@@ -1,0 +1,52 @@
+{
+    "name": "@zuzjs/ui",
+    "version": "0.4.2",
+    "keywords": [
+        "react",
+        "zuz",
+        "zuz.js",
+        "zuz ui",
+        "zuzui"
+    ],
+    "description": "ZuzJS UI Library",
+    "author": "Zuz.js Team <support@zuz.com.pk>",
+    "license": "MIT",
+    "type": "module",
+    "main": "dist/index.js",
+    "bin": {
+        "zuzjs": "dist/bin.js"
+    },
+    "exports": {
+        ".": "./dist/index.js",
+        "./styles": "./dist/styles.css",
+        "./funs": "./dist/funs/index.js"
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "dev:css": "sass --watch --no-source-map src/scss:dist --style compressed",
+        "dev:dist": "tsc -d -w -p tsconfig.json",
+        "dev": "npm-run-all -p dev:*"
+    },
+    "engines": {
+        "node": ">=18.17.0"
+    },
+    "dependencies": {
+        "axios": "^1.7.6",
+        "chokidar": "^3.6.0",
+        "commander": "^12.1.0",
+        "hashids": "^2.3.0",
+        "md5": "^2.3.0",
+        "nanoid": "^5.0.7",
+        "picocolors": "^1.0.1",
+        "react": "19.0.0-beta-26f2496093-20240514",
+        "react-dom": "19.0.0-beta-26f2496093-20240514",
+        "sass": "1.77.8"
+    },
+    "devDependencies": {
+        "node-loader": "^2.0.0",
+        "react": "19.0.0-beta-26f2496093-20240514",
+        "react-dom": "19.0.0-beta-26f2496093-20240514"
+    }
+}
