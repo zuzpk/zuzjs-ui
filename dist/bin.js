@@ -91,12 +91,23 @@ const rebuildAll = () => {
             }
         }
         else {
+            const mediaQueries = {};
             files.map(f => {
                 const r = rebuild(f);
                 if (r && r.length > 0) {
-                    as.push(cssBuilder.Build([r], true).sheet);
+                    const _built = cssBuilder.Build([r], true);
+                    as.push(_built.sheet);
+                    Object.keys(_built.mediaQuery).map(mq => {
+                        if (!mediaQueries[mq])
+                            mediaQueries[mq] = [];
+                        mediaQueries[mq] = [
+                            ...mediaQueries[mq],
+                            ..._built.mediaQuery[mq]
+                        ];
+                    });
                 }
             });
+            as.push(cssBuilder.buildMediaQueries(mediaQueries));
         }
         const sheet = as.join(`\n`);
         if (!fs.existsSync(path.join(process.cwd(), `src`, `app`, `css`))) {

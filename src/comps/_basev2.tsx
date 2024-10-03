@@ -2,17 +2,15 @@ import { ComponentPropsWithoutRef, createElement, ElementType, forwardRef, Ref }
 import { css, cleanProps } from "../funs";
 import { nanoid } from "nanoid";
 import { dynamicObject } from "../types";
-import { buildWithStyles, getAnimationCurve, getAnimationTransition } from "../funs/css";
-import { TRANSITION_CURVES, TRANSITIONS } from "../types/enums";
+import { buildWithStyles, getAnimationCurve } from "../funs/css";
 
 export interface animationProps {
-    transition?: TRANSITIONS,
     from?: dynamicObject;
     to?: dynamicObject;
     when?: boolean;
     duration?: number;
     delay?: number;
-    curve?: string | TRANSITION_CURVES;
+    curve?: string;
 }
 
 interface BaseProps<T extends ElementType> {
@@ -44,22 +42,19 @@ const With = forwardRef(<T extends ElementType = 'div'>(
         cx = css().Build(`string` == typeof as ? as : as.join(` `)).cx;
     }
 
-    const { transition, from, to, when, duration, delay, curve } = animate || {};
+    const { from, to, when, duration, delay, curve } = animate || {};
 
     let _style : dynamicObject = {};
-    const _transition : dynamicObject = transition || (from && to) ? { transition: `all ${duration || `0.2`}s ${getAnimationCurve(curve)} ${delay || 0}s` } : {}
+    const _transition : dynamicObject = from && to ? { transition: `all ${duration || `0.2`}s ${getAnimationCurve(curve)} ${delay || 0}s` } : {}
 
     if ( undefined === when ){
-        _style = transition ? getAnimationTransition(transition, true) : { ...from, ...to }
+        _style = { ...from, ...to }
     }else if ( true === when ){
-        _style = transition ? getAnimationTransition(transition, false) : { ...(to || {}) }
+        _style = { ...(to || {}) }
     }
     else {
-        _style = transition ? getAnimationTransition(transition, false, true) : from || {};
+        _style = from || {};
     }
-
-    // console.log(`as`, as, cx)
-    // console.log(`cx`, cx)
 
     return createElement(Comp, {
         style: {

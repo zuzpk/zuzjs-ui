@@ -25,8 +25,8 @@ const Spinner = forwardRef<HTMLDivElement, SpinnerProps >((props, ref) => {
 
     const buildSimple = () : dynamicObject => {
 
-        const c = hexToRgba(color || defaultColor)
-        const bg = hexToRgba(color || defaultColor, .3)
+        const c = color && color.startsWith(`var`) ? color : hexToRgba(color || defaultColor)
+        const bg = color && color.startsWith(`var`) ? color :  hexToRgba(color || defaultColor, .3)
         
         const pops : dynamicObject = {
             width: size || 50,

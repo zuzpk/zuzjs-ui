@@ -7,8 +7,12 @@ export interface SheetProps {
     title?: string;
     message?: string | ReactNode;
 }
+export interface SheetActionHandler {
+    label: string;
+    handler: () => void;
+}
 export interface SheetHandler {
-    showDialog: (message: string | ReactNode, onShow: () => void) => void;
+    showDialog: (title: string | ReactNode, message: string | ReactNode, action?: SheetActionHandler, onShow?: () => void) => void;
     show: (message: string | ReactNode, duration?: number, type?: SHEET) => void;
     hide: () => void;
 }

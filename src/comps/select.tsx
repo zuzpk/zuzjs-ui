@@ -46,7 +46,7 @@ const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
         })
     }, [])
 
-    return <>
+    return <With className={`zuz-select-wrap rel`}>
         <With 
             popovertarget={_id}
             tag={`button`}
@@ -55,7 +55,7 @@ const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
             ref={_ref} 
             onClick={(e: MouseEvent) => setChoosing(true)}   
             {...rest} >
-            <With tag={`h2`} className={`zuz-selected`}>{value ? `string` == typeof value ? value : value.value : label || `Choose`}</With>
+            <With tag={`h2`} className={`zuz-selected`}>{value ? `string` == typeof value ? value : value.label : label || `Choose`}</With>
             {chevronExpand()}
         </With>
         <With
@@ -78,8 +78,7 @@ const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
                 className={ value && (`string` == typeof o ? o : o.value) == (`string` == typeof value ? value : value.value) ? `selected` : ``}
                 tag={`button`}>{`string` == typeof o ? o : o.label}</With>)}
         </With>
-    </>
-
+    </With>  
 });
 
 export default Select

@@ -7,7 +7,7 @@ import path from "path";
 import CSS from "./funs/css.js"
 import pc from "picocolors"
 import { FIELNAME_KEY, withZuz } from "./funs/index.js";
-import { zuzProps } from "./types/index.js";
+import { dynamicObject, zuzProps } from "./types/index.js";
 
 program
     .option(`-d, --debug`)
@@ -136,6 +136,7 @@ const rebuildAll = () => {
         }
         else{
 
+            const mediaQueries : dynamicObject =  {}
 
             files.map(f => {
                 // if ( f.endsWith(`header.jsx`) ){
@@ -145,12 +146,25 @@ const rebuildAll = () => {
                         // as.push( f.endsWith(`header.jsx`) ?
                         //  `.header{${cssBuilder.Build([r], true).sheet}}`
                         //  : cssBuilder.Build([r], true).sheet)
-                        as.push(cssBuilder.Build([r], true).sheet)
+                        const _built = cssBuilder.Build([r], true)
+                        as.push(_built.sheet)
+
+                        Object.keys(_built.mediaQuery).map(mq => {
+                            if ( !mediaQueries[mq] ) mediaQueries[mq] = []
+                            mediaQueries[mq] = [
+                                ...mediaQueries[mq],
+                                ..._built.mediaQuery[mq]
+                            ]
+                        })
                         // as.push(new CSS().Build([[r]], true).sheet)
                     }
                 // }
                     // as.push(r)
             })
+
+            as.push(cssBuilder.buildMediaQueries(mediaQueries))
+
+
         }
 
         // console.log(as)

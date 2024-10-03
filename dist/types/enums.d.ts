@@ -18,3 +18,13 @@ export declare enum SHEET {
     Success = "SUCCESS",
     Warn = "WARN"
 }
+export declare enum TRANSITION_CURVES {
+    Spring = "SPRING"
+}
+export declare enum TRANSITIONS {
+    ScaleIn = "SCALE_IN",
+    SlideInTop = "SLIDE_FROM_TOP",
+    SlideInRight = "SLIDE_FROM_RIGHT",
+    SlideInBottom = "SLIDE_FROM_BOTTOM",
+    SlideInLeft = "SLIDE_FROM_LEFT"
+}

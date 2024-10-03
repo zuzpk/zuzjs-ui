@@ -27,3 +27,13 @@ export declare const setDeep: (object: dynamicObject, path: string, value: any, 
 export declare const removeDuplicatesFromArray: <T>(array: T[]) => T[];
 export declare const extendGlobals: () => void;
 export declare const withPost: (uri: string, data: dynamicObject, timeout?: number, fd?: dynamicObject) => Promise<unknown>;
+export declare const useDevice: () => {
+    isMobile: boolean;
+    isTablet: boolean;
+    isDesktop: boolean;
+};
+export declare const withTime: (fun: (...args: any[]) => any) => {
+    result: any;
+    executionTime: number;
+};
+export declare const time: (stamp?: number, format?: string) => string;

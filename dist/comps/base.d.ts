@@ -1,12 +1,14 @@
 import { ComponentPropsWithoutRef, ElementType } from "react";
 import { dynamicObject } from "../types";
+import { TRANSITION_CURVES, TRANSITIONS } from "../types/enums";
 export interface animationProps {
+    transition?: TRANSITIONS;
     from?: dynamicObject;
     to?: dynamicObject;
     when?: boolean;
     duration?: number;
     delay?: number;
-    curve?: string;
+    curve?: string | TRANSITION_CURVES;
 }
 interface BaseProps<T extends ElementType> {
     tag?: T;

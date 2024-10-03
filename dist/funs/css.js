@@ -1,6 +1,8 @@
 import { __SALT, FIELNAME_KEY, isColor, isHexColor, isNumber, LINE_KEY, setDeep } from "./index.js";
 import { cssAnimationCurves, cssDirect, cssProps, cssTransformKeys, cssWithKeys } from "./stylesheet.js";
 import Hashids from "hashids";
+import { TRANSITION_CURVES, TRANSITIONS } from "../types/enums.js";
+import md5 from "md5";
 class CSS {
     cx;
     cache;
@@ -16,14 +18,38 @@ class CSS {
     seperator;
     pseudoList;
     ids;
+    mediaQueries;
+    _mediaQueries;
+    _mediaQueriesLabels;
+    PROPS_KEYS;
+    DIRECT_KEYS;
+    _cli;
+    DIRECT_VALUES;
+    PROPS_VALUES;
     constructor(options) {
         const opts = options || {};
+        this._cli = false;
+        this._mediaQueries = {};
+        this._mediaQueriesLabels = {
+            ph: `Extra Small Devices (Phones)`,
+            sm: `Small Devices (Tablets)`,
+            md: `Medium Devices (Small Laptops)`,
+            lg: `Large Devices (Laptops and Desktops)`,
+            xl: `Extra Large Devices (Large Desktops)`,
+        };
+        this.mediaQueries = {
+            ph: `(max-width: 599px)`,
+            sm: `(min-width: 600px) and (max-width: 767px)`,
+            md: `(min-width: 768px) and (max-width: 991px)`,
+            lg: `(min-width: 992px) and (max-width: 1199px)`,
+            xl: `(min-width: 1200px)`,
+        };
         this.cx = [];
         this.cache = {};
         this.unit = opts.unit || `px`;
         this.seperator = `__@@__`;
         this.hashids = new Hashids(__SALT, 5);
-        this.chars = "#@_-[]{}();:^/!^&*+='\"`,.~abcdefghijklmnopqrstuvwxyz0123456789";
+        this.chars = "#@_-[]{}();:^/!^&*+='\"`,.~%abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         this.rgbaRegex = /\b\w+\[\d+,\d+,\d+(?:,\d+)?\]/g;
         this.pseudoList = [
             "@before", "@after", "@active", "@checked", "@default", "@disabled", "@empty", "@enabled", "@first", "@firstChild", "@firstOfType", "@focus", "@hover", "@indeterminate", "@inRange", "@invalid", "@lastChild", "@lastOfType", "@link", "@not", "@nthChild", "@nthLastChild", "@nthLastOfType", "@nthOfType", "@onlyChild", "@onlyOfType", "@optional", "@outOfRange", "@readOnly", "@readWrite", "@required", "@root", "@scope", "@target", "@valid", "@visited"
@@ -39,27 +65,72 @@ class CSS {
         this.propCounter = {};
         this.ids = [];
         this.PROPS = cssProps;
+        this.PROPS_KEYS = Object.keys(cssProps);
+        this.PROPS_VALUES = this.PROPS_KEYS.reduce((arr, k) => {
+            arr.push(cssProps[k]);
+            return arr;
+        }, []);
         this.DIRECT = cssDirect;
+        this.DIRECT_KEYS = Object.keys(cssDirect);
+        this.DIRECT_VALUES = this.DIRECT_KEYS.reduce((arr, k) => {
+            if (!cssDirect[k].includes(`__VALUE__`))
+                arr.push(cssDirect[k].replace(/\s+/g, ``));
+            return arr;
+        }, []);
+    }
+    buildMediaQueries(queries) {
+        const self = this;
+        const scss = [`\n`];
+        Object.keys(queries).forEach((key) => {
+            scss.push(`/**\n*${self._mediaQueriesLabels[key]}\n*/`);
+            scss.push(`@media screen and ${self.mediaQueries[key]}{`);
+            scss.push(queries[key].join(`\n`));
+            scss.push(`}`);
+        });
+        return scss.join(`\n`);
     }
     styleSheet(cache, pseudo = ``) {
         const self = this;
         const scss = [];
         const build = (key, value) => {
-            let css = `${self.pseudoList.includes(`@${key}`) ? `&:` : `.`}${key}{`;
-            if (`object` == typeof value) {
-                for (const prop in value) {
-                    if (`object` == typeof value[prop]) {
-                        css += build(prop, value[prop]);
-                    }
-                    else {
-                        css += value[prop];
+            const __build = (_key, _value) => {
+                let _css = `${self.pseudoList.includes(`@${_key}`) ? `&:` : `.`}${_key}{`;
+                if (`object` == typeof _value) {
+                    for (const prop in _value) {
+                        if (`object` == typeof _value[prop]) {
+                            _css += __build(prop, _value[prop]);
+                        }
+                        else {
+                            _css += _value[prop];
+                        }
                     }
                 }
+                else {
+                    _css += _value;
+                }
+                _css += `}`;
+                return _css;
+            };
+            let css = ``;
+            if (`object` == typeof value && Object.keys(value)[0] in this.mediaQueries) {
+                const mq = Object.keys(value)[0];
+                let __css = `.${key}{`;
+                const _value = value[mq];
+                for (const prop in _value) {
+                    if (`object` == typeof _value[prop]) {
+                        __css += __build(prop, _value[prop]);
+                    }
+                    else {
+                        __css += _value[prop];
+                    }
+                }
+                __css += `}`;
+                this._mediaQueries[mq] = this._mediaQueries[mq] || [];
+                this._mediaQueries[mq].push(__css);
             }
             else {
-                css += value;
+                css += __build(key, value);
             }
-            css += `}`;
             return css;
         };
         for (const key in cache) {
@@ -168,7 +239,8 @@ class CSS {
                 const _id = `z${self.hashids.encode(_indices)}`;
                 if (!_[_id]) {
                     const cleaned = self.deepClean(cache[_k], level + 1);
-                    if (level == 0 && self.pseudoList.includes(`@${__k}`)) {
+                    if (level == 0 &&
+                        (self.pseudoList.includes(`@${__k}`) || __k in self.mediaQueries)) {
                         self.cx.push(_id);
                         _[_id] = { [__k]: cleaned };
                     }
@@ -291,15 +363,76 @@ class CSS {
         }
         return _indices.join(``);
     }
-    mmakeID(k, v, _out) {
-        const cs = [];
-        const out = this.calcIndexes(k) + this.calcIndexes(v) + this.calcIndexes(_out);
-        console.log(this.hashids.encode(out));
-        cs.push(out.charAt(0).match(/\d+/g) ? `z` : ``, out);
-        return cs.join(``);
+    makeID2(k, v, _out) {
+        const self = this;
+        let _ = [];
+        const out = _out.replace(/\s+/g, ``).trim();
+        const _mi = (_k, _v) => {
+            let i = Math.abs(self.DIRECT_KEYS.indexOf(_k)) + Math.abs(self.PROPS_VALUES.indexOf(_k));
+            _.push(i);
+            const nums = _v.match(/[0-9]/g);
+            if (nums) {
+                let ii = Math.abs(+nums.join(``));
+                _.push(ii);
+                i += ii;
+            }
+            const abc = _v.match(/[a-zA-Z,/-\[\]]/g);
+            if (abc) {
+                const ai = abc.reduce((acc, char) => acc + self.chars.indexOf(char), 0);
+                _.push(ai);
+                i += ai;
+            }
+            return i;
+        };
+        const [_ok, _ov] = out.split(`:`);
+        const ok = _ok.trim();
+        const ov = _ov.trim();
+        let _cp = ok.charAt(0);
+        if (self.PROPS[ok]?.indexOf("-") > -1) {
+            _cp = "";
+            self.PROPS[ok].split("-").map((c) => _cp += c.charAt(0));
+        }
+        const io = self.DIRECT_VALUES.includes(out) ? self.DIRECT_VALUES.indexOf(out) : _mi(ok, ov);
+        const id = `${_cp}${self.hashids.encode(io, _mi(k, v))}`;
+        return id;
+    }
+    makeID3(k, v, _out) {
+        const self = this;
+        const md = md5(_out);
+        let _ = [];
+        const _mi = (_k, _v) => {
+            let i = Math.abs(self.DIRECT_KEYS.indexOf(_k)) + Math.abs(self.PROPS_VALUES.indexOf(_k));
+            _.push(i);
+            const nums = _v.match(/[0-9]/g);
+            if (nums) {
+                let ii = Math.abs(+nums.join(``));
+                _.push(ii);
+                i += ii;
+            }
+            const abc = _v.match(/[a-zA-Z,/-\[\]]/g);
+            if (abc) {
+                const ai = abc.reduce((acc, char) => acc + self.chars.indexOf(char), 0);
+                _.push(ai);
+                i += ai;
+            }
+            return i;
+        };
+        const out = _out.replace(/\s+/g, ``).trim();
+        const [_ok, _ov] = out.split(`:`);
+        const ok = _ok.trim();
+        const ov = _ov.trim();
+        let _cp = ok.charAt(0);
+        if (self.PROPS[ok]?.indexOf("-") > -1) {
+            _cp = "";
+            self.PROPS[ok].split("-").map((c) => _cp += c.charAt(0));
+        }
+        const io = self.DIRECT_VALUES.includes(out) ? self.DIRECT_VALUES.indexOf(out) : _mi(ok, ov);
+        const ai = md.split(``).reduce((acc, char) => acc + self.chars.indexOf(char), 0);
+        return `${_cp}${self.hashids.encode(io, ai)}`;
     }
     makeID(k, v, _out) {
         const self = this;
+        return self.makeID3(k, v, _out);
         const _css = _out.toString().replace(/;|:|\s/g, "");
         let _indices = 0;
         for (let i = 0; i < _css.length; i++) {
@@ -388,6 +521,17 @@ class CSS {
         }
         else {
             const value = (_k, pseudo = ``) => {
+                let _mediaQuery = null;
+                if (_k.includes(`@`)) {
+                    const [_x, _y] = _k.split(`@`);
+                    _k = _x;
+                    _mediaQuery = _y;
+                    if (_y.includes(`:`)) {
+                        const [_a, _b] = _y.split(`:`);
+                        _k = `${_x}:${_b}`;
+                        _mediaQuery = _a;
+                    }
+                }
                 if (_k.includes(`:`)) {
                     const [key, _val] = _k.split(`:`);
                     if (key in self.PROPS) {
@@ -395,6 +539,10 @@ class CSS {
                         const _id = self.makeID(key, _val + pseudo, _out);
                         if (pseudo == ``)
                             self.cx.push(_id);
+                        if (_mediaQuery) {
+                            self.mediaQueries[_mediaQuery].push({ [_id]: _out });
+                            return {};
+                        }
                         return { [_id]: _out };
                     }
                     else if (key in self.DIRECT) {
@@ -407,6 +555,10 @@ class CSS {
                                 acc.push(`${v.startsWith(`.`) ? `` : `.`}${v.trim()}`);
                                 return acc;
                             }, []).join(`,`);
+                        }
+                        else if (key == `ratio`) {
+                            _out = self.DIRECT[key].replace(`__VALUE__`, val.replace(`,`, `/`));
+                            _out = _out.replace(`;`, `${important};`);
                         }
                         else if (key == `anim`) {
                             let delay = `0s`;
@@ -430,6 +582,7 @@ class CSS {
                                 .replace(`__VALUE__`, duration)
                                 .replace(`__CURVE__`, curve)
                                 .replace(`__DELAY__`, delay);
+                            _out = _out.replace(`;`, `${important};`);
                         }
                         else {
                             const __value = `${val}${key == `extend` ? `` : self.makeUnit(key, val)}`;
@@ -439,6 +592,10 @@ class CSS {
                         const _id = self.makeID(key, key + pseudo, _out);
                         if (pseudo == ``)
                             self.cx.push(_id);
+                        if (_mediaQuery) {
+                            self.mediaQueries[_mediaQuery].push({ [_id]: _out });
+                            return {};
+                        }
                         return { [_id]: _out };
                     }
                 }
@@ -447,6 +604,10 @@ class CSS {
                     const _id = self.makeID(_k, _k + pseudo, _out);
                     if (pseudo == ``)
                         self.cx.push(_id);
+                    if (_mediaQuery) {
+                        self.mediaQueries[_mediaQuery].push({ [_id]: _out });
+                        return {};
+                    }
                     return { [_id]: _out };
                 }
                 else if (_k.trim().match(/^[a-zA-Z0-9\-]+$/g)) {
@@ -472,12 +633,15 @@ class CSS {
     }
     Build(css, cli = false) {
         let self = this;
+        self._cli = cli;
         self.cx = [];
         self.cache = {};
+        self._mediaQueries = {};
         if (undefined == css)
             return {
                 cx: self.cx,
-                sheet: ``
+                sheet: ``,
+                mediaQuery: {}
             };
         if (`string` == typeof css) {
             css = [[css]];
@@ -488,9 +652,11 @@ class CSS {
             });
         });
         const _cleaned = self.deepClean(self.cache);
+        const _stylesheet = self.styleSheet(_cleaned);
         const _ = {
             cx: self.cx,
-            sheet: self.styleSheet(_cleaned)
+            sheet: _stylesheet,
+            mediaQuery: self._mediaQueries
         };
         return _;
     }
@@ -526,15 +692,31 @@ export const buildWithStyles = (source) => {
 export const getAnimationCurve = (curve) => {
     if (!curve)
         return `linear`;
-    const _curves = [`spring`];
-    if (_curves.includes(curve)) {
-        switch (curve) {
-            case "spring":
-                return `cubic-bezier(0.2, -0.36, 0, 1.46)`;
-                break;
-            default:
-                return `linear`;
-        }
+    switch (curve.toUpperCase()) {
+        case TRANSITION_CURVES.Spring:
+            return `cubic-bezier(0.2, -0.36, 0, 1.46)`;
+            break;
+        default:
+            return `linear`;
     }
-    return curve;
+};
+export const getAnimationTransition = (transition, to, from) => {
+    let _from, _to;
+    switch (transition) {
+        case TRANSITIONS.SlideInLeft:
+        case TRANSITIONS.SlideInRight:
+            _from = { x: transition == TRANSITIONS.SlideInLeft ? -20 : 20, opacity: 0 };
+            _to = { x: 0, opacity: 1 };
+            break;
+        case TRANSITIONS.SlideInTop:
+        case TRANSITIONS.SlideInBottom:
+            _from = { y: transition == TRANSITIONS.SlideInTop ? -20 : 20, opacity: 0 };
+            _to = { y: 0, opacity: 1 };
+            break;
+        case TRANSITIONS.ScaleIn:
+            _from = { scale: 0, opacity: 0 };
+            _to = { scale: 1, opacity: 1 };
+            break;
+    }
+    return to ? { ..._from, ..._to } : from ? _from : _to;
 };

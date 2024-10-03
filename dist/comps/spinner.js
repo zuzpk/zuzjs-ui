@@ -7,8 +7,8 @@ const Spinner = forwardRef((props, ref) => {
     const { as, type, width, speed, size, color, background, foreground, ...rest } = props;
     const defaultColor = `#000000`;
     const buildSimple = () => {
-        const c = hexToRgba(color || defaultColor);
-        const bg = hexToRgba(color || defaultColor, .3);
+        const c = color && color.startsWith(`var`) ? color : hexToRgba(color || defaultColor);
+        const bg = color && color.startsWith(`var`) ? color : hexToRgba(color || defaultColor, .3);
         const pops = {
             width: size || 50,
             height: size || 50,

@@ -1,5 +1,6 @@
 import { dynamicObject } from "../types";
 import Hashids from "hashids";
+import { TRANSITION_CURVES, TRANSITIONS } from "../types/enums.js";
 declare class CSS {
     cx: string[];
     cache: dynamicObject;
@@ -15,7 +16,16 @@ declare class CSS {
     seperator: string;
     pseudoList: string[];
     ids: string[];
+    mediaQueries: dynamicObject;
+    _mediaQueries: dynamicObject;
+    _mediaQueriesLabels: dynamicObject;
+    PROPS_KEYS: string[];
+    DIRECT_KEYS: string[];
+    _cli: boolean;
+    DIRECT_VALUES: string[];
+    PROPS_VALUES: string[];
     constructor(options?: dynamicObject | undefined);
+    buildMediaQueries(queries: dynamicObject): string;
     styleSheet(cache: dynamicObject, pseudo?: string): string;
     _styleSheet(cache: dynamicObject): string;
     cleanKey(key: string): string;
@@ -23,15 +33,18 @@ declare class CSS {
     makeUnit(k: string, v: any): any;
     makeValue(k: string, v: any): string;
     calcIndexes(str: string): string;
-    mmakeID(k: string, v: string, _out: string): string;
+    makeID2(k: string, v: string, _out: string): string;
+    makeID3(k: string, v: string, _out: string): string;
     makeID(k: string, v: string, _out: string): string;
     lexer(line: string): dynamicObject;
     processLine(line: string): void;
     Build(css: string | string[][], cli?: boolean): {
         cx: string[];
         sheet: string;
+        mediaQuery: dynamicObject;
     };
 }
 export default CSS;
 export declare const buildWithStyles: (source: dynamicObject) => dynamicObject;
-export declare const getAnimationCurve: (curve?: string) => string;
+export declare const getAnimationCurve: (curve?: string | TRANSITION_CURVES) => string;
+export declare const getAnimationTransition: (transition: TRANSITIONS, to?: boolean, from?: boolean) => dynamicObject;

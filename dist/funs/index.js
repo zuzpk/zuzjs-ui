@@ -4,6 +4,8 @@ import axios from "axios";
 import { colorNames } from "./colors.js";
 import Hashids from "hashids";
 import { nanoid } from "nanoid";
+import Cookies from "js-cookie";
+import moment from "moment";
 let __css;
 export const __SALT = `zuzjs-ui`;
 export const FIELNAME_KEY = `__FILENAME__`;
@@ -108,7 +110,10 @@ export const withPost = async (uri, data, timeout = 60, fd = {}) => {
             axios({
                 method: 'post',
                 url: uri,
-                data: data,
+                data: {
+                    ...data,
+                    ...Cookies.get(),
+                },
                 timeout: timeout * 1000,
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -130,6 +135,7 @@ export const withPost = async (uri, data, timeout = 60, fd = {}) => {
     return new Promise((resolve, reject) => {
         axios.post(uri, {
             ...data,
+            ...Cookies.get(),
             __stmp: new Date().getTime() / 1000
         }, {
             timeout: 1000 * timeout,
@@ -147,4 +153,28 @@ export const withPost = async (uri, data, timeout = 60, fd = {}) => {
         })
             .catch(err => reject(err));
     });
+};
+export const useDevice = () => {
+    const userAgent = navigator.userAgent;
+    const mobile = /Mobi|Android/i.test(userAgent);
+    const tablet = /Tablet|iPad/i.test(userAgent);
+    return {
+        isMobile: mobile,
+        isTablet: tablet,
+        isDesktop: !mobile && !tablet
+    };
+};
+export const withTime = (fun) => {
+    const start = new Date().getTime();
+    const result = fun();
+    const end = new Date().getTime();
+    return {
+        result,
+        executionTime: end - start
+    };
+};
+export const time = (stamp, format) => {
+    return stamp ?
+        moment.unix(+stamp / 1000).format(format || `YYYY-MM-DD HH:mm:ss`)
+        : moment().format(format || `YYYY-MM-DD HH:mm:ss`);
 };

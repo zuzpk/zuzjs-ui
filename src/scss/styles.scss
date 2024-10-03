@@ -38,6 +38,21 @@ input{
     --select-selected: #ddd;
     --select-padding: 6px 8px;
     --select-radius: 5px;
+
+    --cover-bg: rgba(255,255,255,0.8);
+    --cover-label: #111;
+
+    --dialog-bg: #fff;
+    --dialog-radius: 10px;
+    --dialog-padding: 10px;
+    --dialog-title-font-size: 16px;
+    --dialog-closer-font-size: 36px;
+    --dialog-closer-hover: rgba(255,255,255,0.2);
+
+    --sheet-error: #ff4747;    
+    --sheet-warn: #ffba00;
+    --sheet-success: #23ac28;
+
 }
 
 .flex{
@@ -54,8 +69,20 @@ input{
     bottom: 0px;
     right: 0px;
 }
-
+.fillx{
+    top: -10px;
+    left: -10px;
+    bottom: -10px;
+    right: -10px;
+}
+.nope{pointer-events: none;}
+.nous{user-select: none;}
 .rel{position: relative;}
+.ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
 .input-with-error{
     box-shadow: inset 0px 0px 0px 1px #ff8b8b;
@@ -144,34 +171,84 @@ input{
     // @include anim($duration: 0.5s, $fun: cubic-bezier(0.68, -0.2, 0.27, 1.5));
     @include anim($duration: 0.5s, $fun: cubic-bezier(0.2, -0.36, 0, 1.46));
 
+    &.wobble{
+        transform-origin: inherit !important;
+        // transform: scale(0.8) !important;
+        // @include anim($duration: 0.5s, $fun: cubic-bezier(0.68, -0.2, 0.27, 1.5));
+    }
+
     &.toast-default{
         background: #333;
         color: #fff;
+        top: 10px !important;
+        @extend .zuz-toast;
     }
-
     &.toast-error{
-        background: #ff4747;
+        background: var(--sheet-error);
         color: #fff;
-        top: -20px;
+        top: 10px;
         @extend .zuz-toast;
     }
     &.toast-success{
-        background: #23ac28;
+        background: var(--sheet-success);
         color: #fff;
+        top: 10px;
         @extend .zuz-toast;
     }
     &.toast-warn{
-        background: #ffba00;
+        background: var(--sheet-warn);
+        color: #111;
+        top: 10px;
         @extend .zuz-toast;
     }
 
-    &.is-visible{
-        // transform: translate(-50%, 0vh);
-        &.wobble{
-            // transform: translate(-50%, 10px);
-            // @include anim($duration: 0.5s, $fun: cubic-bezier(0.68, -0.2, 0.27, 1.5));
-        }
+    &.toast-dialog{
+        background: var(--dialog-bg);
+        border-radius: var(--dialog-radius);
+        padding: var(--dialog-padding);
+        overflow: hidden;
     }
+
+    .zuz-sheet-head{
+        margin-bottom: 20px;
+        .zuz-sheet-title{
+            flex: 1;
+            font-size: var(--dialog-title-font-size);
+            opacity: 0.5;
+            text-align: center;
+            padding: 0px 45px;
+        }
+        .zuz-sheet-dot{
+            flex: 1;
+        }
+        .zuz-sheet-closer{
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            font-size: var(--dialog-closer-font-size);
+            background: transparent;
+            border: 0px;
+            line-height: 0;
+            padding: 0px;
+            font-weight: normal;
+            border-radius: 20px;
+            opacity: 0.35;
+            top: 50%;
+            right: 0px;
+            transform: translateY(-50%);
+            &:hover{
+                background: var(--dialog-closer-hover);
+                opacity: 1;
+            }
+        }
+    }   
+    // &.is-visible{
+    //     // transform: translate(-50%, 0vh);
+    //     &.wobble{
+    //         // transform: translate(-50%, 10px);
+    //         // @include anim($duration: 0.5s, $fun: cubic-bezier(0.68, -0.2, 0.27, 1.5));
+    //     }
+    // }
 
 }
 .zuz-sheet-overlay{
@@ -207,15 +284,38 @@ input{
     }
 }
 
+@position-try --zuz-select-bottom {
+    top: anchor(bottom);
+    bottom: unset;
+    margin-block: calc(var(--zuz-select-height) + var(--zuz-select-gap)) 0;
+}
+.zuz-selectk-wrap{
+    width: 100%;
+}
 .zuz-select{
+    width: 100%;
     gap: 5px;
     background: var(--select);
     border-radius: var(--select-radius);
+    border: 0px;
+    padding: 12px 15px;
+    anchor-name: --zuz-select-anchor;
+    &:hover{
+        background: var(--select-hover);
+    }
     .zuz-selected{
         flex: 1;
+        text-align: left;
     }
 }
 .zuz-select-options{
+
+    --zuz-select-height: 30px;
+    --zuz-select-gap: 0px;
+    position-anchor: --zuz-select-anchor;
+    position-try: most-height --zuz-select-bottom;
+
+    width: 100%;
     max-height: 400px;
     overflow-x: hidden;
     gap: 2px;
