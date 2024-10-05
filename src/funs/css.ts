@@ -531,89 +531,6 @@ class CSS {
     makeID2(k: string, v: string, _out: string){
        
         const self = this;
-        
-        let _ : any[] = []
-
-        const out = _out.replace(/\s+/g, ``).trim()
-
-        const _mi = (_k: string, _v: string) : number => {
-
-            // console.log(_k, _v, Math.abs(self.DIRECT_KEYS.indexOf(_k)) + Math.abs(self.PROPS_VALUES.indexOf(_k)))
-
-            let i = Math.abs(self.DIRECT_KEYS.indexOf(_k)) + Math.abs(self.PROPS_VALUES.indexOf(_k))
-            // _k in self.DIRECT ? self.DIRECT_KEYS.indexOf(_k) : _k in self.PROPS_VALUES ? self.PROPS_VALUES.indexOf(_k) : 0
-            _.push(i)
-            const nums = _v.match(/[0-9]/g)
-            if ( nums ){
-                let ii = Math.abs(+nums.join(``))
-                _.push(ii)
-                i += ii
-            }
-
-            const abc = _v.match(/[a-zA-Z,/-\[\]]/g)
-            if ( abc ) {
-                const ai = abc.reduce((acc, char) => acc + self.chars.indexOf(char), 0)
-                _.push(ai)
-                i += ai
-            }
-            return i
-        }
-
-        const [ _ok, _ov ] = out.split(`:`)
-        const ok = _ok.trim()
-        const ov = _ov.trim()
-
-        /**Prefix */
-        let _cp = ok.charAt(0)
-        if(self.PROPS[ok]?.indexOf("-") > -1){
-            _cp = "";
-            self.PROPS[ok].split("-").map((c: string) => _cp += c.charAt(0))
-        }
-
-        const io = self.DIRECT_VALUES.includes(out) ? self.DIRECT_VALUES.indexOf(out) : _mi(ok, ov)
-        
-        const id = `${_cp}${self.hashids.encode(io, _mi(k, v))}`
-        // const id = `${_cp}${self.hashids.encode(_)}`
-
-        // console.log(`[${self._cli}]`, ok, ov, _, io, id)
-
-        // if ( v == `40%` || v == `3` ){
-            // console.log(`[${self._cli}]`, k, v, ok, ov, _, i, id)
-        // }
-        // if ( k in self.DIRECT )
-        // 
-
-        return id
-        // const _css = _out.toString().replace(/;|:|\s/g, "") 
-        // let _indices = self.calcIndexes(_css)
-        // let _cp = k.charAt(0)
-        // if(self.PROPS[k]?.indexOf("-") > -1){
-        //     _cp = "";
-        //     self.PROPS[k].split("-").map((c: string) => _cp += c.charAt(0))
-        // }
-        // if(v.toString().indexOf("-") > -1){
-        //     v.toString().split("-").map(c => _cp += c.charAt(0))
-        // }
-        // else{
-        //     _indices += self.calcIndexes(v)
-        // }
-        
-        // const _id = _cp + self.hashids.encode(
-        //     // self.PROPS[k] ? self.PROPS[k].length : 0 + 
-        //     _indices
-        // )
-
-        // console.log(k, v, _id, 
-        //     self.calcIndexes(self.hashids.encode(_indices)),
-        //     // self.hashids.encode(self.calcIndexes(self.hashids.encode(_indices)))
-        // )
-
-        // return _id
-    }
-
-    makeID3(k: string, v: string, _out: string){
-       
-        const self = this;
         const md = md5(_out)
         let _ : any[] = []
 
@@ -645,6 +562,10 @@ class CSS {
         const ok = _ok.trim()
         const ov = _ov.trim()
 
+        if ( ov == `` ){
+            throw new TypeError(`${ok} value is empty.`)
+        } 
+
         /**Prefix */
         let _cp = ok.charAt(0)
         if(self.PROPS[ok]?.indexOf("-") > -1){
@@ -662,7 +583,7 @@ class CSS {
         // console.log(`makeID`, k, v, _out)
         const self = this;
 
-        return self.makeID3(k, v, _out)
+        return self.makeID2(k, v, _out)
 
         const _css = _out.toString().replace(/;|:|\s/g, "")           
         let _indices = 0
@@ -1060,6 +981,9 @@ export const getAnimationCurve = ( curve?: string | TRANSITION_CURVES ): string 
         case TRANSITION_CURVES.Spring:
             return `cubic-bezier(0.2, -0.36, 0, 1.46)`
             break;
+        case TRANSITION_CURVES.EaseInOut:
+            return `cubic-bezier(0.42, 0, 0.58, 1)`
+            break;
         default:
             return `linear`
     }
@@ -1084,6 +1008,10 @@ export const getAnimationTransition = ( transition: TRANSITIONS, to?: boolean, f
         case TRANSITIONS.ScaleIn:
             _from = { scale: 0, opacity: 0 }
             _to = { scale: 1, opacity: 1 }
+            break;            
+        case TRANSITIONS.FadeIn:
+            _from = { opacity: 0 }
+            _to = { opacity: 1 }
             break;            
     }
 

@@ -288,6 +288,13 @@ export const cssDirect = {
     "inlineblock": "display: inline-block;",
     "blur": "filter: blur(__VALUE__);",
     "ratio": "aspect-ratio: __VALUE__;",
+    "center-h": "left: 50%;transform: translateX(-50%);",
+    "center-v": "top: 50%;transform: translateY(-50%);",
+    "no-overflow": "overflow: hidden;",
+    "overflow-x": "overflow-x: auto;",
+    "overflow-y": "overflow-x: auto;",
+    "space-pre": "white-space: pre;",
+    "text-wrap": "width: 98%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;",
 };
 export const cssAnimationCurves = {
     ease: 'ease',

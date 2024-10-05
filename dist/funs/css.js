@@ -365,39 +365,6 @@ class CSS {
     }
     makeID2(k, v, _out) {
         const self = this;
-        let _ = [];
-        const out = _out.replace(/\s+/g, ``).trim();
-        const _mi = (_k, _v) => {
-            let i = Math.abs(self.DIRECT_KEYS.indexOf(_k)) + Math.abs(self.PROPS_VALUES.indexOf(_k));
-            _.push(i);
-            const nums = _v.match(/[0-9]/g);
-            if (nums) {
-                let ii = Math.abs(+nums.join(``));
-                _.push(ii);
-                i += ii;
-            }
-            const abc = _v.match(/[a-zA-Z,/-\[\]]/g);
-            if (abc) {
-                const ai = abc.reduce((acc, char) => acc + self.chars.indexOf(char), 0);
-                _.push(ai);
-                i += ai;
-            }
-            return i;
-        };
-        const [_ok, _ov] = out.split(`:`);
-        const ok = _ok.trim();
-        const ov = _ov.trim();
-        let _cp = ok.charAt(0);
-        if (self.PROPS[ok]?.indexOf("-") > -1) {
-            _cp = "";
-            self.PROPS[ok].split("-").map((c) => _cp += c.charAt(0));
-        }
-        const io = self.DIRECT_VALUES.includes(out) ? self.DIRECT_VALUES.indexOf(out) : _mi(ok, ov);
-        const id = `${_cp}${self.hashids.encode(io, _mi(k, v))}`;
-        return id;
-    }
-    makeID3(k, v, _out) {
-        const self = this;
         const md = md5(_out);
         let _ = [];
         const _mi = (_k, _v) => {
@@ -421,6 +388,9 @@ class CSS {
         const [_ok, _ov] = out.split(`:`);
         const ok = _ok.trim();
         const ov = _ov.trim();
+        if (ov == ``) {
+            throw new TypeError(`${ok} value is empty.`);
+        }
         let _cp = ok.charAt(0);
         if (self.PROPS[ok]?.indexOf("-") > -1) {
             _cp = "";
@@ -432,7 +402,7 @@ class CSS {
     }
     makeID(k, v, _out) {
         const self = this;
-        return self.makeID3(k, v, _out);
+        return self.makeID2(k, v, _out);
         const _css = _out.toString().replace(/;|:|\s/g, "");
         let _indices = 0;
         for (let i = 0; i < _css.length; i++) {
@@ -696,6 +666,9 @@ export const getAnimationCurve = (curve) => {
         case TRANSITION_CURVES.Spring:
             return `cubic-bezier(0.2, -0.36, 0, 1.46)`;
             break;
+        case TRANSITION_CURVES.EaseInOut:
+            return `cubic-bezier(0.42, 0, 0.58, 1)`;
+            break;
         default:
             return `linear`;
     }
@@ -716,6 +689,10 @@ export const getAnimationTransition = (transition, to, from) => {
         case TRANSITIONS.ScaleIn:
             _from = { scale: 0, opacity: 0 };
             _to = { scale: 1, opacity: 1 };
+            break;
+        case TRANSITIONS.FadeIn:
+            _from = { opacity: 0 };
+            _to = { opacity: 1 };
             break;
     }
     return to ? { ..._from, ..._to } : from ? _from : _to;

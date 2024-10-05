@@ -27,7 +27,7 @@ export enum TRANSITION_CURVES {
     // Ease = "EASE",
     // EaseIn = "EASEIN",
     // EaseOut = "EASEOUT",
-    // EaseInOut = "EASEINOUT",
+    EaseInOut = "EASEINOUT",
     // Linear = "LINEAR",
     // StepStart = "STEPSTART",
     // StepEnd = "STEPEND",
@@ -37,7 +37,7 @@ export enum TRANSITION_CURVES {
 
 export enum TRANSITIONS {
     
-    // FadeIn = "FADEIN",
+    FadeIn = "FADE_IN",
     ScaleIn = "SCALE_IN",
 
     SlideInTop = "SLIDE_FROM_TOP",
@@ -51,4 +51,11 @@ export enum TRANSITIONS {
     // Rotate = "ROTATE",
     // Pulse = "PULSE",
     // Shake = "SHAKE"
+}
+
+export enum DRAWER_SIDE {
+    Left = "LEFT",
+    Right = "RIGHT",
+    Top = "TOP",
+    Bottom = "BOTTOM"
 }

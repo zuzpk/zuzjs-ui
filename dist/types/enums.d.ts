@@ -19,12 +19,20 @@ export declare enum SHEET {
     Warn = "WARN"
 }
 export declare enum TRANSITION_CURVES {
-    Spring = "SPRING"
+    Spring = "SPRING",
+    EaseInOut = "EASEINOUT"
 }
 export declare enum TRANSITIONS {
+    FadeIn = "FADE_IN",
     ScaleIn = "SCALE_IN",
     SlideInTop = "SLIDE_FROM_TOP",
     SlideInRight = "SLIDE_FROM_RIGHT",
     SlideInBottom = "SLIDE_FROM_BOTTOM",
     SlideInLeft = "SLIDE_FROM_LEFT"
+}
+export declare enum DRAWER_SIDE {
+    Left = "LEFT",
+    Right = "RIGHT",
+    Top = "TOP",
+    Bottom = "BOTTOM"
 }

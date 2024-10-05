@@ -34,7 +34,6 @@ declare class CSS {
     makeValue(k: string, v: any): string;
     calcIndexes(str: string): string;
     makeID2(k: string, v: string, _out: string): string;
-    makeID3(k: string, v: string, _out: string): string;
     makeID(k: string, v: string, _out: string): string;
     lexer(line: string): dynamicObject;
     processLine(line: string): void;

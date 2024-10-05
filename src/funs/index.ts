@@ -7,6 +7,7 @@ import Hashids from "hashids";
 import { nanoid } from "nanoid";
 import Cookies from "js-cookie";
 import moment from "moment";
+import { FormatNumberParams } from "../types/interfaces.js";
 
 let __css : CSS;
 export const __SALT : string = `zuzjs-ui`
@@ -211,25 +212,6 @@ export const withPost = async (uri: string, data: dynamicObject, timeout: number
     })
 }
 
-export const useDevice = () : {
-    isMobile: boolean,
-    isTablet: boolean,
-    isDesktop: boolean
-} => {
-
-    const userAgent = navigator.userAgent;
-    const mobile = /Mobi|Android/i.test(userAgent)
-    const tablet = /Tablet|iPad/i.test(userAgent)
-    
-    return {
-        isMobile: mobile,
-        isTablet: tablet,
-        isDesktop: !mobile && !tablet
-    }
-
-
-}
-
 export const withTime = ( fun : (...args: any[]) => any ) => {
     const start = new Date().getTime()
     const result = fun()
@@ -244,4 +226,37 @@ export const time = (stamp?: number, format?: string) => {
     return stamp ? 
         moment.unix(+stamp / 1000).format(format || `YYYY-MM-DD HH:mm:ss`)
         : moment().format(format || `YYYY-MM-DD HH:mm:ss`)
+}
+
+export const arrayRand = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)]
+
+export const formatNumber = ({
+    number,
+    locale = 'en-US',
+    style = `decimal`,
+    decimal = 2,
+    currency
+} : FormatNumberParams) => {
+
+    if (style === 'currency' && !currency) {
+        throw new TypeError('Currency code is required with currency style.');
+    }
+
+    if (currency) {
+        const { code, style: currencyStyle, symbol } = currency;
+        const out = new Intl.NumberFormat(locale, {
+            style: `currency`,
+            currency: code,
+            currencyDisplay: currencyStyle,
+            minimumFractionDigits: +number % 1 > 0 ? decimal : 0,
+            maximumFractionDigits: +number % 1 > 0 ? decimal : 0
+        }).format(+number);
+        return symbol ? out.replace(new RegExp(`\\${code}`, 'g'), symbol) : out;
+    }
+
+    return new Intl.NumberFormat(locale, {
+        style,
+        minimumFractionDigits: +number % 1 > 0 ? 2 : 0,
+        maximumFractionDigits: +number % 1 > 0 ? 2 : 0
+    }).format(+number);
 }

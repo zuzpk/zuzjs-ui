@@ -1,5 +1,6 @@
 import CSS from './css.js';
 import { dynamicObject } from "../types/index.js";
+import { FormatNumberParams } from "../types/interfaces.js";
 export declare const __SALT: string;
 export declare const FIELNAME_KEY = "__FILENAME__";
 export declare const LINE_KEY = "__LINE__";
@@ -27,13 +28,10 @@ export declare const setDeep: (object: dynamicObject, path: string, value: any, 
 export declare const removeDuplicatesFromArray: <T>(array: T[]) => T[];
 export declare const extendGlobals: () => void;
 export declare const withPost: (uri: string, data: dynamicObject, timeout?: number, fd?: dynamicObject) => Promise<unknown>;
-export declare const useDevice: () => {
-    isMobile: boolean;
-    isTablet: boolean;
-    isDesktop: boolean;
-};
 export declare const withTime: (fun: (...args: any[]) => any) => {
     result: any;
     executionTime: number;
 };
 export declare const time: (stamp?: number, format?: string) => string;
+export declare const arrayRand: (arr: any[]) => any;
+export declare const formatNumber: ({ number, locale, style, decimal, currency }: FormatNumberParams) => string;

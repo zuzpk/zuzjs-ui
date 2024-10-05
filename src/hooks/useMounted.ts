@@ -15,7 +15,7 @@ import { useState, useEffect } from 'react';
  *   }
  * }, [isMounted]);
  */
-const useMounted = (delay = 100) => {
+const useMounted = (delay: number = 100) => {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {

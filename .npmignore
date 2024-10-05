@@ -3,3 +3,8 @@
 
 # But include the dist folder
 !dist/
+
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
