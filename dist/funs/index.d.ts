@@ -35,3 +35,4 @@ export declare const withTime: (fun: (...args: any[]) => any) => {
 export declare const time: (stamp?: number, format?: string) => string;
 export declare const arrayRand: (arr: any[]) => any;
 export declare const formatNumber: ({ number, locale, style, decimal, currency }: FormatNumberParams) => string;
+export declare const copyToClipboard: (text: string) => Promise<void>;

@@ -7,6 +7,7 @@ export interface DrawerProps {
     speed?: number,
     from?: DRAWER_SIDE,
     children: string | ReactNode | ReactNode[],
+    prerender?: boolean,
 }
 
 export interface DrawerHandler {
@@ -16,10 +17,11 @@ export interface DrawerHandler {
 
 const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
     
-    const { as, from, speed, children, ...rest } = props;
+    const { as, from, speed, children, prerender, ...rest } = props;
 
     const [ visible, setVisible ] = useState(false)
     const divRef = useRef<HTMLDivElement>(null);
+    const render = useMemo(() => prerender || true, [])
 
     const style = useMemo(() => {
         switch (from){
@@ -69,7 +71,8 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
             }}
             {...rest}>
                 {from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? <With className="drawer-handle" /> : null}
-                {children}
+                {/* {(render || visible) && children} */}
+                {visible && children}
         </With>
     </>
 })

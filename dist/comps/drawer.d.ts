@@ -5,6 +5,7 @@ export interface DrawerProps {
     speed?: number;
     from?: DRAWER_SIDE;
     children: string | ReactNode | ReactNode[];
+    prerender?: boolean;
 }
 export interface DrawerHandler {
     open: () => void;

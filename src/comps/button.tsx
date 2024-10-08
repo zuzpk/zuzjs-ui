@@ -1,28 +1,21 @@
 import { ComponentPropsWithoutRef, forwardRef } from "react";
 import With, { animationProps } from "./base";
 
-const Button = forwardRef<HTMLButtonElement, { as?: string, animate?: animationProps } & ComponentPropsWithoutRef<`button`>>((props, ref ) => {
-    
-    const { as, ...rest } = props;
+export interface ButtonProps {
+    as?: string
+    animate?: animationProps,
+    icon?: string,
+}
 
-    return <With tag={`button`} as={as} {...rest} ref={ref} />
+const Button = forwardRef<HTMLButtonElement, ButtonProps & ComponentPropsWithoutRef<`button`>>((props, ref ) => {
+    
+    const { as, icon, ...rest } = props;
+
+    return <With tag={`button`} as={as} className={`flex aic ${icon ? `ico-btn` : ``}`.trim()} {...rest} ref={ref}>
+        {icon && <With className={`icon-${icon}`} />}
+        <With tag={`span`} className={`b-label`}>{props.children}</With>
+    </With>
 
 });
-
-// import { Ref } from "react";
-// import { css, cleanProps } from "../funs";
-// import { UIProps } from "../types/interfaces";
-
-// const Button = ( props: UIProps<HTMLButtonElement> ) => {
-
-//     const { as, ref, children } = props
-//     const { cx } = css.Build(as)
-
-//     return <button
-//         ref={ref}
-//         className={cx.join(` `)}
-//         {...(cleanProps(props) as UIProps<HTMLButtonElement>)}>{children}</button>
-
-// }
 
 export default Button

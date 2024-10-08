@@ -190,3 +190,4 @@ export const formatNumber = ({ number, locale = 'en-US', style = `decimal`, deci
         maximumFractionDigits: +number % 1 > 0 ? 2 : 0
     }).format(+number);
 };
+export const copyToClipboard = (text) => navigator.clipboard.writeText(text);

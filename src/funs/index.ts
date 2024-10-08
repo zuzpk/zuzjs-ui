@@ -260,3 +260,5 @@ export const formatNumber = ({
         maximumFractionDigits: +number % 1 > 0 ? 2 : 0
     }).format(+number);
 }
+
+export const copyToClipboard = (text: string) => navigator.clipboard.writeText(text)

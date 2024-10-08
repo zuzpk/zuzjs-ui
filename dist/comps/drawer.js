@@ -3,9 +3,10 @@ import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from "reac
 import With from "./base";
 import { DRAWER_SIDE, TRANSITION_CURVES, TRANSITIONS } from "../types/enums";
 const Drawer = forwardRef((props, ref) => {
-    const { as, from, speed, children, ...rest } = props;
+    const { as, from, speed, children, prerender, ...rest } = props;
     const [visible, setVisible] = useState(false);
     const divRef = useRef(null);
+    const render = useMemo(() => prerender || true, []);
     const style = useMemo(() => {
         switch (from) {
             case DRAWER_SIDE.Left:
@@ -41,6 +42,6 @@ const Drawer = forwardRef((props, ref) => {
                     when: visible,
                     curve: TRANSITION_CURVES.EaseInOut,
                     duration: speed || .5,
-                }, ...rest, children: [from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? _jsx(With, { className: "drawer-handle" }) : null, children] })] });
+                }, ...rest, children: [from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? _jsx(With, { className: "drawer-handle" }) : null, visible && children] })] });
 });
 export default Drawer;
