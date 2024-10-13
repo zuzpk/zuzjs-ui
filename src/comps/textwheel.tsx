@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, useRef, useState } from 'react';
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { forwardRef, ComponentPropsWithoutRef } from 'react';
 import With, { animationProps } from "./base";
 
@@ -45,8 +45,13 @@ const TextWheel = forwardRef<WheelHandler, WheelProps>((props, ref) => {
       }
     }))
 
+    useEffect(() => {
+      // console.log(value)
+      _setValue(value || 0);
+    }, [value])
+
     return <With 
-      className={`text-wheel flex aic rel`} aria-hidden={true}
+      className={`text-wheel flex aic jcc rel`} aria-hidden={true}
       as={as} 
       ref={divRef}
       {...rest} >
@@ -72,7 +77,7 @@ const TextWheel = forwardRef<WheelHandler, WheelProps>((props, ref) => {
               </With>
             </With>
         })}
-        {color && <With className={`abs fill`} style={{
+        {color && <With className={`abs fillx`} style={{
           zIndex: 1,
           background: `linear-gradient(0deg, ${color}, transparent, transparent, transparent, ${color})`,
         }} />}

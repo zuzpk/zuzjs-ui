@@ -9,6 +9,7 @@ export interface CoverProps extends ComponentPropsWithoutRef<`div`> {
     as?: string;
     animate?: animationProps;
     when?: boolean;
+    hideMessage?: boolean;
 }
 declare const Cover: import("react").ForwardRefExoticComponent<CoverProps & import("react").RefAttributes<HTMLDivElement>>;
 export default Cover;

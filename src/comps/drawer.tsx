@@ -11,7 +11,7 @@ export interface DrawerProps {
 }
 
 export interface DrawerHandler {
-    open: () => void,
+    open: (child?: string | ReactNode | ReactNode[]) => void,
     close: () => void,
 }
 
@@ -21,7 +21,7 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
 
     const [ visible, setVisible ] = useState(false)
     const divRef = useRef<HTMLDivElement>(null);
-    const render = useMemo(() => prerender || true, [])
+    const [ content, setContent ] = useState(children)
 
     const style = useMemo(() => {
         switch (from){
@@ -39,8 +39,9 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
     }, [])
 
     useImperativeHandle(ref, () => ({
-        open(){
-            setVisible(true)
+        open(child?: string | ReactNode | ReactNode[]){
+            if ( child ) setContent(child)
+            setVisible(true)            
         },
         close(){
             setVisible(false)
@@ -72,7 +73,7 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
             {...rest}>
                 {from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? <With className="drawer-handle" /> : null}
                 {/* {(render || visible) && children} */}
-                {visible && children}
+                {visible && content}
         </With>
     </>
 })

@@ -8,7 +8,7 @@ export interface DrawerProps {
     prerender?: boolean;
 }
 export interface DrawerHandler {
-    open: () => void;
+    open: (child?: string | ReactNode | ReactNode[]) => void;
     close: () => void;
 }
 declare const Drawer: import("react").ForwardRefExoticComponent<DrawerProps & import("react").RefAttributes<DrawerHandler>>;

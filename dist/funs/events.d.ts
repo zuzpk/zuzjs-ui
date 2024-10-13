@@ -1,13 +1,14 @@
 export interface Event {
     event: String | Symbol;
     listeners: (() => void)[];
+    context?: any;
 }
 declare class Events {
     _events: Event[];
     constructor();
-    addEvent(event: String | Symbol, fun: (...args: any[]) => void): number | undefined;
+    addEvent(event: String | Symbol, fun: (...args: any[]) => void, context?: any): number | undefined;
     removeEvent(event: String | Symbol, fun: (...args: any[]) => void): void;
-    on(event: String | Symbol, fun: (...args: any[]) => void): number | undefined;
+    on(event: String | Symbol, fun: (...args: any[]) => void, context?: any): number | undefined;
     off(event: String | Symbol, fun: (...args: any[]) => void): void;
     emit(event: String | Symbol, ...args: any[]): void;
 }

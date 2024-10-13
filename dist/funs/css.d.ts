@@ -33,7 +33,6 @@ declare class CSS {
     makeUnit(k: string, v: any): any;
     makeValue(k: string, v: any): string;
     calcIndexes(str: string): string;
-    makeID2(k: string, v: string, _out: string): string;
     makeID(k: string, v: string, _out: string): string;
     lexer(line: string): dynamicObject;
     processLine(line: string): void;
@@ -46,4 +45,8 @@ declare class CSS {
 export default CSS;
 export declare const buildWithStyles: (source: dynamicObject) => dynamicObject;
 export declare const getAnimationCurve: (curve?: string | TRANSITION_CURVES) => string;
+export declare const animationTransition: (transition: TRANSITIONS) => {
+    from: {};
+    to: {};
+};
 export declare const getAnimationTransition: (transition: TRANSITIONS, to?: boolean, from?: boolean) => dynamicObject;

@@ -2,38 +2,23 @@ import { ComponentPropsWithoutRef, forwardRef } from "react";
 import With, { animationProps } from "./base";
 import { FORMVALIDATION } from "../types/enums";
 
-const Input = forwardRef<HTMLInputElement, { required?: FORMVALIDATION, as?: string, animate?: animationProps } & ComponentPropsWithoutRef<`input`>>((props, ref ) => {
+const Input = forwardRef<HTMLInputElement, { required?: FORMVALIDATION, textarea?: any, as?: string, animate?: animationProps } & ComponentPropsWithoutRef<`input`>>((props, ref ) => {
     
-    const { as, ...rest } = props;
+    const { as, textarea, value, ...rest } = props;
 
-    return <With 
+    return textarea ? <With 
+        tag={`textarea`}
+        as={as} 
+        {...rest} 
+        value={value}
+        ref={ref} />
+        : <With 
         tag={`input`}
         as={as} 
+        value={value}
         {...rest} 
         ref={ref} />
 
 });
-
-// import { DetailedHTMLProps, HTMLAttributes, InputHTMLAttributes, ReactNode, Ref } from "react";
-// import { css, cleanProps } from "../funs";
-// import { UIProps } from "../types/interfaces";
-// import { FORMVALIDATION } from "../types/enums";
-
-// export interface InputProps extends UIProps<HTMLInputElement> {
-//     required?: FORMVALIDATION
-// }
-
-// const Input = ( props : InputProps ) => {
-
-//     const { cx } = css.Build(props.as)
-
-//     // console.log(`inputing...`)
-
-//     return <input 
-//         ref={props.ref}
-//         className={cx.join(` `)}
-//         {...(cleanProps(props) as UIProps<HTMLInputElement>)} />
-
-// }
 
 export default Input

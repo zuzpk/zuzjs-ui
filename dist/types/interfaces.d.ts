@@ -1,4 +1,10 @@
 import { DetailedHTMLProps, HTMLAttributes } from "react";
+import { animationProps } from "../comps/base";
+export interface BaseProps {
+    as?: string;
+    animate?: animationProps;
+    editor?: boolean;
+}
 export interface FormatNumberParams {
     number: number | string;
     locale: string;

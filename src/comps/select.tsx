@@ -59,7 +59,7 @@ const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
             {chevronExpand()}
         </With>
         <With
-            popover={true}
+            popover="true"
             id={_id}          
             className={`zuz-select-options abs flex cols`}
             style={{

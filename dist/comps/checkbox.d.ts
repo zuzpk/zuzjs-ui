@@ -1,6 +1,18 @@
 import { animationProps } from "./base";
-declare const CheckBox: import("react").ForwardRefExoticComponent<{
+import { CHECKBOX } from "../types/enums";
+export interface CheckboxProps {
     as?: string;
+    type?: CHECKBOX;
+    required?: boolean;
+    name?: string;
+    value?: string;
+    checked?: boolean;
+    onChange?: (checked: boolean, value: string | string[]) => void;
     animate?: animationProps;
-} & Omit<import("react").DetailedHTMLProps<import("react").InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "ref"> & import("react").RefAttributes<HTMLButtonElement>>;
+}
+export interface CheckboxHandler {
+    setChecked: (mode: boolean, triggerChange?: boolean) => void;
+    toggle: (triggerChange?: boolean) => void;
+}
+declare const CheckBox: import("react").ForwardRefExoticComponent<CheckboxProps & import("react").RefAttributes<CheckboxHandler>>;
 export default CheckBox;

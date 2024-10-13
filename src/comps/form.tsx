@@ -9,7 +9,22 @@ import { FORMVALIDATION, SHEET, SPINNER } from "../types/enums";
 import { dynamicObject, FormInputs } from "../types";
 import Cover, { CoverProps } from "./cover";
 
-// const { as, ref, errors, at, cover, spinner, onSubmit, onSuccess, onError, children } = props
+/**
+ * Props for the Form component.
+ * 
+ * @property {string} [as] - Inline Styles.
+ * @property {animationProps} [animate] - Animation properties for the form.
+ * @property {string} [action] - The URL to which the form will be auto submitted.
+ * @property {string[]} [errors] - An array of error messages.
+ * @property {SpinnerProps} [spinner] - Properties for the spinner component.
+ * @property {dynamicObject} [withData] - Dynamic data to be used within the form.
+ * @property {(data: FormData | dynamicObject) => void} [onSubmit] - Callback function to handle form submission.
+ * @property {(data: dynamicObject) => void} [onSuccess] - Callback function to handle successful form submission.
+ * @property {(error: any) => void} [onError] - Callback function to handle errors during form submission.
+ * @property {Object} [cover] - Cover properties for the form.
+ * @property {string} [cover.color] - Color of the cover.
+ * @property {string} [cover.message] - Message to be displayed on the cover.
+ */
 export interface FormProps { 
     as?: string, 
     animate?: animationProps,

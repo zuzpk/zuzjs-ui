@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import Events from "../funs/events";
 const events = new Events();
-const useSub = (event, fun) => {
+const useSub = (event, fun, context) => {
     const unsubscribe = () => {
         events.off(event, fun);
     };
     useEffect(() => {
-        events.on(event, fun);
+        events.on(event, fun, context);
         return;
     }, []);
     return unsubscribe;

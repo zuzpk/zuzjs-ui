@@ -19,9 +19,11 @@ export { default as Input } from "./comps/input"
 export { default as Select } from "./comps/select"
 export { default as Sheet } from "./comps/sheet"
 export { default as Spinner } from "./comps/spinner"
+export { default as TabView } from "./comps/tabview"
 export { default as TextWheel } from "./comps/textwheel"
 
 export {
+    CHECKBOX,
     DRAWER_SIDE,
     SHEET,
     FORMVALIDATION,

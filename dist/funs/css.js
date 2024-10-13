@@ -335,8 +335,19 @@ class CSS {
                 if (v.includes(`,`)) {
                     let __v = [];
                     v.split(`,`).map((_) => {
+                        if (_.charAt(0) == `#`) {
+                            _ = _.substring(1);
+                        }
                         if (_.startsWith(`$`)) {
                             __v.push(`var(--${_.substring(1)})`);
+                        }
+                        else if (isColor(`#${_}`)) {
+                            if (_.includes(`rgb`) || _.includes(`rgba`)) {
+                                __v.push(_.replace(`[`, `(`).replace(`]`, `)`));
+                            }
+                            else {
+                                __v.push(isHexColor(`#${_}`) ? `#${_}` : _);
+                            }
                         }
                         else {
                             __v.push(`${_}${this.makeUnit(key, _)}`);
@@ -363,7 +374,7 @@ class CSS {
         }
         return _indices.join(``);
     }
-    makeID2(k, v, _out) {
+    makeID(k, v, _out) {
         const self = this;
         const md = md5(_out);
         let _ = [];
@@ -387,7 +398,7 @@ class CSS {
         const out = _out.replace(/\s+/g, ``).trim();
         const [_ok, _ov] = out.split(`:`);
         const ok = _ok.trim();
-        const ov = _ov.trim();
+        const ov = _ov ? _ov.trim() : v;
         if (ov == ``) {
             throw new TypeError(`${ok} value is empty.`);
         }
@@ -399,26 +410,6 @@ class CSS {
         const io = self.DIRECT_VALUES.includes(out) ? self.DIRECT_VALUES.indexOf(out) : _mi(ok, ov);
         const ai = md.split(``).reduce((acc, char) => acc + self.chars.indexOf(char), 0);
         return `${_cp}${self.hashids.encode(io, ai)}`;
-    }
-    makeID(k, v, _out) {
-        const self = this;
-        return self.makeID2(k, v, _out);
-        const _css = _out.toString().replace(/;|:|\s/g, "");
-        let _indices = 0;
-        for (let i = 0; i < _css.length; i++) {
-            _indices += self.chars.indexOf(_out.charAt(i));
-        }
-        let _cp = k.substring(0, 1);
-        if (self.PROPS[k]?.indexOf("-") > -1) {
-            _cp = "";
-            self.PROPS[k].split("-").map((c) => _cp += c.substring(0, 1));
-        }
-        if (v.toString().indexOf("-") > -1) {
-            v.toString().split("-").map(c => _cp += c.substring(0, 1));
-        }
-        const _id = `${_cp}${self.hashids.encode((self.PROPS[k] ? self.PROPS[k].length : 0) + _indices + (isNaN(parseInt(v)) ? 0 : parseInt(v)))}`.replace(/\s|\$/g, '-');
-        const _kw = _id in self.propCounter ? ++self.propCounter[_id] : self.propCounter[_id] = 1;
-        return _id;
     }
     lexer(line) {
         const self = this;
@@ -673,8 +664,9 @@ export const getAnimationCurve = (curve) => {
             return `linear`;
     }
 };
-export const getAnimationTransition = (transition, to, from) => {
-    let _from, _to;
+export const animationTransition = (transition) => {
+    let _from = {};
+    let _to = {};
     switch (transition) {
         case TRANSITIONS.SlideInLeft:
         case TRANSITIONS.SlideInRight:
@@ -695,5 +687,9 @@ export const getAnimationTransition = (transition, to, from) => {
             _to = { opacity: 1 };
             break;
     }
+    return { from: _from, to: _to };
+};
+export const getAnimationTransition = (transition, to, from) => {
+    const { from: _from, to: _to } = animationTransition(transition);
     return to ? { ..._from, ..._to } : from ? _from : _to;
 };

@@ -1,0 +1,11 @@
+@mixin anim($duration: 0.3s, $fun: linear) {
+    transition: all $duration $fun 0s;
+}
+
+@mixin ensure-flex($selector) {
+    #{$selector} {
+      @if not (display: flex) {
+        display: flex;
+      }
+    }
+}

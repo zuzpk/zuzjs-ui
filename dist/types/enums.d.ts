@@ -36,3 +36,22 @@ export declare enum DRAWER_SIDE {
     Top = "TOP",
     Bottom = "BOTTOM"
 }
+export declare enum CHECKBOX {
+    Default = "DEFAULT",
+    Switch = "SWITCH"
+}
+export declare enum EDIT_TYPE {
+    Slider = "SLIDER",
+    Checkbox = "CHECKBOX"
+}
+export declare enum DATATYPE {
+    String = "STRING",
+    Number = "NUMBER",
+    Boolean = "BOOLEAN",
+    Array = "ARRAY",
+    Object = "OBJECT",
+    Date = "DATE",
+    Time = "TIME",
+    DateTime = "DATETIME",
+    File = "FILE"
+}

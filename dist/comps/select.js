@@ -19,7 +19,7 @@ const Select = forwardRef((props, ref) => {
             setChoosing(false);
         });
     }, []);
-    return _jsxs(With, { className: `zuz-select-wrap rel`, children: [_jsxs(With, { popovertarget: _id, tag: `button`, as: as, className: `zuz-select rel flex aic`, ref: _ref, onClick: (e) => setChoosing(true), ...rest, children: [_jsx(With, { tag: `h2`, className: `zuz-selected`, children: value ? `string` == typeof value ? value : value.label : label || `Choose` }), chevronExpand()] }), _jsx(With, { popover: true, id: _id, className: `zuz-select-options abs flex cols`, style: {
+    return _jsxs(With, { className: `zuz-select-wrap rel`, children: [_jsxs(With, { popovertarget: _id, tag: `button`, as: as, className: `zuz-select rel flex aic`, ref: _ref, onClick: (e) => setChoosing(true), ...rest, children: [_jsx(With, { tag: `h2`, className: `zuz-selected`, children: value ? `string` == typeof value ? value : value.label : label || `Choose` }), chevronExpand()] }), _jsx(With, { popover: "true", id: _id, className: `zuz-select-options abs flex cols`, style: {
                     pointerEvents: choosing ? `auto` : `none`,
                 }, animate: {
                     from: { height: 0, opacity: 0 },

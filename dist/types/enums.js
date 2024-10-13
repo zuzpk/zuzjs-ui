@@ -43,3 +43,25 @@ export var DRAWER_SIDE;
     DRAWER_SIDE["Top"] = "TOP";
     DRAWER_SIDE["Bottom"] = "BOTTOM";
 })(DRAWER_SIDE || (DRAWER_SIDE = {}));
+export var CHECKBOX;
+(function (CHECKBOX) {
+    CHECKBOX["Default"] = "DEFAULT";
+    CHECKBOX["Switch"] = "SWITCH";
+})(CHECKBOX || (CHECKBOX = {}));
+export var EDIT_TYPE;
+(function (EDIT_TYPE) {
+    EDIT_TYPE["Slider"] = "SLIDER";
+    EDIT_TYPE["Checkbox"] = "CHECKBOX";
+})(EDIT_TYPE || (EDIT_TYPE = {}));
+export var DATATYPE;
+(function (DATATYPE) {
+    DATATYPE["String"] = "STRING";
+    DATATYPE["Number"] = "NUMBER";
+    DATATYPE["Boolean"] = "BOOLEAN";
+    DATATYPE["Array"] = "ARRAY";
+    DATATYPE["Object"] = "OBJECT";
+    DATATYPE["Date"] = "DATE";
+    DATATYPE["Time"] = "TIME";
+    DATATYPE["DateTime"] = "DATETIME";
+    DATATYPE["File"] = "FILE";
+})(DATATYPE || (DATATYPE = {}));

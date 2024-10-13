@@ -87,7 +87,7 @@ export const ucfirst = (str : string) => `${str.charAt(0).toUpperCase()}${str.su
 
 export const cleanProps = <T extends dynamicObject>( props: T, withProps: string[] = [] ) : T => {
 
-    let _extras = [ `as`, ...withProps ]
+    let _extras = [ `as`, `editor`, ...withProps ]
     let _props = { ...props }
     
     Object.keys(_props).map(k => {

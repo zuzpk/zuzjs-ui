@@ -10,12 +10,13 @@ export interface CoverProps extends ComponentPropsWithoutRef<`div`> {
     color?: string,
     as?: string,
     animate?: animationProps,
-    when?: boolean
+    when?: boolean,
+    hideMessage?: boolean
 }
 
 const Cover = forwardRef<HTMLDivElement, CoverProps>((props, ref ) => {
     
-    const { spinner, message, color, as, when, ...rest } = props;
+    const { spinner, message, color, as, when, hideMessage, ...rest } = props;
     
     if ( `when` in props && props.when == false ){
         return null
@@ -34,7 +35,7 @@ const Cover = forwardRef<HTMLDivElement, CoverProps>((props, ref ) => {
             {<Spinner {...{
                 ...spinner
             } as SpinnerProps} />}
-            {<With tag={`h1`} className={`label`} style={{ color: `var(--cover-label)` }}>{message || `loading`}</With>}
+            {!hideMessage && <With tag={`h1`} className={`label`} style={{ color: `var(--cover-label)` }}>{message || `loading`}</With>}
             {/* {message && <With tag={`h1`} className={`label`}>{message}</With>} */}
         </With>
     );

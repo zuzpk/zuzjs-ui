@@ -6,7 +6,7 @@ const Drawer = forwardRef((props, ref) => {
     const { as, from, speed, children, prerender, ...rest } = props;
     const [visible, setVisible] = useState(false);
     const divRef = useRef(null);
-    const render = useMemo(() => prerender || true, []);
+    const [content, setContent] = useState(children);
     const style = useMemo(() => {
         switch (from) {
             case DRAWER_SIDE.Left:
@@ -22,7 +22,9 @@ const Drawer = forwardRef((props, ref) => {
         }
     }, []);
     useImperativeHandle(ref, () => ({
-        open() {
+        open(child) {
+            if (child)
+                setContent(child);
             setVisible(true);
         },
         close() {
@@ -42,6 +44,6 @@ const Drawer = forwardRef((props, ref) => {
                     when: visible,
                     curve: TRANSITION_CURVES.EaseInOut,
                     duration: speed || .5,
-                }, ...rest, children: [from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? _jsx(With, { className: "drawer-handle" }) : null, visible && children] })] });
+                }, ...rest, children: [from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? _jsx(With, { className: "drawer-handle" }) : null, visible && content] })] });
 });
 export default Drawer;

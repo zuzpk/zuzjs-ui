@@ -485,8 +485,26 @@ class CSS {
                     // console.log(`vwithcomma`, v)
                     let __v : string[] = []
                     v.split(`,`).map((_:string) => {
+
+                        if ( _.charAt(0) == `#` ){
+                            _ = _.substring(1)
+                        }
+
+                        //Variable
                         if ( _.startsWith(`$`) ){
                             __v.push(`var(--${_.substring(1)})`)
+                        }
+                        //Color
+                        else if ( isColor(`#${_}`) ){
+
+                            if ( _.includes(`rgb`) || _.includes(`rgba`) ){
+                                __v.push(_.replace(`[`, `(`).replace(`]`, `)`))
+                            }
+                            else{
+                                __v.push(
+                                    isHexColor(`#${_}`) ? `#${_}` : _
+                                )
+                            }
                         }
                         else{
                             // console.log(`comma`, key, v, this.makeUnit(key, v))
@@ -494,6 +512,9 @@ class CSS {
                         }
                     })
                     value = __v.join(` `)
+                    
+                    // if( k == `shadow` || k == `box-shadow` ) console.log(value)
+                    
                 }
                 else
                     value = `${v}${this.makeUnit(key, v)}`
@@ -528,8 +549,8 @@ class CSS {
         return _indices.join(``)
     }
 
-    makeID2(k: string, v: string, _out: string){
-       
+    makeID(k: string, v: string, _out: string){
+        
         const self = this;
         const md = md5(_out)
         let _ : any[] = []
@@ -560,7 +581,7 @@ class CSS {
         const out = _out.replace(/\s+/g, ``).trim()
         const [ _ok, _ov ] = out.split(`:`)
         const ok = _ok.trim()
-        const ov = _ov.trim()
+        const ov = _ov ? _ov.trim() : v
 
         if ( ov == `` ){
             throw new TypeError(`${ok} value is empty.`)
@@ -577,30 +598,7 @@ class CSS {
         const ai = md.split(``).reduce((acc, char) => acc + self.chars.indexOf(char), 0)
 
         return `${_cp}${self.hashids.encode(io, ai)}`
-    }
-    
-    makeID(k: string, v: string, _out: string){
-        // console.log(`makeID`, k, v, _out)
-        const self = this;
 
-        return self.makeID2(k, v, _out)
-
-        const _css = _out.toString().replace(/;|:|\s/g, "")           
-        let _indices = 0
-        for(let i = 0; i < _css.length; i++){ _indices += self.chars.indexOf(_out.charAt(i)) }    
-        let _cp = k.substring(0, 1);
-        if(self.PROPS[k]?.indexOf("-") > -1){
-            _cp = "";
-            self.PROPS[k].split("-").map((c: string) => _cp += c.substring(0, 1))
-        }
-        if(v.toString().indexOf("-") > -1){
-            v.toString().split("-").map(c => _cp += c.substring(0, 1))
-        }
-        const _id = `${_cp}${self.hashids.encode((self.PROPS[k] ? self.PROPS[k].length : 0)+ _indices + (isNaN(parseInt(v)) ? 0 : parseInt(v)))}`.replace(/\s|\$/g, '-')       
-        const _kw = _id in self.propCounter ? ++self.propCounter[_id] : self.propCounter[_id] = 1
-        // return `${_id}-${_kw}`
-        return _id
-    // }
     }
 
     lexer(line: string){
@@ -990,10 +988,9 @@ export const getAnimationCurve = ( curve?: string | TRANSITION_CURVES ): string 
 
 }
 
-export const getAnimationTransition = ( transition: TRANSITIONS, to?: boolean, from?: boolean ) : dynamicObject => {
-    
-    let _from, _to
-
+export const animationTransition = (transition: TRANSITIONS) => {
+    let _from = {}
+    let _to = {}
     switch(transition){
         case TRANSITIONS.SlideInLeft:
         case TRANSITIONS.SlideInRight:
@@ -1014,6 +1011,12 @@ export const getAnimationTransition = ( transition: TRANSITIONS, to?: boolean, f
             _to = { opacity: 1 }
             break;            
     }
+    return { from: _from, to: _to }
+}
+
+export const getAnimationTransition = ( transition: TRANSITIONS, to?: boolean, from?: boolean ) : dynamicObject => {
+    
+    const { from : _from, to : _to } = animationTransition(transition)
 
     return to ? { ..._from, ..._to } : from  ? _from : _to
 

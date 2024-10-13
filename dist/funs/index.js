@@ -52,7 +52,7 @@ export const hexToRgba = (hex, alpha = 1) => {
 };
 export const ucfirst = (str) => `${str.charAt(0).toUpperCase()}${str.substring(1, str.length)}`;
 export const cleanProps = (props, withProps = []) => {
-    let _extras = [`as`, ...withProps];
+    let _extras = [`as`, `editor`, ...withProps];
     let _props = { ...props };
     Object.keys(_props).map(k => {
         if (k in cssProps) {

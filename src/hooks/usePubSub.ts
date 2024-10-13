@@ -3,14 +3,14 @@ import Events from "../funs/events"
 
 const events = new Events()
 
-const useSub = (event: String | Symbol, fun: () => void) => {
+const useSub = (event: String | Symbol, fun: () => void, context?: any) => {
 
     const unsubscribe = () => {
         events.off(event, fun)
     }
 
     useEffect(() => {
-        events.on(event, fun)
+        events.on(event, fun, context)
         return 
     }, [])
 
