@@ -55,7 +55,7 @@ class CSS {
             "@before", "@after", "@active", "@checked", "@default", "@disabled", "@empty", "@enabled", "@first", "@firstChild", "@firstOfType", "@focus", "@hover", "@indeterminate", "@inRange", "@invalid", "@lastChild", "@lastOfType", "@link", "@not", "@nthChild", "@nthLastChild", "@nthLastOfType", "@nthOfType", "@onlyChild", "@onlyOfType", "@optional", "@outOfRange", "@readOnly", "@readWrite", "@required", "@root", "@scope", "@target", "@valid", "@visited"
         ];
         this.IGNORE = [
-            `flex`, `opacity`, `z-index`, `zIndex`, `color`, `line-height`, `anim`, `scale`
+            `flex`, `opacity`, `z-index`, `zIndex`, `color`, `line-height`, `anim`, `scale`, `saturate`
         ];
         this.keysWithoutCommaToSpace = [
             `transform`, `translate`, `color`, `background`, `background-color`, `backgroundColor`,
@@ -546,7 +546,7 @@ class CSS {
                             _out = _out.replace(`;`, `${important};`);
                         }
                         else {
-                            const __value = `${val}${key == `extend` ? `` : self.makeUnit(key, val)}`;
+                            const __value = `${val}${self.IGNORE.includes(key) ? `` : self.makeUnit(key, val)}`;
                             _out = self.DIRECT[key].includes(`__VALUE__`) ?
                                 self.DIRECT[key].replace(/__VALUE__/g, __value).replace(`;`, `${important};`) : self.DIRECT[key];
                         }

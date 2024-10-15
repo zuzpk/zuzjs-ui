@@ -292,6 +292,7 @@ export const cssDirect = {
     "block": "display: block;",
     "inlineblock": "display: inline-block;",
     "blur": "filter: blur(__VALUE__);",
+    "saturate": "filter: saturate(__VALUE__);",
     "ratio": "aspect-ratio: __VALUE__;",
     "center-h": "left: 50%;transform: translateX(-50%);",
     "center-v": "top: 50%;transform: translateY(-50%);",

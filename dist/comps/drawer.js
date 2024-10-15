@@ -1,12 +1,16 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import With from "./base";
 import { DRAWER_SIDE, TRANSITION_CURVES, TRANSITIONS } from "../types/enums";
 const Drawer = forwardRef((props, ref) => {
     const { as, from, speed, children, prerender, ...rest } = props;
+    const [render, setRender] = useState(undefined == prerender ? true : prerender);
     const [visible, setVisible] = useState(false);
     const divRef = useRef(null);
     const [content, setContent] = useState(children);
+    useEffect(() => {
+        setContent(children);
+    }, [children]);
     const style = useMemo(() => {
         switch (from) {
             case DRAWER_SIDE.Left:
@@ -44,6 +48,6 @@ const Drawer = forwardRef((props, ref) => {
                     when: visible,
                     curve: TRANSITION_CURVES.EaseInOut,
                     duration: speed || .5,
-                }, ...rest, children: [from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? _jsx(With, { className: "drawer-handle" }) : null, visible && content] })] });
+                }, ...rest, children: [from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? _jsx(With, { className: "drawer-handle" }) : null, render ? content : visible ? content : null] })] });
 });
 export default Drawer;

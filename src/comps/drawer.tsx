@@ -1,4 +1,4 @@
-import { forwardRef, ReactNode, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { forwardRef, ReactNode, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import With, { animationProps } from "./base";
 import { DRAWER_SIDE, TRANSITION_CURVES, TRANSITIONS } from "../types/enums";
 
@@ -19,9 +19,14 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
     
     const { as, from, speed, children, prerender, ...rest } = props;
 
+    const [ render, setRender ] = useState(undefined == prerender ? true : prerender)   
     const [ visible, setVisible ] = useState(false)
     const divRef = useRef<HTMLDivElement>(null);
     const [ content, setContent ] = useState(children)
+
+    useEffect(() => {
+        setContent(children);
+    }, [children]);
 
     const style = useMemo(() => {
         switch (from){
@@ -73,7 +78,8 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
             {...rest}>
                 {from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? <With className="drawer-handle" /> : null}
                 {/* {(render || visible) && children} */}
-                {visible && content}
+                {/* {prerender == true ? content : visible ? content : null} */}
+                {render ? content : visible ? content : null}
         </With>
     </>
 })

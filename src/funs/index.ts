@@ -261,4 +261,25 @@ export const formatNumber = ({
     }).format(+number);
 }
 
-export const copyToClipboard = (text: string) => navigator.clipboard.writeText(text)
+export const copyToClipboard = (text: string) => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text);
+    } else {
+        return new Promise((resolve, reject) => {
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            try {
+                document.execCommand("copy");
+                resolve(`Copied to clipboard`);
+            } catch (err) {
+                // console.error("Fallback: Oops, unable to copy", err);
+                reject(err);
+            }
+            document.body.removeChild(textarea);
+        })
+    }
+}

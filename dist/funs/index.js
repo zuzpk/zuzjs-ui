@@ -190,4 +190,26 @@ export const formatNumber = ({ number, locale = 'en-US', style = `decimal`, deci
         maximumFractionDigits: +number % 1 > 0 ? 2 : 0
     }).format(+number);
 };
-export const copyToClipboard = (text) => navigator.clipboard.writeText(text);
+export const copyToClipboard = (text) => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text);
+    }
+    else {
+        return new Promise((resolve, reject) => {
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.style.position = "fixed";
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            try {
+                document.execCommand("copy");
+                resolve(`Copied to clipboard`);
+            }
+            catch (err) {
+                reject(err);
+            }
+            document.body.removeChild(textarea);
+        });
+    }
+};

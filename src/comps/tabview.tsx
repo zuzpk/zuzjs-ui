@@ -7,7 +7,7 @@ import { BaseProps } from "../types/interfaces";
 
 export interface Tab {
     onSelect: (index: number) => void
-    label: string
+    label: string | ReactNode | ReactNode[]
     body: string | ReactNode | ReactNode[]
     render?: boolean,
 }
