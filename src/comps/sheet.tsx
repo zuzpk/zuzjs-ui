@@ -1,12 +1,13 @@
 "use client"
 import { forwardRef, ReactNode, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import With, { animationProps } from "./base";
-import { SHEET, TRANSITION_CURVES, TRANSITIONS } from "../types/enums";
+import { SHEET, SHEET_ACTION_POSITION, TRANSITION_CURVES, TRANSITIONS } from "../types/enums";
 import Cover, { CoverProps } from "./cover";
 import { animationTransition, getAnimationTransition } from "../funs/css";
 import { BaseProps } from "../types/interfaces";
 import useComponentEditor from "../hooks/useCompEditor";
 import ComponentEditor from "./editor";
+import { uuid } from "../funs";
 
 export interface SheetProps {
     title?: string,
@@ -15,11 +16,14 @@ export interface SheetProps {
     curve?: TRANSITION_CURVES,
     speed?: Number,
     type?: SHEET,
+    actionPosition?: SHEET_ACTION_POSITION,
 }
 
 export interface SheetActionHandler {
+    key?: string,
     label: string, 
-    handler: () => void
+    handler?: () => void,
+    onClick?: () => void,
 }
 
 export interface SheetHandler {
@@ -38,20 +42,23 @@ let _sheetWobbleTimeout: NodeJS.Timeout | null = null
 
 const Sheet = forwardRef<SheetHandler, SheetProps & BaseProps>((props, ref) => {
     
-    const { as, transition, curve, speed, editor, type, ...rest } = props;
+    const { as, transition, curve, speed, editor, type, actionPosition, ...rest } = props;
 
-    const _editor = useComponentEditor()
-
+    // const _editor = useComponentEditor()
+    const sheetID = useMemo(() => uuid(), [])
     const [ visible, setVisible ] = useState(false)
     const [ title, setTitle ] = useState<string | ReactNode>(``)
     const [ msg, setMsg ] = useState<string | ReactNode>(``)
     const [ action, setAction ] = useState<SheetActionHandler[] | null>(null)
     const [ _errorType, setErrorType ] = useState(type || SHEET.Default)
     const [ loading, setLoading ] = useState(false)
+    const [ render, setRender ] = useState(true)
+    const _render = useRef<NodeJS.Timeout>(null)
 
     const divRef = useRef<HTMLDivElement>(null);
     const lastTransform = useRef<string | null>(null)
-    
+    // const dialogContent = useMemo(() => msg, [msg])
+
     useImperativeHandle(ref, () => ({
         setLoading(mode: boolean){
             setLoading(mode)
@@ -78,7 +85,13 @@ const Sheet = forwardRef<SheetHandler, SheetProps & BaseProps>((props, ref) => {
             setErrorType(SHEET.Dialog)
             setMsg(message);
             setTitle(title);
-            if ( action) setAction(action);
+            if ( action ) setAction(action.reduce((ar, b) => {
+                ar.push({
+                    ...b,
+                    key: b.key || uuid()
+                })
+                return ar
+            }, [] as SheetActionHandler[]));
             setVisible(true);
 
             setTimeout(() => onShow ? onShow() : () => {}, 1000)
@@ -219,8 +232,14 @@ const Sheet = forwardRef<SheetHandler, SheetProps & BaseProps>((props, ref) => {
     }), [])
 
     useEffect(() => {
-        
-    }, [])
+        if ( _render.current ) clearTimeout(_render.current)
+        if ( !visible ){
+            _render.current = setTimeout(() => setRender(false), 1000)
+        }
+        else{
+            setRender(true)
+        }
+    }, [visible])
 
     if ( _errorType == SHEET.Dialog ){
         return <>
@@ -244,11 +263,11 @@ const Sheet = forwardRef<SheetHandler, SheetProps & BaseProps>((props, ref) => {
                     <With className={`sheet-${title ? `title` : `dot`}`}>{title || ``}</With>
                     <With tag={`button`} onClick={(e: MouseEvent) => setVisible(false)} className={`sheet-closer abs`}>&times;</With>
                 </With>
-                <With className={`sheet-body flex aic rel`}>
-                    {msg}
+                <With className={`sheet-body flex aic rel ${action ? `` : `--no-action`}`.trim()}>
+                    {render ? msg : null}
                 </With>
-                {action && <With className={`sheet-footer flex aic rel`}>
-                    {action.map((a: SheetActionHandler, i: number) => <With onClick={a.handler} tag={`button`} as={`sheet-action-btn`}>{a.label}</With>)}
+                {action && <With className={`sheet-footer flex aic rel ${actionPosition ? actionPosition == SHEET_ACTION_POSITION.Center ? `jcc` : `` : `jce`}`}>
+                    {action.map((a: SheetActionHandler, i: number) => <With key={`sheet-${sheetID}-action-${a.key}`}  onClick={(e: MouseEvent) => a.handler ? a.handler() : a.onClick ? a.onClick() : console.log(`onClick Handler missing`)} tag={`button`} as={`sheet-action-btn`}>{a.label}</With>)}
                 </With>}
             </With>
             {props.editor && visible && <ComponentEditor 
@@ -262,11 +281,11 @@ const Sheet = forwardRef<SheetHandler, SheetProps & BaseProps>((props, ref) => {
     } 
 
     return <With 
-    animate={buildAnimation()}
-    as={as} 
-    className={`zuz-sheet toast-${_errorType.toLowerCase()} fixed`.trim()}
-    {...rest} 
-    ref={divRef}>
+        animate={buildAnimation()}
+        as={as} 
+        className={`zuz-sheet toast-${_errorType.toLowerCase()} abs`.trim()}
+        {...rest} 
+        ref={divRef}>
         {visible ? msg : null}
     </With>
 

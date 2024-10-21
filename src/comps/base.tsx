@@ -1,9 +1,14 @@
 import { ComponentPropsWithoutRef, createElement, ElementType, forwardRef, Ref } from "react";
 import { css, cleanProps } from "../funs";
-import { nanoid } from "nanoid";
-import { dynamicObject } from "../types";
+import { 
+    dynamicObject,
+} from "../types";
+// import { 
+//     BaseProps as _BaseProps,
+// } from "../types/interfaces";
 import { buildWithStyles, getAnimationCurve, getAnimationTransition } from "../funs/css";
 import { TRANSITION_CURVES, TRANSITIONS } from "../types/enums";
+import { Skeleton } from "../types/interfaces";
 
 export interface animationProps {
     transition?: TRANSITIONS,
@@ -15,15 +20,48 @@ export interface animationProps {
     curve?: string | TRANSITION_CURVES;
 }
 
-interface BaseProps<T extends ElementType> {
-    tag?: T;
-    as?: string | string[];
-    className?: string;
-    propsToRemove?: string[];    
+interface BaseProps<T extends ElementType>{
+    tag?: T
+    as?: string | string[]
     animate?: animationProps
+    className?: string
+    propsToRemove?: string[]
+    skeleton?: Skeleton
 }
 
 export type Props<T extends ElementType> = BaseProps<T> & ComponentPropsWithoutRef<T>;
+
+const buildSkeletonStyle = (s: Skeleton) : dynamicObject => {
+
+    const makeValue = (v?: number | string, unit: string = `px`) : string => {
+        return v ? 
+            `string` == typeof v ? v  :`${v}${unit}`
+            : `inherit`
+    }
+
+    const style : dynamicObject = {}
+
+    if ( s.radius ){
+        style.borderRadius = makeValue(s.radius)
+    }
+
+    if ( s.size ){
+        style.width = style.minWidth = style.maxWidth = style.height = style.minHeight = style.maxHeight = makeValue(s.size)
+    }
+    else if ( s.width || s.height ) {
+        if ( s.width ) {
+            style.width = style.minWidth = style.maxWidth = makeValue(s.width)
+        }
+        if ( s.height ) {
+            style.height = style.minHeight = style.maxHeight = makeValue(s.height)
+        }
+    }
+    else {
+        style.minWidth = style.minHeight = `100%`
+    }
+        
+    return style
+}
 
 const With = forwardRef(<T extends ElementType = 'div'>(
     {
@@ -33,6 +71,7 @@ const With = forwardRef(<T extends ElementType = 'div'>(
         className,
         propsToRemove,
         style,
+        skeleton,
         ...rest
     }: Props<T>,
     ref: Ref<Element>
@@ -58,17 +97,27 @@ const With = forwardRef(<T extends ElementType = 'div'>(
         _style = transition ? getAnimationTransition(transition, false, true) : from || {};
     }
 
-    // console.log(`as`, as, cx)
-    // console.log(`cx`, cx)
+    const { children, ...restProps } = cleanProps(rest, propsToRemove ? [...propsToRemove, `skeleton`] : [`skeleton`])
 
     return createElement(Comp, {
         style: {
             ...buildWithStyles(_style),
             ..._transition,
-            ...style
+            ...style,
+            ...(skeleton?.enabled? buildSkeletonStyle(skeleton) : {})
         },
-        className: [className, ...cx].join(' ').trim(),
-        ...cleanProps(rest, propsToRemove || []),
+        className: [
+            className, 
+            ...cx,
+            skeleton?.enabled ? `--skeleton` : ``
+        ].join(' ').trim(),
+        children: skeleton?.enabled ? ` `.repeat(6)
+            // createElement(`div`, {
+            // className: [ `--skeleton-body` ],
+            // dangerouslySetInnerHTML: { __html: `&nbsp;`.repeat(6) }
+            // }) 
+        : children,
+        ...restProps,
         ref
     });
 

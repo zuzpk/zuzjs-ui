@@ -1,7 +1,10 @@
 import { ComponentPropsWithoutRef, forwardRef } from "react";
 import With, { animationProps } from "./base";
+import { BaseProps } from "../types/interfaces";
 
-const Box = forwardRef<HTMLDivElement, { as?: string, animate?: animationProps } & ComponentPropsWithoutRef<`div`>>((props, ref ) => {
+// const Box = forwardRef<HTMLDivElement, { as?: string, animate?: animationProps } & ComponentPropsWithoutRef<`div`>>((props, ref ) => {
+const Box = forwardRef<HTMLDivElement, BaseProps & ComponentPropsWithoutRef<`div`>>((props, ref ) => {
+// const Box = forwardRef<HTMLDivElement, BaseProps>((props, ref ) => {
     
     const { as, ...rest } = props;
 

@@ -2,22 +2,24 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import With from "./base";
-import { SHEET, TRANSITION_CURVES, TRANSITIONS } from "../types/enums";
+import { SHEET, SHEET_ACTION_POSITION, TRANSITION_CURVES, TRANSITIONS } from "../types/enums";
 import Cover from "./cover";
 import { animationTransition } from "../funs/css";
-import useComponentEditor from "../hooks/useCompEditor";
 import ComponentEditor from "./editor";
+import { uuid } from "../funs";
 let _sheetTimeout = null;
 let _sheetWobbleTimeout = null;
 const Sheet = forwardRef((props, ref) => {
-    const { as, transition, curve, speed, editor, type, ...rest } = props;
-    const _editor = useComponentEditor();
+    const { as, transition, curve, speed, editor, type, actionPosition, ...rest } = props;
+    const sheetID = useMemo(() => uuid(), []);
     const [visible, setVisible] = useState(false);
     const [title, setTitle] = useState(``);
     const [msg, setMsg] = useState(``);
     const [action, setAction] = useState(null);
     const [_errorType, setErrorType] = useState(type || SHEET.Default);
     const [loading, setLoading] = useState(false);
+    const [render, setRender] = useState(true);
+    const _render = useRef(null);
     const divRef = useRef(null);
     const lastTransform = useRef(null);
     useImperativeHandle(ref, () => ({
@@ -41,7 +43,13 @@ const Sheet = forwardRef((props, ref) => {
             setMsg(message);
             setTitle(title);
             if (action)
-                setAction(action);
+                setAction(action.reduce((ar, b) => {
+                    ar.push({
+                        ...b,
+                        key: b.key || uuid()
+                    });
+                    return ar;
+                }, []));
             setVisible(true);
             setTimeout(() => onShow ? onShow() : () => { }, 1000);
         },
@@ -167,17 +175,25 @@ const Sheet = forwardRef((props, ref) => {
         }
     }), []);
     useEffect(() => {
-    }, []);
+        if (_render.current)
+            clearTimeout(_render.current);
+        if (!visible) {
+            _render.current = setTimeout(() => setRender(false), 1000);
+        }
+        else {
+            setRender(true);
+        }
+    }, [visible]);
     if (_errorType == SHEET.Dialog) {
         return _jsxs(_Fragment, { children: [_jsx(With, { "aria-hidden": !visible, className: `zuz-overlay fixed fill`, animate: {
                         transition: TRANSITIONS.FadeIn,
                         when: visible,
                         duration: 0.1,
-                    } }), _jsxs(With, { animate: buildAnimation(), as: as, className: `zuz-sheet toast-${_errorType.toLowerCase()} fixed`.trim(), ...rest, ref: divRef, children: [_jsx(Cover, { ...({ when: loading }) }), _jsxs(With, { className: `sheet-head flex aic rel`, children: [_jsx(With, { className: `sheet-${title ? `title` : `dot`}`, children: title || `` }), _jsx(With, { tag: `button`, onClick: (e) => setVisible(false), className: `sheet-closer abs`, children: "\u00D7" })] }), _jsx(With, { className: `sheet-body flex aic rel`, children: msg }), action && _jsx(With, { className: `sheet-footer flex aic rel`, children: action.map((a, i) => _jsx(With, { onClick: a.handler, tag: `button`, as: `sheet-action-btn`, children: a.label })) })] }), props.editor && visible && _jsx(ComponentEditor, { element: `.zuz-sheet`, title: `Sheet`, attrs: {
+                    } }), _jsxs(With, { animate: buildAnimation(), as: as, className: `zuz-sheet toast-${_errorType.toLowerCase()} fixed`.trim(), ...rest, ref: divRef, children: [_jsx(Cover, { ...({ when: loading }) }), _jsxs(With, { className: `sheet-head flex aic rel`, children: [_jsx(With, { className: `sheet-${title ? `title` : `dot`}`, children: title || `` }), _jsx(With, { tag: `button`, onClick: (e) => setVisible(false), className: `sheet-closer abs`, children: "\u00D7" })] }), _jsx(With, { className: `sheet-body flex aic rel ${action ? `` : `--no-action`}`.trim(), children: render ? msg : null }), action && _jsx(With, { className: `sheet-footer flex aic rel ${actionPosition ? actionPosition == SHEET_ACTION_POSITION.Center ? `jcc` : `` : `jce`}`, children: action.map((a, i) => _jsx(With, { onClick: (e) => a.handler ? a.handler() : a.onClick ? a.onClick() : console.log(`onClick Handler missing`), tag: `button`, as: `sheet-action-btn`, children: a.label }, `sheet-${sheetID}-action-${a.key}`)) })] }), props.editor && visible && _jsx(ComponentEditor, { element: `.zuz-sheet`, title: `Sheet`, attrs: {
                         ...sheetProps,
                         ...(_errorType == SHEET.Dialog ? dialogProps : toastProps)
                     } })] });
     }
-    return _jsx(With, { animate: buildAnimation(), as: as, className: `zuz-sheet toast-${_errorType.toLowerCase()} fixed`.trim(), ...rest, ref: divRef, children: visible ? msg : null });
+    return _jsx(With, { animate: buildAnimation(), as: as, className: `zuz-sheet toast-${_errorType.toLowerCase()} abs`.trim(), ...rest, ref: divRef, children: visible ? msg : null });
 });
 export default Sheet;

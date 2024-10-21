@@ -1,9 +1,19 @@
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 import { animationProps } from "../comps/base";
+import { SKELETON } from "./enums";
+export interface Skeleton {
+    enabled: boolean;
+    type?: SKELETON;
+    size?: number | string;
+    width?: number | string;
+    height?: number | string;
+    radius?: number | string;
+}
 export interface BaseProps {
     as?: string;
     animate?: animationProps;
     editor?: boolean;
+    skeleton?: Skeleton;
 }
 export interface FormatNumberParams {
     number: number | string;

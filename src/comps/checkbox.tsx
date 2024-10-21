@@ -22,8 +22,8 @@ export interface CheckboxHandler {
 // const CheckBox = forwardRef<HTMLButtonElement, { as?: string, type?: CHECKBOX, animate?: animationProps } & ComponentPropsWithoutRef<`input`>>((props, ref) => {
 const CheckBox = forwardRef<CheckboxHandler, CheckboxProps>((props, ref) => {
     
-    const { as, name, required, type, value, onChange, ...rest } = props;
-    const [ checked, _setChecked ] = useState(props.checked || false)
+    const { as, name, required, type, value, checked: defaultCheck, onChange, ...rest } = props;
+    const [ checked, _setChecked ] = useState(defaultCheck || false)
 
     const bRef = useRef<HTMLInputElement>(null)
 
@@ -50,6 +50,7 @@ const CheckBox = forwardRef<CheckboxHandler, CheckboxProps>((props, ref) => {
     return <With tag={`label`} className={`${type == CHECKBOX.Default ? `checkbox icon-check` : `zuz-checkbox`} flex aic jcc ${checked ? `is-checked` : ``} rel`.trim()} as={as} {...rest}>
         <With tag={`input`} 
             ref={bRef} 
+            defaultChecked={checked}
             value={value || `cb`}
             type={`checkbox`}  
             className={`abs`}

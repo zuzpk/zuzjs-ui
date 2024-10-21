@@ -2,6 +2,7 @@ export { withZuz as css } from './funs'
 
 export * from "./funs"
 export * from "./hooks"
+export * from "./types/enums";
 export { default as PubSub } from "./funs/events"
 
 export { default as Box } from "./comps/box"
@@ -16,19 +17,11 @@ export { default as Text } from "./comps/heading"
 export { default as Icon } from "./comps/icon"
 export { default as Image } from "./comps/image"
 export { default as Input } from "./comps/input"
+export { default as ProgressBar } from "./comps/progressbar"
 export { default as Select } from "./comps/select"
 export { default as Sheet } from "./comps/sheet"
 export { default as Spinner } from "./comps/spinner"
 export { default as TabView } from "./comps/tabview"
 export { default as TextWheel } from "./comps/textwheel"
+export { default as TreeView } from "./comps/treeview"
 
-export {
-    CHECKBOX,
-    DRAWER_SIDE,
-    SHEET,
-    FORMVALIDATION,
-    FORMVALIDATION_STYLE,
-    SPINNER,
-    TRANSITIONS,
-    TRANSITION_CURVES
-} from "./types/enums";

@@ -43,6 +43,7 @@ export interface FormProps {
 
 export interface FormHandler {
     setLoading: ( mode: boolean ) => void,
+    hideError: () => void,
 }
 
 const Form = forwardRef<FormHandler, FormProps & ComponentPropsWithoutRef<`div`>>((props, ref ) => {
@@ -65,6 +66,11 @@ const Form = forwardRef<FormHandler, FormProps & ComponentPropsWithoutRef<`div`>
             if ( el.type == `checkbox` && el.checked == false ){
                 return false
             }
+
+            if( el.classList.contains(`--select`) && el.dataset.value == `-1` ){
+                return false
+            }
+
             if ( el.value == `` )
                 return false     
         }
@@ -127,13 +133,12 @@ const Form = forwardRef<FormHandler, FormProps & ComponentPropsWithoutRef<`div`>
                 if ( el.required || el.with )
                     valid = _validate(el)
 
-                
                 data[el.name] = {
                     valid: valid,
-                    value: el.value
+                    value: el.classList.contains(`--select`) ? el.dataset.value : el.value
                 }
 
-                payload[el.name] = el.value
+                payload[el.name] = el.classList.contains(`--select`) ? el.dataset.value : el.value
 
                 if ( !valid ){
                     if ( _error == null && errors ){
@@ -221,10 +226,16 @@ const Form = forwardRef<FormHandler, FormProps & ComponentPropsWithoutRef<`div`>
 
     useImperativeHandle(ref, () => ({
         setLoading(mod : boolean){
+            if ( mod ){
+                sheet.current!.hide()
+            }
             setLoading(mod)
         },
         showError(errorMsg : string | ReactNode ){
             sheet.current!.show(errorMsg, 4, SHEET.Error)
+        },
+        hideError(){
+            sheet.current!.hide()
         }
     }))
     
@@ -237,7 +248,7 @@ const Form = forwardRef<FormHandler, FormProps & ComponentPropsWithoutRef<`div`>
         propsToRemove={[`withData`, `action`, `onSubmit`, `onSuccess`, `onError`]}
         {...rest} 
     >
-        {<Sheet ref={sheet} />}
+        {<Sheet ref={sheet} as={`toast-form`} />}
         
         { loading && <Cover message={cover ? cover.message || undefined : `working`} {...{ spinner, color: cover ? `color` in cover ? cover.color : `#ffffff` : `#ffffff` } as CoverProps } /> }
 

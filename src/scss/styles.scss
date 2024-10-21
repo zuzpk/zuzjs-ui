@@ -74,6 +74,12 @@ input{
     --text-wheel-speed: 2;
     --text-wheel-transition: translate calc(var(--text-wheel-speed) * 1s) var(--ease);
 
+    --checkbox-height: 24px;
+    --checkbox-width: 42px;
+    --checkbox-knob-size: 20px;
+    --checkbox-knob-left: 2px;
+    --checkbox-knob-top: 2px;
+    --checkbox-knob-left-on: 18px;
     --checkbox-check-color: #fff;
     --checkbox-check-size: 13px;
     --checkbox-size: 17px;
@@ -84,11 +90,16 @@ input{
     --checkbox-thumb-shadow: #000;
     --checkbox-thumb-shadow-size: 2px;
 
-    --select: #fff;
-    --select-options: #fff;
-    --select-option-font-size: 16px;
-    --select-hover: #eee;
-    --select-selected: #ddd;
+    --select-width: auto;
+    --select: #eee;
+    --select-font-size: 16px;
+    --select-hover: #e6e6e6;
+    --select-options: #eee;
+    --select-options-top: 0.1rem;
+    --select-options-padding: 4px;
+    --select-option-color: #111;    
+    --select-option-hover: #ddd;
+    --select-selected: #ccc;
     --select-padding: 6px 8px;
     --select-radius: 5px;
 
@@ -118,6 +129,7 @@ input{
     --tab-border: 1px #ddd solid;
 
     --sheet-bg: #fff;
+    --sheet-body: #fff;
     --sheet-radius: 10px;
     --sheet-padding: 6px 12px;
     --sheet-head-padding: 10px;
@@ -143,13 +155,65 @@ input{
     --sheet-warn: #ffba00;
     --sheet-success: #23ac28;
 
+    --context-z-index: 99;
+    --context: #fff;
+    --context-border: 0px;
+    --context-radius: 10px;
+    --context-padding: 10px;
+    --context-shadow: 0px 0px 0px 1px #ddd, 0px 0px 0px 3px #eee;
+    --context-seperator: #eee;
+    --context-seperator-height: 1px;
+    --context-seperator-margin: 3px 6px;
+    --context-item-width: 220px;
+    --context-item-padding: 6px 10px;
+    --context-item-gap: 10px;
+    --context-item-font-size: 15px;
+    --context-item-radius: 5px;
+    --context-item-icon-size: 18px;
+    --context-item-hover: #eee;
+
+    --treeview-gap: 6px;
+    --treenode-gap: 2px;
+    --treenode-arrow-btn-size: 20px;
+    --treenode-arrow-icon-size: 12px;
+    --treenode-arrow-icon-color: #111;
+    --treenode-label-padding: 3px 6px;
+    --treenode-label-radius: 3px 6px;
+    --treenode-label-hover: #f1f1f1;
+    --treenode-label-bg: transparent;
+    --treenode-label-selected-bg: #eee;
+    --treenode-label-selected-color: #111;
+    --treenode-label-icon-color: #111;
+    --treenode-label-icon-size: 15px;
+    --treenode-label-color: #111;
+    --treenode-label-size: 15px;
+    --treenode-label-gap: 6px;
+    --treenode-sub-margin: 20px;
+
+    --progress-width: 100%;
+    --progress-height: 6px;
+    --progress-radius: 6px;
+    --progress-track: #eee;
+    --progress-bar: #111;
+
+    --skeleton: #eee;
+    --skeleton-radius: 7px;
+    --shimmer: #ccc;    
+    --shimmer-width: 10%;
+    --shimmer-angle: 120deg;
+    --shimmer-speed: 2s;
+    --shimmer-blur: 50px;
+
 }
 
 .flex{
     display: flex;
     &.cols{flex-direction: column;}
     &.aic{align-items: center;}
+    &.aie{align-items: flex-end;}
     &.jcc{justify-content: center;}
+    &.jce{justify-content: flex-end;}
+    &.jcs{justify-content: flex-start;}
 }
 .abs{ position: absolute; }
 .fixed{ position: fixed; }
@@ -169,7 +233,7 @@ input{
 .nope{pointer-events: none;}
 .nous{user-select: none;}
 .rel{position: relative;}
-.ellipsis {
+.text-wrap, .ellipsis {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -209,8 +273,8 @@ button{
     }
 }
 .zuz-checkbox{
-    height: 25px;
-    width: 45px;
+    height: var(--checkbox-height);
+    width: var(--checkbox-width);
     cursor: pointer;
     input[type=checkbox]{
         z-index: 0;
@@ -221,8 +285,8 @@ button{
     &:before{
         content: "";
         position: absolute;
-        width: 45px;
-        height: 25px;
+        height: var(--checkbox-height);
+        width: var(--checkbox-width);
         background: var(--checkbox-unchecked);
         border-radius: 50px;
         z-index: 1;
@@ -231,24 +295,64 @@ button{
     &:after{
         content: "";
         position: absolute;
-        width: 21px;
-        height: 21px;
+        width: var(--checkbox-knob-size);
+        height: var(--checkbox-knob-size);
         background: var(--checkbox-thumb);
         border-radius: 50px;
         z-index: 2;
-        top: 2px;
-        left: 2px;
+        top: var(--checkbox-knob-top);
+        left: var(--checkbox-knob-left);
         box-shadow: 0px 0px --checkbox-thumb-shadow-size --checkbox-thumb-shadow;
-        @include anim($duration: 0.2s);
+        @include anim($duration: 0.75s, $fun: var(--bounce));
     }
     &.is-checked {
         &:before{
             box-shadow: inset 0px 0px 0px 15px var(--checkbox-checked);
         }
         &:after{
-            transform: translateX(20px);
+            transform: translateX(var(--checkbox-knob-left-on));
         }
     }
+}
+
+@keyframes shimmering{
+    0% {
+        transform: translateX(-100%) rotate(var(--shimmer-angle));
+    }
+    20% {
+        transform: translateX(100%) rotate(var(--shimmer-angle));
+    }
+    100% {
+        transform: translateX(100%) rotate(var(--shimmer-angle));
+    }
+}
+.--skeleton{
+    
+
+    overflow: hidden;
+    border-radius: var(--skeleton-radius);
+    height: 1lh;
+    background: var(--skeleton);
+    position: relative;
+    
+    &:after{
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-image: linear-gradient(90deg, var(--skeleton) 0%, var(--shimmer) 50%, var(--skeleton) 100%);
+        transform: translateX(-100%) rotate(var(--shimmer-angle));
+        animation-name: shimmering;
+        animation-direction: var(--shimmer-direction);
+        animation-duration: var(--shimmer-speed);
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+        filter: blur(var(--shimmer-blur));
+    }
+
 }
 
 /* SIMPLE SPINNER */
@@ -284,8 +388,6 @@ button{
 }
 .zuz-sheet{
 
-    
-    
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -324,11 +426,14 @@ button{
         top: 10px;
         @extend .zuz-toast;
     }
+    &.toast-form{
+        position: absolute !important;
+    }
 
     &.toast-dialog{
         background: var(--sheet-bg);
         border-radius: var(--sheet-radius);
-        overflow: hidden;
+        // overflow: hidden;
     }
 
     .sheet-head{
@@ -371,12 +476,18 @@ button{
         }
     }   
     .sheet-body{
+        background: var(--sheet-body);
         padding: var(--sheet-body-padding);
+
+        &.--no-action{
+            border-radius: 0px 0px var(--sheet-radius) var(--sheet-radius);
+        }
     }
 
     .sheet-footer{
         padding: var(--sheet-footer-padding);
         background: var(--sheet-footer);
+        border-radius: 0px 0px var(--sheet-radius) var(--sheet-radius);
         .sheet-action-btn{
             background: var(--sheet-action);
             color: var(--sheet-action-color);
@@ -404,88 +515,92 @@ button{
     z-index: 111;
     backdrop-filter: blur(10px);
 }
-.zuz-context-menu{
-    z-index: 99;
-    background: var(--context-background);
+.context-menu{
+
+    z-index: var(--context-z-index);
+    background: var(--context);
     border-radius: var(--context-radius);
-    padding: 10px;
+    padding: var(--context-padding);
     box-shadow: var(--context-shadow);
     
     .context-line{
-        height: 1px;
+        height: var(--context-seperator-height);
         background: var(--context-seperator);
-        margin: 3px 6px;
+        margin: var(--context-seperator-margin);
     }
+
     .context-menu-item{
-        width: 220px;
-        padding: 6px 10px;
-        gap: 10px;
+        width: var(--context-item-width);
+        padding: var(--context-item-padding);
+        gap: var(--context-item-gap);
         cursor: pointer;
-        font-size: var(--context-label-size);
-        border-radius: var(--context-radius);
+        font-size: var(--context-item-font-size);
+        border-radius: var(--context-item-radius);
         .ico{
-            font-size: var(--context-icon-size);
+            font-size: var(--context-item-icon-size);
         }
         &:hover{
-            background: var(--context-hover);
+            background: var(--context-item-hover);
         }
     }
+
 }
 
-@position-try --zuz-select-bottom {
-    top: anchor(bottom);
-    bottom: unset;
-    margin-block: calc(var(--zuz-select-height) + var(--zuz-select-gap)) 0;
-}
-.zuz-selectk-wrap{
-    width: 100%;
-}
-.zuz-select{
-    width: 100%;
-    gap: 5px;
-    background: var(--select);
-    border-radius: var(--select-radius);
-    border: 0px;
-    padding: 12px 15px;
-    anchor-name: --zuz-select-anchor;
-    &:hover{
-        background: var(--select-hover);
-    }
-    .zuz-selected{
-        flex: 1;
-        text-align: left;
-    }
-}
-.zuz-select-options{
-
-    --zuz-select-height: 30px;
-    --zuz-select-gap: 0px;
-    position-anchor: --zuz-select-anchor;
-    position-try: most-height --zuz-select-bottom;
-
-    width: 100%;
-    max-height: 400px;
-    overflow-x: hidden;
-    gap: 2px;
-    background: var(--select-options);
-    border-radius: var(--select-radius);
-    padding: 4px 0px;
-    button{
-        background: transparent;
-        border: 0px;
-        text-align: left;
-        padding: var(--select-padding);
+// @position-try --zuz-select-bottom {
+//     top: anchor(bottom);
+//     bottom: unset;
+//     margin-block: calc(var(--zuz-select-height) + var(--zuz-select-gap)) 0;
+// }
+.zuz-select-wrap{
+    width: var(--select-width);
+    z-index: 1;
+    .zuz-select{
+        width: 100%;
+        gap: 5px;
+        background: var(--select);
         border-radius: var(--select-radius);
-        font-size: var(--select-option-font-size);
+        border: 0px;
+        padding: 12px 15px;
+        font-size: var(--select-font-size);
+        // anchor-name: attr(popovertarget);
+        // anchor-name: --zuz-select-anchor;
         &:hover{
             background: var(--select-hover);
         }
-        &.selected{
-            background: var(--select-selected);
+        .zuz-selected{
+            flex: 1;
+            text-align: left;
+        }
+    }
+    .zuz-select-options{
+        backdrop-filter: blur(10px) saturate(0);
+        left: 0;
+        top: calc(100% + var(--select-options-top));
+        width: 100%;
+        max-height: 400px;
+        overflow-x: hidden;
+        gap: 2px;
+        background: var(--select-options);
+        border-radius: var(--select-radius);
+        padding: var(--select-options-padding);
+        button{
+            background: transparent;
+            border: 0px;
+            text-align: left;
+            color: var(--select-option-color);
+            padding: var(--select-padding);
+            border-radius: var(--select-radius);
+            font-size: var(--select-font-size);
+            white-space: pre;
+            &:hover{
+                background: var(--select-option-hover);
+            }
+            &.selected{
+                background: var(--select-selected);
+            }
         }
     }
 }
-
 .zuz-overlay{
     background: var(--zuz-overlay);
     z-index: 2147483645;
@@ -604,8 +719,98 @@ button{
             width: 100%;
             background: var(--tab-body);            
             padding: var(--tab-body-padding);
+            align-self: baseline;
         }
     }
+}
+
+.treeview{
+
+    gap: var(--treeview-gap);
+
+    .--node{
+        gap: var(--treenode-gap);
+        cursor: pointer;
+
+        .--node-aro-btn{
+            width: var(--treenode-arrow-btn-size);
+            height: var(--treenode-arrow-btn-size);
+            border: 0px;
+            background: transparent;
+            opacity: 0.6;
+            @include anim($duration: 0.4s);
+            &:hover{
+                opacity: 1;
+            }
+
+            .--node-aro-icon{
+                font-size: var(--treenode-arrow-icon-size);
+                color: var(--treenode-arrow-icon-color);
+            }
+        }
+
+        .--node-meta{
+            background: transparent;
+            gap: var(--treenode-label-gap);
+            border: 0px;
+            
+            .--node-icon{
+                font-size: var(--treenode-label-icon-size);
+                color: var(--treenode-label-icon-color);
+            }
+
+            .--node-label{
+                background: var(--treenode-label-bg);
+                color: var(--treenode-label-color);
+                font-size: var(--treenode-label-size);
+                padding: var(--treenode-label-padding);
+                border-radius: var(--treenode-label-radius);
+            }
+
+            &:hover{
+                .--node-label{
+                    background: var(--treenode-label-hover);
+                }
+            }
+
+        }
+
+        &.--selected{
+            .--node-meta{
+                .--node-label{
+                    background: var(--treenode-label-selected-bg);
+                    color: var(--treenode-label-selected-color);
+                }
+            }
+        }
+
+        
+
+    }
+
+    .--sub-node{
+        margin-top: var(--treeview-gap);
+        gap: var(--treeview-gap);
+        padding-left: var(--treenode-sub-margin);
+    }
+}
+
+.--progress{
+
+    background: var(--progress-track);
+    width: var(--progress-width);
+    height: var(--progress-height);
+    border-radius: var(--progress-radius);
+    overflow: hidden;
+
+    .--bar{
+        
+        width: 0%;
+        height: var(--progress-heigt);
+        border-radius: var(--progress-radius);
+
+    }
+
 }
 
 .comp-editor{

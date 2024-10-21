@@ -6,15 +6,19 @@ import ComponentEditor from "./editor";
 import { BaseProps } from "../types/interfaces";
 
 export interface Tab {
-    onSelect: (index: number) => void
+    onSelect: (tab: Tab, index: number) => void
+    tag?: string,
+    key?: string,
     label: string | ReactNode | ReactNode[]
     body: string | ReactNode | ReactNode[]
     render?: boolean,
 }
 
 export interface TabViewProps {
+    onChange?: (tab: Tab, index: number) => void,
     speed?: number,
-    tabs: Tab[]
+    tabs: Tab[],
+    prerender?: boolean,
 }
 
 export interface TabViewHandler {
@@ -23,19 +27,33 @@ export interface TabViewHandler {
 
 const TabView = forwardRef<TabViewHandler, TabViewProps & BaseProps>((props, ref) => {
     
-    const { as, tabs, speed, ...rest } = props;
+    const { as, tabs: _tabs, speed, prerender, onChange, ...rest } = props;
+    const tabs = useMemo(() => _tabs.reduce((ts, t: Tab) => {
+        ts.push({
+            ...t,
+            key: t.key || uuid()
+        })
+        return ts
+    }, [] as Tab[]), [_tabs])
     const tabview = useRef<HTMLDivElement>(null)
     const tabViewID = useMemo(() => uuid(), [])
     const [activeTab, setActiveTab] = useState(0);
     const size = useResizeObserver(tabview)
+    const render = useMemo(() => prerender == undefined || prerender == true ? true : false, [])
 
     const handleTabClick = (index: number) => {
         setActiveTab(index)
     };
 
     useEffect(() => {
-        
+        // console.log(`TabRenderCount`)
+        onChange && onChange(tabs[0], 0)
     }, [])
+
+    // useEffect(() => {
+    //     console.log(tabs)
+    // }, [tabs])
+
 
     return <>
         <With 
@@ -46,11 +64,12 @@ const TabView = forwardRef<TabViewHandler, TabViewProps & BaseProps>((props, ref
         <With className={`tab-head flex aic`}>
             {tabs.map((tab, index) => <With 
                 tag={`button`}
-                key={`tab-label-${tabViewID}-${index}`} 
+                key={`tab-${tabViewID}-${tab.key}`} 
                 className={`tab-label rel ${index === activeTab ? 'active' : ''}`.trim()} 
                 onClick={() => {
                     handleTabClick(index)
-                    tab.onSelect && tab.onSelect(index)
+                    tab.onSelect && tab.onSelect(tab, index)
+                    onChange && onChange(tab, index)
                 }}>{tab.label}</With>)}
         </With>
 
@@ -59,12 +78,9 @@ const TabView = forwardRef<TabViewHandler, TabViewProps & BaseProps>((props, ref
             <With className={`tabs-track flex aic`} style={{ transition: `all ${speed || 0.3}s ease-in-out 0s`, transform: `translate(-${activeTab * size.width}px, 0)` }}>
             {tabs.map((tab, index) => {
 
-                // const tabBodyRef = useRef<HTMLDivElement>(null);
-                // const intersectionRatio = useIntersectionObserver(tabBodyRef, { threshold: Array.from({ length: 101 }, (_, i) => i / 100) });
-                // console.log(activeTab, index, 0, -((index+1) * size.width))
                 return <With 
                 // ref={tabBodyRef}
-                key={`tab-body-${tabViewID}-${index}`} 
+                key={`tab-body-${tabViewID}-${tab.key}`} 
                 className={`tab-body rel`} 
                 style={{ 
                     width: size.width,
@@ -72,7 +88,7 @@ const TabView = forwardRef<TabViewHandler, TabViewProps & BaseProps>((props, ref
                     maxWidth: size.width,
                     opacity: index === activeTab ? 1 : 0,
                     transition: 'opacity 0.5s ease',
-                }}>{tab.body}</With>
+                }}>{(render || activeTab == index) && tab.body}</With>
                 // onClick={() => tab.onSelect(index)}
             })}
             </With>

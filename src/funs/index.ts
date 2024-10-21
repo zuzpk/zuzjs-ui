@@ -1,13 +1,14 @@
 import { cssProps } from "./stylesheet.js";
 import CSS from './css.js'
-import { dynamicObject } from "../types/index.js";
+import { dynamicObject, sortOptions } from "../types/index.js";
 import axios from "axios";
 import { colorNames } from "./colors.js";
 import Hashids from "hashids";
 import { nanoid } from "nanoid";
 import Cookies from "js-cookie";
 import moment from "moment";
-import { FormatNumberParams } from "../types/interfaces.js";
+import { FormatNumberParams, Skeleton } from "../types/interfaces.js";
+import { SORT } from "../types/enums.js";
 
 let __css : CSS;
 export const __SALT : string = `zuzjs-ui`
@@ -27,6 +28,8 @@ export const numberInRange = (min : number, max : number) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
   
+export const toLowerCase = String.prototype.toLocaleLowerCase || String.prototype.toLowerCase
+
 // Hex color regex (#RGB, #RRGGBB)
 export const hexColorRegex = /^#([A-Fa-f0-9]{3}){1,2}$/;
 // export const hexColorRegex3 = /^#([A-Fa-f0-9]{3}){1,2}$/;
@@ -95,6 +98,10 @@ export const cleanProps = <T extends dynamicObject>( props: T, withProps: string
             delete _props[k]
         }
     });
+
+    if ( `skeleton` in _extras && (_extras.skeleton as Skeleton).enabled == true ){
+        delete _props[`children`]
+    }
     
     _extras.map(x => x in _props && delete _props[x])
 
@@ -261,6 +268,16 @@ export const formatNumber = ({
     }).format(+number);
 }
 
+export const formatSize = (bytes : number | string) => {
+	const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const _bytes = `string` == typeof bytes ? parseFloat(bytes) : bytes
+	if (_bytes == 0) return '0 Byte';
+    const _i = Math.floor(Math.log(_bytes) / Math.log(1024))
+	const i = `string` == typeof _i ? parseInt(_i) : _i
+	const nx = _bytes / Math.pow(1024, i);
+	return  nx.toFixed(2) + ' ' + sizes[i];
+}
+
 export const copyToClipboard = (text: string) => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
         return navigator.clipboard.writeText(text);
@@ -281,5 +298,145 @@ export const copyToClipboard = (text: string) => {
             }
             document.body.removeChild(textarea);
         })
+    }
+}
+
+/**
+ * Borrowed from https://github.com/bubkoo/natsort
+ * So we don't have to install a package for this
+ */
+export const natsort = (options: sortOptions = {
+    direction: SORT.Asc,
+    caseSensitive: false,
+}) => {
+
+    const ore = /^0/
+    const sre = /\s+/g
+    const tre = /^\s+|\s+$/g
+    // unicode
+    const ure = /[^\x00-\x80]/
+    // hex
+    const hre = /^0x[0-9a-f]+$/i
+    // numeric
+    const nre = /(0x[\da-fA-F]+|(^[\+\-]?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?(?=\D|\s|$))|\d+)/g
+    // datetime
+    const dre = /(^([\w ]+,?[\w ]+)?[\w ]+,?[\w ]+\d+:\d+(:\d+)?[\w ]?|^\d{1,4}[\/\-]\d{1,4}[\/\-]\d{1,4}|^\w+, \w+ \d+, \d{4})/ // tslint:disable-line
+      
+    const GREATER = options.direction == SORT.Desc ? -1 : 1
+    const SMALLER = -GREATER
+    
+    const _normalize = !options.caseSensitive
+        ? (s: string | number) => toLowerCase.call(`${s}`).replace(tre, '')
+        : (s: string | number) => (`${s}`).replace(tre, '')
+      
+    const _tokenize = (s: string): string[] => {
+        return s.replace(nre, '\0$1\0')
+        .replace(/\0$/, '')
+        .replace(/^\0/, '')
+        .split('\0')
+    }
+      
+    const _parse = (s: string, l: number) => {
+        return (!s.match(ore) || l === 1) && 
+            parseFloat(s) 
+            || s.replace(sre, ' ').replace(tre, '')
+            || 0
+    }
+      
+    return function (
+        a: string | number,
+        b: string | number,
+    ): number {
+      
+        const aa = _normalize(a)
+        const bb = _normalize(b)
+      
+        if (!aa && !bb) {
+            return 0
+        }
+      
+        if (!aa && bb) {
+            return SMALLER
+        }
+      
+        if (aa && !bb) {
+            return GREATER
+        }
+      
+        const aArr = _tokenize(aa)
+        const bArr = _tokenize(bb)
+      
+        // hex or date detection
+        const aHex = aa.match(hre)
+        const bHex = bb.match(hre)
+        const av = (aHex && bHex) ? parseInt(aHex[0], 16) : (aArr.length !== 1 && Date.parse(aa))
+        const bv = (aHex && bHex)
+            ? parseInt(bHex[0], 16)
+            : av && bb.match(dre) && Date.parse(bb) || null
+      
+        // try and sort Hex codes or Dates
+        if (bv) {
+
+            if (av === bv) {
+                return 0
+            }
+      
+            if (typeof av === 'number' && typeof bv === 'number' && av < bv) {
+              return SMALLER
+            }
+      
+            if (typeof av === 'number' && av > bv) {
+              return GREATER
+            }
+
+        }
+      
+        const al = aArr.length
+        const bl = bArr.length
+      
+        // handle numeric strings and default strings
+        for (let i = 0, l = Math.max(al, bl); i < l; i += 1) {
+      
+            const af = _parse(aArr[i] || '', al)
+            const bf = _parse(bArr[i] || '', bl)
+      
+            if (isNaN(af as number) !== isNaN(bf as number)) {
+              return isNaN(af as number) ? GREATER : SMALLER
+            }
+      
+            if (ure.test((af as string) + (bf as string)) && (af as string).localeCompare) {
+              const comp = (af as string).localeCompare(bf as string)
+      
+              if (comp > 0) {
+                return GREATER
+              }
+      
+              if (comp < 0) {
+                return SMALLER
+              }
+      
+              if (i === l - 1) {
+                return 0
+              }
+            }
+      
+            if (af < bf) {
+              return SMALLER
+            }
+      
+            if (af > bf) {
+              return GREATER
+            }
+      
+            if (`${af}` < `${bf}`) {
+              return SMALLER
+            }
+      
+            if (`${af}` > `${bf}`) {
+              return GREATER
+            }
+        }
+      
+        return 0
     }
 }

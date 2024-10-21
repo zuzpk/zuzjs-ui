@@ -22,6 +22,12 @@ export enum SHEET {
     Warn = "WARN",
 }
 
+export enum SHEET_ACTION_POSITION {
+    Left = "LEFT",
+    Right = "RIGHT",
+    Center = "CENTER"
+}
+
 export enum TRANSITION_CURVES {
     Spring = "SPRING",
     // Ease = "EASE",
@@ -80,4 +86,19 @@ export enum DATATYPE {
     Time = "TIME",
     DateTime = "DATETIME",
     File = "FILE"
+}
+
+export enum SORT {
+    Asc = "ASC",
+    Desc = "DESC"
+}
+
+export enum PROGRESS {
+    Bar = "BAR",
+    Ring = "RING"
+}
+
+export enum SKELETON {
+    Default = "DEFAULT",
+    Circle = "CIRCLE"
 }

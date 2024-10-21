@@ -1,6 +1,5 @@
 import { ComponentPropsWithoutRef, forwardRef } from "react";
 import With, { animationProps } from "./base";
-import { nanoid } from "nanoid";
 
 export interface ContextMenuItem {
     label: string;
@@ -17,7 +16,7 @@ const ContextMenu = forwardRef<HTMLDivElement, { as?: string, items: ContextMenu
 
     return <With 
         as={as} 
-        className={`zuz-context-menu abs flex cols`}
+        className={`context-menu abs flex cols`}
         {...rest} 
         ref={ref} >
         {items.map((item : ContextMenuItem, index) => item.label == `-` ? <With as={`context-line`} key={`${index}-line`} /> :

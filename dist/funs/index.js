@@ -6,6 +6,7 @@ import Hashids from "hashids";
 import { nanoid } from "nanoid";
 import Cookies from "js-cookie";
 import moment from "moment";
+import { SORT } from "../types/enums.js";
 let __css;
 export const __SALT = `zuzjs-ui`;
 export const FIELNAME_KEY = `__FILENAME__`;
@@ -17,6 +18,7 @@ export const uuid = (len) => nanoid(len);
 export const numberInRange = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
+export const toLowerCase = String.prototype.toLocaleLowerCase || String.prototype.toLowerCase;
 export const hexColorRegex = /^#([A-Fa-f0-9]{3}){1,2}$/;
 export const rgbaColorRegex = /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(,\s*((0|1|0?\.\d+)\s*))?\)$/;
 export const hslColorRegex = /^hsl\(\s*(\d{1,3})\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%\s*\)$/;
@@ -59,6 +61,9 @@ export const cleanProps = (props, withProps = []) => {
             delete _props[k];
         }
     });
+    if (`skeleton` in _extras && _extras.skeleton.enabled == true) {
+        delete _props[`children`];
+    }
     _extras.map(x => x in _props && delete _props[x]);
     return _props;
 };
@@ -190,6 +195,16 @@ export const formatNumber = ({ number, locale = 'en-US', style = `decimal`, deci
         maximumFractionDigits: +number % 1 > 0 ? 2 : 0
     }).format(+number);
 };
+export const formatSize = (bytes) => {
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const _bytes = `string` == typeof bytes ? parseFloat(bytes) : bytes;
+    if (_bytes == 0)
+        return '0 Byte';
+    const _i = Math.floor(Math.log(_bytes) / Math.log(1024));
+    const i = `string` == typeof _i ? parseInt(_i) : _i;
+    const nx = _bytes / Math.pow(1024, i);
+    return nx.toFixed(2) + ' ' + sizes[i];
+};
 export const copyToClipboard = (text) => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
         return navigator.clipboard.writeText(text);
@@ -212,4 +227,99 @@ export const copyToClipboard = (text) => {
             document.body.removeChild(textarea);
         });
     }
+};
+export const natsort = (options = {
+    direction: SORT.Asc,
+    caseSensitive: false,
+}) => {
+    const ore = /^0/;
+    const sre = /\s+/g;
+    const tre = /^\s+|\s+$/g;
+    const ure = /[^\x00-\x80]/;
+    const hre = /^0x[0-9a-f]+$/i;
+    const nre = /(0x[\da-fA-F]+|(^[\+\-]?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?(?=\D|\s|$))|\d+)/g;
+    const dre = /(^([\w ]+,?[\w ]+)?[\w ]+,?[\w ]+\d+:\d+(:\d+)?[\w ]?|^\d{1,4}[\/\-]\d{1,4}[\/\-]\d{1,4}|^\w+, \w+ \d+, \d{4})/;
+    const GREATER = options.direction == SORT.Desc ? -1 : 1;
+    const SMALLER = -GREATER;
+    const _normalize = !options.caseSensitive
+        ? (s) => toLowerCase.call(`${s}`).replace(tre, '')
+        : (s) => (`${s}`).replace(tre, '');
+    const _tokenize = (s) => {
+        return s.replace(nre, '\0$1\0')
+            .replace(/\0$/, '')
+            .replace(/^\0/, '')
+            .split('\0');
+    };
+    const _parse = (s, l) => {
+        return (!s.match(ore) || l === 1) &&
+            parseFloat(s)
+            || s.replace(sre, ' ').replace(tre, '')
+            || 0;
+    };
+    return function (a, b) {
+        const aa = _normalize(a);
+        const bb = _normalize(b);
+        if (!aa && !bb) {
+            return 0;
+        }
+        if (!aa && bb) {
+            return SMALLER;
+        }
+        if (aa && !bb) {
+            return GREATER;
+        }
+        const aArr = _tokenize(aa);
+        const bArr = _tokenize(bb);
+        const aHex = aa.match(hre);
+        const bHex = bb.match(hre);
+        const av = (aHex && bHex) ? parseInt(aHex[0], 16) : (aArr.length !== 1 && Date.parse(aa));
+        const bv = (aHex && bHex)
+            ? parseInt(bHex[0], 16)
+            : av && bb.match(dre) && Date.parse(bb) || null;
+        if (bv) {
+            if (av === bv) {
+                return 0;
+            }
+            if (typeof av === 'number' && typeof bv === 'number' && av < bv) {
+                return SMALLER;
+            }
+            if (typeof av === 'number' && av > bv) {
+                return GREATER;
+            }
+        }
+        const al = aArr.length;
+        const bl = bArr.length;
+        for (let i = 0, l = Math.max(al, bl); i < l; i += 1) {
+            const af = _parse(aArr[i] || '', al);
+            const bf = _parse(bArr[i] || '', bl);
+            if (isNaN(af) !== isNaN(bf)) {
+                return isNaN(af) ? GREATER : SMALLER;
+            }
+            if (ure.test(af + bf) && af.localeCompare) {
+                const comp = af.localeCompare(bf);
+                if (comp > 0) {
+                    return GREATER;
+                }
+                if (comp < 0) {
+                    return SMALLER;
+                }
+                if (i === l - 1) {
+                    return 0;
+                }
+            }
+            if (af < bf) {
+                return SMALLER;
+            }
+            if (af > bf) {
+                return GREATER;
+            }
+            if (`${af}` < `${bf}`) {
+                return SMALLER;
+            }
+            if (`${af}` > `${bf}`) {
+                return GREATER;
+            }
+        }
+        return 0;
+    };
 };

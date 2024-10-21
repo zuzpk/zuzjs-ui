@@ -1,4 +1,4 @@
-import { DetailedHTMLProps, FormEvent, FormEventHandler, HTMLAttributes } from "react"
+import { SORT } from "./enums"
 
 export type dynamicObject = { 
     [x: string] : any 
@@ -30,3 +30,8 @@ export type FormSubmitHandler = (formData: FormData) => void;
 export type FormInputs = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
 
 export type zuzProps = `as` | `css` | `hover` | `before` | `after`
+
+export type sortOptions = {
+    direction?: SORT,
+    caseSensitive?: boolean,
+}

@@ -1,5 +1,5 @@
 import CSS from './css.js';
-import { dynamicObject } from "../types/index.js";
+import { dynamicObject, sortOptions } from "../types/index.js";
 import { FormatNumberParams } from "../types/interfaces.js";
 export declare const __SALT: string;
 export declare const FIELNAME_KEY = "__FILENAME__";
@@ -9,6 +9,10 @@ export declare const fromHash: (n: string) => number;
 export declare const css: () => CSS;
 export declare const uuid: (len?: number) => string;
 export declare const numberInRange: (min: number, max: number) => number;
+export declare const toLowerCase: {
+    (locales?: string | string[]): string;
+    (locales?: Intl.LocalesArgument): string;
+};
 export declare const hexColorRegex: RegExp;
 export declare const rgbaColorRegex: RegExp;
 export declare const hslColorRegex: RegExp;
@@ -35,4 +39,6 @@ export declare const withTime: (fun: (...args: any[]) => any) => {
 export declare const time: (stamp?: number, format?: string) => string;
 export declare const arrayRand: (arr: any[]) => any;
 export declare const formatNumber: ({ number, locale, style, decimal, currency }: FormatNumberParams) => string;
+export declare const formatSize: (bytes: number | string) => string;
 export declare const copyToClipboard: (text: string) => Promise<unknown>;
+export declare const natsort: (options?: sortOptions) => (a: string | number, b: string | number) => number;

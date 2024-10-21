@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { SHEET, TRANSITION_CURVES, TRANSITIONS } from "../types/enums";
+import { SHEET, SHEET_ACTION_POSITION, TRANSITION_CURVES, TRANSITIONS } from "../types/enums";
 import { BaseProps } from "../types/interfaces";
 export interface SheetProps {
     title?: string;
@@ -8,10 +8,13 @@ export interface SheetProps {
     curve?: TRANSITION_CURVES;
     speed?: Number;
     type?: SHEET;
+    actionPosition?: SHEET_ACTION_POSITION;
 }
 export interface SheetActionHandler {
+    key?: string;
     label: string;
-    handler: () => void;
+    handler?: () => void;
+    onClick?: () => void;
 }
 export interface SheetHandler {
     showDialog: (title: string | ReactNode, message: string | ReactNode, action?: SheetActionHandler[], onShow?: () => void) => void;

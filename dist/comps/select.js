@@ -19,14 +19,13 @@ const Select = forwardRef((props, ref) => {
             setChoosing(false);
         });
     }, []);
-    return _jsxs(With, { className: `zuz-select-wrap rel`, children: [_jsxs(With, { popovertarget: _id, tag: `button`, as: as, className: `zuz-select rel flex aic`, ref: _ref, onClick: (e) => setChoosing(true), ...rest, children: [_jsx(With, { tag: `h2`, className: `zuz-selected`, children: value ? `string` == typeof value ? value : value.label : label || `Choose` }), chevronExpand()] }), _jsx(With, { popover: "true", id: _id, className: `zuz-select-options abs flex cols`, style: {
+    return _jsxs(With, { className: `zuz-select-wrap rel`, children: [_jsxs(With, { "data-value": value ? `string` == typeof value ? value : value.value : value || `-1`, name: name, tag: `button`, as: as, className: `zuz-select rel flex aic --select`, ref: _ref, onClick: (e) => setChoosing(true), ...rest, children: [_jsx(With, { tag: `h2`, className: `zuz-selected`, children: value ? `string` == typeof value ? value : value.label : label || `Choose` }), chevronExpand()] }), _jsx(With, { id: _id, className: `zuz-select-options abs flex cols`, style: {
                     pointerEvents: choosing ? `auto` : `none`,
                 }, animate: {
-                    from: { height: 0, opacity: 0 },
-                    to: { height: `auto`, opacity: 1 },
+                    from: { y: 5, opacity: 0 },
+                    to: { y: 0, opacity: 1 },
                     when: choosing,
-                    curve: `spring`,
-                    duration: .4
+                    duration: .05
                 }, children: options.map((o) => _jsx(With, { onClick: (e) => updateValue(o), className: value && (`string` == typeof o ? o : o.value) == (`string` == typeof value ? value : value.value) ? `selected` : ``, tag: `button`, children: `string` == typeof o ? o : o.label }, `option-${(`string` == typeof o ? o : o.label).replace(/\s+/g, `-`)}-${`string` == typeof o ? o : o.value}`)) })] });
 });
 export default Select;

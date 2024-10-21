@@ -22,6 +22,12 @@ export var SHEET;
     SHEET["Success"] = "SUCCESS";
     SHEET["Warn"] = "WARN";
 })(SHEET || (SHEET = {}));
+export var SHEET_ACTION_POSITION;
+(function (SHEET_ACTION_POSITION) {
+    SHEET_ACTION_POSITION["Left"] = "LEFT";
+    SHEET_ACTION_POSITION["Right"] = "RIGHT";
+    SHEET_ACTION_POSITION["Center"] = "CENTER";
+})(SHEET_ACTION_POSITION || (SHEET_ACTION_POSITION = {}));
 export var TRANSITION_CURVES;
 (function (TRANSITION_CURVES) {
     TRANSITION_CURVES["Spring"] = "SPRING";
@@ -65,3 +71,18 @@ export var DATATYPE;
     DATATYPE["DateTime"] = "DATETIME";
     DATATYPE["File"] = "FILE";
 })(DATATYPE || (DATATYPE = {}));
+export var SORT;
+(function (SORT) {
+    SORT["Asc"] = "ASC";
+    SORT["Desc"] = "DESC";
+})(SORT || (SORT = {}));
+export var PROGRESS;
+(function (PROGRESS) {
+    PROGRESS["Bar"] = "BAR";
+    PROGRESS["Ring"] = "RING";
+})(PROGRESS || (PROGRESS = {}));
+export var SKELETON;
+(function (SKELETON) {
+    SKELETON["Default"] = "DEFAULT";
+    SKELETON["Circle"] = "CIRCLE";
+})(SKELETON || (SKELETON = {}));

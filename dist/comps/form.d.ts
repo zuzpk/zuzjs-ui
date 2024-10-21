@@ -18,6 +18,7 @@ export interface FormProps {
 }
 export interface FormHandler {
     setLoading: (mode: boolean) => void;
+    hideError: () => void;
 }
 declare const Form: import("react").ForwardRefExoticComponent<FormProps & Omit<import("react").DetailedHTMLProps<import("react").HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "ref"> & import("react").RefAttributes<FormHandler>>;
 export default Form;

@@ -19,6 +19,9 @@ const Form = forwardRef((props, ref) => {
             if (el.type == `checkbox` && el.checked == false) {
                 return false;
             }
+            if (el.classList.contains(`--select`) && el.dataset.value == `-1`) {
+                return false;
+            }
             if (el.value == ``)
                 return false;
         }
@@ -70,9 +73,9 @@ const Form = forwardRef((props, ref) => {
                 valid = _validate(el);
             data[el.name] = {
                 valid: valid,
-                value: el.value
+                value: el.classList.contains(`--select`) ? el.dataset.value : el.value
             };
-            payload[el.name] = el.value;
+            payload[el.name] = el.classList.contains(`--select`) ? el.dataset.value : el.value;
             if (!valid) {
                 if (_error == null && errors) {
                     _error = el;
@@ -136,13 +139,19 @@ const Form = forwardRef((props, ref) => {
     };
     useImperativeHandle(ref, () => ({
         setLoading(mod) {
+            if (mod) {
+                sheet.current.hide();
+            }
             setLoading(mod);
         },
         showError(errorMsg) {
             sheet.current.show(errorMsg, 4, SHEET.Error);
+        },
+        hideError() {
+            sheet.current.hide();
         }
     }));
     useEffect(_init, []);
-    return _jsxs(With, { as: as, className: `rel`, ref: _ref, propsToRemove: [`withData`, `action`, `onSubmit`, `onSuccess`, `onError`], ...rest, children: [_jsx(Sheet, { ref: sheet }), loading && _jsx(Cover, { message: cover ? cover.message || undefined : `working`, ...{ spinner, color: cover ? `color` in cover ? cover.color : `#ffffff` : `#ffffff` } }), children] });
+    return _jsxs(With, { as: as, className: `rel`, ref: _ref, propsToRemove: [`withData`, `action`, `onSubmit`, `onSuccess`, `onError`], ...rest, children: [_jsx(Sheet, { ref: sheet, as: `toast-form` }), loading && _jsx(Cover, { message: cover ? cover.message || undefined : `working`, ...{ spinner, color: cover ? `color` in cover ? cover.color : `#ffffff` : `#ffffff` } }), children] });
 });
 export default Form;

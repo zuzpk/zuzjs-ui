@@ -48,10 +48,11 @@ const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
 
     return <With className={`zuz-select-wrap rel`}>
         <With 
-            popovertarget={_id}
+            data-value={value ? `string` == typeof value ? value : value.value : value || `-1`}
+            name={name}
             tag={`button`}
             as={as} 
-            className={`zuz-select rel flex aic`}
+            className={`zuz-select rel flex aic --select`}
             ref={_ref} 
             onClick={(e: MouseEvent) => setChoosing(true)}   
             {...rest} >
@@ -59,19 +60,20 @@ const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
             {chevronExpand()}
         </With>
         <With
-            popover="true"
+            // popover="true"
             id={_id}          
             className={`zuz-select-options abs flex cols`}
             style={{
                 pointerEvents: choosing ? `auto` : `none`,
             }}
             animate={{
-                from: { height: 0, opacity: 0 },
-                to: { height: `auto`, opacity: 1 },
+                from: { y: 5, opacity: 0 },
+                to: { y: 0, opacity: 1 },
                 when: choosing,
-                curve: `spring`,
-                duration: .4
-            }}>
+                // curve: `spring`,
+                duration: .05
+            }}
+            >
             {options.map((o: string | dynamicObject) => <With 
                 key={`option-${(`string` == typeof o ? o : o.label).replace(/\s+/g, `-`)}-${`string` == typeof o ? o : o.value}`}               
                 onClick={(e: MouseEvent) => updateValue(o)}
