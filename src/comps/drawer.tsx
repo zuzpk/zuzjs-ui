@@ -1,6 +1,7 @@
 import { forwardRef, ReactNode, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import With, { animationProps } from "./base";
-import { DRAWER_SIDE, TRANSITION_CURVES, TRANSITIONS } from "../types/enums";
+import { DRAWER_SIDE, KeyCode, TRANSITION_CURVES, TRANSITIONS } from "../types/enums";
+import { bindKey } from "../funs";
 
 export interface DrawerProps {
     as?: string,
@@ -27,6 +28,13 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
     useEffect(() => {
         setContent(children);
     }, [children]);
+
+    useEffect(() => {
+        bindKey(
+            KeyCode.Escape,
+            () => visible && setVisible(false)
+        )
+    }, [])
 
     const style = useMemo(() => {
         switch (from){

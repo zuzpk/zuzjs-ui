@@ -1,8 +1,9 @@
 import { __SALT, FIELNAME_KEY, isColor, isHexColor, isNumber, LINE_KEY, setDeep } from "./index.js";
-import { cssAnimationCurves, cssDirect, cssProps, cssTransformKeys, cssWithKeys } from "./stylesheet.js";
+import { cssAnimationCurves, cssDirect, cssProps, cssPropsWithColor, cssTransformKeys, cssWithKeys } from "./stylesheet.js";
 import Hashids from "hashids";
 import { TRANSITION_CURVES, TRANSITIONS } from "../types/enums.js";
 import md5 from "md5";
+import pc from "picocolors";
 class CSS {
     cx;
     cache;
@@ -26,6 +27,7 @@ class CSS {
     _cli;
     DIRECT_VALUES;
     PROPS_VALUES;
+    _currentFile;
     constructor(options) {
         const opts = options || {};
         this._cli = false;
@@ -46,6 +48,7 @@ class CSS {
         };
         this.cx = [];
         this.cache = {};
+        this._currentFile = `?`;
         this.unit = opts.unit || `px`;
         this.seperator = `__@@__`;
         this.hashids = new Hashids(__SALT, 5);
@@ -151,7 +154,9 @@ class CSS {
                 }
             }
         }
-        return scss.join(`\n`);
+        return scss
+            .filter(x => x.trim() != `.{}`)
+            .join(`\n`);
     }
     _styleSheet(cache) {
         const self = this;
@@ -264,7 +269,25 @@ class CSS {
             return ``;
         return this.unit;
     }
+    makeColor(v) {
+        if (v.charAt(0) == `#`) {
+            v = v.substring(1);
+        }
+        if (v.charAt(0) == `$`) {
+            return `var(--${v.replace(`$`, ``)})`;
+        }
+        if (/^#[0-9A-F]{6}[0-9a-f]{0,2}$/i.test(`#${v}`) ||
+            /^#([0-9A-F]{3}){1,2}$/i.test(`#${v}`)) {
+            return `#${v}`;
+        }
+        else if (v.includes(`rgb`) || v.includes(`rgba`)) {
+            return v.replace(`[`, `(`).replace(`]`, `)`);
+        }
+        else
+            return v.trim();
+    }
     makeValue(k, v) {
+        const self = this;
         if (k in this.PROPS) {
             const key = this.PROPS[k];
             let value;
@@ -272,7 +295,28 @@ class CSS {
             let hasImportant = v.charAt(v.length - 1) == `!`;
             v = hasImportant ? v.slice(0, -1) : v;
             let important = hasImportant ? ` !important` : ``;
-            if (v.charAt(0) == `$`) {
+            if (v.startsWith(`gradient`) || v.startsWith(`linear-gradient`) || v.startsWith(`radial-gradient`)) {
+                if (v.startsWith(`gradient`)) {
+                    v = `linear-${v}`;
+                }
+                const [_gtype, _xyz, _gto, _gdeg, ..._colors] = v.split(`-`);
+                const _gdegree = /^[+-]?\d+(\.\d+)?$/.test(_gdeg) ? `${_gdeg}deg` : `to ${_gdeg}`;
+                const _gcolors = _colors.reduce((arr, val) => {
+                    arr.push(self.makeColor(val));
+                    return arr;
+                }, []).join(`, `);
+                switch (_gtype) {
+                    case `linear`:
+                        value = `linear-gradient(${_gdegree}, ${_gcolors})`;
+                        break;
+                    case `radial`:
+                        break;
+                    default:
+                        value = v;
+                        break;
+                }
+            }
+            else if (v.charAt(0) == `$`) {
                 value = `var(--${v.replace(`$`, ``)})`;
             }
             else if (v.trim() == `transparent`) {
@@ -341,7 +385,7 @@ class CSS {
                         if (_.startsWith(`$`)) {
                             __v.push(`var(--${_.substring(1)})`);
                         }
-                        else if (isColor(`#${_}`)) {
+                        else if (cssPropsWithColor.includes(_) && isColor(`#${_}`)) {
                             if (_.includes(`rgb`) || _.includes(`rgba`)) {
                                 __v.push(_.replace(`[`, `(`).replace(`]`, `)`));
                             }
@@ -400,7 +444,8 @@ class CSS {
         const ok = _ok.trim();
         const ov = _ov ? _ov.trim() : v;
         if (ov == ``) {
-            throw new TypeError(`${ok} value is empty.`);
+            console.log(pc.yellow(`[${self._currentFile}]`), pc.cyan(k), pc.red(`value is empty.`));
+            return ``;
         }
         let _cp = ok.charAt(0);
         if (self.PROPS[ok]?.indexOf("-") > -1) {
@@ -424,6 +469,9 @@ class CSS {
                 word = word.replace(/\s+/g, ``);
             if (word == ``)
                 return;
+            if (word[word.length - 1] == `:`) {
+                word = word.slice(0, -1);
+            }
             const _kw = word in self.propCounter ? ++self.propCounter[word] : self.propCounter[word] = 1;
             if (isLevel) {
                 levels.push(`${word}${self.seperator}${_kw}`);
@@ -592,12 +640,13 @@ class CSS {
             self.cache = { ...self.cache, ..._built };
         }
     }
-    Build(css, cli = false) {
+    Build(css, cli = false, ff = ``) {
         let self = this;
         self._cli = cli;
         self.cx = [];
         self.cache = {};
         self._mediaQueries = {};
+        self._currentFile = ff;
         if (undefined == css)
             return {
                 cx: self.cx,
@@ -654,6 +703,15 @@ export const getAnimationCurve = (curve) => {
     if (!curve)
         return `linear`;
     switch (curve.toUpperCase()) {
+        case TRANSITION_CURVES.Bounce:
+            return `linear( 0, 0.0039, 0.0157, 0.0352, 0.0625 9.09%,
+                0.1407, 0.25, 0.3908, 0.5625, 0.7654,
+                1, 0.8907, 0.8125 45.45%, 0.7852, 0.7657,
+                0.7539, 0.75, 0.7539, 0.7657, 0.7852,
+                0.8125 63.64%, 0.8905, 1 72.73%, 0.9727, 0.9532,
+                0.9414, 0.9375, 0.9414, 0.9531, 0.9726,
+                1, 0.9883, 0.9844, 0.9883, 1 )`;
+            break;
         case TRANSITION_CURVES.Spring:
             return `cubic-bezier(0.2, -0.36, 0, 1.46)`;
             break;

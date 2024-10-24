@@ -1,6 +1,6 @@
 import { cssProps } from "./stylesheet.js";
 import CSS from './css.js'
-import { dynamicObject, sortOptions } from "../types/index.js";
+import { dynamicObject, KeyBindings, sortOptions } from "../types/index.js";
 import axios from "axios";
 import { colorNames } from "./colors.js";
 import Hashids from "hashids";
@@ -8,7 +8,7 @@ import { nanoid } from "nanoid";
 import Cookies from "js-cookie";
 import moment from "moment";
 import { FormatNumberParams, Skeleton } from "../types/interfaces.js";
-import { SORT } from "../types/enums.js";
+import { KeyCode, SORT } from "../types/enums.js";
 
 let __css : CSS;
 export const __SALT : string = `zuzjs-ui`
@@ -439,4 +439,16 @@ export const natsort = (options: sortOptions = {
       
         return 0
     }
+}
+
+export const bindKey = (key: KeyCode, fun: () => void, element?: HTMLElement): void => {
+
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (key === event.keyCode) {
+        fun();
+      }
+    };
+  
+    (element || document.documentElement).addEventListener('keydown', handleKeydown);
+
 }

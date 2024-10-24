@@ -35,3 +35,7 @@ export type sortOptions = {
     direction?: SORT,
     caseSensitive?: boolean,
 }
+
+export type KeyBindings = {
+    [key: string]: () => void;
+};

@@ -1,7 +1,8 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import With from "./base";
-import { DRAWER_SIDE, TRANSITION_CURVES, TRANSITIONS } from "../types/enums";
+import { DRAWER_SIDE, KeyCode, TRANSITION_CURVES, TRANSITIONS } from "../types/enums";
+import { bindKey } from "../funs";
 const Drawer = forwardRef((props, ref) => {
     const { as, from, speed, children, prerender, ...rest } = props;
     const [render, setRender] = useState(undefined == prerender ? true : prerender);
@@ -11,6 +12,9 @@ const Drawer = forwardRef((props, ref) => {
     useEffect(() => {
         setContent(children);
     }, [children]);
+    useEffect(() => {
+        bindKey(KeyCode.Escape, () => visible && setVisible(false));
+    }, []);
     const style = useMemo(() => {
         switch (from) {
             case DRAWER_SIDE.Left:

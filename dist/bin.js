@@ -85,9 +85,9 @@ const rebuildAll = () => {
     if (files.length > 0) {
         const as = [];
         if (options.file) {
-            const r = rebuild(files.filter(f => f.endsWith(options.file))[0]);
+            const r = rebuild(files.filter(f => f.endsWith(options.file.replace(path.resolve(`./`), ``)))[0]);
             if (r && r.length > 0) {
-                as.push(cssBuilder.Build([r], true).sheet);
+                as.push(cssBuilder.Build([r], true, options.file).sheet);
             }
         }
         else {
@@ -95,7 +95,7 @@ const rebuildAll = () => {
             files.map(f => {
                 const r = rebuild(f);
                 if (r && r.length > 0) {
-                    const _built = cssBuilder.Build([r], true);
+                    const _built = cssBuilder.Build([r], true, f.replace(path.resolve(`./`), ``));
                     as.push(_built.sheet);
                     Object.keys(_built.mediaQuery).map(mq => {
                         if (!mediaQueries[mq])

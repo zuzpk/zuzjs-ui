@@ -30,6 +30,7 @@ export const cssProps : dynamicObject = {
     "backgroundAttachment": "background-attachment",
     "backgroundBlendMode": "background-blend-mode",
     "backgroundClip": "background-clip",
+    "bg-clip": "background-clip",
 
     //Borders
     "border": "border",
@@ -333,6 +334,60 @@ export const cssDirect : dynamicObject = {
     "space-pre": "white-space: pre;",
     "text-wrap": "width: 98%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;",
 }
+
+export const cssPropsWithColor = [
+    // Regular CSS keys
+    "color",
+    "background",
+    "border",
+    "border-color",
+    "border-top-color",
+    "border-right-color",
+    "border-bottom-color",
+    "border-left-color",
+    "outline-color",
+    "text-decoration-color",
+    "text-shadow",
+    "box-shadow",
+    "fill",
+    "stroke",
+    "stop-color",
+    "caret-color",
+    "column-rule-color",
+    "text-emphasis-color",
+    "accent-color",
+    "border-block-color",
+    "border-inline-color",
+    "column-fill",
+    "marker",
+    "scrollbar-color",
+    "outline-offset-color",
+  
+    // JSX camelCase keys
+    "backgroundColor",
+    "borderColor",
+    "borderTopColor",
+    "borderRightColor",
+    "borderBottomColor",
+    "borderLeftColor",
+    "outlineColor",
+    "textDecorationColor",
+    "textShadow",
+    "boxShadow",
+    "fill",
+    "stroke",
+    "stopColor",
+    "caretColor",
+    "columnRuleColor",
+    "textEmphasisColor",
+    "accentColor",
+    "borderBlockColor",
+    "borderInlineColor",
+    "columnFill",
+    "marker",
+    "scrollbarColor",
+    "outlineOffsetColor",
+]
 
 export const cssAnimationCurves : dynamicObject = {
     ease: 'ease',

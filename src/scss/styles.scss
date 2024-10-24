@@ -70,7 +70,7 @@ input{
     --ease: var(--back);
 
     --max-z-index: 2147483647;
-
+    --zuz-shadow: 0px 0px 0px 1px #d4d4d4, 0px 0px 6px #ccc;
     --text-wheel-speed: 2;
     --text-wheel-transition: translate calc(var(--text-wheel-speed) * 1s) var(--ease);
 
@@ -112,6 +112,7 @@ input{
     --drawer-handle-color: #ccc;
     --drawer-radius-v: 0px;
     --drawer-radius-h: 0px;
+    --drawer-shadow: var(--zuz-shadow);
     
     --tab-head: #fff;
     --tab-head-padding: 3px 3px 0px 3px;
@@ -129,6 +130,7 @@ input{
     --tab-border: 1px #ddd solid;
 
     --sheet-bg: #fff;
+    --sheet-shadow: var(--zuz-shadow);
     --sheet-body: #fff;
     --sheet-radius: 10px;
     --sheet-padding: 6px 12px;
@@ -160,7 +162,7 @@ input{
     --context-border: 0px;
     --context-radius: 10px;
     --context-padding: 10px;
-    --context-shadow: 0px 0px 0px 1px #ddd, 0px 0px 0px 3px #eee;
+    --context-shadow: var(--zuz-shadow);
     --context-seperator: #eee;
     --context-seperator-height: 1px;
     --context-seperator-margin: 3px 6px;
@@ -204,6 +206,20 @@ input{
     --shimmer-speed: 2s;
     --shimmer-blur: 50px;
 
+    --alert-error: #ffd4d4;
+    --alert-error-color: #ae1313;
+    --alert-info: #bee3f8;
+    --alert-info-color: #2b6cb0;
+    --alert-warning: #feebc8;
+    --alert-warning-color: #c05621;
+    --alert-success: #c6f6d5;
+    --alert-success-color: #2f855a;
+    --alert-padding: 12px;;
+    --alert-radius: 10px;
+    --alert-gap: 10px;
+
+    --avatar-bg: #fff;
+
 }
 
 .flex{
@@ -245,7 +261,12 @@ input{
 
 button{
     &.ico-btn{gap:5px;}
-    .b-label{flex:1;}
+    .b-label{
+        flex:1;
+        &:empty{
+            display: none;
+        }
+    }
 }
 
 .checkbox{
@@ -393,7 +414,7 @@ button{
     transform: translate(-50%, -50%);
     z-index: 2147483645;
     transform-origin: top left;
-    // @include anim($duration: 0.5s, $fun: cubic-bezier(0.68, -0.2, 0.27, 1.5));
+    
     @include anim($duration: 0.5s, $fun: cubic-bezier(0.2, -0.36, 0, 1.46));
 
     &.wobble{
@@ -433,7 +454,7 @@ button{
     &.toast-dialog{
         background: var(--sheet-bg);
         border-radius: var(--sheet-radius);
-        // overflow: hidden;
+        box-shadow: var(--sheet-shadow);
     }
 
     .sheet-head{
@@ -562,6 +583,7 @@ button{
         border: 0px;
         padding: 12px 15px;
         font-size: var(--select-font-size);
+        box-shadow: var(--select-shadow);
         // anchor-name: attr(popovertarget);
         // anchor-name: --zuz-select-anchor;
         &:hover{
@@ -583,6 +605,7 @@ button{
         background: var(--select-options);
         border-radius: var(--select-radius);
         padding: var(--select-options-padding);
+        box-shadow: var(--select-options-shadow);
         button{
             background: transparent;
             border: 0px;
@@ -622,6 +645,8 @@ button{
 }
 .zuz-drawer{
     background: var(--drawer-color);
+    border: var(--drawer-border);
+    box-shadow: var(--drawer-shadow);
     z-index: 2147483646;
     overflow-x: hidden;
     overflow-y: auto;   
@@ -949,4 +974,62 @@ button{
         }
     }
 
+}
+
+.--alert{
+
+    padding: var(--alert-padding);
+    border-radius: var(--alert-radius);
+    gap: var(--alert-gap);
+
+    .--icon{
+        width: 20px;
+        height: 20px;
+    }
+    .--meta{
+        gap: 2px;
+        .--title{
+            &.--tm{
+                font-weight: bold;
+            }
+        }
+    }
+
+    &.--info{
+        background: var(--alert-info);
+        color: var(--alert-info-color); 
+        path{
+            fill: var(--alert-info-color);
+        }
+    }
+    &.--warning{
+        background: var(--alert-warning);
+        color: var(--alert-warning-color); 
+        path{
+            fill: var(--alert-warning-color);
+        }
+    }
+    &.--error{
+        background: var(--alert-error);
+        color: var(--alert-error-color); 
+        path{
+            fill: var(--alert-error-color);
+        }
+    }
+    &.--success{
+        background: var(--alert-success);
+        color: var(--alert-success-color); 
+        path{
+            fill: var(--alert-success-color);
+        }
+    }
+}
+
+.--avatar{
+    
+    background: var(--avatar-bg);
+
+    &.--circle{
+        border-radius: 50%;
+    }
 }

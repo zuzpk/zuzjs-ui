@@ -1,9 +1,10 @@
-import { __SALT, FIELNAME_KEY, isColor, isHexColor, isNumber, LINE_KEY, setDeep } from "./index.js"
+import { __SALT, extendGlobals, FIELNAME_KEY, isColor, isHexColor, isNumber, LINE_KEY, setDeep } from "./index.js"
 import { dynamicObject } from "../types"
-import { cssAnimationCurves, cssDirect, cssProps, cssTransformKeys, cssWithKeys } from "./stylesheet.js"
+import { cssAnimationCurves, cssDirect, cssProps, cssPropsWithColor, cssTransformKeys, cssWithKeys } from "./stylesheet.js"
 import Hashids from "hashids"
 import { TRANSITION_CURVES, TRANSITIONS } from "../types/enums.js"
 import md5 from "md5"
+import pc from "picocolors"
 
 class CSS {
 
@@ -29,6 +30,7 @@ class CSS {
     _cli: boolean
     DIRECT_VALUES: string[]
     PROPS_VALUES: string[]
+    _currentFile: string
 
     constructor(options?: dynamicObject | undefined){
 
@@ -53,7 +55,7 @@ class CSS {
         }
         this.cx = []
         this.cache = {}
-        
+        this._currentFile = `?`
         this.unit = opts.unit || `px`
 
         this.seperator = `__@@__`
@@ -90,6 +92,8 @@ class CSS {
             return arr
         }, [])
         
+        // extendGlobals()
+
     }
 
     buildMediaQueries( queries: dynamicObject ) : string {
@@ -208,7 +212,9 @@ class CSS {
 
         }
 
-        return scss.join(`\n`)
+        return scss
+            .filter(x => x.trim() != `.{}`)
+            .join(`\n`)
     }
 
     _styleSheet(cache: dynamicObject ) : string {
@@ -370,7 +376,33 @@ class CSS {
         return this.unit;
     }
 
+    makeColor(v: string){
+        if ( v.charAt(0) == `#` ){
+            v = v.substring(1)
+        }
+
+        if ( v.charAt(0) == `$` ){
+            return `var(--${v.replace(`$`, ``)})`
+        }
+
+        if ( 
+            /^#[0-9A-F]{6}[0-9a-f]{0,2}$/i.test(`#${v}`) ||
+            /^#([0-9A-F]{3}){1,2}$/i.test(`#${v}`)
+        ){
+            return `#${v}`
+        }
+        
+        else if ( v.includes(`rgb`) || v.includes(`rgba`) ){
+            return v.replace(`[`, `(`).replace(`]`, `)`)
+        }
+        else
+            return v.trim()
+    }
+
     makeValue(k: string, v: any){
+
+        // const hasGradient = v.includes(`gradient`)
+        const self = this
 
         if(k in this.PROPS){
             const key = this.PROPS[k]
@@ -383,9 +415,45 @@ class CSS {
             let important = hasImportant ? ` !important` : ``
 
             /**
+             * Gradients
+             */
+            if ( v.startsWith(`gradient`) || v.startsWith(`linear-gradient`) || v.startsWith(`radial-gradient`) ){
+                if ( v.startsWith(`gradient`) ){
+                    v = `linear-${v}`
+                }
+
+                //linear-gradient-to-bottom-blue-green
+                const [ 
+                    _gtype, 
+                    _xyz,
+                    _gto, 
+                    _gdeg,
+                    ..._colors
+                ] = v.split(`-`)
+                
+                // const _gdegree = _gdeg.isNumber() ? `${_gdeg}deg` : `to ${_gto}`
+                const _gdegree = /^[+-]?\d+(\.\d+)?$/.test(_gdeg) ? `${_gdeg}deg` : `to ${_gdeg}`
+                const _gcolors = _colors.reduce((arr: string[], val: string) => {
+                    arr.push(self.makeColor(val))
+                    return arr
+                }, [] as string[]).join(`, `)
+                switch(_gtype){
+                    case `linear`:
+                        value = `linear-gradient(${_gdegree}, ${_gcolors})`
+                        break;
+                    case `radial`:
+                        // value = `radial-gradient(${_gparts[1]})`
+                        break;
+                    default:
+                        value = v
+                        break;
+                }
+            }
+
+            /**
              * Variable
              */
-            if ( v.charAt(0) == `$` ){
+            else if ( v.charAt(0) == `$` ){
                 value = `var(--${v.replace(`$`, ``)})`
                 
             }
@@ -495,7 +563,8 @@ class CSS {
                             __v.push(`var(--${_.substring(1)})`)
                         }
                         //Color
-                        else if ( isColor(`#${_}`) ){
+                        else if ( cssPropsWithColor.includes(_) && isColor(`#${_}`) ){
+                        // else if ( isColor(_) ){
 
                             if ( _.includes(`rgb`) || _.includes(`rgba`) ){
                                 __v.push(_.replace(`[`, `(`).replace(`]`, `)`))
@@ -512,7 +581,7 @@ class CSS {
                         }
                     })
                     value = __v.join(` `)
-                    
+                    // console.log(key, value)
                     // if( k == `shadow` || k == `box-shadow` ) console.log(value)
                     
                 }
@@ -530,9 +599,7 @@ class CSS {
             // if ( key.includes(`padding`) ) console.log(`->padding`, `${key}: ${value}${important};`)
             if ( key == `content` ) value = `"${value}"`
 
-            // if ( key == `ratio` ){
-            //     console.log(key, value, important)
-            // }
+            
             // if ( key == `extend` ){
             //     value = value.split(`,`).reduce((acc: string[], v: string) => acc.push(`${v.startsWith(`.`) ? `` : `.`}${v}`) && acc, []).join(`,`)
             // }
@@ -584,7 +651,13 @@ class CSS {
         const ov = _ov ? _ov.trim() : v
 
         if ( ov == `` ){
-            throw new TypeError(`${ok} value is empty.`)
+            console.log(
+                pc.yellow(`[${self._currentFile}]`), 
+                pc.cyan(k),  
+                pc.red(`value is empty.`)
+            )
+            return ``
+            // throw new TypeError()
         } 
 
         /**Prefix */
@@ -617,6 +690,10 @@ class CSS {
 
             if ( word == ``) return 
 
+            if ( word[word.length-1] == `:` ){
+                word = word.slice(0, -1)
+            }
+
             const _kw = word in self.propCounter ? ++self.propCounter[word] : self.propCounter[word] = 1
 
             if ( isLevel ){
@@ -634,7 +711,6 @@ class CSS {
                 classes = setDeep( classes, `${levels.join(`^`)}${levels.length > 0 ? `^` : ``}${word}`, word, `^` )
 
             }
-
             word = ``
         }
 
@@ -863,7 +939,7 @@ class CSS {
 
     }
 
-    Build( css : string | string[][], cli = false ) : {
+    Build( css : string | string[][], cli = false, ff: string = `` ) : {
         cx: string[],
         sheet: string,
         mediaQuery: dynamicObject
@@ -874,6 +950,7 @@ class CSS {
         self.cx = []
         self.cache = {}
         self._mediaQueries = {}
+        self._currentFile = ff
 
         if ( undefined == css ) return {
             cx: self.cx,
@@ -977,6 +1054,15 @@ export const getAnimationCurve = ( curve?: string | TRANSITION_CURVES ): string 
     if ( !curve ) return `linear`
 
     switch(curve.toUpperCase()){
+        case TRANSITION_CURVES.Bounce:
+            return `linear( 0, 0.0039, 0.0157, 0.0352, 0.0625 9.09%,
+                0.1407, 0.25, 0.3908, 0.5625, 0.7654,
+                1, 0.8907, 0.8125 45.45%, 0.7852, 0.7657,
+                0.7539, 0.75, 0.7539, 0.7657, 0.7852,
+                0.8125 63.64%, 0.8905, 1 72.73%, 0.9727, 0.9532,
+                0.9414, 0.9375, 0.9414, 0.9531, 0.9726,
+                1, 0.9883, 0.9844, 0.9883, 1 )`
+            break;
         case TRANSITION_CURVES.Spring:
             return `cubic-bezier(0.2, -0.36, 0, 1.46)`
             break;

@@ -24,6 +24,7 @@ declare class CSS {
     _cli: boolean;
     DIRECT_VALUES: string[];
     PROPS_VALUES: string[];
+    _currentFile: string;
     constructor(options?: dynamicObject | undefined);
     buildMediaQueries(queries: dynamicObject): string;
     styleSheet(cache: dynamicObject, pseudo?: string): string;
@@ -31,12 +32,13 @@ declare class CSS {
     cleanKey(key: string): string;
     deepClean(cache: dynamicObject, level?: number): dynamicObject;
     makeUnit(k: string, v: any): any;
+    makeColor(v: string): string;
     makeValue(k: string, v: any): string;
     calcIndexes(str: string): string;
     makeID(k: string, v: string, _out: string): string;
     lexer(line: string): dynamicObject;
     processLine(line: string): void;
-    Build(css: string | string[][], cli?: boolean): {
+    Build(css: string | string[][], cli?: boolean, ff?: string): {
         cx: string[];
         sheet: string;
         mediaQuery: dynamicObject;

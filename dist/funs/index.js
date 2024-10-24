@@ -323,3 +323,11 @@ export const natsort = (options = {
         return 0;
     };
 };
+export const bindKey = (key, fun, element) => {
+    const handleKeydown = (event) => {
+        if (key === event.keyCode) {
+            fun();
+        }
+    };
+    (element || document.documentElement).addEventListener('keydown', handleKeydown);
+};

@@ -1,6 +1,7 @@
 import CSS from './css.js';
 import { dynamicObject, sortOptions } from "../types/index.js";
 import { FormatNumberParams } from "../types/interfaces.js";
+import { KeyCode } from "../types/enums.js";
 export declare const __SALT: string;
 export declare const FIELNAME_KEY = "__FILENAME__";
 export declare const LINE_KEY = "__LINE__";
@@ -42,3 +43,4 @@ export declare const formatNumber: ({ number, locale, style, decimal, currency }
 export declare const formatSize: (bytes: number | string) => string;
 export declare const copyToClipboard: (text: string) => Promise<unknown>;
 export declare const natsort: (options?: sortOptions) => (a: string | number, b: string | number) => number;
+export declare const bindKey: (key: KeyCode, fun: () => void, element?: HTMLElement) => void;

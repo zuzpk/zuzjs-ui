@@ -6,7 +6,7 @@ import chokidar from 'chokidar';
 import path from "path";
 import CSS from "./funs/css.js"
 import pc from "picocolors"
-import { FIELNAME_KEY, withZuz } from "./funs/index.js";
+import { extendGlobals, FIELNAME_KEY, withZuz } from "./funs/index.js";
 import { dynamicObject, zuzProps } from "./types/index.js";
 
 program
@@ -19,6 +19,7 @@ program.parse()
 
 const options = program.opts();
 
+// extendGlobals()
 
 const getAllFiles = (dir: any, extn: any, files?: string | any[], result?: any[], regex?: RegExp) : string[] => {
     files = files || readdirSync(dir);
@@ -119,18 +120,17 @@ const rebuildAll = () => {
 
     if ( files.length > 0 ){
 
-        // const as : string[][] = []
         const as : string[] = []
 
         if ( options.file ){
-            const r = rebuild(files.filter(f => f.endsWith(options.file))[0])
+            const r = rebuild(files.filter(f => f.endsWith(options.file.replace(path.resolve(`./`), ``)))[0])
             if ( r && r.length > 0 ){
 
                 
                 
                 // console.log(r)
 
-                as.push(cssBuilder.Build([r], true).sheet)
+                as.push(cssBuilder.Build([r], true, options.file).sheet)
                 // as.push(r)
             }
         }
@@ -146,7 +146,7 @@ const rebuildAll = () => {
                         // as.push( f.endsWith(`header.jsx`) ?
                         //  `.header{${cssBuilder.Build([r], true).sheet}}`
                         //  : cssBuilder.Build([r], true).sheet)
-                        const _built = cssBuilder.Build([r], true)
+                        const _built = cssBuilder.Build([r], true, f.replace(path.resolve(`./`), ``))
                         as.push(_built.sheet)
 
                         Object.keys(_built.mediaQuery).map(mq => {

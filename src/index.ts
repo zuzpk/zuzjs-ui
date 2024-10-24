@@ -5,6 +5,8 @@ export * from "./hooks"
 export * from "./types/enums";
 export { default as PubSub } from "./funs/events"
 
+export { default as Alert } from "./comps/alert"
+export { default as Avatar } from "./comps/avatar"
 export { default as Box } from "./comps/box"
 export { default as Button } from "./comps/button"
 export { default as CheckBox } from "./comps/checkbox"
