@@ -1,0 +1,56 @@
+import { dynamicObject } from "../types";
+import Hashids from "hashids";
+import { TRANSITION_CURVES, TRANSITIONS } from "../types/enums.js";
+import { OptionValues } from "commander";
+declare class CSS {
+    cx: string[];
+    cache: dynamicObject;
+    PROPS: dynamicObject;
+    DIRECT: dynamicObject;
+    hashids: Hashids;
+    chars: string;
+    rgbaRegex: RegExp;
+    IGNORE: string[];
+    unit: any;
+    keysWithoutCommaToSpace: string[];
+    propCounter: dynamicObject;
+    seperator: string;
+    pseudoList: string[];
+    ids: string[];
+    mediaQueries: dynamicObject;
+    _mediaQueries: dynamicObject;
+    _mediaQueriesLabels: dynamicObject;
+    PROPS_KEYS: string[];
+    DIRECT_KEYS: string[];
+    _cli: boolean;
+    DIRECT_VALUES: string[];
+    PROPS_VALUES: string[];
+    _currentFile: string;
+    debug: OptionValues | undefined;
+    constructor(options?: dynamicObject | undefined, debug?: OptionValues);
+    buildMediaQueries(queries: dynamicObject): string;
+    styleSheet(cache: dynamicObject, pseudo?: string): string;
+    _styleSheet(cache: dynamicObject): string;
+    cleanKey(key: string): string;
+    deepClean(cache: dynamicObject, level?: number): dynamicObject;
+    makeUnit(k: string, v: any): any;
+    makeColor(v: string): string;
+    makeValue(k: string, v: any): string;
+    calcIndexes(str: string): string;
+    makeID(k: string, v: string, _out: string): string;
+    lexer(line: string): dynamicObject;
+    processLine(line: string): void;
+    Build(css: string | string[][], cli?: boolean, ff?: string): {
+        cx: string[];
+        sheet: string;
+        mediaQuery: dynamicObject;
+    };
+}
+export default CSS;
+export declare const buildWithStyles: (source: dynamicObject) => dynamicObject;
+export declare const getAnimationCurve: (curve?: string | TRANSITION_CURVES) => string;
+export declare const animationTransition: (transition: TRANSITIONS) => {
+    from: {};
+    to: {};
+};
+export declare const getAnimationTransition: (transition: TRANSITIONS, to?: boolean, from?: boolean) => dynamicObject;
