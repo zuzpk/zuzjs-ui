@@ -19,18 +19,13 @@ const Text = forwardRef<HTMLHeadingElement, TextProps>((props, ref) => {
         rest
     } = useBase(pops)
  
-    const Tag = `h${props.h || 1}`
+    const Tag = `h${props.h || 1}` as `h1` | `h2` | `h3` | `h4` | `h5` | `h6`
 
-    return createElement(
-        Tag,
-        {
-            ref,
-            style,
-            className,
-            ...rest
-        },
-        html ? <Span dangerouslySetInnerHTML={{ __html: html }} /> : children
-    )
+    return <Tag
+        ref={ref}
+        style={style}
+        className={className}
+        {...rest as HTMLAttributes<HTMLHeadingElement>}>{html ? <Span dangerouslySetInnerHTML={{ __html: html }} /> : children}</Tag>
 
 })
 

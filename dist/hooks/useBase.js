@@ -28,7 +28,7 @@ const buildSkeletonStyle = (s) => {
     return style;
 };
 const useBase = (props) => {
-    const { as, animate, skeleton, className, shimmer, propsToRemove, draggable, ...rest } = props || {};
+    const { as, animate, skeleton, className, shimmer, propsToRemove, draggable, dragOptions, ...rest } = props || {};
     let cx = [];
     if (as) {
         cx = css().Build(`string` == typeof as ? as : as.join(` `)).cx;
@@ -45,7 +45,7 @@ const useBase = (props) => {
     else {
         _style = transition ? getAnimationTransition(transition, false, true) : from || {};
     }
-    const drag = useDrag();
+    const drag = useDrag(dragOptions);
     let dragProps = {};
     let dragStyle = {};
     if (draggable) {
@@ -56,6 +56,7 @@ const useBase = (props) => {
             transform: `translate(${drag.position.x}px, ${drag.position.y}px)`,
         };
     }
+    // console.log(`x`, buildWithStyles(_style),)
     return {
         style: {
             ...buildWithStyles(_style),

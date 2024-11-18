@@ -1,24 +1,25 @@
+import { FormEventHandler } from "react"
 import { FORMVALIDATION } from "../../types/enums"
 import { BoxProps } from "../Box"
 
 /**
- * Represents an option object with a label and value.
+ * Represents an option which can be either a string or an OptionObject.
  */
-export interface OptionObject {
+export type Option = {
     label: string,
     value: string
 }
+
+/**
+ * Represents an option object with a label and value.
+ */
+export type Value = FormEventHandler<HTMLDivElement> & Option
 
 export interface OptionItemProps {
     updateValue: (o: Option) => void, 
     o: Option,
     value: Option
 }
-
-/**
- * Represents an option which can be either a string or an OptionObject.
- */
-export type Option = string | OptionObject
 
 /**
  * Props for the Select component.
@@ -42,7 +43,7 @@ export type SelectProps = BoxProps & {
     /**
      * The currently selected option.
      */
-    selected?: Option,
+    selected?: string | Option,
 
     /**
      * Enables the search functionality within the select dropdown.

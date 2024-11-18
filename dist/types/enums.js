@@ -3,6 +3,11 @@ export var SPINNER;
     SPINNER["Simple"] = "SIMPLE";
     SPINNER["Roller"] = "ROLLER";
 })(SPINNER || (SPINNER = {}));
+export var SLIDER;
+(function (SLIDER) {
+    SLIDER["Default"] = "range";
+    SLIDER["Text"] = "number";
+})(SLIDER || (SLIDER = {}));
 export var FORMVALIDATION_STYLE;
 (function (FORMVALIDATION_STYLE) {
     FORMVALIDATION_STYLE["Dots"] = "DOTS";
@@ -223,3 +228,9 @@ export var SHIMMER;
     SHIMMER["Aurora"] = "AURORA";
     SHIMMER["Flame"] = "FLAME";
 })(SHIMMER || (SHIMMER = {}));
+export var DRAG_DIRECTION;
+(function (DRAG_DIRECTION) {
+    DRAG_DIRECTION["x"] = "x";
+    DRAG_DIRECTION["y"] = "y";
+    DRAG_DIRECTION["xy"] = "xy";
+})(DRAG_DIRECTION || (DRAG_DIRECTION = {}));

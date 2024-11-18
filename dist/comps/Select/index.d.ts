@@ -5,7 +5,7 @@ declare const Select: import("react").ForwardRefExoticComponent<BoxProps & {
     required?: FORMVALIDATION;
     options: Option[];
     label?: string;
-    selected?: Option;
+    selected?: string | Option;
     search?: boolean;
     onChange?: (v: Option) => void;
     searchPlaceholder?: string;

@@ -23,7 +23,11 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
         searchPlaceholder,
         onChange,
         ...pops } = props
-    const [ value, setValue ] = useState<Option>(selected || options[0])
+    const [ value, setValue ] = useState<Option>(
+        selected ? 
+            typeof selected === `string` ? options.find(fo => fo.value === selected)! : selected
+            : options[0]
+    )
     const [ choosing, setChoosing ] = useState(false)
     const [ query, setQuery ] = useState<string | null>(null)
     const _ref = useRef<HTMLButtonElement>(null);
@@ -67,7 +71,7 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
             className={`--selected flex aic rel ${className}`.trim()}
             withLabel={false}
             style={style}
-            onClick={(e) => setChoosing(true)}
+            onClick={(e) => setChoosing(prev => !prev)}
             {...rest as ButtonProps}>
             <Text className={`--label`}>{value ? `string` == typeof value ? value : value.label : label || `Choose`}</Text>
             <Box className={`--svg-arrow rel flex aic jcc`}>{choosing ? SVGIcons.arrowUp : SVGIcons.arrowDown}</Box>
@@ -94,9 +98,11 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
                 placeholder={searchPlaceholder || `Search...`} />}
             {   
                 (query == null ? options : options.filter((o: Option) => {
-                return `string` == typeof o ? 
-                    o.toLowerCase().includes(query.toLowerCase()) 
-                    : o.label.toLowerCase().includes(query.toLowerCase()) || o.value.toLowerCase().includes(query.toLowerCase())
+                // return 
+                    // `string` == typeof o ? 
+                    // o.toLowerCase().includes(query.toLowerCase()) 
+                    // : 
+                    return o.label.toLowerCase().includes(query.toLowerCase()) || o.value.toLowerCase().includes(query.toLowerCase())
                 }))
                 .map((o) => <OptionItem 
                     updateValue={updateValue} 

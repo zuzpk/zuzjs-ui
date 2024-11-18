@@ -17,7 +17,7 @@ export const __SALT : string = `zuzjs-ui`
 export const FIELNAME_KEY = `__FILENAME__`
 export const LINE_KEY = `__LINE__`
 
-export const extendGlobals = () => {
+export const withGlobals = () => {
     Object.prototype.isTypeof = function(v : any){ return typeof this === typeof v }
     Object.prototype.equals = function(v : any){ return this === v }
     Object.prototype.isNull = function(){ return this === null }
@@ -59,6 +59,8 @@ export const extendGlobals = () => {
         return `${this.charAt(0).toUpperCase()}${this.substring(1, this.length)}`
     }
 }
+
+export const isBrowser = typeof document !== "undefined"
 
 export const is = (o: any, v : any) => typeof o === v;
 

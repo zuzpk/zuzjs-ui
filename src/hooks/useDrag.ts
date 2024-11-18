@@ -1,11 +1,25 @@
 import { useRef, useState, useEffect } from 'react';
+import { DRAG_DIRECTION } from '../types/enums';
 
 interface Position {
     x: number;
     y: number;
 }
 
-const useDrag = () => {
+export type DragOptions = {
+    direction?: DRAG_DIRECTION,
+    snap?: number,
+    limits?: { left?: number, right?: number, top?: number, bottom?: number },
+}
+
+const useDrag = (dragOptions? : DragOptions) => {
+
+    const { direction, snap, limits } = dragOptions || { 
+        direction: DRAG_DIRECTION.xy, 
+        snap: 0, 
+        limits: {} 
+    } as DragOptions;
+
     const [position, setPosition] = useState<Position>({ x: 0, y: 0 });
     const isDragging = useRef(false);
     const dragStart = useRef<Position>({ x: 0, y: 0 });
@@ -26,8 +40,28 @@ const useDrag = () => {
     const onMouseMove = (event: MouseEvent) => {
         if (!isDragging.current) return;
 
-        const newX = event.clientX - dragStart.current.x;
-        const newY = event.clientY - dragStart.current.y;
+        let newX = position.x //event.clientX - dragStart.current.x;
+        let newY = position.y //event.clientY - dragStart.current.y;
+
+        if (direction === DRAG_DIRECTION.x || direction === DRAG_DIRECTION.xy) {
+            newX = event.clientX - dragStart.current.x;
+        }
+
+        if (direction === DRAG_DIRECTION.y || direction === DRAG_DIRECTION.xy) {
+            newY = event.clientY - dragStart.current.y;
+        }
+
+        // Apply limits
+        if (limits!.left !== undefined) newX = Math.max(newX, limits!.left);
+        if (limits!.right !== undefined) newX = Math.min(newX, limits!.right);
+        if (limits!.top !== undefined) newY = Math.max(newY, limits!.top);
+        if (limits!.bottom !== undefined) newY = Math.min(newY, limits!.bottom);
+
+        // Apply snapping
+        if (snap && snap > 0) {
+            newX = Math.round(newX / snap) * snap;
+            newY = Math.round(newY / snap) * snap;
+        }
 
         // Set `wasDragged` to true if the mouse has moved from the starting position
         if (Math.abs(newX - position.x) > 1 || Math.abs(newY - position.y) > 1) {
@@ -49,7 +83,7 @@ const useDrag = () => {
             document.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mouseup', onMouseUp);
         };
-    }, []);
+    }, [limits]);
 
     return {
         position,

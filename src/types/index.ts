@@ -1,6 +1,7 @@
 import { ComponentPropsWithoutRef, ElementType } from "react"
-import { SHIMMER, SORT } from "./enums"
+import { DRAG_DIRECTION, SHIMMER, SORT } from "./enums"
 import { animationProps, Skeleton } from "./interfaces"
+import { DragOptions } from "../hooks"
 
 export type dynamicObject = { 
     [x: string] : any 
@@ -34,8 +35,8 @@ export interface FormatNumberParams {
 export type zuzProps = `as` | `css` | `hover` | `before` | `after`
 
 export interface ZuzProps {
-    /** Defines the React element or HTML tag to render */
-    // tag?: T;
+    /** When true, exposes itself to ZuzBuilder (Editor) */
+    withEditor?: boolean;
 
     /** CSS Styles, such as "w:100" for "width: 100px"; */
     as?: string | string[];
@@ -57,13 +58,33 @@ export interface ZuzProps {
 
     /** Makes Component Draggable */
     draggable?: boolean;
+
+    dragOptions?: DragOptions;
 }
 
 export type Attach<T, U> = Omit<T, keyof U> & U
 
-export type BaseProps<T extends keyof JSX.IntrinsicElements> = ComponentPropsWithoutRef<T>
+// export type BaseProps<T extends keyof JSX.IntrinsicElements> = ComponentPropsWithoutRef<T>
 
-// export type Props<T extends keyof JSX.IntrinsicElements> = BaseProps<T> & ZuzProps<T>
+// export type Props<T extends keyof JSX.IntrinsicElements> = BaseProps<T> & ZuzProps
+
 export type Props<T extends ElementType> = ZuzProps & Omit<ComponentPropsWithoutRef<T>, keyof ZuzProps>;
 
 export type FormInputs = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+
+export type cssShortKey = keyof cssShortKeys
+export type cssShortKeys = {
+    w: string | number,
+    h: string | number,
+    x: string | number,
+    y: string | number,
+    z: string | number,
+    r: string | number,
+    rx: string | number,
+    ry: string | number,
+    rz: string | number,
+    s: string | number,
+    sx: string | number,
+    sy: string | number,
+    sz: string | number,
+};

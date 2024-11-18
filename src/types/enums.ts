@@ -3,6 +3,11 @@ export enum SPINNER {
     Roller = "ROLLER"
 }
 
+export enum SLIDER {
+    Default = "range",
+    Text = "number"
+}
+
 export enum FORMVALIDATION_STYLE {
     Dots = "DOTS"
 }
@@ -231,4 +236,10 @@ export enum SHIMMER {
     Classic = "CLASSIC",
     Aurora = "AURORA",
     Flame = "FLAME",
+}
+
+export enum DRAG_DIRECTION {
+    x = "x",
+    y = "y",
+    xy = "xy"
 }

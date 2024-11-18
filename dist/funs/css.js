@@ -1,5 +1,5 @@
 import { __SALT, FIELNAME_KEY, isColor, isHexColor, isNumber, LINE_KEY, setDeep } from "./index.js";
-import { cssAnimationCurves, cssDirect, cssProps, cssPropsWithColor, cssTransformKeys, cssWithKeys } from "./stylesheet.js";
+import { cssAnimationCurves, cssDirect, cssFilterKeys, cssProps, cssPropsWithColor, cssTransformKeys, cssWithKeys } from "./stylesheet.js";
 import Hashids from "hashids";
 import { TRANSITION_CURVES, TRANSITIONS } from "../types/enums.js";
 import md5 from "md5";
@@ -283,7 +283,10 @@ class CSS {
     }
     makeUnit(k, v) {
         // console.log(`unit`, k, v)
-        if (k == `rotate`) {
+        if ([
+            `rotate`, `rotateX`, `rotateY`, `rotateZ`,
+            `r`, `rx`, `ry`, `rz`,
+        ].includes(k)) {
             return `deg`;
         }
         if (cssTransformKeys.includes(k))
@@ -709,6 +712,15 @@ class CSS {
                                 .replace(`__DELAY__`, delay);
                             _out = _out.replace(`;`, `${important};`);
                         }
+                        else if (key == `rotate3d`) {
+                            const [rx, ry, rz, ra] = val.split(`,`);
+                            _out = self.DIRECT[key]
+                                .replace(`__X__`, rx)
+                                .replace(`__Y__`, ry)
+                                .replace(`__Z__`, rz)
+                                .replace(`__A__`, ra.match(/^\d+deg$/) ? ra : `${ra}deg`);
+                            _out = _out.replace(`;`, `${important};`);
+                        }
                         else {
                             // const __value = `${val}${key == `extend` ? `` : self.makeUnit(key, val)}`
                             const __value = `${val}${self.IGNORE.includes(key) ? `` : self.makeUnit(key, val)}`;
@@ -757,11 +769,32 @@ class CSS {
                 });
                 return out;
             };
+            const mergeDuplicates = (o) => {
+                const kvs = {};
+                const _transforms = [];
+                Object.keys(o).map((_k) => {
+                    if (typeof o[_k] === `string` && o[_k].startsWith(`transform:`)) {
+                        // console.log(_k, o[_k])
+                        const [_tk, _tv] = o[_k].replace(`;`, ``).split(`:`);
+                        _transforms.push(_tv.trim());
+                        self.cx.splice(self.cx.indexOf(_k), 1);
+                    }
+                    else {
+                        kvs[_k] = o[_k];
+                    }
+                });
+                if (_transforms.length > 0) {
+                    const _id = self.makeID(`transform`, `transform`, `transform: ${_transforms.join(` `)}`);
+                    kvs[_id] = `transform: ${_transforms.join(` `)};`;
+                    self.cx.push(_id);
+                }
+                return kvs;
+            };
             const _built = build(self.lexer(line));
             if (self.debug?.lexer)
                 console.log(line, self.lexer(line), _built);
-            // console.log(line, self.lexer(line))
-            self.cache = { ...self.cache, ..._built };
+            // console.log(line, self.lexer(line), _built)
+            self.cache = { ...self.cache, ...mergeDuplicates(_built) };
         }
     }
     Build(css, cli = false, ff = ``) {
@@ -799,6 +832,8 @@ class CSS {
         // if ( !cli ){
         //     console.log(css, self.cx, self.styleSheet(_cleaned))
         // }
+        // console.log(`[${cli}]`, self.cache)
+        // console.log(`[${cli}]`, _cleaned)
         if (self.debug?.classes)
             console.log(`[${cli}]`, self.cx);
         if (self.debug?.cache)
@@ -824,10 +859,15 @@ export const buildWithStyles = (source) => {
     const _css = new CSS();
     if (Object.keys(source).length > 0) {
         const _transform = [];
-        for (const prop in source) {
+        const _filter = [];
+        for (const _prop in source) {
+            let prop = _prop;
             if (prop in cssWithKeys) {
-                if (cssTransformKeys.includes(cssWithKeys[prop])) {
+                if (cssTransformKeys.includes(cssWithKeys[prop].toString())) {
                     _transform.push(`${cssWithKeys[prop]}(${source[prop]}${_css.makeUnit(prop, source[prop])})`);
+                }
+                if (cssFilterKeys.includes(cssWithKeys[prop].toString())) {
+                    _filter.push(`${cssWithKeys[prop]}(${source[prop]}${_css.makeUnit(prop, source[prop])})`);
                 }
                 else
                     _[cssWithKeys[prop]] = source[prop];
@@ -836,12 +876,18 @@ export const buildWithStyles = (source) => {
                 if (cssTransformKeys.includes(prop)) {
                     _transform.push(`${prop}(${source[prop]}${_css.makeUnit(prop, source[prop])})`);
                 }
+                else if (cssFilterKeys.includes(prop)) {
+                    _filter.push(`${prop}(${source[prop]}${_css.makeUnit(prop, source[prop])})`);
+                }
                 else
                     _[prop] = source[prop];
             }
         }
         if (_transform.length > 0) {
             _.transform = _transform.join(` `);
+        }
+        if (_filter.length > 0) {
+            _.filter = _filter.join(` `);
         }
         // console.log(_, _transform)
     }

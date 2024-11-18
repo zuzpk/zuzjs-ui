@@ -51,6 +51,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>) : {
         shimmer,
         propsToRemove,
         draggable,
+        dragOptions,
         ...rest
     } = props || {};
 
@@ -73,7 +74,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>) : {
         _style = transition ? getAnimationTransition(transition, false, true) : from || {};
     }
 
-    const drag = useDrag()
+    const drag = useDrag(dragOptions)
     let dragProps = {} 
     let dragStyle = {}
     if ( draggable ){
@@ -84,6 +85,8 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>) : {
             transform: `translate(${drag.position.x}px, ${drag.position.y}px)`,
         }
     }
+
+    // console.log(`x`, buildWithStyles(_style),)
 
     return {
         style: {

@@ -1,4 +1,4 @@
-import { dynamicObject } from "../types"
+import { cssShortKeys, dynamicObject } from "../types"
 
 export const cssProps : dynamicObject = {  
             
@@ -321,7 +321,13 @@ export const cssDirect : dynamicObject = {
     "x": "transform: translateX(__VALUE__);",
     "y": "transform: translateY(__VALUE__);",
     "rotate": "transform: rotate(__VALUE__);",
+    "rotateX": "transform: rotateX(__VALUE__);",
+    "rotateY": "transform: rotatY(__VALUE__);",
+    "rotateZ": "transform: rotateZ(__VALUE__);",
+    "rotate3d": "transform: rotate3d(__X__, __Y__, __Z__, __A__);",
     "scale": "transform: scale(__VALUE__);",
+    "view": "perspective: __VALUE__;",
+    "3d": "transform-style: preserve-3d;",
     "anim": "transition: all __VALUE__ __CURVE__ __DELAY__;",
     "hide" : "display: none;",
     "block" : "display: block;",
@@ -439,13 +445,33 @@ export const cssTransformKeys: string[] = [
     'skewY',
     'perspective',
     'matrix',
-    'matrix3d'
+    'matrix3d',
 ];
 
-export const cssWithKeys : dynamicObject = {
+export const cssFilterKeys: string[] = [
+    'blur',
+    'brightness',
+    'contrast',
+    'drop-shadow',
+    'grayscale',
+    'hue-rotate',
+    'invert',
+    'saturate',
+    'sepia',
+];
+
+export const cssWithKeys : cssShortKeys = {
     w: `width`,
     h: `height`,
     x: `translateX`,
     y: `translateY`,
     z: `translateZ`,
+    r: `rotate`,
+    rx: `rotateX`,
+    ry: `rotateY`,
+    rz: `rotateZ`,
+    s: `scale`,
+    sx: `scaleX`,
+    sy: `scaleY`,
+    sz: `scaleZ`,
 }

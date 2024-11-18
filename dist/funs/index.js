@@ -12,7 +12,7 @@ let __css;
 export const __SALT = `zuzjs-ui`;
 export const FIELNAME_KEY = `__FILENAME__`;
 export const LINE_KEY = `__LINE__`;
-export const extendGlobals = () => {
+export const withGlobals = () => {
     Object.prototype.isTypeof = function (v) { return typeof this === typeof v; };
     Object.prototype.equals = function (v) { return this === v; };
     Object.prototype.isNull = function () { return this === null; };
@@ -54,6 +54,7 @@ export const extendGlobals = () => {
         return `${this.charAt(0).toUpperCase()}${this.substring(1, this.length)}`;
     };
 };
+export const isBrowser = typeof document !== "undefined";
 export const is = (o, v) => typeof o === v;
 export const isTypeOf = (o, v) => typeof o === typeof v;
 export const equals = (o, v) => o === v;
