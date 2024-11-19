@@ -64,10 +64,6 @@ export interface ZuzProps {
 
 export type Attach<T, U> = Omit<T, keyof U> & U
 
-// export type BaseProps<T extends keyof JSX.IntrinsicElements> = ComponentPropsWithoutRef<T>
-
-// export type Props<T extends keyof JSX.IntrinsicElements> = BaseProps<T> & ZuzProps
-
 export type Props<T extends ElementType> = ZuzProps & Omit<ComponentPropsWithoutRef<T>, keyof ZuzProps>;
 
 export type FormInputs = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement

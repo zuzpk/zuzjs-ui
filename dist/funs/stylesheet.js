@@ -324,7 +324,9 @@ export const cssDirect = {
 export const cssPropsWithColor = [
     // Regular CSS keys
     "color",
+    "bg",
     "background",
+    "background-color",
     "border",
     "border-color",
     "border-top-color",

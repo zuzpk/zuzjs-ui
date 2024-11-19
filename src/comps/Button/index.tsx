@@ -21,13 +21,13 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     } = useBase<"button">(pops)
  
     return <button
-        className={`${className} flex aic ${icon ? `ico-btn` : ``}`}
+        className={`${className} flex aic jcc ${icon ? `ico-btn` : ``}`}
         style={style}
         ref={ref}
         {...rest}>
         
         {icon && <Icon 
-            name={`icon-${icon}`} />}
+            name={icon} />}
 
         {withLabel === true ? <Span>{children}</Span> : children}
 

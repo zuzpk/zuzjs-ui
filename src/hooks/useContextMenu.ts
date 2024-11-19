@@ -1,12 +1,12 @@
 import { Ref, RefObject, useEffect } from "react";
-import { ContextMenuHandler } from "../comps";
+import { ContextItem, ContextMenuHandler } from "../comps";
 
 const useContextMenu = (menu: RefObject<ContextMenuHandler>) => {
 
-    const show = (e : MouseEvent) => {
+    const show = (e : MouseEvent, items?: ContextItem[]) => {
         e.preventDefault();
         e.stopPropagation();
-        menu.current?.show(e);
+        menu.current?.show(e, items);
     }
 
     const hide = (e : MouseEvent | TouchEvent) => {
@@ -14,11 +14,9 @@ const useContextMenu = (menu: RefObject<ContextMenuHandler>) => {
     }
 
     useEffect(() => {
-        document.addEventListener("mousedown", hide);
-        document.addEventListener("touchstart", hide);
+        document.addEventListener("click", hide);
         return () => {
-            document.removeEventListener("mousedown", hide);
-            document.removeEventListener("touchstart", hide);
+            document.removeEventListener("click", hide);
         }
     }, [menu])
 

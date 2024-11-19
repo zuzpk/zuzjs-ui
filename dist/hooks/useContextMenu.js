@@ -1,19 +1,17 @@
 import { useEffect } from "react";
 const useContextMenu = (menu) => {
-    const show = (e) => {
+    const show = (e, items) => {
         e.preventDefault();
         e.stopPropagation();
-        menu.current?.show(e);
+        menu.current?.show(e, items);
     };
     const hide = (e) => {
         menu.current?.hide(e);
     };
     useEffect(() => {
-        document.addEventListener("mousedown", hide);
-        document.addEventListener("touchstart", hide);
+        document.addEventListener("click", hide);
         return () => {
-            document.removeEventListener("mousedown", hide);
-            document.removeEventListener("touchstart", hide);
+            document.removeEventListener("click", hide);
         };
     }, [menu]);
     return { show, hide };

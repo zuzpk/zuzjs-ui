@@ -6,6 +6,10 @@ declare const SVGIcons: {
     eye: import("react/jsx-runtime").JSX.Element;
     eyeSlash: import("react/jsx-runtime").JSX.Element;
     check: import("react/jsx-runtime").JSX.Element;
+    info: import("react/jsx-runtime").JSX.Element;
+    warning: import("react/jsx-runtime").JSX.Element;
+    error: import("react/jsx-runtime").JSX.Element;
+    success: import("react/jsx-runtime").JSX.Element;
     layers: import("react/jsx-runtime").JSX.Element;
     play: import("react/jsx-runtime").JSX.Element;
     pause: import("react/jsx-runtime").JSX.Element;

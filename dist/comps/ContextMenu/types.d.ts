@@ -5,16 +5,17 @@ export interface ContextItem {
     icon?: string;
     iconColor?: string;
     className?: string;
+    enabled?: boolean;
     onSelect: () => void;
 }
 export type ContextMenuProps = BoxProps & {
-    items: ContextItem[];
+    items?: ContextItem[];
 };
 export type MenuItemProps = ContextItem & {
     index: number;
     className: string;
 };
 export interface ContextMenuHandler {
-    show: (e: MouseEvent | TouchEvent) => void;
+    show: (e: MouseEvent | TouchEvent, items?: ContextItem[]) => void;
     hide: (e: MouseEvent | TouchEvent) => void;
 }

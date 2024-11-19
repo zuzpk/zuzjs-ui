@@ -258,7 +258,6 @@ class CSS {
             const __k = self.cleanKey(_k);
             if (`object` == typeof cache[_k]) {
                 const _d = oid(_k, cache[_k]);
-                // console.log(_d)
                 let _indices = 0;
                 for (let i = 0; i < _d.length; i++) {
                     _indices += self.chars.indexOf(_d.charAt(i));
@@ -313,8 +312,8 @@ class CSS {
             return v.trim();
     }
     makeValue(k, v) {
-        // const hasGradient = v.includes(`gradient`)
         const self = this;
+        // console.log(`makeValue`, k, v)
         if (k in this.PROPS) {
             const key = this.PROPS[k];
             let value;
@@ -459,9 +458,11 @@ class CSS {
             else {
                 // ${v.charAt(0) == `$` ? `var(--${v.substring(1)})` : v}
                 // if ( key.includes(`padding`) ) console.log(`->padding`, v)
+                // console.log(`rea`, k, v)
                 if (v.includes(`,`)) {
-                    // console.log(`vwithcomma`, v)
+                    // console.log(`vwithcomma`, k, v)
                     let __v = [];
+                    const __k = k in cssProps ? cssProps[k] : k;
                     v.split(`,`).map((_) => {
                         // console.log(`comma`, _, cssPropsWithColor.includes(_) && isColor(`#${_}`))
                         if (_.charAt(0) == `#`) {
@@ -481,7 +482,7 @@ class CSS {
                                 __v.push(isHexColor(`#${_}`) ? `#${_}` : _);
                             }
                         }
-                        else if (isColor(`#${_}`)) {
+                        else if (cssPropsWithColor.includes(__k) && isColor(`#${_}`)) {
                             __v.push(self.makeColor(_));
                         }
                         else {
@@ -637,6 +638,7 @@ class CSS {
     }
     processLine(line) {
         const self = this;
+        // console.log(self.cx)
         if (line.startsWith(FIELNAME_KEY)) {
             self.cache = { ...self.cache, [FIELNAME_KEY]: line.split(`:`)[1] };
         }
@@ -658,7 +660,7 @@ class CSS {
                     if (key in self.PROPS) {
                         const _out = self.makeValue(key, _val);
                         const _id = self.makeID(key, _val + pseudo, _out);
-                        // console.log(`props`, _k, _id)
+                        // console.log(`_VALUE`, _k, _id)
                         if (pseudo == ``)
                             self.cx.push(_id);
                         // console.log(`_build`, key, _val, _id, _out)
@@ -729,7 +731,7 @@ class CSS {
                         }
                         // console.log(`_build`, key, _val)
                         const _id = self.makeID(key, key + pseudo, _out);
-                        // console.log(`_buildid`, key, _id)
+                        // console.log(`_VALUE-2`, _k, _id)
                         if (pseudo == ``)
                             self.cx.push(_id);
                         if (_mediaQuery) {
@@ -788,12 +790,14 @@ class CSS {
                     kvs[_id] = `transform: ${_transforms.join(` `)};`;
                     self.cx.push(_id);
                 }
+                // console.log(`[mergeDuplicates]`, o, kvs)
                 return kvs;
             };
             const _built = build(self.lexer(line));
             if (self.debug?.lexer)
-                console.log(line, self.lexer(line), _built);
+                console.log(pc.cyan(`[lexer]`), line, self.lexer(line), _built);
             // console.log(line, self.lexer(line), _built)
+            // self.cache = { ...self.cache, ...mergeDuplicates(_built) }
             self.cache = { ...self.cache, ...mergeDuplicates(_built) };
         }
     }
@@ -835,15 +839,15 @@ class CSS {
         // console.log(`[${cli}]`, self.cache)
         // console.log(`[${cli}]`, _cleaned)
         if (self.debug?.classes)
-            console.log(`[${cli}]`, self.cx);
+            console.log(pc.cyan(`[classes]`), self.cx);
         if (self.debug?.cache)
-            console.log(`[${cli}]`, self.cache);
+            console.log(pc.cyan(`[cache]`), self.cache);
         if (self.debug?.cleaned)
-            console.log(`[${cli}]`, _cleaned);
+            console.log(pc.cyan(`[cleaned]`), _cleaned);
         if (self.debug?.sheet)
-            console.log(_stylesheet);
+            console.log(pc.cyan(`[sheet]`), _stylesheet);
         if (self.debug?.media)
-            console.log(self._mediaQueries);
+            console.log(pc.cyan(`[mediaquery]`), self._mediaQueries);
         const _ = {
             cx: self.cx,
             sheet: _stylesheet,

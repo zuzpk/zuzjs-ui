@@ -78,10 +78,10 @@ export declare enum SKELETON {
     Circle = "CIRCLE"
 }
 export declare enum ALERT {
-    Success = "SUCCESS",
-    Error = "ERROR",
-    Warning = "WARNING",
-    Info = "INFO"
+    Success = "success",
+    Error = "error",
+    Warning = "warning",
+    Info = "info"
 }
 export declare enum AVATAR {
     Circle = "CIRCLE",
@@ -194,4 +194,10 @@ export declare enum DRAG_DIRECTION {
     x = "x",
     y = "y",
     xy = "xy"
+}
+export declare enum Size {
+    Default = "def",
+    Small = "sm",
+    Medium = "md",
+    Large = "lg"
 }

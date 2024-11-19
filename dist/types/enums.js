@@ -108,10 +108,10 @@ export var SKELETON;
 })(SKELETON || (SKELETON = {}));
 export var ALERT;
 (function (ALERT) {
-    ALERT["Success"] = "SUCCESS";
-    ALERT["Error"] = "ERROR";
-    ALERT["Warning"] = "WARNING";
-    ALERT["Info"] = "INFO";
+    ALERT["Success"] = "success";
+    ALERT["Error"] = "error";
+    ALERT["Warning"] = "warning";
+    ALERT["Info"] = "info";
 })(ALERT || (ALERT = {}));
 export var AVATAR;
 (function (AVATAR) {
@@ -234,3 +234,10 @@ export var DRAG_DIRECTION;
     DRAG_DIRECTION["y"] = "y";
     DRAG_DIRECTION["xy"] = "xy";
 })(DRAG_DIRECTION || (DRAG_DIRECTION = {}));
+export var Size;
+(function (Size) {
+    Size["Default"] = "def";
+    Size["Small"] = "sm";
+    Size["Medium"] = "md";
+    Size["Large"] = "lg";
+})(Size || (Size = {}));

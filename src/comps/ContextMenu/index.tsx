@@ -1,13 +1,13 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import Box, { BoxProps } from "../Box";
-import { ContextMenuHandler, ContextMenuProps, MenuItemProps } from "./types";
+import { ContextItem, ContextMenuHandler, ContextMenuProps, MenuItemProps } from "./types";
 import { useBase } from "../../hooks";
 import MenuItem from "./item";
 import { dynamicObject } from "../../types";
 
 const ContextMenu = forwardRef<ContextMenuHandler, ContextMenuProps>((props, ref ) => {
     
-    const { as, items, ...pops } = props;
+    const { as, items: _items, ...pops } = props;
 
     const {
         className,
@@ -17,10 +17,11 @@ const ContextMenu = forwardRef<ContextMenuHandler, ContextMenuProps>((props, ref
 
     const [ visible, setVisible ] = useState(false);
     const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [ items, setItems ] = useState<ContextItem[]>(_items || [])
+
 
     useImperativeHandle(ref, () => ({
-      show: (e: MouseEvent | TouchEvent) => {
-        // console.log(e)
+      show: (e: MouseEvent | TouchEvent, menuItems?: ContextItem[]) => {
         if (e instanceof MouseEvent) {
             setPosition({ x: e.clientX, y: e.clientY })
         } else if (e instanceof TouchEvent && e.touches.length > 0) {
@@ -30,12 +31,17 @@ const ContextMenu = forwardRef<ContextMenuHandler, ContextMenuProps>((props, ref
             const { clientX: x, clientY: y } = e as dynamicObject
             setPosition({ x, y })
         }
+        if (menuItems){
+            setItems(menuItems)
+        }
         setVisible(true)
       },  
       hide: (e: MouseEvent | TouchEvent) => setVisible(false),  
     }))
 
-    useEffect(() => {}, [visible, position])
+    useEffect(() => {
+        
+    }, [visible, position, items])
 
     if ( !visible ) return null;
 

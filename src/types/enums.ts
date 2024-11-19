@@ -111,10 +111,10 @@ export enum SKELETON {
 }
 
 export enum ALERT {
-    Success = "SUCCESS",
-    Error = "ERROR",
-    Warning = "WARNING",
-    Info = "INFO"
+    Success = "success",
+    Error = "error",
+    Warning = "warning",
+    Info = "info"
 }
 
 export enum AVATAR {
@@ -242,4 +242,11 @@ export enum DRAG_DIRECTION {
     x = "x",
     y = "y",
     xy = "xy"
+}
+
+export enum Size {
+    Default = `def`,
+    Small = `sm`,
+    Medium = `md`,
+    Large = `lg`
 }

@@ -83,12 +83,18 @@ input{
     --text-wheel-speed: 2;
     --text-wheel-transition: translate calc(var(--text-wheel-speed) * 1s) var(--ease);
 
-    --checkbox-height: 24px;
-    --checkbox-width: 42px;
-    --checkbox-knob-size: 20px;
-    --checkbox-knob-left: 2px;
-    --checkbox-knob-top: 2px;
-    --checkbox-knob-left-on: 18px;
+    --switch-height: 24px;
+    --switch-width: 42px;
+    --switch-knob-size: 20px;
+    --switch-knob-left: 2px;
+    --switch-knob-top: 2px;
+    --switch-knob-left-on: 18px;
+    --switch-checked: rgb(46, 161, 42);
+    --switch-unchecked: rgb(203, 203, 203);
+    --switch-knob: #fff;
+    --switch-knob-shadow: #000;
+    --switch-knob-shadow-size: 2px;
+
     --checkbox-check-color: #fff;
     --checkbox-check-size: 13px;
     --checkbox-size: 20px;
@@ -102,8 +108,8 @@ input{
     --cover-bg: rgba(255,255,255,0.8);
     --cover-label: #111;
 
-    --zuz-overlay: rgba(0, 0, 0, 0.7);
-    --zuz-overlay-blur: 0;
+    --overlay: rgba(0, 0, 0, 0.7);
+    --overlay-blur: 0;
     --drawer-color: #fff;
     --drawer-handle-color: #ccc;
     --drawer-radius-v: 0px;
@@ -400,9 +406,9 @@ button{
 }
 
 .--overlay{
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--overlay);
     z-index: var(--max-z-index);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(var(--overlay-blur));
 }
 
 .--otp{
@@ -633,6 +639,8 @@ button{
             border-radius: var(--select-option-radius);
             font-size: var(--select-font-size);
             white-space: pre;
+            text-align: left !important;
+            justify-content: flex-start;
             &:hover{
                 background: var(--select-option-hover);
             }
@@ -713,8 +721,23 @@ button{
         }
     }
 .--switch{
-    height: var(--checkbox-height);
-    width: var(--checkbox-width);
+
+    &.--md{
+        --switch-height: 20px;
+        --switch-width: 36px;
+        --switch-knob-size: 16px;
+        --switch-knob-left-on: 16px;
+    }
+    &.--sm{
+        --switch-height: 10px;
+        --switch-width: 34px;
+        --switch-knob-size: 16px;
+        --switch-knob-left: 0px;
+        --switch-knob-top: -3px;
+    }
+
+    height: var(--switch-height);
+    width: var(--switch-width);
     cursor: pointer;
     input[type=checkbox]{
         z-index: 0;
@@ -725,9 +748,9 @@ button{
     &:before{
         content: "";
         position: absolute;
-        height: var(--checkbox-height);
-        width: var(--checkbox-width);
-        background: var(--checkbox-unchecked);
+        height: var(--switch-height);
+        width: var(--switch-width);
+        background: var(--switch-unchecked);
         border-radius: 50px;
         z-index: 1;
         @include anim($duration: 0.3s);
@@ -735,22 +758,22 @@ button{
     &:after{
         content: "";
         position: absolute;
-        width: var(--checkbox-knob-size);
-        height: var(--checkbox-knob-size);
-        background: var(--checkbox-thumb);
+        width: var(--switch-knob-size);
+        height: var(--switch-knob-size);
+        background: var(--switch-knob);
         border-radius: 50px;
         z-index: 2;
-        top: var(--checkbox-knob-top);
-        left: var(--checkbox-knob-left);
-        box-shadow: 0px 0px --checkbox-thumb-shadow-size --checkbox-thumb-shadow;
+        top: var(--switch-knob-top);
+        left: var(--switch-knob-left);
+        box-shadow: 0px 0px var(--switch-knob-shadow-size) var(--switch-knob-shadow);
         @include anim($duration: 0.75s, $fun: var(--bounce));
     }
     &.is-checked {
         &:before{
-            box-shadow: inset 0px 0px 0px 15px var(--checkbox-checked);
+            box-shadow: inset 0px 0px 0px 15px var(--switch-checked);
         }
         &:after{
-            transform: translateX(var(--checkbox-knob-left-on));
+            transform: translateX(var(--switch-knob-left-on));
         }
     }
 }

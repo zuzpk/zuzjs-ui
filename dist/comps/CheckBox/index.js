@@ -1,12 +1,12 @@
 "use client";
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
-import { CHECKBOX } from "../../types/enums";
+import { CHECKBOX, Size } from "../../types/enums";
 import Label from "../Label";
 import Input from "../Input";
 import SVGIcons from "../svgicons";
 const CheckBox = forwardRef((props, ref) => {
-    const { name, required, type, value, checked: defaultCheck, onChange, ...pops } = props;
+    const { name, required, type, value, size, checked: defaultCheck, onChange, ...pops } = props;
     const [checked, _setChecked] = useState(defaultCheck || false);
     const bRef = useRef(null);
     useImperativeHandle(ref, () => ({
@@ -26,7 +26,7 @@ const CheckBox = forwardRef((props, ref) => {
             _setChecked(!checked);
         }
     }));
-    return _jsxs(Label, { className: `--${(type || CHECKBOX.Default).toLowerCase()} ${!type || type == CHECKBOX.Default ? `--checkbox` : `--switch`} flex aic jcc ${checked ? `is-checked` : ``} rel`.trim(), ...pops, children: [(!type || type == CHECKBOX.Default) && SVGIcons.check, _jsx(Input, { ...{}, ref: bRef, defaultChecked: checked, value: value || `cb`, type: `checkbox`, className: `abs`, name: name, required: required || false, onChange: (e) => {
+    return _jsxs(Label, { className: `--${(type || CHECKBOX.Default).toLowerCase()} ${!type || type == CHECKBOX.Default ? `--checkbox` : `--switch`} --${size || Size.Default} flex aic jcc ${checked ? `is-checked` : ``} rel`.trim(), ...pops, children: [(!type || type == CHECKBOX.Default) && SVGIcons.check, _jsx(Input, { ...{}, ref: bRef, defaultChecked: checked, value: value || `cb`, type: `checkbox`, className: `abs`, name: name, required: required || false, onChange: (e) => {
                     onChange && onChange(e.target.checked, value || `cb`);
                     _setChecked(e.target.checked);
                 } })] });

@@ -1,8 +1,10 @@
 /**Components */
-export { default as ActionBar } from './Actionbar';
-export * from './Actionbar/types';
 export { default as Accordion } from './Accordion';
 export * from './Accordion/types';
+export { default as ActionBar } from './Actionbar';
+export * from './Actionbar/types';
+export { default as Alert } from './Alert';
+export * from './Alert/types';
 export { type AvatarProps, default as Avatar } from './Avatar';
 export { type BoxProps, default as Box } from './Box';
 export { type ButtonProps, default as Button } from './Button';
@@ -41,6 +43,7 @@ export { default as Switch } from './Switch';
 export { default as TabView } from './TabView';
 export * from './TabView/types';
 export { type TextProps, default as Text } from './Text';
+export { type TextAreaProps, default as Textarea } from './TextArea';
 export { default as TextWheel } from './TextWheel';
 export * from './TextWheel/types';
 export { type ToolTipProps, default as ToolTip } from './Tooltip';

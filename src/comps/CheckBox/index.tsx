@@ -1,6 +1,6 @@
 "use client"
 import { ChangeEvent, forwardRef, useImperativeHandle, useRef, useState } from "react";
-import { CHECKBOX } from "../../types/enums";
+import { CHECKBOX, Size } from "../../types/enums";
 import Label, { LabelProps } from "../Label";
 import Input, { InputProps } from "../Input";
 import { CheckboxHandler, CheckBoxProps } from "./types";
@@ -8,7 +8,7 @@ import SVGIcons from "../svgicons";
 
 const CheckBox = forwardRef<CheckboxHandler, CheckBoxProps>((props, ref) => {
     
-    const { name, required, type, value, checked: defaultCheck, onChange, ...pops } = props;
+    const { name, required, type, value, size, checked: defaultCheck, onChange, ...pops } = props;
     const [ checked, _setChecked ] = useState(defaultCheck || false)
 
     const bRef = useRef<HTMLInputElement>(null)
@@ -34,7 +34,7 @@ const CheckBox = forwardRef<CheckboxHandler, CheckBoxProps>((props, ref) => {
     }))
 
     return <Label 
-        className={`--${(type || CHECKBOX.Default).toLowerCase()} ${!type || type == CHECKBOX.Default ? `--checkbox` : `--switch`} flex aic jcc ${checked ? `is-checked` : ``} rel`.trim()}
+        className={`--${(type || CHECKBOX.Default).toLowerCase()} ${!type || type == CHECKBOX.Default ? `--checkbox` : `--switch`} --${size || Size.Default} flex aic jcc ${checked ? `is-checked` : ``} rel`.trim()}
         {...pops as LabelProps } >
         {(!type || type == CHECKBOX.Default) && SVGIcons.check}
         <Input
