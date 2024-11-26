@@ -1,14 +1,14 @@
 "use client"
 import { forwardRef } from "react";
 import Box, { BoxProps } from "../Box";
-import { SPINNER } from "../../types/enums";
+import { Size, SPINNER } from "../../types/enums";
 import { useBase } from "../../hooks";
 import { dynamicObject } from "../../types";
 import { hexToRgba } from "../../funs";
 
 export type SpinnerProps = BoxProps & {
     type?: SPINNER,
-    size?: number,
+    size?: Size | number,
     width?: number,
     color?: string,
     background?: string,
@@ -30,10 +30,16 @@ const Spinner = forwardRef<HTMLDivElement, SpinnerProps >((props, ref) => {
 
         const c = color && color.startsWith(`var`) ? color : hexToRgba(color || defaultColor)
         const bg = color && color.startsWith(`var`) ? color :  hexToRgba(color || defaultColor, .3)
-        
+        const sizes : dynamicObject = {
+            [Size.Small]: 20,
+            [Size.Medium]: 30,
+            [Size.Large]: 50,
+            default: 20
+        }
+        const _size = size ? Object.values(Size).includes(size as Size) ? sizes[size] : size : sizes.default
         const _props : dynamicObject = {
-            width: size || 30,
-            height: size || 30,
+            width: _size,
+            height: _size,
             border: `${width || 3}px solid ${bg}`,
             borderRadius: `50%`,
             borderTopColor: c,

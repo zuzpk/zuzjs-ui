@@ -78,6 +78,11 @@ export enum CHECKBOX {
     Switch = "SWITCH"
 }
 
+export enum RADIO {
+    Default = "DEFAULT",
+    Card = "CARD"
+}
+
 export enum EDIT_TYPE {
     Slider = "SLIDER",
     Checkbox = "CHECKBOX"

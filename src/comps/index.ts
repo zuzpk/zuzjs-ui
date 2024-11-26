@@ -11,7 +11,8 @@ export * from './Alert/types';
 
 export { type AvatarProps, default as Avatar } from './Avatar';
 export { type BoxProps, default as Box } from './Box';
-export { type ButtonProps, default as Button } from './Button';
+export { default as Button } from './Button';
+export * from './Button/types';
 
 export { default as CheckBox } from './CheckBox';
 export * from './CheckBox/types';
@@ -42,6 +43,9 @@ export { type PinInputProps, default as PinInput } from './PinInput';
 export { default as ProgressBar } from './ProgressBar';
 export * from './ProgressBar/types';
 
+export { default as Radio } from './Radio';
+export * from './Radio/types';
+
 export { type SearchProps, default as Search } from './Search';
 
 export { default as SelectTabs } from './Segmented';
@@ -65,7 +69,8 @@ export { type TextAreaProps, default as Textarea } from './TextArea';
 export { default as TextWheel } from './TextWheel';
 export * from './TextWheel/types';
 
-export { type ToolTipProps, default as ToolTip } from './Tooltip';
+export { default as ToolTip } from './Tooltip';
+export * from './Tooltip/types';
 
 export { default as TreeView } from './Treeview';
 export * from './Treeview/types';

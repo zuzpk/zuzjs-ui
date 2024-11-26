@@ -12,7 +12,7 @@ export type PinInputProps = InputProps & {
 
 const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
 
-    const { animate, size, mask, ...pops } = props
+    const { size, mask, ...pops } = props
     const inputs = useRef<(HTMLInputElement | null)[]>([])
     
     let name = `pinput`

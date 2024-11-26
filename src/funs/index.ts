@@ -10,6 +10,7 @@ import Cookies from "js-cookie";
 import moment from "moment";
 import { KeyCode, SORT } from "../types/enums.js";
 import { Skeleton } from "../types/interfaces";
+import { Children, cloneElement, isValidElement, ReactElement, ReactNode } from "react";
 
 let __css : CSS;
 
@@ -503,3 +504,21 @@ export const camelCase = (str: string) => {
 }
 
 export const pluralize = (word: string, count : number) => `${word}${count !== 1 ? 's' : ''}`
+
+export const addPropsToChildren = (children: ReactNode, conditions: (child: ReactElement<any>) => boolean, newProps: object) : ReactNode => {
+    return Children.map(children, (child) => {
+        if ( isValidElement(child) ){
+            const element = child as ReactElement<any>
+            const newChild = conditions(element) 
+                ? cloneElement(element, { ...newProps })
+                : element
+            if ( element.props.children ){
+                return cloneElement(newChild, {
+                    children: addPropsToChildren(element.props.children, conditions, newProps)
+                })
+            }
+            return newChild
+        }
+        return child
+    })
+}

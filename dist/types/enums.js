@@ -74,6 +74,11 @@ export var CHECKBOX;
     CHECKBOX["Default"] = "DEFAULT";
     CHECKBOX["Switch"] = "SWITCH";
 })(CHECKBOX || (CHECKBOX = {}));
+export var RADIO;
+(function (RADIO) {
+    RADIO["Default"] = "DEFAULT";
+    RADIO["Card"] = "CARD";
+})(RADIO || (RADIO = {}));
 export var EDIT_TYPE;
 (function (EDIT_TYPE) {
     EDIT_TYPE["Slider"] = "SLIDER";

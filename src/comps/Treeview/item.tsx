@@ -1,7 +1,7 @@
 import { forwardRef, ReactNode, useEffect, useMemo, useState } from "react";
 import { TreeItemHandler, TreeItemProps } from "./types";
 import Box, { BoxProps } from "../Box";
-import Button, { ButtonProps } from "../Button";
+import Button from "../Button";
 import Icon, { IconProps } from "../Icon";
 import Text, { TextProps } from "../Text";
 

@@ -1,12 +1,13 @@
 "use client";
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { forwardRef, startTransition, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, startTransition, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import Box from "../Box";
 import { useBase } from "../../hooks";
 import Sheet from "../Sheet";
 import Cover from "../Cover";
 import { FORMVALIDATION, SHEET } from "../../types/enums";
-import { isEmail, withPost } from "../../funs";
+import { addPropsToChildren, isEmail, withPost } from "../../funs";
+import { ButtonState } from "../Button/types";
 /**
  * {@link Form} is a controlled component designed to handle form data submission, validation, and display of loading or error states.
  * It allows for optional server-side submission through an action endpoint and customizable success/error handling callbacks.
@@ -22,6 +23,7 @@ const Form = forwardRef((props, ref) => {
     const [loading, setLoading] = useState(false);
     const innerRef = useRef(null);
     const sheet = useRef(null);
+    const submit = useRef(null);
     /**
      * Utility function to select multiple DOM elements within the form based on a CSS query.
      * @param query - CSS selector to match elements inside the form.
@@ -172,7 +174,7 @@ const Form = forwardRef((props, ref) => {
     const _onSubmit = useCallback(() => {
         const { error, errorMsg, payload } = _buildFormData();
         if (error) {
-            sheet.current.show(errorMsg, 4, SHEET.Error);
+            sheet.current.error(errorMsg);
         }
         else if (action) {
             // If `action` is defined, submit the form data to the specified endpoint
@@ -180,10 +182,12 @@ const Form = forwardRef((props, ref) => {
                 beforeSubmit && beforeSubmit(payload);
                 setLoading(true);
                 sheet.current.hide();
+                submit.current?.setState(ButtonState.Loading);
                 withPost(action, { ...payload, ...(withData || {}) })
                     .then(_resp => {
                     const resp = _resp;
                     setLoading(false);
+                    submit.current?.reset();
                     if (onSuccess)
                         onSuccess(resp);
                     else {
@@ -194,6 +198,7 @@ const Form = forwardRef((props, ref) => {
                     .catch(err => {
                     console.warn(`Error occurred while submitting form`, err);
                     setLoading(false);
+                    submit.current?.reset();
                     if (onError)
                         onError(err);
                     else
@@ -219,6 +224,7 @@ const Form = forwardRef((props, ref) => {
             });
         }
     }, [innerRef.current]);
+    const buildChildren = useMemo(() => addPropsToChildren(children, child => child.props.type == `submit`, { ref: submit }), [children]);
     useImperativeHandle(ref, () => ({
         setLoading(mod) {
             if (mod) {
@@ -237,6 +243,6 @@ const Form = forwardRef((props, ref) => {
         }
     }));
     useEffect(_init, []);
-    return _jsxs(Box, { ref: innerRef, style: style, className: `--form rel ${className} --form${name ? `-${name.replace(/\s+/g, `-`)}` : ``}`, propsToRemove: [`withData`, `action`, `onSubmit`, `onSuccess`, `onError`], children: [_jsx(Sheet, { ref: sheet, as: `--sheet-form` }), _jsx(Cover, { message: cover ? cover.message || undefined : `working`, spinner: spinner, color: cover ? `color` in cover ? cover.color : `#ffffff` : `#ffffff`, when: loading }), children] });
+    return _jsxs(Box, { ref: innerRef, style: style, className: `--form rel ${className} --form${name ? `-${name.replace(/\s+/g, `-`)}` : ``}`, propsToRemove: [`withData`, `action`, `onSubmit`, `onSuccess`, `onError`], children: [_jsx(Sheet, { ref: sheet, as: `--sheet-form` }), _jsx(Cover, { message: cover ? cover.message || undefined : `working`, spinner: spinner, color: cover ? `color` in cover ? cover.color : `#ffffff` : `#ffffff`, when: loading }), buildChildren] });
 });
 export default Form;

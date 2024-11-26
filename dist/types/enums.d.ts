@@ -50,6 +50,10 @@ export declare enum CHECKBOX {
     Default = "DEFAULT",
     Switch = "SWITCH"
 }
+export declare enum RADIO {
+    Default = "DEFAULT",
+    Card = "CARD"
+}
 export declare enum EDIT_TYPE {
     Slider = "SLIDER",
     Checkbox = "CHECKBOX"

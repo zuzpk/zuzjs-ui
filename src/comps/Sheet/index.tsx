@@ -5,7 +5,7 @@ import Box, { BoxProps } from "../Box";
 import { useBase } from "../../hooks";
 import { uuid } from "../../funs";
 import { animationTransition } from "../../funs/css";
-import Button, { ButtonProps } from "../Button";
+import Button from "../Button";
 import SVGIcons from "../svgicons";
 import Cover, { CoverProps } from "../Cover";
 import { ZuzProps } from "../../types";

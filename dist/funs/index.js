@@ -8,6 +8,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import moment from "moment";
 import { SORT } from "../types/enums.js";
+import { Children, cloneElement, isValidElement } from "react";
 let __css;
 export const __SALT = `zuzjs-ui`;
 export const FIELNAME_KEY = `__FILENAME__`;
@@ -392,3 +393,20 @@ export const camelCase = (str) => {
         .join('');
 };
 export const pluralize = (word, count) => `${word}${count !== 1 ? 's' : ''}`;
+export const addPropsToChildren = (children, conditions, newProps) => {
+    return Children.map(children, (child) => {
+        if (isValidElement(child)) {
+            const element = child;
+            const newChild = conditions(element)
+                ? cloneElement(element, { ...newProps })
+                : element;
+            if (element.props.children) {
+                return cloneElement(newChild, {
+                    children: addPropsToChildren(element.props.children, conditions, newProps)
+                });
+            }
+            return newChild;
+        }
+        return child;
+    });
+};

@@ -1,32 +1,51 @@
 "use client"
-import { forwardRef } from 'react';
+import { forwardRef, Ref, useImperativeHandle, useRef, useState } from 'react';
 import { Props } from '../../types';
 import { useBase } from '../../hooks';
 import Icon, { IconProps } from '../Icon';
 import Span, { SpanProps } from '../Span';
+import { ButtonHandler, ButtonProps, ButtonState } from './types';
+import Spinner from '../Spinner';
+import { Size } from '../../types/enums';
 
-export type ButtonProps = Props<`button`> & {
-    icon?: string,
-    withLabel?: boolean
-}
+const Button = forwardRef((props : ButtonProps, ref) => {
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
-
-    const { icon, children, withLabel, ...pops } = props
-
+    const { icon, iconSize, children, withLabel, spinner, ...pops } = props
     const {
         style,
         className,
         rest
     } = useBase<"button">(pops)
+    const [ loading, setLoading ] = useState(false)
+
+    useImperativeHandle(ref, () => ({
+        setState: (mod : ButtonState) => {
+            if ( mod == ButtonState.Loading ){
+                setLoading(true)
+            }
+            else if ( mod == ButtonState.Normal ){
+                setLoading(false)
+            }
+        },
+        reset: () => {
+            setLoading(false)
+        }
+    }) as ButtonHandler)
  
     return <button
         className={`${className} flex aic jcc ${icon ? `ico-btn` : ``}`}
         style={style}
-        ref={ref}
+        ref={ref as Ref<HTMLButtonElement>}
         {...rest}>
         
-        {icon && <Icon 
+        { loading && <Spinner 
+            size={Size.Small} 
+            {...{
+                color: `#ffffff`,
+                ...(spinner || {})
+            }} />}
+        {!loading && icon && <Icon
+            size={iconSize}
             name={icon} />}
 
         {withLabel === true ? <Span>{children}</Span> : children}

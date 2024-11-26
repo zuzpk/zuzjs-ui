@@ -1,5 +1,5 @@
 import { forwardRef, useEffect } from "react";
-import { AVATAR } from "../../types/enums";
+import { AVATAR, Size } from "../../types/enums";
 import { Props } from "../../types";
 import { useBase, useImage } from "../../hooks";
 import Image from "../Image";
@@ -57,7 +57,7 @@ const Avatar = forwardRef<AvatarHandler, AvatarProps>((props, ref) => {
             className={`--avatar --${(type || AVATAR.Circle).toLowerCase()} rel ${className}`.trim()}
             style={{
                 width: size || `auto`, 
-                height: `auto`,
+                height: size || `auto`,
                 ...style,
             }}
             {...rest as BoxProps}>

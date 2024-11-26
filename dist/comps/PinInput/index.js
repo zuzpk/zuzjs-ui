@@ -5,7 +5,7 @@ import { useBase } from '../../hooks';
 import Input from '../Input';
 import Box from '../Box';
 const PinInput = forwardRef((props, ref) => {
-    const { animate, size, mask, ...pops } = props;
+    const { size, mask, ...pops } = props;
     const inputs = useRef([]);
     let name = `pinput`;
     let required = false;

@@ -6,7 +6,7 @@ import Icon, { IconProps } from '../Icon';
 import Span, { SpanProps } from '../Span';
 import Input, { InputProps } from '../Input';
 import Box, { BoxProps } from '../Box';
-import Button, { ButtonProps } from '../Button';
+import Button from '../Button';
 import SVGIcons from '../svgicons';
 
 export type PasswordProps = Omit<InputProps, `type` | `numeric`> & {}

@@ -1,6 +1,7 @@
 import CSS from "./css.js";
 import { dynamicObject, FormatNumberParams, sortOptions } from "../types/index.js";
 import { KeyCode } from "../types/enums.js";
+import { ReactElement, ReactNode } from "react";
 export declare const __SALT: string;
 export declare const FIELNAME_KEY = "__FILENAME__";
 export declare const LINE_KEY = "__LINE__";
@@ -54,3 +55,4 @@ export declare const natsort: (options?: sortOptions) => (a: string | number, b:
 export declare const bindKey: (key: KeyCode, fun: () => void, element?: HTMLElement) => void;
 export declare const camelCase: (str: string) => string;
 export declare const pluralize: (word: string, count: number) => string;
+export declare const addPropsToChildren: (children: ReactNode, conditions: (child: ReactElement<any>) => boolean, newProps: object) => ReactNode;

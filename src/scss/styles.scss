@@ -1,3 +1,5 @@
+@use "./colors";
+
 @mixin anim($duration: 0.3s, $fun: linear) {
     transition: all $duration $fun 0s;
 }
@@ -40,6 +42,7 @@ input{
 }
 
 :root{
+
     --basic: ease;
 	--back: linear( 0, -0.0077 5.2%, -0.0452 16.98%, -0.0493 22.35%, -0.0418 25.57%,
        -0.0258 28.57%, -0.0007 31.42%, 0.0335 34.15%, 0.1242 39.03%, 0.2505 43.65%,
@@ -245,8 +248,10 @@ input{
     --accordion-head-font-size: 16px;
     --accordion-head-font-weight: normal;
     --accordion-head-arrow-size: 18px;
+    --accordion-head-arrow: #111;
 
     --accordion-detail-padding: 10px;
+    --accordion-detail-font-size: 15px;
 
     --password-toggle-radius: 5px;
     --password-toggle: #fff;
@@ -366,7 +371,10 @@ input{
     &.jce{justify-content: flex-end;}
     &.jcs{justify-content: flex-start;}
 }
-.abs{ position: absolute; }
+.abs{ 
+    position: absolute; 
+    &.abc{top: 50%;left: 50%;transform: translate(-50%, -50%);}
+}
 .fixed{ position: fixed; }
 .fill{
     top: 0px;
@@ -518,10 +526,16 @@ button{
         }
         .--arrow{
             width: var(--accordion-head-arrow-size);
+            svg{
+                path{
+                    fill: var(--accordion-head-arrow);
+                }
+            }
         }
     }
     .--detail{
         padding: var(--accordion-detail-padding);
+        font-size: var(--accordion-detail-font-size);
     }
 }
 
@@ -694,32 +708,32 @@ button{
 }
 
 .--checkbox{
-        height: var(--checkbox-size);
-        width: var(--checkbox-size);
-        cursor: pointer;
-        border: 1px var(--checkbox-unchecked) solid;
-        border-radius: var(--checkbox-radius);
-        overflow: hidden;
-        input[type=checkbox]{
-            z-index: 0;
-            opacity: 0;
-        }
+    height: var(--checkbox-size);
+    width: var(--checkbox-size);
+    cursor: pointer;
+    border: 1px var(--checkbox-unchecked) solid;
+    border-radius: var(--checkbox-radius);
+    overflow: hidden;
+    input[type=checkbox]{
+        z-index: 0;
+        opacity: 0;
+    }
+    &:before{
+        font-size: var(--checkbox-check-size);
+        color: var(--checkbox-check-color);
+        opacity: 0;
+    }
+    &.is-checked {
+        background-color: var(--checkbox-checked);
+        border: 1px var(--checkbox-checked) solid;
         &:before{
-            font-size: var(--checkbox-check-size);
-            color: var(--checkbox-check-color);
-            opacity: 0;
-        }
-        &.is-checked {
-            background-color: var(--checkbox-checked);
-            border: 1px var(--checkbox-checked) solid;
-            &:before{
-                opacity: 1;
-            }
-        }
-        svg{
-            fill: var(--checkbox-check-color);
+            opacity: 1;
         }
     }
+    svg{
+        fill: var(--checkbox-check-color);
+    }
+}
 .--switch{
 
     &.--md{
@@ -776,6 +790,49 @@ button{
             transform: translateX(var(--switch-knob-left-on));
         }
     }
+}
+
+.--radio{
+    --radio-size: 16px;
+    --radio: var(--black-900);
+    --radio-fill: #fff;
+    --radio-border: 1px var(--radio) solid;
+    --radio-gap: 5px;
+    --radio-padding: 6px;
+
+    gap: var(--radio-gap);
+    line-height: 1;
+
+    input[type=radio]{
+        z-index: 0;
+        left: 0px;
+        top: 0px;
+        opacity: 0;
+    }
+
+    .--dot{
+        width: var(--radio-size);
+        height: var(--radio-size);
+        background: var(--radio-fill);
+        border: var(--radio-border);
+        border-radius: 50%;
+        .--rod{
+            width: calc( var(--radio-size) - ( var(--radio-padding) * 1.5) );
+            height: calc(var(--radio-size) - ( var(--radio-padding) * 1.5) );
+            border-radius: 50%;
+        }
+    }
+    .--value{
+        flex: 1;
+    }
+
+    input[type=radio]:checked ~ .--dot{
+        background: var(--radio);
+        .--rod{
+            background: var(--radio-fill);
+        }
+    }
+
 }
 
 @keyframes shimmering{
@@ -1070,6 +1127,12 @@ button{
         background: var(--drawer-handle-color);
         margin: 12px auto 0px auto;
     }
+}
+
+.--icon{
+    &.--sm{ font-size: 14px; }
+    &.--md{  font-size: 16px;  }
+    &.--lg{  font-size: 18px; }
 }
 
 .text-wheel{
@@ -1618,10 +1681,7 @@ button{
         border-radius: var(--tooltip-radius);
         padding: var(--tooltip-padding);
         z-index: var(--max-z-index);
-        top: -1lh;
         overflow: visible;
-        left: 50%;
-        transform: translateX(-50%);
         pointer-events: none;
         user-select: none;
         &:before{
@@ -1631,14 +1691,51 @@ button{
             height: var(--tooltip-arrow-size);
             border-radius: calc(var(--tooltip-radius) / 2);
             background: var(--tooltip);
-            bottom: -0.2lh;
-            left: 50%;
-            transform: translateX(-50%) rotate(45deg);
             z-index: 0;
         }
         .--text{
             z-index: 1;
             white-space: pre;
+        }
+        &.--top{
+            top: -1lh;
+            left: 50%;
+            transform: translateX(-50%);
+            &:before{
+                bottom: -0.2lh;
+                left: 50%;
+                transform: translateX(-50%) rotate(45deg);
+            }
+        }
+        &.--bottom{
+            bottom: -1lh;
+            left: 50%;
+            transform: translateX(-50%);
+            &:before{
+                top: -0.2lh;
+                left: 50%;
+                transform: translateX(-50%) rotate(45deg);
+            }
+        }
+        &.--left{
+            right: -1lh;
+            top: 50%;
+            transform: translateY(-50%);
+            &:before{
+                right: -0.2lh;
+                top: 50%;
+                transform: translateY(-50%) rotate(45deg);
+            }
+        }
+        &.--right{
+            left: -1lh;
+            top: 50%;
+            transform: translateY(-50%);
+            &:before{
+                left: -0.2lh;
+                top: 50%;
+                transform: translateY(-50%) rotate(45deg);
+            }
         }
     }
 }

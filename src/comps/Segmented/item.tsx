@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { Segment, SegmentItemProps } from "./types"
-import Button, { ButtonProps } from "../Button"
+import Button from "../Button"
 import Box, { BoxProps } from "../Box"
 
 

@@ -1,8 +1,8 @@
 import { BoxProps } from "../Box";
-import { SPINNER } from "../../types/enums";
+import { Size, SPINNER } from "../../types/enums";
 export type SpinnerProps = BoxProps & {
     type?: SPINNER;
-    size?: number;
+    size?: Size | number;
     width?: number;
     color?: string;
     background?: string;
@@ -11,7 +11,7 @@ export type SpinnerProps = BoxProps & {
 };
 declare const Spinner: import("react").ForwardRefExoticComponent<BoxProps & {
     type?: SPINNER;
-    size?: number;
+    size?: Size | number;
     width?: number;
     color?: string;
     background?: string;

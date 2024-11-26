@@ -1,5 +1,5 @@
 "use client"
-import { forwardRef, ReactNode, startTransition, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { Children, cloneElement, forwardRef, isValidElement, ReactElement, ReactNode, startTransition, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import Box, { BoxProps } from "../Box";
 import { dynamicObject, FormInputs } from "../../types";
 import { useBase } from "../../hooks";
@@ -7,7 +7,8 @@ import { SpinnerProps } from "../Spinner";
 import Sheet, { SheetHandler } from "../Sheet";
 import Cover, { CoverProps } from "../Cover";
 import { FORMVALIDATION, SHEET } from "../../types/enums";
-import { isEmail, withPost } from "../../funs";
+import { addPropsToChildren, isEmail, withPost } from "../../funs";
+import { ButtonHandler, ButtonState } from "../Button/types";
 
 export type FormProps = BoxProps & {
     /** Name of form, will be appended to --form-{name} in className 
@@ -86,7 +87,7 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
     const [ loading, setLoading ] = useState(false)
     const innerRef = useRef<HTMLDivElement>(null);
     const sheet = useRef<SheetHandler>(null)
-
+    const submit = useRef<ButtonHandler>(null)
 
     /**
      * Utility function to select multiple DOM elements within the form based on a CSS query.
@@ -269,7 +270,7 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
         const { error, errorMsg, payload } = _buildFormData()
 
         if ( error ){
-            sheet.current!.show(errorMsg, 4, SHEET.Error)
+            sheet.current!.error(errorMsg)
         }
         else if ( action ){
             
@@ -280,10 +281,13 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
                 setLoading(true)
                 sheet.current!.hide()
                 
+                submit.current?.setState(ButtonState.Loading)
+                
                 withPost(action, { ...payload, ...(withData || {}) })
                 .then( _resp  => {
                     const resp = _resp as dynamicObject
                     setLoading(false)
+                    submit.current?.reset()
                     if ( onSuccess ) 
                         onSuccess(resp)
                     else{
@@ -296,6 +300,7 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
 
                     console.warn(`Error occurred while submitting form`, err)
                     setLoading(false)
+                    submit.current?.reset()
 
                     if( onError ) 
                         onError(err)
@@ -328,6 +333,12 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
             })
         }
     }, [innerRef.current])
+
+    const buildChildren = useMemo(() => addPropsToChildren(
+        children, 
+        child => child.props.type == `submit`,
+        { ref: submit }
+    ), [children])
 
     useImperativeHandle(ref, () => ({
         setLoading(mod : boolean){
@@ -364,7 +375,7 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
             when={loading}
         />
 
-        {children}
+        {buildChildren}
 
     </Box>
 

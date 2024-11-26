@@ -1,4 +1,4 @@
-import Button, { ButtonProps } from "../Button"
+import Button from "../Button"
 import { OptionItemProps } from "./types"
 
 const OptionItem = ({ value, updateValue, o } : OptionItemProps) => {

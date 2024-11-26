@@ -28,7 +28,7 @@ const Avatar = forwardRef((props, ref) => {
     }, []);
     return _jsx(Box, { className: `--avatar --${(type || AVATAR.Circle).toLowerCase()} rel ${className}`.trim(), style: {
             width: size || `auto`,
-            height: `auto`,
+            height: size || `auto`,
             ...style,
         }, ...rest, children: _jsx(Image, { src: img, crossOrigin: crossOrigin, referrerPolicy: referrerPolicy, ...pops }) });
 });
