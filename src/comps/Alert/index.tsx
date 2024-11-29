@@ -20,12 +20,12 @@ const Alert = forwardRef<AlertHandler, AlertProps>((props, ref) => {
         <Box className={`--icon icon-${icon || `auto-matic`}`} style={iconSize ? { width: iconSize, height: iconSize } : {}}>
             {!icon && SVGIcons[type || ALERT.Info]}
         </Box>
-        <Text className={`--meta flex cols`}>
+        <Box className={`--meta flex cols`}>
             <Text className={`--title ${message ? `--tm` : ``}`}>
                 {title || `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`}
             </Text>
             {message && <Text className={`--message`} h={2}>{message}</Text>}
-        </Text>
+        </Box>
     </Box>
 
 

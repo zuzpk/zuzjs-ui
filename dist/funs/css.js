@@ -352,7 +352,8 @@ class CSS {
             /**
              * Variable
              */
-            else if (v.charAt(0) == `$`) {
+            else if (v.charAt(0) == `$` && !v.includes(`,`)) {
+                // else if ( v.match(/\$[a-z0-9-_]+\b(?![\[\],])/g) ){
                 value = `var(--${v.replace(`$`, ``)})`;
             }
             else if (v.trim() == `transparent`) {
@@ -660,7 +661,7 @@ class CSS {
                     if (key in self.PROPS) {
                         const _out = self.makeValue(key, _val);
                         const _id = self.makeID(key, _val + pseudo, _out);
-                        // console.log(`_VALUE`, _k, _id)
+                        // console.log(`_VALUE`, _k, _out)
                         if (pseudo == ``)
                             self.cx.push(_id);
                         // console.log(`_build`, key, _val, _id, _out)

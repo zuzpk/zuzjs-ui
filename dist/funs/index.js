@@ -58,6 +58,28 @@ export const withGlobals = () => {
 export const isBrowser = typeof document !== "undefined";
 export const is = (o, v) => typeof o === v;
 export const isTypeOf = (o, v) => typeof o === typeof v;
+/**
+ * Check if 2 objects have the same keys and values, including nested objects.
+ * @param obj1
+ * @param obj2
+ * @returns @boolean
+ */
+export const compare = (obj1, obj2) => {
+    if (typeof obj1 !== 'object' || typeof obj2 !== 'object' || obj1 === null || obj2 === null) {
+        return obj1 === obj2;
+    }
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+    if (keys1.length !== keys2.length) {
+        return false;
+    }
+    for (let key of keys1) {
+        if (!keys2.includes(key) || !compare(obj1[key], obj2[key])) {
+            return false;
+        }
+    }
+    return true;
+};
 export const equals = (o, v) => o === v;
 export const isNull = (o) => o === null;
 export const isString = (o) => typeof o == `string`;

@@ -9,6 +9,13 @@ export declare const withGlobals: () => void;
 export declare const isBrowser: boolean;
 export declare const is: (o: any, v: any) => boolean;
 export declare const isTypeOf: (o: any, v: any) => boolean;
+/**
+ * Check if 2 objects have the same keys and values, including nested objects.
+ * @param obj1
+ * @param obj2
+ * @returns @boolean
+ */
+export declare const compare: (obj1: any, obj2: any) => boolean;
 export declare const equals: (o: any, v: any) => boolean;
 export declare const isNull: (o: any) => boolean;
 export declare const isString: (o: any) => o is string;

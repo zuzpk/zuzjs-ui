@@ -9,5 +9,9 @@ export { type DragOptions } from './useDrag';
 export { default as useImage } from './useImage';
 export { default as useIntersectionObserver } from './useIntersectionObserver';
 export { default as useKeyBind } from './useKeyBind';
+/**
+ * @deprecated use useDelayed hook instead
+ */
 export { default as useMounted } from './useMounted';
+export { default as useDelayed } from './useMounted';
 export { default as useResizeObserver } from './useResizeObserver';

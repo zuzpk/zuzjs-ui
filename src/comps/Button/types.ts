@@ -6,10 +6,11 @@ export type ButtonProps = Props<`button`> & {
     icon?: string,
     iconSize?: Size,
     withLabel?: boolean,
-    spinner?: SpinnerProps
+    spinner?: SpinnerProps,
+    state?: ButtonState,
 }
 
-export interface ButtonHandler {
+export interface ButtonHandler extends HTMLButtonElement {
     reset: () => void,
     setState: ( mod: ButtonState ) => void,
 }

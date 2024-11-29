@@ -8,47 +8,35 @@ import { ButtonHandler, ButtonProps, ButtonState } from './types';
 import Spinner from '../Spinner';
 import { Size } from '../../types/enums';
 
-const Button = forwardRef((props : ButtonProps, ref) => {
+const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
 
-    const { icon, iconSize, children, withLabel, spinner, ...pops } = props
+    const { icon, iconSize, children, withLabel, spinner, state, ...pops } = props
     const {
         style,
         className,
         rest
     } = useBase<"button">(pops)
-    const [ loading, setLoading ] = useState(false)
-
-    useImperativeHandle(ref, () => ({
-        setState: (mod : ButtonState) => {
-            if ( mod == ButtonState.Loading ){
-                setLoading(true)
-            }
-            else if ( mod == ButtonState.Normal ){
-                setLoading(false)
-            }
-        },
-        reset: () => {
-            setLoading(false)
-        }
-    }) as ButtonHandler)
- 
+    
     return <button
         className={`${className} flex aic jcc ${icon ? `ico-btn` : ``}`}
         style={style}
-        ref={ref as Ref<HTMLButtonElement>}
+        ref={ref}
         {...rest}>
         
-        { loading && <Spinner 
+        { state == ButtonState.Loading && <Spinner 
             size={Size.Small} 
             {...{
                 color: `#ffffff`,
                 ...(spinner || {})
             }} />}
-        {!loading && icon && <Icon
-            size={iconSize}
-            name={icon} />}
 
-        {withLabel === true ? <Span>{children}</Span> : children}
+        { ( !state || state == ButtonState.Normal ) && <>
+            {icon && <Icon
+                size={iconSize}
+                name={icon} />}
+
+            {withLabel === true ? <Span>{children}</Span> : children}
+        </>}
 
     </button>
 })

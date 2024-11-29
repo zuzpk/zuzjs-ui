@@ -7,7 +7,6 @@ import Sheet from "../Sheet";
 import Cover from "../Cover";
 import { FORMVALIDATION, SHEET } from "../../types/enums";
 import { addPropsToChildren, isEmail, withPost } from "../../funs";
-import { ButtonState } from "../Button/types";
 /**
  * {@link Form} is a controlled component designed to handle form data submission, validation, and display of loading or error states.
  * It allows for optional server-side submission through an action endpoint and customizable success/error handling callbacks.
@@ -182,12 +181,12 @@ const Form = forwardRef((props, ref) => {
                 beforeSubmit && beforeSubmit(payload);
                 setLoading(true);
                 sheet.current.hide();
-                submit.current?.setState(ButtonState.Loading);
+                // submit.current?.setState(ButtonState.Loading)
                 withPost(action, { ...payload, ...(withData || {}) })
                     .then(_resp => {
                     const resp = _resp;
                     setLoading(false);
-                    submit.current?.reset();
+                    // submit.current?.reset()
                     if (onSuccess)
                         onSuccess(resp);
                     else {
@@ -198,7 +197,7 @@ const Form = forwardRef((props, ref) => {
                     .catch(err => {
                     console.warn(`Error occurred while submitting form`, err);
                     setLoading(false);
-                    submit.current?.reset();
+                    // submit.current?.reset()
                     if (onError)
                         onError(err);
                     else

@@ -281,13 +281,13 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
                 setLoading(true)
                 sheet.current!.hide()
                 
-                submit.current?.setState(ButtonState.Loading)
+                // submit.current?.setState(ButtonState.Loading)
                 
                 withPost(action, { ...payload, ...(withData || {}) })
                 .then( _resp  => {
                     const resp = _resp as dynamicObject
                     setLoading(false)
-                    submit.current?.reset()
+                    // submit.current?.reset()
                     if ( onSuccess ) 
                         onSuccess(resp)
                     else{
@@ -300,7 +300,7 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
 
                     console.warn(`Error occurred while submitting form`, err)
                     setLoading(false)
-                    submit.current?.reset()
+                    // submit.current?.reset()
 
                     if( onError ) 
                         onError(err)
