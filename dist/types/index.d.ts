@@ -26,6 +26,8 @@ export interface FormatNumberParams {
         symbol?: string;
     };
 }
+export type CalendarWeekdayFormat = "long" | "short" | "narrow";
+export type CalendarMonthFormat = CalendarWeekdayFormat | "numeric" | "2-digit";
 export type zuzProps = `as` | `css` | `hover` | `before` | `after`;
 export interface ZuzProps {
     /** When true, exposes itself to ZuzBuilder (Editor) */

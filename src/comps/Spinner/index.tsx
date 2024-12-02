@@ -37,26 +37,51 @@ const Spinner = forwardRef<HTMLDivElement, SpinnerProps >((props, ref) => {
             default: 20
         }
         const _size = size ? Object.values(Size).includes(size as Size) ? sizes[size] : size : sizes.default
-        const _props : dynamicObject = {
+        const _animationSetting : dynamicObject = {
+            animationDuration: `${speed || .6}s`,
+            animationTimingFunction: `linear`
+        }
+        const _props : dynamicObject = ( type || SPINNER.Simple ) == SPINNER.Simple ? {
             width: _size,
             height: _size,
             border: `${width || 3}px solid ${bg}`,
             borderRadius: `50%`,
             borderTopColor: c,
-            animationDuration: `${speed || .6}s`,
-            animationTimingFunction: `linear`
+            ..._animationSetting
+        } : {
+            // ..._animationSetting
         }
         return _props
         
     }
 
+    const child = () => {
+        switch( type || SPINNER.Simple ){
+            case SPINNER.Simple:
+                return null
+                break;
+            case SPINNER.Wave:
+                return  <>
+                    <Box as={`--dot --dot-1`} />
+                    <Box as={`--dot --dot-2`} />
+                    <Box as={`--dot --dot-3`} />
+                </>
+                break;
+            case SPINNER.Roller:
+                return null
+                break;
+        }
+    }
+
     return <Box
-        className={`${className} --spinner --${(type || SPINNER.Simple).toLowerCase()}`.trim()}
+        className={`${className} --spinner --${(type || SPINNER.Simple).toLowerCase()} --${size || Size.Default}`.trim()}
         style={{
             ...style,
             ...build()
         }}
-        {...rest as BoxProps} />
+        {...rest as BoxProps}>
+        {child()}
+    </Box>
 
 })
 

@@ -20,6 +20,9 @@ export * from './CheckBox/types';
 export { default as ContextMenu } from './ContextMenu';
 export * from './ContextMenu/types';
 
+export { default as CookiesConsent } from './CookiesConsent';
+export * from './CookiesConsent/types';
+
 export { type CoverProps, default as Cover } from './Cover';
 
 export { default as Drawer } from './Drawer';
@@ -30,6 +33,8 @@ export { default as ZuzBuilder } from './Editor';
 export { default as TimeLine } from './Editor/Timeline';
 export * from './Editor/types';
 export { default as withEditor } from './Editor/withEditor';
+
+export { type FilterProps, default as Filters } from './Filters';
 
 export { type FormProps, default as Form } from './Form';
 export { type IconProps, default as Icon } from './Icon';
@@ -55,6 +60,10 @@ export { default as Select } from './Select';
 export * from './Select/types';
 
 export { type SheetProps, default as Sheet } from './Sheet';
+
+export { default as SideBar } from './Sidebar';
+export * from './Sidebar/types';
+
 export { type SliderProps, default as Slider } from './Slider';
 export { type SpanProps, default as Span } from './Span';
 export { type SpinnerProps, default as Spinner } from './Spinner';

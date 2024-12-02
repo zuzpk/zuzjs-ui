@@ -400,7 +400,7 @@ class CSS {
         }
         
         else if ( v.includes(`rgb`) || v.includes(`rgba`) ){
-            return v.replace(`[`, `(`).replace(`]`, `)`)
+            return v.replace(/\[/g, `(`).replace(/\]/g, `)`)
         }
         else
             return v.trim()
@@ -728,7 +728,7 @@ class CSS {
         let levels : string[] = []
         let isLevel = false
         let classes : dynamicObject = {}
-        let hasBracket = false
+        let bracketCount = 0
 
         const processWord = () => {
 
@@ -770,38 +770,28 @@ class CSS {
             
                 const nextChar = arr[i + 1]   
 
-                if ( char == ` ` && word != `` && ![`(`, `)`, `[`, `]`, `:`].includes(nextChar) && !hasBracket) {
+                if ( char == ` ` && word != `` && ![`(`, `)`, `[`, `]`, `:`].includes(nextChar) && bracketCount == 0) {
                     processWord()
                 }
                 else{ 
                     
-                    //SKIPABLE
-                    // if([`(`].includes(char) && level == 0 ){
-                    //     //DON'T ADD
-                    // }
-
-                    if ( 
-                        [`&`].includes(char) 
-                    ){
+                    if ( [`&`].includes(char)  ){
                         isLevel = true
                     }
 
-                    //Level Start
                     else if([`(`].includes(char) && isLevel ){
                         processWord()
                     }
-                    //Level End
+                    
                     else if ( [`)`].includes(char) ){
                         processWord()
-                        // console.log(`before->`, levels)
                         levels.splice(-1, 1)
-                        // console.log(`after->`, levels)
                         isLevel = false
                     }
                     else {
                         word += char
-                        if ( char == `[` ) hasBracket = true
-                        if ( char == `]` && hasBracket ) hasBracket = false                        
+                        if ( char == `[` ) bracketCount++
+                        if ( char == `]` ) bracketCount--
                     }
                 }
             })

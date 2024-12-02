@@ -55,6 +55,24 @@ export const withGlobals = () => {
         return `${this.charAt(0).toUpperCase()}${this.substring(1, this.length)}`;
     };
 };
+moment.updateLocale('en', {
+    relativeTime: {
+        future: 'in %s',
+        past: '%s',
+        s: 'Just now', // "a few seconds" → "now"
+        ss: '%ds ago', // "seconds" → "s"
+        m: '1m ago', // "a minute" → "1m"
+        mm: '%dm ago', // "minutes" → "m"
+        h: '1h ago', // "an hour" → "1h"
+        hh: '%dh ago', // "hours" → "h"
+        d: '1d ago', // "a day" → "1d"
+        dd: '%dd ago', // "days" → "d"
+        M: '1mo ago', // "a month" → "1mo"
+        MM: '%dmo ago', // "months" → "mo"
+        y: '1y ago', // "a year" → "1y"
+        yy: '%dy ago' // "years" → "y"
+    }
+});
 export const isBrowser = typeof document !== "undefined";
 export const is = (o, v) => typeof o === v;
 export const isTypeOf = (o, v) => typeof o === typeof v;
@@ -174,22 +192,25 @@ export const removeDuplicatesFromArray = (array) => {
         return accumulator;
     }, []);
 };
-export const withPost = async (uri, data, timeout = 60, fd = {}) => {
-    if (Object.keys(fd).length > 0) {
+export const withPost = async (uri, data, timeout = 60, onProgress) => {
+    const _cookies = Cookies.get();
+    if (data instanceof FormData) {
+        for (const c in _cookies) {
+            data.append(c, _cookies[c]);
+        }
+        for (var key of data.entries()) {
+            console.log(key[0] + ', ' + key[1]);
+        }
         return new Promise((resolve, reject) => {
             axios({
                 method: 'post',
                 url: uri,
-                data: {
-                    ...data,
-                    ...Cookies.get(),
-                },
+                data: data,
                 timeout: timeout * 1000,
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
-                onUploadProgress: ev => {
-                }
+                onUploadProgress: ev => onProgress && onProgress(ev)
             })
                 .then(resp => {
                 if (resp.data && "kind" in resp.data) {
@@ -205,7 +226,7 @@ export const withPost = async (uri, data, timeout = 60, fd = {}) => {
     return new Promise((resolve, reject) => {
         axios.post(uri, {
             ...data,
-            ...Cookies.get(),
+            ..._cookies,
             __stmp: new Date().getTime() / 1000
         }, {
             timeout: 1000 * timeout,
@@ -431,4 +452,16 @@ export const addPropsToChildren = (children, conditions, newProps) => {
         }
         return child;
     });
+};
+export const getPositionAroundElement = (x, y, distance, childCount) => {
+    const positions = [];
+    const angle = 360 / childCount;
+    for (let i = 0; i < childCount; i++) {
+        const radian = (angle * i * Math.PI) / 180;
+        positions.push({
+            x: x + distance * Math.cos(radian),
+            y: y + distance * Math.sin(radian)
+        });
+    }
+    return positions;
 };

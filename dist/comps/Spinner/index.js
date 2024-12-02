@@ -1,5 +1,5 @@
 "use client";
-import { jsx as _jsx } from "react/jsx-runtime";
+import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef } from "react";
 import Box from "../Box";
 import { Size, SPINNER } from "../../types/enums";
@@ -19,20 +19,38 @@ const Spinner = forwardRef((props, ref) => {
             default: 20
         };
         const _size = size ? Object.values(Size).includes(size) ? sizes[size] : size : sizes.default;
-        const _props = {
+        const _animationSetting = {
+            animationDuration: `${speed || .6}s`,
+            animationTimingFunction: `linear`
+        };
+        const _props = (type || SPINNER.Simple) == SPINNER.Simple ? {
             width: _size,
             height: _size,
             border: `${width || 3}px solid ${bg}`,
             borderRadius: `50%`,
             borderTopColor: c,
-            animationDuration: `${speed || .6}s`,
-            animationTimingFunction: `linear`
+            ..._animationSetting
+        } : {
+        // ..._animationSetting
         };
         return _props;
     };
-    return _jsx(Box, { className: `${className} --spinner --${(type || SPINNER.Simple).toLowerCase()}`.trim(), style: {
+    const child = () => {
+        switch (type || SPINNER.Simple) {
+            case SPINNER.Simple:
+                return null;
+                break;
+            case SPINNER.Wave:
+                return _jsxs(_Fragment, { children: [_jsx(Box, { as: `--dot --dot-1` }), _jsx(Box, { as: `--dot --dot-2` }), _jsx(Box, { as: `--dot --dot-3` })] });
+                break;
+            case SPINNER.Roller:
+                return null;
+                break;
+        }
+    };
+    return _jsx(Box, { className: `${className} --spinner --${(type || SPINNER.Simple).toLowerCase()} --${size || Size.Default}`.trim(), style: {
             ...style,
             ...build()
-        }, ...rest });
+        }, ...rest, children: child() });
 });
 export default Spinner;

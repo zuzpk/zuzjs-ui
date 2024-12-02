@@ -1,4 +1,5 @@
 export { default as useBase } from './useBase';
+export { default as useCalendar } from './useCalendar';
 export { default as useContextMenu } from './useContextMenu';
 export { default as useDB } from './useDB';
 export { default as useDebounce } from './useDebounce';

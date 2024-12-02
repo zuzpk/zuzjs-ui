@@ -15,7 +15,9 @@ const Image = forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
         className,
         rest
     } = useBase<"img">(props)
- 
+    
+    if ( !rest.src || rest.src == `` ) return null
+
     return <img 
         ref={ref}
         style={style}

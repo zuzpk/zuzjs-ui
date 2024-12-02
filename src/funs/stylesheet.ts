@@ -254,7 +254,8 @@ export const cssProps : dynamicObject = {
     
     "transform": "transform",
     "transform(2D)": "transform(2D)",
-    "transformOrigin(twoValue syntax)": "transform-origin(two-value syntax)",
+    "transformOrigin": "transform-origin",
+    "origin": "transform-origin",
     "transformStyle": "transform-style",
     "transition": "transition",
     "transitionDelay": "transition-delay",

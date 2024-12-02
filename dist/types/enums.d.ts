@@ -1,6 +1,10 @@
+export declare enum FILTER {
+    Gooey = "gooey"
+}
 export declare enum SPINNER {
     Simple = "SIMPLE",
-    Roller = "ROLLER"
+    Roller = "ROLLER",
+    Wave = "Wave"
 }
 export declare enum SLIDER {
     Default = "range",
@@ -204,4 +208,11 @@ export declare enum Size {
     Small = "sm",
     Medium = "md",
     Large = "lg"
+}
+export declare enum Position {
+    Auto = "auto",
+    Top = "top",
+    Bottom = "bottom",
+    Left = "left",
+    Right = "right"
 }

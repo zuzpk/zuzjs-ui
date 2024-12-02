@@ -1,5 +1,6 @@
 import CSS from "./css.js";
 import { dynamicObject, FormatNumberParams, sortOptions } from "../types/index.js";
+import { AxiosProgressEvent } from "axios";
 import { KeyCode } from "../types/enums.js";
 import { ReactElement, ReactNode } from "react";
 export declare const __SALT: string;
@@ -47,7 +48,7 @@ export declare const cleanProps: <T extends dynamicObject>(props: T, withProps?:
 export declare const withZuz: (cx: string | string[]) => string;
 export declare const setDeep: (object: dynamicObject, path: string, value: any, seperator?: string) => dynamicObject;
 export declare const removeDuplicatesFromArray: <T>(array: T[]) => T[];
-export declare const withPost: (uri: string, data: dynamicObject, timeout?: number, fd?: dynamicObject) => Promise<unknown>;
+export declare const withPost: (uri: string, data: dynamicObject | FormData, timeout?: number, onProgress?: (ev: AxiosProgressEvent) => void) => Promise<unknown>;
 export declare const withTime: (fun: (...args: any[]) => any) => {
     result: any;
     executionTime: number;
@@ -63,3 +64,7 @@ export declare const bindKey: (key: KeyCode, fun: () => void, element?: HTMLElem
 export declare const camelCase: (str: string) => string;
 export declare const pluralize: (word: string, count: number) => string;
 export declare const addPropsToChildren: (children: ReactNode, conditions: (child: ReactElement<any>) => boolean, newProps: object) => ReactNode;
+export declare const getPositionAroundElement: (x: number, y: number, distance: number, childCount: number) => {
+    x: number;
+    y: number;
+}[];

@@ -1,7 +1,12 @@
+export var FILTER;
+(function (FILTER) {
+    FILTER["Gooey"] = "gooey";
+})(FILTER || (FILTER = {}));
 export var SPINNER;
 (function (SPINNER) {
     SPINNER["Simple"] = "SIMPLE";
     SPINNER["Roller"] = "ROLLER";
+    SPINNER["Wave"] = "Wave";
 })(SPINNER || (SPINNER = {}));
 export var SLIDER;
 (function (SLIDER) {
@@ -246,3 +251,11 @@ export var Size;
     Size["Medium"] = "md";
     Size["Large"] = "lg";
 })(Size || (Size = {}));
+export var Position;
+(function (Position) {
+    Position["Auto"] = "auto";
+    Position["Top"] = "top";
+    Position["Bottom"] = "bottom";
+    Position["Left"] = "left";
+    Position["Right"] = "right";
+})(Position || (Position = {}));

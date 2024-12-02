@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { BoxProps } from "../Box";
+import { Position } from "../../types/enums";
 
 export interface ActionBarHandler {
     show: () => void,
@@ -29,4 +30,6 @@ export type ActionBarProps = BoxProps & {
     onSwitch?: (tag: string) => void;
     /** Array of action items to display in the ActionBar */
     items: ActionBarItem[];
+    /** Position of ActionBar */
+    position?: Position
 };

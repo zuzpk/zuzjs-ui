@@ -1,6 +1,11 @@
+export enum FILTER {
+    Gooey = "gooey"
+}
+
 export enum SPINNER {
     Simple = "SIMPLE",
-    Roller = "ROLLER"
+    Roller = "ROLLER",
+    Wave = "Wave"
 }
 
 export enum SLIDER {
@@ -254,4 +259,12 @@ export enum Size {
     Small = `sm`,
     Medium = `md`,
     Large = `lg`
+}
+
+export enum Position {
+    Auto = `auto`,
+    Top = `top`,
+    Bottom = `bottom`,
+    Left = `left`,
+    Right = `right`
 }

@@ -3,7 +3,7 @@ const useImage = (url, crossOrigin, referrerPolicy) => {
     const img = useRef(null);
     const [state, setState] = useState({ loaded: false, error: null });
     useEffect(() => {
-        if (url) {
+        if (url && url !== ``) {
             var _img = new Image();
             crossOrigin && (_img.crossOrigin = crossOrigin);
             referrerPolicy && (_img.referrerPolicy = referrerPolicy);

@@ -4,6 +4,7 @@ import Box, { BoxProps } from "../Box";
 import { useBase } from "../../hooks";
 import { ActionBarHandler, ActionBarProps } from "./types";
 import ActionItem from "./item";
+import { Position } from "../../types/enums";
 
 
 /**
@@ -21,7 +22,7 @@ import ActionItem from "./item";
  */
 const ActionBar = forwardRef<ActionBarHandler, ActionBarProps>((props, ref) => {
 
-    const { items, name, selected, ...pops } = props
+    const { items, name, selected, position, ...pops } = props
     
     const self = useRef<HTMLDivElement>(null)
 
@@ -72,7 +73,10 @@ const ActionBar = forwardRef<ActionBarHandler, ActionBarProps>((props, ref) => {
     return <Box 
         ref={self}
         style={style}
-        className={`--actionbar rel flex aic ${className}`.trim()}
+        className={[
+            `--actionbar flex aic ${className}`,
+            `${!position || position == Position.Auto ? `rel` : `--${position}`}`
+        ].join(` `).trim()}
         {...rest as BoxProps}>
 
         {items.map((item, index) => <ActionItem 

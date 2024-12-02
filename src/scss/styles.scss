@@ -1,4 +1,5 @@
 @use "./colors";
+@use "./keyframes";
 
 @mixin anim($duration: 0.3s, $fun: linear) {
     transition: all $duration $fun 0s;
@@ -335,6 +336,7 @@ input{
     --actionbar-action-border: 0px;
     --actionbar-action-padding: 6px;
     --actionbar-action-radius: 20px;
+    --actionbar-action-icon-size: 18px;
     /*ActionBar Tooltip*/
     --actionbar-tooltip: #111;
     --actionbar-tooltip-padding: 2px 0px;
@@ -666,16 +668,6 @@ button{
     }
 }
 
-
-@keyframes textshimmer {
-    0% {
-      background-position: -120% 0;
-    }
-    50%,
-    100% {
-      background-position: 120% 0;
-    }
-}
 .--shimmer{
     background-clip: text;
     color: transparent;
@@ -835,17 +827,7 @@ button{
 
 }
 
-@keyframes shimmering{
-    0% {
-        transform: translateX(-100%) rotate(var(--shimmer-angle));
-    }
-    20% {
-        transform: translateX(100%) rotate(var(--shimmer-angle));
-    }
-    100% {
-        transform: translateX(100%) rotate(var(--shimmer-angle));
-    }
-}
+
 .--skeleton{
     
 
@@ -877,14 +859,68 @@ button{
 
 /* SIMPLE SPINNER */
 .--spinner {
-    animation: spin infinite;
+    
+    --spinner-color: #111;
+
     &.--simple{
         aspect-ratio: 1;
+        animation: spin infinite;
     }
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
+
+    &.--wave{
+        display: flex;
+        align-items: center;
+        gap: var(--spinner-gap);
+
+        &.--def,
+        &.--sm{
+            --spinner-radius: 2px;
+            --spinner-gap: 3px;
+            --spinner-wave-width: 4px;
+            --spinner-wave-height: 10px;
+        }
+        &.--md{
+            --spinner-radius: 2px;
+            --spinner-gap: 4px;
+            --spinner-wave-width: 5px;
+            --spinner-wave-height: 14px;
+        }
+        &.--lg{
+            --spinner-radius: 3px;
+            --spinner-gap: 4px;
+            --spinner-wave-width: 6px;
+            --spinner-wave-height: 16px;
+        }
+
+        .--dot{
+            width: var(--spinner-wave-width);
+            background: var(--spinner-color);
+            border-radius: var(--spinner-radius);     
+            &.--dot-1{
+                animation: spinnerWave infinite;
+                animation-delay: 0.1s;
+                height: var(--spinner-wave-height);
+                animation-duration: 1.5s;
+                animation-timing-function: ease-in-out;       
+            }
+            &.--dot-2{
+                animation: spinnerWave infinite;
+                animation-delay: 0.2s;
+                height: calc( var(--spinner-wave-height) * 1.1 );
+                animation-duration: 1.5s;
+                animation-timing-function: ease-in-out;       
+            }
+            &.--dot-3{
+                animation: spinnerWave infinite;
+                animation-delay: 0.3s;
+                height: calc( var(--spinner-wave-height) * 1.25 );
+                animation-duration: 1.5s;
+                animation-timing-function: ease-in-out;       
+            }
+        }
     }
+    
+
 }
 
 .--cover{
@@ -895,11 +931,7 @@ button{
     .label{
         font-size: 14px;
         animation: breath 1s linear infinite;
-        @keyframes breath {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
+        
     }
 }
 
@@ -1532,6 +1564,13 @@ button{
     box-shadow: var(--actionbar-shadow);
     gap: var(--actionbar-gap);
 
+    &.--bottom{
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 20px;
+    }
+
     .--action{
         color: var(--actionbar-action-color);
         width: var(--actionbar-action-size);
@@ -1549,6 +1588,10 @@ button{
         img{
             width: 100%;
             height: 100%;
+        }
+
+        .--icon{
+            font-size: var(--actionbar-action-icon-size);
         }
 
         &:hover{
@@ -1957,4 +2000,78 @@ button{
         }
     }
     
+}
+
+/**Sidebar */
+.--sidebar{
+    
+    --sidebar-padding: 10px;
+    --sidebar-bg: #fff;
+
+    background: var(--sidebar-bg);
+    padding: var(--sidebar-padding);
+
+    .--nav{
+        flex: 1;
+    }
+
+}
+
+.--cookie-consent{
+    --cookie-consent: #fff;
+    --cookie-consent-radius: 20px;
+    --cookie-consent-padding: 20px;
+    --cookie-consent-width: 320px;
+    --cookie-consent-font-size: 18px;
+    --cookie-consent-action: #222;
+
+    z-index: var(--max-z-index);
+    background: var(--cookie-consent);
+    border-radius: var(--cookie-consent-radius);
+    padding: var(--cookie-consent-padding);
+    gap: 15px;
+    position: fixed;
+    bottom: 20px;
+    width: var(--cookie-consent-width);
+    font-size: var(--cookie-consent-font-size);
+
+    &.--left{
+        left: 20px;
+    }
+    &.--right{
+        right: 20px;
+    }
+
+    .--title{
+        font-weight: bold;
+    }
+    .--message{
+        font-size: calc(var(--cookie-consent-font-size) * 0.8);
+    }
+    .--footer{
+        margin-top: 20px;
+        gap: 10px;
+    }
+    button{
+        flex: 1;
+        border: 0px;
+        border-radius: var(--cookie-consent-radius);
+        padding: 10px;
+        font-weight: bold;
+        &.--accept{
+            color: #fff;
+            background: var(--cookie-consent-action);
+            &:hover{
+                opacity: 0.9;
+            }
+        }
+        &.--reject{
+            color: var(--cookie-consent-action);
+            background: transparent;
+            &:hover{
+                background: var(--cookie-consent-action);
+                color: #fff;
+            }
+        }
+    }
 }

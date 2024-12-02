@@ -32,6 +32,9 @@ export interface FormatNumberParams {
     }
 }
 
+export type CalendarWeekdayFormat = "long" | "short" | "narrow"
+export type CalendarMonthFormat = CalendarWeekdayFormat | "numeric" | "2-digit"
+
 export type zuzProps = `as` | `css` | `hover` | `before` | `after`
 
 export interface ZuzProps {

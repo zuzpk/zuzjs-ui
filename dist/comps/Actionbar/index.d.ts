@@ -1,5 +1,6 @@
 import { BoxProps } from "../Box";
 import { ActionBarHandler } from "./types";
+import { Position } from "../../types/enums";
 /**
  * ActionBar renders a list of buttons with tooltips.
  *
@@ -17,5 +18,6 @@ declare const ActionBar: import("react").ForwardRefExoticComponent<BoxProps & {
     selected?: number | string;
     onSwitch?: (tag: string) => void;
     items: import("./types").ActionBarItem[];
+    position?: Position;
 } & import("react").RefAttributes<ActionBarHandler>>;
 export default ActionBar;

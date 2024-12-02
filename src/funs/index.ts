@@ -5,7 +5,7 @@ import md5 from "md5";
 import { colorNames } from "./colors.js";
 import { dynamicObject, FormatNumberParams, sortOptions } from "../types/index.js";
 import { cssProps } from "./stylesheet.js";
-import axios from "axios";
+import axios, { AxiosProgressEvent } from "axios";
 import Cookies from "js-cookie";
 import moment from "moment";
 import { KeyCode, SORT } from "../types/enums.js";
@@ -60,6 +60,25 @@ export const withGlobals = () => {
         return `${this.charAt(0).toUpperCase()}${this.substring(1, this.length)}`
     }
 }
+
+moment.updateLocale('en', {
+    relativeTime: {
+      future: 'in %s',
+      past: '%s',
+      s: 'Just now',          // "a few seconds" → "now"
+      ss: '%ds ago',         // "seconds" → "s"
+      m: '1m ago',           // "a minute" → "1m"
+      mm: '%dm ago',         // "minutes" → "m"
+      h: '1h ago',           // "an hour" → "1h"
+      hh: '%dh ago',         // "hours" → "h"
+      d: '1d ago',           // "a day" → "1d"
+      dd: '%dd ago',         // "days" → "d"
+      M: '1mo ago',          // "a month" → "1mo"
+      MM: '%dmo ago',        // "months" → "mo"
+      y: '1y ago',           // "a year" → "1y"
+      yy: '%dy ago'          // "years" → "y"
+    }
+});
 
 export const isBrowser = typeof document !== "undefined"
 
@@ -234,23 +253,25 @@ export const removeDuplicatesFromArray = <T>(array: T[]): T[] => {
     }, []);
 }
 
-export const withPost = async (uri: string, data: dynamicObject, timeout: number = 60, fd: dynamicObject = {} ) => {
-    if ( Object.keys(fd).length > 0 ){
+export const withPost = async (uri: string, data: dynamicObject | FormData, timeout: number = 60, onProgress?: (ev: AxiosProgressEvent) => void ) => {
+    const _cookies = Cookies.get()
+    if ( data instanceof FormData ){
+        for ( const c in _cookies ){
+            data.append(c, _cookies[c])
+        }
+        for (var key of data.entries()) {
+            console.log(key[0] + ', ' + key[1]);
+        }
         return new Promise((resolve, reject) => {
             axios({
                 method: 'post',
                 url: uri,
-                data: {
-                    ...data,
-                    ...Cookies.get(),
-                },
+                data: data,
                 timeout: timeout * 1000,
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
-                onUploadProgress: ev => {
-
-                }
+                onUploadProgress: ev => onProgress && onProgress(ev)
             })
             .then(resp => {
                 if(resp.data && "kind" in resp.data){
@@ -267,7 +288,7 @@ export const withPost = async (uri: string, data: dynamicObject, timeout: number
             uri,
             {
                 ...data,
-                ...Cookies.get(),
+                ..._cookies,
                 __stmp: new Date().getTime() / 1000
             },
             {
@@ -550,4 +571,19 @@ export const addPropsToChildren = (children: ReactNode, conditions: (child: Reac
         }
         return child
     })
+}
+
+export const getPositionAroundElement = (x : number, y : number, distance : number, childCount : number) : { x: number, y: number }[] => {
+    const positions: { x: number, y: number }[] = []
+    const angle = 360 / childCount
+
+    for (let i = 0; i < childCount; i++) {
+        const radian = (angle * i * Math.PI) / 180
+        positions.push({ 
+            x: x + distance * Math.cos(radian), 
+            y: y + distance * Math.sin(radian) 
+        })
+    }
+
+    return positions
 }

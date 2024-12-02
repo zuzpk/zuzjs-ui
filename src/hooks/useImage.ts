@@ -12,7 +12,7 @@ const useImage = (
     
     useEffect(() => {
 
-        if ( url ){
+        if ( url && url !== `` ){
 
             var _img = new Image();
             crossOrigin && (_img.crossOrigin = crossOrigin);

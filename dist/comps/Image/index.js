@@ -4,6 +4,8 @@ import { forwardRef } from 'react';
 import { useBase } from '../../hooks';
 const Image = forwardRef((props, ref) => {
     const { style, className, rest } = useBase(props);
+    if (!rest.src || rest.src == ``)
+        return null;
     return _jsx("img", { ref: ref, style: style, className: `${className} flex`, ...rest });
 });
 export default Image;
