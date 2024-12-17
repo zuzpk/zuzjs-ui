@@ -3,6 +3,7 @@ import { Segment, SegmentProps } from "./types";
 import { useBase } from "../../hooks";
 import Box, { BoxProps } from "../Box";
 import SegmentItem from "./item";
+import { Size } from "../../types/enums";
 
 
 /**
@@ -25,12 +26,12 @@ import SegmentItem from "./item";
  */
 const Segmented = forwardRef<HTMLDivElement, SegmentProps>((props, ref) => {
 
-    const { animate, items, selected, onSwitch, ...pops } = props
+    const { animate, items, selected, size, onSwitch, ...pops } = props
     const [ _selected, setSelected ] = useState(selected || 0)
     const { className, style, rest } = useBase(pops)
     const _tab = useRef<HTMLDivElement | null>(null)
     const _segmented = useRef<HTMLDivElement | null>(null)
-
+    
     /**
      * Handles selection of a segment.
      *
@@ -48,11 +49,15 @@ const Segmented = forwardRef<HTMLDivElement, SegmentProps>((props, ref) => {
         }
     }
 
-    useEffect(() => {}, [])
+    useEffect(() => {
+        if (selected !== undefined) {
+            setSelected(selected);
+        }
+    }, [selected]);
 
     return <Box
         ref={_segmented}
-        className={`${className} --segmented flex aic rel`}
+        className={`${className} --segmented --${size || Size.Small} flex aic rel`}
         style={style}
         {...rest as BoxProps}>
 

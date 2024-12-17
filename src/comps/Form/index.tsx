@@ -363,7 +363,7 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
     return <Box
         ref={innerRef}
         style={style}
-        className={`--form rel ${className} --form${name ? `-${name.replace(/\s+/g, `-`)}` : ``}`}
+        className={`--form flex rel ${className} ${name ? `--form-${name.replace(/\s+/g, `-`)}` : ``}`}
         propsToRemove={[`withData`, `action`, `onSubmit`, `onSuccess`, `onError`]}>
 
         {<Sheet ref={sheet} as={`--sheet-form`} />}

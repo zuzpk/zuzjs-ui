@@ -242,6 +242,6 @@ const Form = forwardRef((props, ref) => {
         }
     }));
     useEffect(_init, []);
-    return _jsxs(Box, { ref: innerRef, style: style, className: `--form rel ${className} --form${name ? `-${name.replace(/\s+/g, `-`)}` : ``}`, propsToRemove: [`withData`, `action`, `onSubmit`, `onSuccess`, `onError`], children: [_jsx(Sheet, { ref: sheet, as: `--sheet-form` }), _jsx(Cover, { message: cover ? cover.message || undefined : `working`, spinner: spinner, color: cover ? `color` in cover ? cover.color : `#ffffff` : `#ffffff`, when: loading }), buildChildren] });
+    return _jsxs(Box, { ref: innerRef, style: style, className: `--form flex rel ${className} ${name ? `--form-${name.replace(/\s+/g, `-`)}` : ``}`, propsToRemove: [`withData`, `action`, `onSubmit`, `onSuccess`, `onError`], children: [_jsx(Sheet, { ref: sheet, as: `--sheet-form` }), _jsx(Cover, { message: cover ? cover.message || undefined : `working`, spinner: spinner, color: cover ? `color` in cover ? cover.color : `#ffffff` : `#ffffff`, when: loading }), buildChildren] });
 });
 export default Form;

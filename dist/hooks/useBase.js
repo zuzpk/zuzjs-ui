@@ -1,6 +1,7 @@
 import { cleanProps, css } from "../funs";
 import { buildWithStyles, getAnimationCurve, getAnimationTransition } from "../funs/css";
 import useDrag from "./useDrag";
+import { cssFilterKeys, cssTransformKeys, cssWithKeys } from "../funs/stylesheet";
 const buildSkeletonStyle = (s) => {
     const makeValue = (v, unit = `px`) => {
         return v ?
@@ -35,7 +36,6 @@ const useBase = (props) => {
     }
     const { transition, from, to, when, duration, delay, curve } = animate || {};
     let _style = {};
-    const _transition = transition || (from && to) ? { transition: `all ${duration || `0.2`}s ${getAnimationCurve(curve)} ${delay || 0}s` } : {};
     if (undefined === when) {
         _style = transition ? getAnimationTransition(transition, true) : { ...from, ...to };
     }
@@ -45,6 +45,29 @@ const useBase = (props) => {
     else {
         _style = transition ? getAnimationTransition(transition, false, true) : from || {};
     }
+    const _transition = {};
+    if (transition || (from && to)) {
+        // { transition: `all ${duration || `0.2`}s ${getAnimationCurve(curve)} ${delay || 0}s` }
+        const _curve = getAnimationCurve(curve);
+        const _transitionList = [];
+        Object.keys(_style).forEach(ck => {
+            let prop = ck;
+            let _subTrans = ck;
+            if (prop in cssWithKeys) {
+                _subTrans = cssTransformKeys.includes(cssWithKeys[prop].toString()) ? `transform`
+                    : cssFilterKeys.includes(cssWithKeys[prop].toString()) ? `filter`
+                        : _subTrans;
+            }
+            else if (cssTransformKeys.includes(prop)) {
+                _subTrans = `transform`;
+            }
+            const _newTransition = `${_subTrans} ${duration || `0.2`}s ${_curve} ${delay || 0}s`;
+            if (!_transitionList.includes(_newTransition))
+                _transitionList.push(_newTransition);
+        });
+        _transition.transition = _transitionList.join(`, `);
+    }
+    // console.log(_style, _transition)
     const drag = useDrag(dragOptions);
     let dragProps = {};
     let dragStyle = {};

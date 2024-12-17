@@ -8,6 +8,8 @@ export type ButtonProps = Props<`button`> & {
     withLabel?: boolean,
     spinner?: SpinnerProps,
     state?: ButtonState,
+    size?: Size,
+    reset?: boolean
 }
 
 export interface ButtonHandler extends HTMLButtonElement {

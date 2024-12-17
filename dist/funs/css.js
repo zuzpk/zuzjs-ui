@@ -306,6 +306,7 @@ class CSS {
             return `#${v}`;
         }
         else if (v.includes(`rgb`) || v.includes(`rgba`)) {
+            // console.log(`makeColorrgb[a]`, v)
             return v.replace(/\[/g, `(`).replace(/\]/g, `)`);
         }
         else
@@ -406,6 +407,7 @@ class CSS {
                     value = `#${v}`;
                 }
                 else if (v.includes(`rgb`) || v.includes(`rgba`)) {
+                    // console.log(`mrgb[a]`, v)
                     value = v.replace(`[`, `(`).replace(`]`, `)`);
                 }
                 else
@@ -452,7 +454,7 @@ class CSS {
                     // const [ _vc ] = v.split(`[`)
                     // value = `${_vc.trim()}(${vs})`
                     value = replaceBrackets(v);
-                    // console.log(`started with []`, replaceBrackets(v))
+                    // console.log(k, `started with []`, replaceBrackets(v))
                 }
                 catch (e) { }
             }

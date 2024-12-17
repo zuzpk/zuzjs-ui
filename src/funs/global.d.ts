@@ -21,6 +21,7 @@ declare global {
         isHslColor(): boolean;
         isColor(): boolean;
         ucfirst(): string;
+        toHMS(): string;
     }
 }
 

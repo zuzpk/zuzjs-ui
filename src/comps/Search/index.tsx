@@ -8,6 +8,7 @@ import Input, { InputProps } from '../Input';
 import Box, { BoxProps } from '../Box';
 import Button from '../Button';
 import SVGIcons from '../svgicons';
+import { Size } from '../../types/enums';
 
 export type SearchProps = InputProps & {
     onSubmit?: (value: string) => void,
@@ -49,7 +50,7 @@ const Search = forwardRef<HTMLInputElement, SearchProps>((props, ref) => {
  
     return <Box 
         style={style}
-        className={`--search flex aic rel ${searchStyle}`.trim()}>
+        className={`--search --${props.size || Size.Small} flex aic rel ${searchStyle}`.trim()}>
         <Input 
             ref={innerRef}
             onChange={handleChange}
@@ -57,7 +58,8 @@ const Search = forwardRef<HTMLInputElement, SearchProps>((props, ref) => {
         <Button 
             tabIndex={-1}
             onClick={e => handleSubmit()}
-            className={`--send flex aic jcc abs`}>
+            className={`--send flex aic jcc abs`}
+            size={props.size || Size.Small}>
             {query !== `` ? SVGIcons.close : SVGIcons.search}
         </Button>
     </Box>

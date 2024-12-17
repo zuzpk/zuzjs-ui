@@ -4,14 +4,16 @@ import { Props } from '../../types';
 import { useBase } from '../../hooks';
 import Icon, { IconProps } from '../Icon';
 import Span, { SpanProps } from '../Span';
+import { Size } from '../../types/enums';
 
 export type InputProps = Props<`input`> & {
-    numeric?: boolean
+    numeric?: boolean,
+    size?: Size
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
-    const { numeric, ...pops } = props
+    const { size, numeric, ...pops } = props
 
     const {
         style,
@@ -26,7 +28,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     }
  
     return <input
-        className={`--input flex ${className}`.trim()}
+        className={`--input --${size || Size.Small} flex ${className}`.trim()}
         style={style}
         onInput={handleInput}
         ref={ref}

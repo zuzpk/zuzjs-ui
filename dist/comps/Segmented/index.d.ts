@@ -1,5 +1,6 @@
 import { Segment } from "./types";
 import { BoxProps } from "../Box";
+import { Size } from "../../types/enums";
 /**
  * `SelectTabs` component is a segmented control that allows switching between segments.
  *
@@ -19,6 +20,7 @@ import { BoxProps } from "../Box";
  * <SelectTabs selected={1} items={segments} />
  */
 declare const Segmented: import("react").ForwardRefExoticComponent<BoxProps & {
+    size?: Size;
     selected?: number;
     onSwitch?: (segment: Segment) => void;
     items: Segment[];

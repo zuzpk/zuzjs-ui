@@ -54,6 +54,13 @@ export const withGlobals = () => {
     String.prototype.ucfirst = function () {
         return `${this.charAt(0).toUpperCase()}${this.substring(1, this.length)}`;
     };
+    String.prototype.toHMS = function () {
+        const tm = this;
+        if (tm.match(/^[+-]?\d+(\.\d+)?$/)) {
+            return `${String(Math.floor((+tm) / 3600)).padStart(2, `0`)}:${String(Math.floor((+tm) % 3600 / 60)).padStart(2, `0`)}:${String((+tm) % 60).padStart(2, `0`)}`;
+        }
+        return `00:00`;
+    };
 };
 moment.updateLocale('en', {
     relativeTime: {
@@ -111,6 +118,12 @@ export const isEmpty = (o) => {
         return Object.keys(o).length == 0;
     else
         return o == "" || o.length == 0;
+};
+export const toHMS = (tm) => {
+    if (String(tm).match(/^[+-]?\d+(\.\d+)?$/)) {
+        return `${String(Math.floor((+tm) / 3600)).padStart(2, `0`)}:${String(Math.floor((+tm) % 3600 / 60)).padStart(2, `0`)}:${String((+tm) % 60).padStart(2, `0`)}`;
+    }
+    return `00:00`;
 };
 export const isEmail = (e) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(e);
 export const isUrl = (o) => /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/.test(o);
@@ -198,9 +211,6 @@ export const withPost = async (uri, data, timeout = 60, onProgress) => {
         for (const c in _cookies) {
             data.append(c, _cookies[c]);
         }
-        for (var key of data.entries()) {
-            console.log(key[0] + ', ' + key[1]);
-        }
         return new Promise((resolve, reject) => {
             axios({
                 method: 'post',
@@ -242,7 +252,12 @@ export const withPost = async (uri, data, timeout = 60, onProgress) => {
                 reject(resp.data);
             }
         })
-            .catch(err => reject(err));
+            .catch(err => {
+            if (err.response.data)
+                reject(err.response.data);
+            else
+                reject(err);
+        });
     });
 };
 export const withTime = (fun) => {
@@ -464,4 +479,7 @@ export const getPositionAroundElement = (x, y, distance, childCount) => {
         });
     }
     return positions;
+};
+export const clamp = (value, min, max) => {
+    return Math.min(Math.max(value, min), max);
 };

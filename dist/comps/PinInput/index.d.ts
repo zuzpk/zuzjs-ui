@@ -5,6 +5,7 @@ export type PinInputProps = InputProps & {
 };
 declare const PinInput: import("react").ForwardRefExoticComponent<import("../../types").ZuzProps & Omit<Omit<import("react").DetailedHTMLProps<import("react").InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "ref">, keyof import("../../types").ZuzProps> & {
     numeric?: boolean;
+    size?: import("../..").Size;
 } & {
     mask?: boolean;
     size?: number;

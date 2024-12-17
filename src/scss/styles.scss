@@ -1,17 +1,20 @@
-@use "./colors";
-@use "./keyframes";
+@use "../css/mixins.scss" as *;
+@use "../css/colors.scss";
+@use "../css/keyframes.scss";
+@use "../css/transitions.scss";
 
-@mixin anim($duration: 0.3s, $fun: linear) {
-    transition: all $duration $fun 0s;
-}
-
-@mixin ensure-flex($selector) {
-    #{$selector} {
-      @if not (display: flex) {
-        display: flex;
-      }
-    }
-}
+@use "../comps/AutoComplete/AutoComplete.scss";
+@use "../comps/Button/Button.scss";
+@use "../comps/ColorScheme/ColorScheme.scss";
+@use "../comps/Cover/Cover.scss";
+@use "../comps/Input/Input.scss";
+@use "../comps/List/List.scss";
+@use "../comps/Network/Network.scss";
+@use "../comps/Password/Password.scss";
+@use "../comps/PinInput/PinInput.scss";
+@use "../comps/Search/Search.scss";
+@use "../comps/Segmented/Segmented.scss";
+@use "../comps/Spinner/Spinner.scss";
 
 *, *::before, *::after {
     box-sizing: border-box;
@@ -44,44 +47,6 @@ input{
 
 :root{
 
-    --basic: ease;
-	--back: linear( 0, -0.0077 5.2%, -0.0452 16.98%, -0.0493 22.35%, -0.0418 25.57%,
-       -0.0258 28.57%, -0.0007 31.42%, 0.0335 34.15%, 0.1242 39.03%, 0.2505 43.65%,
-       0.3844 47.35%, 0.656 53.68%, 0.81 58.37%, 0.9282 63.52%, 0.9719 66.23%,
-       1.0055 69.04%, 1.0255 71.4%, 1.0396 73.87%, 1.0477 76.48%, 1.05 79.27%,
-       1.0419 84.36%, 1.0059 95.49%, 1 );
-	--expo: linear( 0, 0.0053 17.18%, 0.0195 26.59%, 0.0326 30.31%, 0.0506 33.48%,
-       0.0744 36.25%, 0.1046 38.71%, 0.1798 42.62%, 0.2846 45.93%, 0.3991 48.37%,
-       0.6358 52.29%, 0.765 55.45%, 0.8622 59.3%, 0.8986 61.51%, 0.9279 63.97%,
-       0.9481 66.34%, 0.9641 69.01%, 0.9856 75.57%, 0.9957 84.37%, 1 );
-	--sine: linear( 0, 0.007 5.35%, 0.0282 10.75%, 0.0638 16.26%, 0.1144 21.96%,
-       0.1833 28.16%, 0.2717 34.9%, 0.6868 62.19%, 0.775 68.54%, 0.8457 74.3%,
-       0.9141 81.07%, 0.9621 87.52%, 0.9905 93.8%, 1 );
-	--power: linear( 0, 0.0012 14.95%, 0.0089 22.36%, 0.0297 28.43%, 0.0668 33.43%,
-       0.0979 36.08%, 0.1363 38.55%, 0.2373 43.07%, 0.3675 47.01%, 0.5984 52.15%,
-       0.7121 55.23%, 0.8192 59.21%, 0.898 63.62%, 0.9297 66.23%, 0.9546 69.06%,
-       0.9733 72.17%, 0.9864 75.67%, 0.9982 83.73%, 1 );
-	--circ: linear( -0, 0.0033 5.75%, 0.0132 11.43%, 0.0296 16.95%, 0.0522 22.25%,
-       0.0808 27.25%, 0.1149 31.89%, 0.1542 36.11%, 0.1981 39.85%, 0.2779 44.79%,
-       0.3654 48.15%, 0.4422 49.66%, 0.5807 50.66%, 0.6769 53.24%, 0.7253 55.37%,
-       0.7714 58.01%, 0.8142 61.11%, 0.8536 64.65%, 0.9158 72.23%, 0.9619 80.87%,
-       0.9904 90.25%, 1 );
-	--bounce: linear( 0, 0.0039, 0.0157, 0.0352, 0.0625 9.09%,
-       0.1407, 0.25, 0.3908, 0.5625, 0.7654,
-       1, 0.8907, 0.8125 45.45%, 0.7852, 0.7657,
-       0.7539, 0.75, 0.7539, 0.7657, 0.7852,
-       0.8125 63.64%, 0.8905, 1 72.73%, 0.9727, 0.9532,
-       0.9414, 0.9375, 0.9414, 0.9531, 0.9726,
-       1, 0.9883, 0.9844, 0.9883, 1 );
-    --elastic: linear( 0, 0.0009 8.51%, -0.0047 19.22%, 0.0016 22.39%, 0.023 27.81%,
-        0.0237 30.08%, 0.0144 31.81%, -0.0051 33.48%, -0.1116 39.25%, -0.1181 40.59%,
-        -0.1058 41.79%, -0.0455, 0.0701 45.34%, 0.9702 55.19%, 1.0696 56.97%,
-        1.0987 57.88%, 1.1146 58.82%, 1.1181 59.83%, 1.1092 60.95%, 1.0057 66.48%,
-        0.986 68.14%, 0.9765 69.84%, 0.9769 72.16%, 0.9984 77.61%, 1.0047 80.79%,
-        0.9991 91.48%, 1 );
-    --ease: var(--back);
-    --spring: cubic-bezier(0.2, -0.36, 0, 1.46);
-
     --max-z-index: 2147483647;
     --zuz-shadow: 0px 0px 0px 1px #d4d4d4, 0px 0px 6px #ccc;
     --text-wheel-speed: 2;
@@ -109,8 +74,7 @@ input{
     --checkbox-thumb-shadow: #000;
     --checkbox-thumb-shadow-size: 2px;
 
-    --cover-bg: rgba(255,255,255,0.8);
-    --cover-label: #111;
+    
 
     --overlay: rgba(0, 0, 0, 0.7);
     --overlay-blur: 0;
@@ -253,43 +217,6 @@ input{
 
     --accordion-detail-padding: 10px;
     --accordion-detail-font-size: 15px;
-
-    --password-toggle-radius: 5px;
-    --password-toggle: #fff;
-    --password-toggle-width: 40px;
-    --password-toggle-border: 0px;
-    --password-toggle-padding: 6px;
-    --password-toggle-size: 20px;
-    --password-toggle-color: #111;
-
-    --pin-radius: 4px;
-    --pin-gap: 4px;
-    --pin-shadow: inset 0px 0px 0px 2px #111;
-    --pin-padding: 5px;
-
-    --search-send-color: #111;
-    --search-send-size: 25px;
-    --search-send: #fff;
-    --search-send-width: 40px;
-    --search-send-padding: 5px;
-    --search-send-radius: 5px;
-    --search-send-border: 0px;
-
-    --segmented: #eee;
-    --segmented-radius: 8px;
-    --segmented-padding: 2px;
-    --segmented-border: 1px #ddd solid;
-    --segment-item: transparent;
-    --segment-item-radius: calc(var(--segmented-radius) - var(--segmented-padding));
-    --segment-item-padding: 5px 12px;
-    --segment-item-border: 0px;
-    --segment-item-font-size: 15px;
-    --segment-item-font-weight: normal;
-    --segment-item-color: #111;
-    --segment-item-active-color: #fff;
-    --segment-tab: #fff;
-    --segment-tab-radius: calc(var(--segmented-radius) - var(--segmented-padding));
-    --segmented-speed: 0.5s;
     
     --select-width: auto;
     --select: #fff;
@@ -399,6 +326,14 @@ input{
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}x
+.center-h{
+    left: 50%;
+    transform: translateX(-50%);
+}
+.center-v{
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .input-with-error{
@@ -421,90 +356,6 @@ button{
     backdrop-filter: blur(var(--overlay-blur));
 }
 
-.--otp{
-
-    width: 100%;
-    gap: var(--pin-gap);
-
-    .--input{
-        text-align: center;
-        padding: var(--pin-padding) !important;
-        &:not(:last-child),
-        &:not(:first-child){
-            border-radius: 0px !important;
-        }
-        &:first-child{
-            border-radius: var(--pin-radius) 0px 0px var(--pin-radius) !important;
-        }
-        &:last-child{
-            border-radius: 0px var(--pin-radius) var(--pin-radius) 0px !important;
-        }
-
-        &:focus{
-            box-shadow: var(--pin-shadow);
-        }
-    }
-
-}
-
-.--search{
-
-    overflow: hidden;
-    
-
-    .--send{
-        width: var(--search-send-width);
-        background: var(--search-send);
-        padding: var(--search-send-padding);
-        border: var(--search-send-border);
-        right: 2px;
-        bottom: 2px;
-        top: 2px;
-        z-index: 1;
-        border-radius: var(--search-send-radius);
-        
-        svg{
-            width: var(--search-send-size);
-            height: var(--search-send-size);
-            @include anim($duration: 0.2s);
-            path {
-                fill: var(--search-send-color);
-            }
-        }
-    }
-}
-
-.--password{ 
-    overflow: hidden;
-    width: 100%; 
-    .--toggle{
-        width: var(--password-toggle-width);
-        background: var(--password-toggle);
-        border: var(--password-toggle-border);
-        padding: var(--password-toggle-padding);
-        right: 2px;
-        bottom: 2px;
-        top: 2px;
-        z-index: 1;
-        border-radius: var(--password-toggle-radius);
-        .b-label{ line-height: 0 !important; }
-        svg{
-            width: var(--password-toggle-size);
-            height: var(--password-toggle-size);
-            @include anim($duration: 0.2s);
-            path {
-                fill: var(--password-toggle-color);
-            }
-        }
-
-        &:hover{
-            svg{
-                transform: scale(1.1);
-            }
-        }
-
-    }
-}
 
 .--accordion{
 
@@ -541,51 +392,6 @@ button{
     }
 }
 
-.--segmented{
-
-    
-
-    background: var(--segmented);
-    border-radius: var(--segmented-radius);
-    padding: var(--segmented-padding);
-    border: var(--segmented-border);
-    overflow: hidden;
-
-    .--segment-item{
-
-        background: var(--segment-item);
-        border-radius: var(--segment-item-radius);
-        padding: var(--segment-item-padding);
-        border: var(--segment-item-border);
-        color: var(--segment-item-color);
-        font-size: var(--segment-item-font-size);
-        font-weight: var(--segment-item-font-weight);
-        z-index: 1;
-        flex: 1;
-
-        .--segment-label{
-            white-space: pre;
-            @include anim($duration: var(--segmented-speed), $fun: var(--ease));
-        }
-
-        &.--segement-active{
-            color: var(--segment-item-active-color);   
-        }
-
-    }
-
-    .--segment-tab{
-        background: var(--segment-tab);
-        border-radius: calc(var(--segmented-radius) - var(--segmented-padding));
-        width: var(--w);
-        transform: translateX(calc(var(--x) - var(--segmented-padding)));
-        z-index: 0;
-        top: var(--segmented-padding);
-        bottom: var(--segmented-padding);
-        @include anim($duration: var(--segmented-speed), $fun: var(--ease));
-    }
-
-}
 
 .--select{
 
@@ -686,19 +492,6 @@ button{
     }
 }
 
-.--input{
-    &.--otp{
-        letter-spacing: 1ch;
-        font-feature-settings: 'tnum';
-        font-variant: tabular-nums;
-        font-family: monospace;
-        line-height: 1;
-        text-indent: 1.45ch;
-        clip-path: inset(0 1ch 0 1ch);
-        height: 2ch;
-    }
-}
-
 .--checkbox{
     height: var(--checkbox-size);
     width: var(--checkbox-size);
@@ -744,6 +537,11 @@ button{
 
     height: var(--switch-height);
     width: var(--switch-width);
+    min-height: var(--switch-height);
+    min-width: var(--switch-width);
+    max-height: var(--switch-height);
+    max-width: var(--switch-width);
+    
     cursor: pointer;
     input[type=checkbox]{
         z-index: 0;
@@ -855,84 +653,6 @@ button{
         filter: blur(var(--shimmer-blur));
     }
 
-}
-
-/* SIMPLE SPINNER */
-.--spinner {
-    
-    --spinner-color: #111;
-
-    &.--simple{
-        aspect-ratio: 1;
-        animation: spin infinite;
-    }
-
-    &.--wave{
-        display: flex;
-        align-items: center;
-        gap: var(--spinner-gap);
-
-        &.--def,
-        &.--sm{
-            --spinner-radius: 2px;
-            --spinner-gap: 3px;
-            --spinner-wave-width: 4px;
-            --spinner-wave-height: 10px;
-        }
-        &.--md{
-            --spinner-radius: 2px;
-            --spinner-gap: 4px;
-            --spinner-wave-width: 5px;
-            --spinner-wave-height: 14px;
-        }
-        &.--lg{
-            --spinner-radius: 3px;
-            --spinner-gap: 4px;
-            --spinner-wave-width: 6px;
-            --spinner-wave-height: 16px;
-        }
-
-        .--dot{
-            width: var(--spinner-wave-width);
-            background: var(--spinner-color);
-            border-radius: var(--spinner-radius);     
-            &.--dot-1{
-                animation: spinnerWave infinite;
-                animation-delay: 0.1s;
-                height: var(--spinner-wave-height);
-                animation-duration: 1.5s;
-                animation-timing-function: ease-in-out;       
-            }
-            &.--dot-2{
-                animation: spinnerWave infinite;
-                animation-delay: 0.2s;
-                height: calc( var(--spinner-wave-height) * 1.1 );
-                animation-duration: 1.5s;
-                animation-timing-function: ease-in-out;       
-            }
-            &.--dot-3{
-                animation: spinnerWave infinite;
-                animation-delay: 0.3s;
-                height: calc( var(--spinner-wave-height) * 1.25 );
-                animation-duration: 1.5s;
-                animation-timing-function: ease-in-out;       
-            }
-        }
-    }
-    
-
-}
-
-.--cover{
-    backdrop-filter: blur(4px);
-    z-index: 99999;
-    gap: 15px;
-    pointer-events: auto;
-    .label{
-        font-size: 14px;
-        animation: breath 1s linear infinite;
-        
-    }
 }
 
 /** SHEET */

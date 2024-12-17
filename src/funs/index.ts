@@ -59,6 +59,13 @@ export const withGlobals = () => {
     String.prototype.ucfirst = function(){
         return `${this.charAt(0).toUpperCase()}${this.substring(1, this.length)}`
     }
+    String.prototype.toHMS = function(){
+        const tm = this as string
+        if ( tm.match(/^[+-]?\d+(\.\d+)?$/) ){
+            return `${String(Math.floor((+tm)/3600)).padStart(2, `0`)}:${String(Math.floor((+tm)%3600/60)).padStart(2, `0`)}:${String((+tm)%60).padStart(2, `0`)}`
+        }
+        return `00:00`
+    }
 }
 
 moment.updateLocale('en', {
@@ -136,6 +143,13 @@ export const isEmpty = (o: any) => {
         return o == "" || (o as string).length == 0
 }
     
+export const toHMS = (tm: string | number) : string => {
+    if ( String(tm).match(/^[+-]?\d+(\.\d+)?$/) ){
+        return `${String(Math.floor((+tm)/3600)).padStart(2, `0`)}:${String(Math.floor((+tm)%3600/60)).padStart(2, `0`)}:${String((+tm)%60).padStart(2, `0`)}`
+    }
+    return `00:00`
+}
+
 export const isEmail = (e : string) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(e)
 
 export const isUrl = (o: string) => /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/.test(o);
@@ -253,14 +267,11 @@ export const removeDuplicatesFromArray = <T>(array: T[]): T[] => {
     }, []);
 }
 
-export const withPost = async (uri: string, data: dynamicObject | FormData, timeout: number = 60, onProgress?: (ev: AxiosProgressEvent) => void ) => {
+export const withPost = async (uri: string, data: dynamicObject | FormData, timeout: number = 60, onProgress?: (ev: AxiosProgressEvent) => void ) : Promise<dynamicObject> => {
     const _cookies = Cookies.get()
     if ( data instanceof FormData ){
         for ( const c in _cookies ){
             data.append(c, _cookies[c])
-        }
-        for (var key of data.entries()) {
-            console.log(key[0] + ', ' + key[1]);
         }
         return new Promise((resolve, reject) => {
             axios({
@@ -305,7 +316,11 @@ export const withPost = async (uri: string, data: dynamicObject | FormData, time
                 reject(resp.data)
             }            
         })
-        .catch(err => reject(err));
+        .catch(err => {
+            if ( err.response.data ) reject(err.response.data)
+            else reject(err)
+
+        });
     })
 }
 
@@ -587,3 +602,7 @@ export const getPositionAroundElement = (x : number, y : number, distance : numb
 
     return positions
 }
+
+export const clamp = (value: number, min: number, max: number): number => {
+    return Math.min(Math.max(value, min), max);
+};

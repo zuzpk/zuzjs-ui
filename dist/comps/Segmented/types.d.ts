@@ -1,4 +1,6 @@
+import { ReactNode } from "react";
 import { BoxProps } from "../Box";
+import { Size } from "../../types/enums";
 /**
  * Individual segment in the `SelectTabs` component.
  * @typedef {Object} Segment
@@ -9,7 +11,7 @@ import { BoxProps } from "../Box";
 export interface Segment {
     tag?: string;
     index: number;
-    icon?: string;
+    icon?: string | ReactNode;
     label?: string;
 }
 /**
@@ -20,6 +22,7 @@ export interface Segment {
  * @property {Segment[]} items - Array of segments to display.
  */
 export type SegmentProps = BoxProps & {
+    size?: Size;
     selected?: number;
     onSwitch?: (segment: Segment) => void;
     items: Segment[];

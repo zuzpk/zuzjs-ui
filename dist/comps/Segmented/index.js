@@ -3,6 +3,7 @@ import { forwardRef, useEffect, useRef, useState } from "react";
 import { useBase } from "../../hooks";
 import Box from "../Box";
 import SegmentItem from "./item";
+import { Size } from "../../types/enums";
 /**
  * `SelectTabs` component is a segmented control that allows switching between segments.
  *
@@ -22,7 +23,7 @@ import SegmentItem from "./item";
  * <SelectTabs selected={1} items={segments} />
  */
 const Segmented = forwardRef((props, ref) => {
-    const { animate, items, selected, onSwitch, ...pops } = props;
+    const { animate, items, selected, size, onSwitch, ...pops } = props;
     const [_selected, setSelected] = useState(selected || 0);
     const { className, style, rest } = useBase(pops);
     const _tab = useRef(null);
@@ -44,8 +45,12 @@ const Segmented = forwardRef((props, ref) => {
                 onSwitch(meta);
         }
     };
-    useEffect(() => { }, []);
-    return _jsxs(Box, { ref: _segmented, className: `${className} --segmented flex aic rel`, style: style, ...rest, children: [_jsx(Box, { ref: _tab, className: `--segment-tab abs` }), items.map((item, i) => _jsx(SegmentItem, { onSelect: handleSelect, selected: _selected == i, meta: {
+    useEffect(() => {
+        if (selected !== undefined) {
+            setSelected(selected);
+        }
+    }, [selected]);
+    return _jsxs(Box, { ref: _segmented, className: `${className} --segmented --${size || Size.Small} flex aic rel`, style: style, ...rest, children: [_jsx(Box, { ref: _tab, className: `--segment-tab abs` }), items.map((item, i) => _jsx(SegmentItem, { onSelect: handleSelect, selected: _selected == i, meta: {
                     ...item,
                     index: i
                 } }, `segment-${item.label}-${i}`))] });

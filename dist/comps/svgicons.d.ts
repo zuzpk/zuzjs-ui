@@ -1,4 +1,7 @@
 declare const SVGIcons: {
+    colorSchemeLight: import("react/jsx-runtime").JSX.Element;
+    colorSchemeSystem: import("react/jsx-runtime").JSX.Element;
+    colorSchemeDark: import("react/jsx-runtime").JSX.Element;
     arrowDown: import("react/jsx-runtime").JSX.Element;
     arrowUp: import("react/jsx-runtime").JSX.Element;
     search: import("react/jsx-runtime").JSX.Element;

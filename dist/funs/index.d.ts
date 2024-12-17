@@ -24,6 +24,7 @@ export declare const isNumber: (o: string) => boolean;
 export declare const isObject: (o: any) => boolean;
 export declare const isArray: (o: any) => o is any[];
 export declare const isEmpty: (o: any) => boolean;
+export declare const toHMS: (tm: string | number) => string;
 export declare const isEmail: (e: string) => boolean;
 export declare const isUrl: (o: string) => boolean;
 export declare const toLowerCase: (o: string) => string;
@@ -48,7 +49,7 @@ export declare const cleanProps: <T extends dynamicObject>(props: T, withProps?:
 export declare const withZuz: (cx: string | string[]) => string;
 export declare const setDeep: (object: dynamicObject, path: string, value: any, seperator?: string) => dynamicObject;
 export declare const removeDuplicatesFromArray: <T>(array: T[]) => T[];
-export declare const withPost: (uri: string, data: dynamicObject | FormData, timeout?: number, onProgress?: (ev: AxiosProgressEvent) => void) => Promise<unknown>;
+export declare const withPost: (uri: string, data: dynamicObject | FormData, timeout?: number, onProgress?: (ev: AxiosProgressEvent) => void) => Promise<dynamicObject>;
 export declare const withTime: (fun: (...args: any[]) => any) => {
     result: any;
     executionTime: number;
@@ -68,3 +69,4 @@ export declare const getPositionAroundElement: (x: number, y: number, distance: 
     x: number;
     y: number;
 }[];
+export declare const clamp: (value: number, min: number, max: number) => number;
