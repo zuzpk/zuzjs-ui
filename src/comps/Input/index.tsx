@@ -28,7 +28,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     }
  
     return <input
-        className={`--input --${size || Size.Small} flex ${className}`.trim()}
+        className={`--input ${size ? `--${size}` : ``} flex ${className}`.trim()}
         style={style}
         onInput={handleInput}
         ref={ref}

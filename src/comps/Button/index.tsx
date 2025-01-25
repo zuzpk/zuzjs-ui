@@ -18,7 +18,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     } = useBase<"button">(pops)
     
     return <button
-        className={`${reset ? `flex` : `--button --${size || Size.Small} flex aic jcc`} ${icon ? `ico-btn` : ``} ${className}`.trim()}
+        // className={`${reset ? `flex` : `--button ${size ? `--${size}` : ``} flex aic jcc`.trim()} ${icon ? `ico-btn` : ``} ${className}`.trim()}
+        className={`${size ? `--button --${size}` : ``} flex aic jcc ${icon ? `ico-btn` : ``} ${className}`.trim()}
         style={style}
         ref={ref}
         {...rest}>
