@@ -20,6 +20,7 @@ export interface TreeViewHandler {
 export interface TreeNode {
     tag: string;
     label: string;
+    icon?: ReactNode;
     under?: string;
     selected?: string;
     expanded?: boolean;

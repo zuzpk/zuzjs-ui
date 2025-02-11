@@ -9,7 +9,7 @@ import Text, { TextProps } from "../Text";
 const TreeItem = forwardRef<TreeItemHandler, TreeItemProps>((props, ref) => {
 
     const { as, meta, nodes, icons, onSelect, treeTag, selected, ...rest } = props
-    const { tag, label, under } = meta
+    const { tag, label, icon, under } = meta
     
     const [isOpen, setIsOpen] = useState( tag == `root` );
 
@@ -38,7 +38,7 @@ const TreeItem = forwardRef<TreeItemHandler, TreeItemProps>((props, ref) => {
                 className={`--node-aro-btn`}>
                 <Icon 
                     className={`--node-aro-icon`}
-                    name={isOpen ? icons?.arrowOpen : icons?.arrowClose} />
+                    name={icon || ( isOpen ? icons?.arrowOpen : icons?.arrowClose )} />
             </Button>
             <Button 
                 className={`--node-meta flex aic`}

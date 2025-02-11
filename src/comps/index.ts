@@ -39,6 +39,9 @@ export { default as TimeLine } from './Editor/Timeline';
 export * from './Editor/types';
 export { default as withEditor } from './Editor/withEditor';
 
+export { default as Fab } from './Fab';
+export * from './Fab/types';
+
 export { type FilterProps, default as Filters } from './Filters';
 
 export { type FormProps, default as Form } from './Form';
@@ -80,6 +83,9 @@ export { type SliderProps, default as Slider } from './Slider';
 export { type SpanProps, default as Span } from './Span';
 export { type SpinnerProps, default as Spinner } from './Spinner';
 export { default as Switch } from './Switch';
+
+export { default as Table } from './Table';
+export * from './Table/types';
 
 export { default as TabView } from './TabView';
 export * from './TabView/types';

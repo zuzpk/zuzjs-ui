@@ -18,6 +18,7 @@ declare const SVGIcons: {
     pause: import("react/jsx-runtime").JSX.Element;
     next: import("react/jsx-runtime").JSX.Element;
     prev: import("react/jsx-runtime").JSX.Element;
+    plus: import("react/jsx-runtime").JSX.Element;
     add: import("react/jsx-runtime").JSX.Element;
     chevronUp: import("react/jsx-runtime").JSX.Element;
     chevronBottom: import("react/jsx-runtime").JSX.Element;

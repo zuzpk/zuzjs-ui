@@ -483,3 +483,15 @@ export const getPositionAroundElement = (x, y, distance, childCount) => {
 export const clamp = (value, min, max) => {
     return Math.min(Math.max(value, min), max);
 };
+export function mergeRefs(...refs) {
+    return (value) => {
+        refs.forEach(ref => {
+            if (typeof ref === 'function') {
+                ref(value);
+            }
+            else if (ref != null) {
+                ref.current = value;
+            }
+        });
+    };
+}

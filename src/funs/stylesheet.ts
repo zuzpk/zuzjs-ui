@@ -274,7 +274,10 @@ export const cssProps : dynamicObject = {
     "wordWrap": "word-wrap",
     "writingMode": "writing-mode",
     "zIndex": "z-index",
-    "backdropFilter": "backdrop-filter"
+    "backdropFilter": "backdrop-filter",
+
+    "placeItems": "place-items",
+    "placeContent": "place-content",
 
 }
 
@@ -292,12 +295,21 @@ export const cssDirect : dynamicObject = {
     "ais": "align-items:flex-start;",
     "aib": "align-items:baseline;",
     "aic": "align-items:center;",
+    "align-items-center": "align-items:center;",
     "aie": "align-items:flex-end;",
     "jcs": "justify-content:flex-start;",
     "jcc": "justify-content:center;",
     "jce": "justify-content:flex-end;",
     "jcb": "justify-content:space-between;",
     "jca": "justify-content:space-around;",
+    "pis": "place-items:start",
+    "pie": "place-items:end",
+    "pic": "place-items:center",
+    "pist": "place-items:stretch",
+    "pcs": "place-content:start",
+    "pcc": "place-content:center",
+    "pce": "place-content:end",
+    "pcst": "place-content:stretch",
     "tal": "text-align: left;",
     "tac": "text-align: center;",
     "tar": "text-align: right;",

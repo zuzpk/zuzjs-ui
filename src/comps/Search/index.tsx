@@ -54,6 +54,7 @@ const Search = forwardRef<HTMLInputElement, SearchProps>((props, ref) => {
         <Input 
             ref={innerRef}
             onChange={handleChange}
+            className={`--${props.size || Size.Small}`}
             {...pops} />
         <Button 
             tabIndex={-1}

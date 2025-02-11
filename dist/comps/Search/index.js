@@ -32,6 +32,6 @@ const Search = forwardRef((props, ref) => {
         // onSubmit?.(query)
     };
     useEffect(() => { }, []);
-    return _jsxs(Box, { style: style, className: `--search --${props.size || Size.Small} flex aic rel ${searchStyle}`.trim(), children: [_jsx(Input, { ref: innerRef, onChange: handleChange, ...pops }), _jsx(Button, { tabIndex: -1, onClick: e => handleSubmit(), className: `--send flex aic jcc abs`, size: props.size || Size.Small, children: query !== `` ? SVGIcons.close : SVGIcons.search })] });
+    return _jsxs(Box, { style: style, className: `--search --${props.size || Size.Small} flex aic rel ${searchStyle}`.trim(), children: [_jsx(Input, { ref: innerRef, onChange: handleChange, className: `--${props.size || Size.Small}`, ...pops }), _jsx(Button, { tabIndex: -1, onClick: e => handleSubmit(), className: `--send flex aic jcc abs`, size: props.size || Size.Small, children: query !== `` ? SVGIcons.close : SVGIcons.search })] });
 });
 export default Search;

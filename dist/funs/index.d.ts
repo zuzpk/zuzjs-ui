@@ -2,7 +2,7 @@ import CSS from "./css.js";
 import { dynamicObject, FormatNumberParams, sortOptions } from "../types/index.js";
 import { AxiosProgressEvent } from "axios";
 import { KeyCode } from "../types/enums.js";
-import { ReactElement, ReactNode } from "react";
+import { ReactElement, ReactNode, Ref } from "react";
 export declare const __SALT: string;
 export declare const FIELNAME_KEY = "__FILENAME__";
 export declare const LINE_KEY = "__LINE__";
@@ -70,3 +70,4 @@ export declare const getPositionAroundElement: (x: number, y: number, distance: 
     y: number;
 }[];
 export declare const clamp: (value: number, min: number, max: number) => number;
+export declare function mergeRefs<T>(...refs: (Ref<T> | undefined)[]): Ref<T>;

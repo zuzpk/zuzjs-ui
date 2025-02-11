@@ -6,3 +6,4 @@ export * from "./hooks";
 export * from "./types";
 export * from "./types/enums";
 export * from "./types/interfaces";
+export { default as SVGIcons } from "./comps/svgicons";

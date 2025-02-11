@@ -23,7 +23,7 @@ const options = program.opts();
 const getAllFiles = (dir, extn, files, result, regex) => {
     files = files || readdirSync(dir);
     result = result || [];
-    regex = regex || new RegExp(`\\${extn}$`);
+    regex = regex || new RegExp(`^(?!.*[/\\\\]node_modules[/\\\\]).*\\${extn}$`);
     for (let i = 0; i < files.length; i++) {
         let file = path.join(dir, files[i]);
         if (statSync(file).isDirectory()) {
@@ -99,7 +99,7 @@ const rebuild = (f) => {
 const rebuildAll = () => {
     console.log(pc.gray(`○ Building Zuz CSS`));
     const cssBuilder = new CSS({}, options);
-    const files = getAllFiles(process.cwd(), `.jsx`);
+    const files = getAllFiles(process.cwd(), `.(jsx|tsx)`);
     if (files.length > 0) {
         const as = [];
         if (options.file) {
@@ -151,9 +151,13 @@ const rebuildAll = () => {
         });
         console.log(pc.green(`✓ Zuz CSS Generated`));
     }
+    else {
+        console.log(pc.red(`⨯ No tsx | jsx file found`));
+    }
 };
 const watcher = chokidar.watch([
-    `${path.resolve(`./`)}/**/*.jsx`
+    `${path.resolve(`./`)}/**/*.jsx`,
+    `${path.resolve(`./`)}/**/*.tsx`,
 ], {
     ignored: (p) => p.includes(`/dist`) || p.includes('node_modules'),
     persistent: true

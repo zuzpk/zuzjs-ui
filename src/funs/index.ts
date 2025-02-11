@@ -10,7 +10,7 @@ import Cookies from "js-cookie";
 import moment from "moment";
 import { KeyCode, SORT } from "../types/enums.js";
 import { Skeleton } from "../types/interfaces";
-import { Children, cloneElement, isValidElement, ReactElement, ReactNode } from "react";
+import { Children, cloneElement, isValidElement, ReactElement, ReactNode, Ref, RefObject } from "react";
 
 let __css : CSS;
 
@@ -606,3 +606,15 @@ export const getPositionAroundElement = (x : number, y : number, distance : numb
 export const clamp = (value: number, min: number, max: number): number => {
     return Math.min(Math.max(value, min), max);
 };
+
+export function mergeRefs<T>(...refs: (Ref<T> | undefined)[]): Ref<T> {
+    return (value: T) => {
+        refs.forEach(ref => {
+            if (typeof ref === 'function') {
+                ref(value);
+            } else if (ref != null) {
+                (ref as RefObject<T | null>).current = value;
+            }
+        });
+    };
+}

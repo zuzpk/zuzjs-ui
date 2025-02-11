@@ -30,7 +30,7 @@ const options = program.opts();
 const getAllFiles = (dir: any, extn: any, files?: string | any[], result?: any[], regex?: RegExp) : string[] => {
     files = files || readdirSync(dir);
     result = result || [];
-    regex = regex || new RegExp(`\\${extn}$`)
+    regex = regex || new RegExp(`^(?!.*[/\\\\]node_modules[/\\\\]).*\\${extn}$`);
 
     for (let i = 0; i < files!.length; i++) {
         let file = path.join(dir, files![i]);
@@ -122,7 +122,7 @@ const rebuildAll = () => {
     console.log( pc.gray( `○ Building Zuz CSS`) )
 
     const cssBuilder = new CSS({}, options)
-    const files = getAllFiles( process.cwd(), `.jsx` )
+    const files = getAllFiles( process.cwd(), `.(jsx|tsx)` )
 
     if ( files.length > 0 ){
 
@@ -198,11 +198,14 @@ const rebuildAll = () => {
         console.log( pc.green( `✓ Zuz CSS Generated`) )
 
     }
-
+    else{
+        console.log(pc.red (`⨯ No tsx | jsx file found`))
+    }
 }
 
 const watcher = chokidar.watch([
-    `${path.resolve(`./`)}/**/*.jsx`
+    `${path.resolve(`./`)}/**/*.jsx`,
+    `${path.resolve(`./`)}/**/*.tsx`,
 ], {
     ignored: (p: string | string[]) => p.includes(`/dist`) || p.includes('node_modules'),
     persistent: true
