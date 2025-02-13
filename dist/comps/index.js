@@ -69,3 +69,4 @@ export { default as ToolTip } from './Tooltip';
 export * from './Tooltip/types';
 export { default as TreeView } from './Treeview';
 export * from './Treeview/types';
+export { ThemeProvider } from '../hooks/useColorScheme';

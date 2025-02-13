@@ -2,7 +2,7 @@ import { cleanProps, css } from "../funs";
 import { cssShortKey, dynamicObject, Props, ZuzProps } from "../types";
 import { buildWithStyles, getAnimationCurve, getAnimationTransition } from "../funs/css";
 import useDrag from "./useDrag";
-import { ComponentProps, ComponentPropsWithRef, CSSProperties } from "react";
+import { ComponentProps, ComponentPropsWithRef, CSSProperties, JSX } from "react";
 import { Skeleton } from "../types/interfaces";
 import { cssFilterKeys, cssTransformKeys, cssWithKeys } from "../funs/stylesheet";
 

@@ -10,11 +10,21 @@ const SegmentItem = ({ onSelect, meta, selected } : SegmentItemProps) => {
     const ref = useRef<ButtonHandler | null>(null)
     const { index, icon, label } = meta as Segment
     const [ pos, setPos ] = useState({ x: 0, width: 0  })
-    // const [ _initial, setInitial ] = useState(true)
+    // const [ _selected, setSelected ] = useState(selected)
+
     useEffect(() => {
         if ( ref.current ){
             const { width, x } = ref.current.getBoundingClientRect()
             setPos({ x, width })
+            if ( selected ){
+                onSelect(index!, width, x, meta, true)
+                // setSelected(meta.index)
+            }
+
+            // if ( selected && !_initial ){
+            //     ref.current.click()
+            //     setInitial(true)
+            // }
         }
         // else
         //     setInitial(false)
@@ -22,13 +32,15 @@ const SegmentItem = ({ onSelect, meta, selected } : SegmentItemProps) => {
 
     useEffect(() => {
         if ( selected ){
-            onSelect(index!, pos.width, pos.x, meta)
+            onSelect(index!, pos.width, pos.x, meta, false)
         }
     }, [selected])
 
     return <Button
-        onClick={() => onSelect(index!, pos.width, pos.x, meta)}
+        onClick={() => onSelect(index!, pos.width, pos.x, meta, false)}
         ref={ref}
+        // data-x={pos.x}
+        suppressHydrationWarning
         className={`--segment-item flex aic rel ${selected ? `--segement-active` : ``}`.trim()}>
         {icon && <Box 
             className={`--segment-icon ${icon instanceof String ? `icon-${icon}` : `flex aic jcc`}`}>{typeof icon !== `string` && icon}</Box>}

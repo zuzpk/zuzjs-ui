@@ -7,12 +7,13 @@ import Box, { BoxProps } from '../Box';
 
 export type PinInputProps = InputProps & {
     mask?: boolean, 
-    size?: number
+    size?: number,
+    length?: number
 }
 
 const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
 
-    const { size, mask, ...pops } = props
+    const { size, length, mask, ...pops } = props
     const inputs = useRef<(HTMLInputElement | null)[]>([])
     
     let name = `pinput`
@@ -46,16 +47,16 @@ const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
     }
 
     useEffect(() => {
-        inputs.current = inputs.current.slice(0, size);
-    }, [size]);
+        inputs.current = inputs.current.slice(0, size || length);
+    }, [size || length]);
  
     return <Box 
         name={name}
         style={style}
         className={`--otp flex aic rel`}
         data-required={required}
-        data-size={size || 4}>
-        {Array(size || 4).fill(1).map((a, i) => <Input 
+        data-size={size || length || 4}>
+        {Array(size || length || 4).fill(1).map((a, i) => <Input 
             data-index={i}
             key={`pin-${i}`}
             ref={(el : HTMLInputElement | null) => {

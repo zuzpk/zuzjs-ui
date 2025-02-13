@@ -28,6 +28,7 @@ const Segmented = forwardRef((props, ref) => {
     const { className, style, rest } = useBase(pops);
     const _tab = useRef(null);
     const _segmented = useRef(null);
+    const [mounted, setMounted] = useState(false);
     /**
      * Handles selection of a segment.
      *
@@ -35,22 +36,25 @@ const Segmented = forwardRef((props, ref) => {
      * @param {number} width - The width of the selected segment.
      * @param {number} x - The x-coordinate of the selected segment.
      */
-    const handleSelect = (index, width, x, meta) => {
-        setSelected(index);
+    const handleSelect = (index, width, x, meta, force) => {
+        // console.log(selected, _selected, index, mounted)
+        if (force || _selected != index) {
+            setSelected(index);
+            if (onSwitch)
+                onSwitch(meta);
+        }
         if (_tab.current) {
             const _sp = _segmented.current?.getBoundingClientRect();
             _tab.current.style.setProperty(`--w`, `${width}px`);
             _tab.current.style.setProperty(`--x`, `${_sp ? x - _sp.left : x}px`);
-            if (onSwitch)
-                onSwitch(meta);
         }
     };
     useEffect(() => {
-        if (selected !== undefined) {
+        if (selected !== undefined && selected != _selected) {
             setSelected(selected);
         }
-    }, [selected]);
-    return _jsxs(Box, { ref: _segmented, className: `${className} --segmented --${size || Size.Small} flex aic rel`, style: style, ...rest, children: [_jsx(Box, { ref: _tab, className: `--segment-tab abs` }), items.map((item, i) => _jsx(SegmentItem, { onSelect: handleSelect, selected: _selected == i, meta: {
+    }, [selected, _selected]);
+    return _jsxs(Box, { suppressHydrationWarning: true, ref: _segmented, "data-selected": _selected, className: `${className} --segmented --${size || Size.Small} flex aic rel`, style: style, ...rest, children: [_jsx(Box, { ref: _tab, className: `--segment-tab abs` }), items.map((item, i) => _jsx(SegmentItem, { onSelect: handleSelect, selected: _selected == i, meta: {
                     ...item,
                     index: i
                 } }, `segment-${item.label}-${i}`))] });

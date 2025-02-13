@@ -18,7 +18,7 @@ export type FormProps = BoxProps & {
     /** The URL to which the form data is submitted */
     action?:  string;
     /** List of error messages for form validation */
-    errors?: string[];
+    errors?: dynamicObject;
     /** Spinner properties for loading indicator */
     spinner?: SpinnerProps;
     /** Additional data to include with form submission */

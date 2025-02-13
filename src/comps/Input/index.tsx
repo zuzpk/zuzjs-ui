@@ -4,16 +4,18 @@ import { Props } from '../../types';
 import { useBase } from '../../hooks';
 import Icon, { IconProps } from '../Icon';
 import Span, { SpanProps } from '../Span';
-import { Size } from '../../types/enums';
+import { FORMVALIDATION, Size } from '../../types/enums';
 
 export type InputProps = Props<`input`> & {
     numeric?: boolean,
-    size?: Size
+    size?: Size,
+    variant?: Size,
+    with?: FORMVALIDATION
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
-    const { size, numeric, ...pops } = props
+    const { size, variant, numeric, ...pops } = props
 
     const {
         style,
@@ -28,7 +30,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     }
  
     return <input
-        className={`--input ${size ? `--${size}` : ``} flex ${className}`.trim()}
+        className={`--input ${size || variant ? `--${size || variant}` : ``} flex ${className}`.trim()}
         style={style}
         onInput={handleInput}
         ref={ref}

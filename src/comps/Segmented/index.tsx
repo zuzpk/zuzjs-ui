@@ -1,4 +1,4 @@
-import { forwardRef, ReactNode, useEffect, useRef, useState } from "react";
+import { forwardRef, ReactNode, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Segment, SegmentProps } from "./types";
 import { useBase } from "../../hooks";
 import Box, { BoxProps } from "../Box";
@@ -31,6 +31,7 @@ const Segmented = forwardRef<HTMLDivElement, SegmentProps>((props, ref) => {
     const { className, style, rest } = useBase(pops)
     const _tab = useRef<HTMLDivElement | null>(null)
     const _segmented = useRef<HTMLDivElement | null>(null)
+    const [ mounted, setMounted ] = useState(false)
     
     /**
      * Handles selection of a segment.
@@ -39,24 +40,29 @@ const Segmented = forwardRef<HTMLDivElement, SegmentProps>((props, ref) => {
      * @param {number} width - The width of the selected segment.
      * @param {number} x - The x-coordinate of the selected segment.
      */
-    const handleSelect = (index: number, width: number, x: number, meta: Segment) => {
-        setSelected(index)
+    const handleSelect = (index: number, width: number, x: number, meta: Segment, force: boolean) => {
+        // console.log(selected, _selected, index, mounted)
+        if ( force || _selected != index ){
+            setSelected(index)
+            if ( onSwitch ) onSwitch(meta)
+        }
         if ( _tab.current ) {
             const _sp = _segmented.current?.getBoundingClientRect()
             _tab.current.style.setProperty(`--w`, `${width}px`)
             _tab.current.style.setProperty(`--x`, `${_sp ? x - _sp.left : x}px`);
-            if ( onSwitch ) onSwitch(meta)
         }
     }
 
     useEffect(() => {
-        if (selected !== undefined) {
+        if (selected !== undefined && selected != _selected) {
             setSelected(selected);
         }
-    }, [selected]);
+    }, [selected, _selected]);
 
     return <Box
+        suppressHydrationWarning
         ref={_segmented}
+        data-selected={_selected}
         className={`${className} --segmented --${size || Size.Small} flex aic rel`}
         style={style}
         {...rest as BoxProps}>

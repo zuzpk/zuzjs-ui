@@ -8,6 +8,8 @@ export type SearchProps = InputProps & {
 declare const Search: import("react").ForwardRefExoticComponent<import("../../types").ZuzProps & Omit<Omit<import("react").DetailedHTMLProps<import("react").InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "ref">, keyof import("../../types").ZuzProps> & {
     numeric?: boolean;
     size?: Size;
+    variant?: Size;
+    with?: import("../../types/enums").FORMVALIDATION;
 } & {
     onSubmit?: (value: string) => void;
     onChange?: (value: string) => void;

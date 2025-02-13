@@ -38,14 +38,14 @@ const TreeItem = forwardRef<TreeItemHandler, TreeItemProps>((props, ref) => {
                 className={`--node-aro-btn`}>
                 <Icon 
                     className={`--node-aro-icon`}
-                    name={icon || ( isOpen ? icons?.arrowOpen : icons?.arrowClose )} />
+                    name={isOpen ? icons?.arrowOpen : icons?.arrowClose} />
             </Button>
             <Button 
                 className={`--node-meta flex aic`}
                 onClick={(e) => onSelect(tag)}>
                 <Icon 
                     className={`--node-icon`}
-                    name={isOpen ? icons?.dirOpen : icons?.dirClose} />
+                    name={icon || ( isOpen ? icons?.dirOpen : icons?.dirClose )} />
                 <Text {...{ className: `--node-label`} as TextProps}>{label}</Text>
             </Button>
         </Box>

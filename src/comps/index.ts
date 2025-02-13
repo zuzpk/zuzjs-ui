@@ -74,7 +74,7 @@ export * from './Segmented/types';
 export { default as Select } from './Select';
 export * from './Select/types';
 
-export { type SheetProps, default as Sheet } from './Sheet';
+export { type SheetProps, type SheetHandler, default as Sheet } from './Sheet';
 
 export { default as SideBar } from './Sidebar';
 export * from './Sidebar/types';
@@ -101,3 +101,5 @@ export * from './Tooltip/types';
 
 export { default as TreeView } from './Treeview';
 export * from './Treeview/types';
+
+export { ThemeProvider } from '../hooks/useColorScheme'

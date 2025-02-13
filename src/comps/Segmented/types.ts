@@ -33,5 +33,5 @@ export type SegmentProps = BoxProps & {
 export type SegmentItemProps = {
     meta: Segment,
     selected: boolean,
-    onSelect: (index: number, width: number, x: number, segment: Segment ) => void
+    onSelect: (index: number, width: number, x: number, segment: Segment, force: boolean) => void
 }

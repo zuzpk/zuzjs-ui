@@ -23,6 +23,7 @@ export var FORMVALIDATION;
     FORMVALIDATION["Uri"] = "URI";
     FORMVALIDATION["Password"] = "PASSWORD";
     FORMVALIDATION["MatchField"] = "MATCHFIELD";
+    FORMVALIDATION["Pattern"] = "*";
 })(FORMVALIDATION || (FORMVALIDATION = {}));
 export var SHEET;
 (function (SHEET) {

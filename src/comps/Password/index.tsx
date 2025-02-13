@@ -8,8 +8,11 @@ import Input, { InputProps } from '../Input';
 import Box, { BoxProps } from '../Box';
 import Button from '../Button';
 import SVGIcons from '../svgicons';
+import { FORMVALIDATION } from '../../types/enums';
 
-export type PasswordProps = Omit<InputProps, `type` | `numeric`> & {}
+export type PasswordProps = Omit<InputProps, `type` | `numeric`> & {
+    
+}
 
 const Password = forwardRef<HTMLInputElement, PasswordProps>((props, ref) => {
 

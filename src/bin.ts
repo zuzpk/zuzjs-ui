@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import fs, { readdirSync, statSync } from "fs"
+import fs, { readdirSync, statSync, watch } from "fs"
 import { program } from "commander";
 import chokidar from 'chokidar';
 import path from "path";
@@ -12,14 +12,14 @@ import { dynamicObject, zuzProps } from "./types/index.js";
 program
     .option(`-d, --debug`)
     .option(`-v, --version`)
-    .option(`-root, --root <char>`)
+    .option(`-r, --root <char>`)
     .option(`-f, --file <char>`)
-    .option(`-lx, --lexer`)
-    .option(`-cx, --classes`)
-    .option(`-ch, --cache`)
-    .option(`-cl, --cleaned`)
-    .option(`-sh, --sheet`)
-    .option(`-mq, --media`)
+    .option(`-l, --lexer`)
+    .option(`-c, --classes`)
+    .option(`-h, --cache`)
+    .option(`-e, --cleaned`)
+    .option(`-t, --sheet`)
+    .option(`-m, --media`)
 
 program.parse()
 
@@ -203,14 +203,18 @@ const rebuildAll = () => {
     }
 }
 
-const watcher = chokidar.watch([
+const watchPaths = [
     `${path.resolve(`./`)}/**/*.jsx`,
     `${path.resolve(`./`)}/**/*.tsx`,
-], {
+]
+
+const watcher = chokidar.watch(watchPaths, {
     ignored: (p: string | string[]) => p.includes(`/dist`) || p.includes('node_modules'),
-    persistent: true
+    persistent: true,
+    usePolling: true
 })
 
-if ( options.file ) console.log( pc.gray( `○ Watching ${options.file}`) )
+if ( options.file ) 
+    console.log( pc.gray( `○ Watching ${options.file}`) )
 
 watcher.on(`change`, rebuildAll)

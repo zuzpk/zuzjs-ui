@@ -5,7 +5,7 @@ import { useBase } from '../../hooks';
 import Input from '../Input';
 import Box from '../Box';
 const PinInput = forwardRef((props, ref) => {
-    const { size, mask, ...pops } = props;
+    const { size, length, mask, ...pops } = props;
     const inputs = useRef([]);
     let name = `pinput`;
     let required = false;
@@ -33,9 +33,9 @@ const PinInput = forwardRef((props, ref) => {
         }
     };
     useEffect(() => {
-        inputs.current = inputs.current.slice(0, size);
-    }, [size]);
-    return _jsx(Box, { name: name, style: style, className: `--otp flex aic rel`, "data-required": required, "data-size": size || 4, children: Array(size || 4).fill(1).map((a, i) => _jsx(Input, { "data-index": i, ref: (el) => {
+        inputs.current = inputs.current.slice(0, size || length);
+    }, [size || length]);
+    return _jsx(Box, { name: name, style: style, className: `--otp flex aic rel`, "data-required": required, "data-size": size || length || 4, children: Array(size || length || 4).fill(1).map((a, i) => _jsx(Input, { "data-index": i, ref: (el) => {
                 inputs.current[i] = el;
             }, numeric: true, onChange: handleInput, maxLength: 1, placeholder: `0`, type: mask ? `password` : 'text', ...pops }, `pin-${i}`)) });
 });

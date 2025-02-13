@@ -9,14 +9,14 @@ import { FIELNAME_KEY } from "./funs/index.js";
 program
     .option(`-d, --debug`)
     .option(`-v, --version`)
-    .option(`-root, --root <char>`)
+    .option(`-r, --root <char>`)
     .option(`-f, --file <char>`)
-    .option(`-lx, --lexer`)
-    .option(`-cx, --classes`)
-    .option(`-ch, --cache`)
-    .option(`-cl, --cleaned`)
-    .option(`-sh, --sheet`)
-    .option(`-mq, --media`);
+    .option(`-l, --lexer`)
+    .option(`-c, --classes`)
+    .option(`-h, --cache`)
+    .option(`-e, --cleaned`)
+    .option(`-t, --sheet`)
+    .option(`-m, --media`);
 program.parse();
 const options = program.opts();
 // extendGlobals()
@@ -155,12 +155,14 @@ const rebuildAll = () => {
         console.log(pc.red(`⨯ No tsx | jsx file found`));
     }
 };
-const watcher = chokidar.watch([
+const watchPaths = [
     `${path.resolve(`./`)}/**/*.jsx`,
     `${path.resolve(`./`)}/**/*.tsx`,
-], {
+];
+const watcher = chokidar.watch(watchPaths, {
     ignored: (p) => p.includes(`/dist`) || p.includes('node_modules'),
-    persistent: true
+    persistent: true,
+    usePolling: true
 });
 if (options.file)
     console.log(pc.gray(`○ Watching ${options.file}`));

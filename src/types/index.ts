@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef, ElementType } from "react"
+import { ComponentPropsWithoutRef, Dispatch, ElementType, SetStateAction } from "react"
 import { DRAG_DIRECTION, SHIMMER, SORT } from "./enums"
 import { animationProps, Skeleton } from "./interfaces"
 import { DragOptions } from "../hooks"
@@ -87,3 +87,4 @@ export type cssShortKeys = {
     sy: string | number,
     sz: string | number,
 };
+

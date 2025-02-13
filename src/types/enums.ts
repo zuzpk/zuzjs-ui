@@ -21,7 +21,8 @@ export enum FORMVALIDATION {
     Email = "EMAIL",
     Uri = "URI",
     Password = "PASSWORD",
-    MatchField = "MATCHFIELD"
+    MatchField = "MATCHFIELD",
+    Pattern = "*"
 }
 
 export enum SHEET {

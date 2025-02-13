@@ -1,6 +1,6 @@
 export { default as useBase } from './useBase';
 export { default as useCalendar } from './useCalendar';
-export { default as useColorScheme } from './useColorScheme';
+export { useColorScheme } from './useColorScheme';
 export { default as useContextMenu } from './useContextMenu';
 export { default as useDB } from './useDB';
 export { default as useDebounce } from './useDebounce';
