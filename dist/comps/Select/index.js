@@ -39,7 +39,7 @@ const Select = forwardRef((props, ref) => {
             setQuery(null);
         }
     }, [choosing]);
-    return _jsxs(Box, { className: `--select ${name ? `--${name}` : ``} rel`.trim(), children: [_jsxs(Button, { "data-value": value ? `string` == typeof value ? value : value.value : value || `-1`, className: `--selected flex aic rel ${className}`.trim(), withLabel: false, style: style, onClick: (e) => setChoosing(prev => !prev), ...rest, children: [_jsx(Text, { className: `--label`, children: value ? `string` == typeof value ? value : value.label : label || `Choose` }), _jsx(Box, { className: `--svg-arrow rel flex aic jcc`, children: choosing ? SVGIcons.arrowUp : SVGIcons.arrowDown })] }), _jsxs(Box, { id: _id, className: `--options-list flex cols abs`, style: {
+    return _jsxs(Box, { className: `--select ${name ? `--${name}` : ``} rel`.trim(), name: _id, children: [_jsxs(Button, { "data-value": value ? `string` == typeof value ? value : value.value : value || `-1`, className: `--selected flex aic rel ${className}`.trim(), withLabel: false, style: style, onClick: (e) => setChoosing(prev => !prev), ...rest, children: [_jsx(Text, { className: `--label`, children: value ? `string` == typeof value ? value : value.label : label || `Choose` }), _jsx(Box, { className: `--svg-arrow rel flex aic jcc`, children: choosing ? SVGIcons.arrowUp : SVGIcons.arrowDown })] }), _jsxs(Box, { id: _id, className: `--options-list flex cols abs`, style: {
                     pointerEvents: choosing ? `auto` : `none`,
                 }, animate: {
                     from: { y: 5, opacity: 0 },

@@ -1,0 +1,56 @@
+:root{
+    --context: #fff;
+    --context-border: 0px;
+    --context-radius: 10px;
+    --context-padding: 10px;
+    --context-shadow: var(--zuz-shadow);
+    --context-seperator: #eee;
+    --context-seperator-height: 1px;
+    --context-seperator-margin: 3px 6px;
+    --context-item: #fff;
+    --context-item-color: #111;
+    --context-item-width: 220px;
+    --context-item-padding: 6px 10px;
+    --context-item-gap: 10px;
+    --context-item-font-size: 15px;
+    --context-item-radius: 5px;
+    --context-item-icon-size: 18px;
+    --context-item-hover: #eee;
+}
+
+.--contextmenu{
+
+    z-index: var(--max-z-index);
+    background: var(--context);
+    border-radius: var(--context-radius);
+    padding: var(--context-padding);
+    box-shadow: var(--context-shadow);
+    
+    .--line{
+        height: var(--context-seperator-height);
+        background: var(--context-seperator);
+        margin: var(--context-seperator-margin);
+    }
+
+    .--item{
+        width: var(--context-item-width);
+        padding: var(--context-item-padding);
+        gap: var(--context-item-gap);
+        cursor: pointer;
+        font-size: var(--context-item-font-size);
+        border-radius: var(--context-item-radius);
+        background: var(--context-item);
+        border: 0px;
+        color: var(--context-item-color);
+        .--ico{
+            font-size: var(--context-item-icon-size);
+        }
+        .--label{
+            color: var(--context-item-color);
+        }
+        &:hover{
+            background: var(--context-item-hover);
+        }
+    }
+
+}

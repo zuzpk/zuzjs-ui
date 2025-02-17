@@ -1,0 +1,31 @@
+:root{
+    --pin-radius: 4px;
+    --pin-gap: 4px;
+    --pin-shadow: inset 0px 0px 0px 2px #111;
+    --pin-padding: 5px;
+}
+.--otp{
+
+    width: 100%;
+    gap: var(--pin-gap);
+
+    .--input{
+        text-align: center;
+        padding: var(--pin-padding) !important;
+        &:not(:last-child),
+        &:not(:first-child){
+            border-radius: 0px !important;
+        }
+        &:first-child{
+            border-radius: var(--pin-radius) 0px 0px var(--pin-radius) !important;
+        }
+        &:last-child{
+            border-radius: 0px var(--pin-radius) var(--pin-radius) 0px !important;
+        }
+
+        &:focus{
+            box-shadow: var(--pin-shadow);
+        }
+    }
+
+}

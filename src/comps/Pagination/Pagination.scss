@@ -1,0 +1,95 @@
+:root {
+    --pagination: transparent;
+    --pagination-padding: 10px;
+    --pagination-font-size: 15px;
+
+    --pagination-current-page-bg: var(--blue-500);
+    --pagination-current-page-color: #fff;
+    --pagination-disabled-page-color: var(--black-300);
+
+    --pagination-table-button-padding: 4px 8px;
+    --pagination-table-button-nav-padding: 3px;
+    --pagination-table-button-size: 35px;
+    --pagination-table-button-border: 1px #ddd solid;
+    --pagination-table-button-color: #111;
+    --pagination-table-button-hover-color: #111;
+    --pagination-table-button-bg: #fff;
+    --pagination-table-button-hover-bg: #eee;
+    --pagination-table-gap: 1px;
+    --pagination-table-radius: 5px;
+    --pagination-table-icon-size: 26px;
+
+}
+
+[color-scheme="dark"]{
+
+    --pagination-current-page-bg: var(--blue-500);
+    --pagination-current-page-color: #fff;
+    --pagination-disabled-page-color: var(--white-300);
+
+    --pagination-table-button-border: 1px var(--pagination-table-button-bg) solid;
+    --pagination-table-button-color: #f9f9f9;
+    --pagination-table-button-hover-color: #fff;
+    --pagination-table-button-bg: #333;
+    --pagination-table-button-hover-bg: var(--blue-500);
+
+}
+
+.--pagination{
+    padding: var(--pagination-padding);
+    background: var(--pagination);
+    font-size: var(--pagination-font-size);
+
+    .--button{
+        &.--current-page{
+            background: var(--pagination-current-page-bg) !important;
+            color: var(--pagination-current-page-color) !important;
+        }
+        &:disabled{
+            pointer-events: none !important;
+            cursor: auto !important;
+            background: transparent !important;
+            color: var(--pagination-disabled-page-color) !important;
+        }
+    }
+
+    //Table
+    &.--pgt-table{
+        .--pgt-btns{
+            gap: var(--pagination-table-gap);
+            &.--pgt-nav{
+                margin-left: 20px;
+                .--button{
+                    padding: var(--pagination-table-button-nav-padding);
+                }
+            }
+        }
+        .--button{
+            min-width: var(--pagination-table-button-size);
+            height: var(--pagination-table-button-size);
+            font-size: var(--pagination-font-size);
+            border: var(--pagination-table-button-border);
+            background: var(--pagination-table-button-bg);
+            color: var(--pagination-table-button-color);
+            padding: var(--pagination-table-button-padding);
+            &:hover{
+                background: var(--pagination-table-button-hover-bg);
+                color: var(--pagination-table-button-hover-color);
+                svg{
+                    fill: var(--pagination-table-button-hover-color);
+                }
+            }
+            &:first-child {
+                border-radius: var(--pagination-table-radius) 0px 0px var(--pagination-table-radius);
+            }
+            &:last-child {
+                border-radius: 0px var(--pagination-table-radius) var(--pagination-table-radius) 0px;
+            }
+            svg{
+                fill: var(--pagination-table-button-color);
+                width: var(--pagination-table-icon-size);
+            }
+        }
+    }
+
+}

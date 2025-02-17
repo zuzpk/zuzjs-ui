@@ -1,0 +1,80 @@
+@use "../../scss/mixins.scss" as *;
+
+:root{
+    --search-send-color: #111;
+    --search-send: transparent;
+    --search-radius: 5px;
+    --search-send-border: 0px;
+
+    --search-send-width-sm: 40px;
+    --search-send-padding-sm: 5px;
+    --search-send-size-sm: 25px;
+
+    --search-send-width-md: 40px;
+    --search-send-padding-md: 5px;
+    --search-send-size-md: 25px;
+    
+    --search-send-width-lg: 40px;
+    --search-send-padding-lg: 5px;
+    --search-send-size-lg: 25px;
+
+}
+
+[color-scheme="dark"] {
+    --search-send-color: #fff;
+}
+
+.--search{
+
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--search-radius);
+
+    &.--sm{
+        .--send{
+            padding: var(--search-send-padding-sm);
+            width: var(--search-send-width-sm);
+            svg{
+                width: var(--search-send-size-sm);
+                height: var(--search-send-size-sm);
+            }
+        }
+    }
+    &.--md{
+        .--send{
+            padding: var(--search-send-padding-md);
+            width: var(--search-send-width-md);
+            svg{
+                width: var(--search-send-size-md);
+                height: var(--search-send-size-md);
+            }
+        }
+    }
+    &.--lg{
+        .--send{
+            padding: var(--search-send-padding-lg);
+            width: var(--search-send-width-lg);
+            svg{
+                width: var(--search-send-size-lg);
+                height: var(--search-send-size-lg);
+            }
+        }
+    }
+    
+
+    .--send{
+        background: var(--search-send);
+        border: var(--search-send-border);
+        right: 2px;
+        bottom: 2px;
+        top: 2px;
+        z-index: 1;
+        
+        svg{
+            @include anim($duration: 0.2s);
+            path {
+                fill: var(--search-send-color);
+            }
+        }
+    }
+}

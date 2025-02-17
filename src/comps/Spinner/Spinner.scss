@@ -1,0 +1,70 @@
+:root{
+    --spinner-color: #111;
+}
+
+[color-scheme="dark"] {
+    --spinner-color: #f9f9f9;
+}
+
+.--spinner {
+
+    &.--simple{
+        aspect-ratio: 1;
+        animation: spin infinite;
+    }
+
+    &.--wave{
+        display: flex;
+        align-items: center;
+        gap: var(--spinner-gap);
+
+        &.--def,
+        &.--sm{
+            --spinner-radius: 2px;
+            --spinner-gap: 3px;
+            --spinner-wave-width: 4px;
+            --spinner-wave-height: 10px;
+        }
+        &.--md{
+            --spinner-radius: 2px;
+            --spinner-gap: 4px;
+            --spinner-wave-width: 5px;
+            --spinner-wave-height: 14px;
+        }
+        &.--lg{
+            --spinner-radius: 3px;
+            --spinner-gap: 4px;
+            --spinner-wave-width: 6px;
+            --spinner-wave-height: 16px;
+        }
+
+        .--dot{
+            width: var(--spinner-wave-width);
+            background: var(--spinner-color);
+            border-radius: var(--spinner-radius);     
+            &.--dot-1{
+                animation: spinnerWave infinite;
+                animation-delay: 0.1s;
+                height: var(--spinner-wave-height);
+                animation-duration: 1.5s;
+                animation-timing-function: ease-in-out;       
+            }
+            &.--dot-2{
+                animation: spinnerWave infinite;
+                animation-delay: 0.2s;
+                height: calc( var(--spinner-wave-height) * 1.1 );
+                animation-duration: 1.5s;
+                animation-timing-function: ease-in-out;       
+            }
+            &.--dot-3{
+                animation: spinnerWave infinite;
+                animation-delay: 0.3s;
+                height: calc( var(--spinner-wave-height) * 1.25 );
+                animation-duration: 1.5s;
+                animation-timing-function: ease-in-out;       
+            }
+        }
+    }
+    
+
+}

@@ -64,7 +64,7 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
         }
     }, [choosing])
 
-    return <Box className={`--select ${name ? `--${name}` : ``} rel`.trim()}>
+    return <Box className={`--select ${name ? `--${name}` : ``} rel`.trim()} name={_id}>
 
         <Button
             data-value={value ? `string` == typeof value ? value : value.value : value || `-1`}

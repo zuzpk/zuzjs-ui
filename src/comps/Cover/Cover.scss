@@ -1,0 +1,15 @@
+:root{
+    --cover-bg: rgba(255,255,255,0.8);
+    --cover-label: #111;
+}
+.--cover{
+    backdrop-filter: blur(4px);
+    z-index: 99999;
+    gap: 15px;
+    pointer-events: auto;
+    .label{
+        font-size: 14px;
+        animation: breath 1s linear infinite;
+        
+    }
+}

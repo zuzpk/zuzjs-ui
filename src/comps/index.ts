@@ -60,6 +60,9 @@ export { type OverlayProps, default as Overlay } from './Overlay';
 export { type PasswordProps, default as Password } from './Password';
 export { type PinInputProps, default as PinInput } from './PinInput';
 
+export { default as Pagination } from './Pagination';
+export * from './Pagination/types';
+
 export { default as ProgressBar } from './ProgressBar';
 export * from './ProgressBar/types';
 

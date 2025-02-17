@@ -141,7 +141,7 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
                 }
             }
 
-            if( el.classList.contains(`--select`) && el.dataset.value == `-1` ){
+            if( el.classList.contains(`--select`) && el.querySelector(`button.--selected`).dataset.value == `-1` ){
                 return false
             }
 
@@ -221,12 +221,14 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
 
                 data[_name] = {
                     valid: valid,
-                    value: el.classList.contains(`--otp`) ? _getPinValue(el)
-                        : el.classList.contains(`--select`) ? el.dataset.value : el.value
+                    value: el.type == `checkbox` ? el.checked == true ? el.value : false
+                        : el.classList.contains(`--otp`) ? _getPinValue(el)
+                            : el.classList.contains(`--select`) ? el.querySelector(`button.--selected`).dataset.value : el.value
                 }
 
-                payload[_name] = el.classList.contains(`--otp`) ? _getPinValue(el)
-                    : el.classList.contains(`--select`) ? el.dataset.value : el.value
+                payload[_name] = el.type == `checkbox` ? el.checked == true ? true : false
+                    :el.classList.contains(`--otp`) ? _getPinValue(el)
+                        : el.classList.contains(`--select`) ? el.querySelector(`button.--selected`).dataset.value : el.value
 
                 if ( !valid ){
                     if ( _error == null && errors ){

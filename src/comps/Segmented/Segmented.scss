@@ -1,0 +1,162 @@
+@use "../../scss/mixins.scss" as *;
+
+:root{
+    --segmented: #eee;
+    --segmented-border: 1px #ddd solid;
+    --segment-item: transparent;
+    --segment-item-border: 0px;
+    --segment-item-font-weight: normal;
+    --segment-item-color: #999;
+    --segment-item-active-color: #111;
+    --segment-tab: #fff;
+    --segment-tab-radius: calc(var(--segmented-radius) - var(--segmented-padding));
+    --segmented-speed: 0.5s;
+
+    --segmented-radius-sm: 8px;
+    --segmented-padding-sm: 2px;
+    
+    --segmented-radius-md: 8px;
+    --segmented-padding-md: 2px;
+    
+    --segmented-radius-lg: 8px;
+    --segmented-padding-lg: 2px;
+
+    --segment-item-padding-sm: 5px 12px;
+    --segment-item-font-size-sm: 15px;
+    --segment-item-radius-sm: calc(var(--segmented-radius-sm) - var(--segmented-padding-sm));
+    --segment-item-svg-size-sm: 18px;
+
+    --segment-item-padding-md: 5px 12px;
+    --segment-item-font-size-md: 15px;
+    --segment-item-radius-md: calc(var(--segmented-radius-md) - var(--segmented-padding-md));
+    --segment-item-svg-size-md: 18px;
+    
+    --segment-item-padding-lg: 5px 12px;
+    --segment-item-font-size-lg: 15px;
+    --segment-item-radius-lg: calc(var(--segmented-radius-lg) - var(--segmented-padding-lg));
+    --segment-item-svg-size-lg: 18px;
+
+}
+
+[color-scheme="dark"] {
+    body{
+        --segmented: #444;
+        --segmented-border: 1px #555 solid;
+        --segment-tab: #212121;
+        --segment-item-color: #a0a0a0;
+        --segment-item-active-color: #fff;
+    }
+}
+
+.--segmented{
+
+    background: var(--segmented);
+    border: var(--segmented-border);
+    overflow: hidden;
+
+    &.--sm{
+        border-radius: var(--segmented-radius-sm);
+        padding: var(--segmented-padding-sm);
+        .--segment-item{
+            padding: var(--segment-item-padding-sm);
+            font-size: var(--segment-item-font-size-sm);
+            border-radius: var(--segment-item-radius-sm);
+            svg{
+                width: var(--segment-item-svg-size-sm);
+            }
+        }
+        .--segment-tab{
+            border-radius: calc(var(--segmented-radius-sm) - var(--segmented-padding-sm));
+            transform: translateX(calc(var(--x) - var(--segmented-padding-sm)));
+            top: var(--segmented-padding-sm);
+            bottom: var(--segmented-padding-sm);
+        }
+    }
+    &.--md{
+        border-radius: var(--segmented-radius-md);
+        padding: var(--segmented-padding-md);
+        .--segment-item{
+            padding: var(--segment-item-padding-md);
+            font-size: var(--segment-item-font-size-md);
+            border-radius: var(--segment-item-radius-md);
+            svg{
+                width: var(--segment-item-svg-size-md);
+            }
+        }
+        .--segment-tab{
+            border-radius: calc(var(--segmented-radius-md) - var(--segmented-padding-md));
+            transform: translateX(calc(var(--x) - var(--segmented-padding-md)));
+            top: var(--segmented-padding-md);
+            bottom: var(--segmented-padding-md);
+        }
+    }
+    &.--lg{
+        border-radius: var(--segmented-radius-lg);
+        padding: var(--segmented-padding-lg);
+        .--segment-item{
+            padding: var(--segment-item-padding-lg);
+            font-size: var(--segment-item-font-size-lg);
+            border-radius: var(--segment-item-radius-lg);
+            svg{
+                width: var(--segment-item-svg-size-lg);
+            }
+        }
+        .--segment-tab{
+            border-radius: calc(var(--segmented-radius-lg) - var(--segmented-padding-lg));
+            transform: translateX(calc(var(--x) - var(--segmented-padding-lg)));
+            top: var(--segmented-padding-lg);
+            bottom: var(--segmented-padding-lg);
+        }
+    }
+
+    .--segment-item{
+
+        background: var(--segment-item);
+        border: var(--segment-item-border);
+        color: var(--segment-item-color);
+        font-weight: var(--segment-item-font-weight);
+        z-index: 1;
+        flex: 1;
+
+        .--segment-label{
+            white-space: pre;
+            @include anim($duration: var(--segmented-speed), $fun: var(--ease));
+        }
+
+        svg {
+            react{
+                fill: var(--segment-item-color);
+            }
+            path{
+                fill: var(--segment-item-color);
+            }
+            fill: var(--segment-item-color);
+        }
+
+        &.--segement-active{
+            color: var(--segment-item-active-color);   
+
+            svg{
+                react{
+                    fill: var(--segment-item-active-color);
+                }
+                path{
+                    fill: var(--segment-item-active-color);
+                }
+                fill: var(--segment-item-active-color);
+            }
+
+        }
+
+        
+
+    }
+
+    .--segment-tab{
+        background: var(--segment-tab);
+        width: var(--w);
+        z-index: 0;
+        @include anim($duration: var(--segmented-speed), $fun: var(--ease));
+    }
+
+}

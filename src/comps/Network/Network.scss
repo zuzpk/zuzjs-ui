@@ -1,0 +1,66 @@
+:root{
+
+    --network-manager: #111;
+    --network-manager-color: #fff;
+
+    --network-manager-radius-sm: 8px;
+    --network-manager-radius-md: 10px;
+    --network-manager-radius-lg: 12px;
+    
+    --network-manager-padding-sm: 6px 10px;
+    --network-manager-padding-md: 8px 12px;
+    --network-manager-padding-lg: 10px 14px;
+    
+    --network-manager-icon-size-sm: 18px;
+    --network-manager-icon-size-md: 20px;
+    --network-manager-icon-size-lg: 24px;
+
+    --network-manager-font-size-sm: 14px;
+    --network-manager-font-size-md: 16px;
+    --network-manager-font-size-lg: 18px;
+
+}
+.--network-manager{
+
+    color: var(--network-manager-color);
+    z-index: var(--max-z-index);
+    bottom: 50px;
+    left: 50%;
+
+    &.--online{background: var(--green-600);}
+    &.--offline{background: var(--red-600);}
+
+    svg {fill: var(--network-manager-color);}
+    
+    &.--sm{
+        padding: var(--network-manager-padding-sm);
+        border-radius: var(--network-manager-radius-sm);
+        font-size: var(--network-manager-font-size-sm);
+        gap: 6px;
+        .--ico{
+            width: var(--network-manager-icon-size-sm);
+            height: var(--network-manager-icon-size-sm);
+        }
+    }
+    &.--md{
+        padding: var(--network-manager-padding-md);
+        border-radius: var(--network-manager-radius-md);
+        font-size: var(--network-manager-font-size-md);
+        gap: 8px;
+        .--ico{
+            width: var(--network-manager-icon-size-md);
+            height: var(--network-manager-icon-size-md);
+        }
+    }
+    &.--lg{
+        padding: var(--network-manager-padding-lg);
+        border-radius: var(--network-manager-radius-lg);
+        font-size: var(--network-manager-font-size-lg);
+        gap: 10px;
+        .--ico{
+            width: var(--network-manager-icon-size-lg);
+            height: var(--network-manager-icon-size-lg);
+        }
+    }
+
+}

@@ -1,0 +1,61 @@
+// :root{
+//     --color-scheme-radius: 20px;
+//     --color-scheme: #fff;
+//     --color-scheme-gap: 4px;
+//     --color-scheme-padding: 2px;
+//     --color-scheme-border: #ddd;
+//     --color-scheme-item-icon-size: 20px;
+//     --color-scheme-item-hover: #eee;
+//     --color-scheme-item-active: #ccc;
+//     --color-scheme-item-padding: 3px;
+// }
+// .--color-scheme{
+//     background: var(--color-scheme);
+//     border: 1px var(--color-scheme-border) solid;
+//     border-radius: var(--color-scheme-radius);
+//     overflow: hidden;
+//     padding: var(--color-scheme-padding);
+//     gap: var(--color-scheme-gap);
+//     .--color-scheme-item{
+//         background: transparent;
+//         padding: var(--color-scheme-item-padding);
+//         border-radius: var(--color-scheme-radius);
+//         width: calc( var(--color-scheme-item-icon-size) + 2 * 1px );
+//         height: calc( var(--color-scheme-item-icon-size) + 2 * 1px );
+//         svg{
+//             width: var(--color-scheme-item-icon-size);
+//             circle, path, rect{
+//                 fill: #111;
+//             }
+//         }
+
+//         &:hover{
+//             background: var(--color-scheme-item-hover);
+//         }
+//         &.--active{
+//             background: var(--color-scheme-item-active);
+//         }
+
+//     }
+// }
+
+// [color-scheme="dark"] {
+//     body{
+//         .--color-scheme{
+//             --color-scheme: #444;
+//             --color-scheme-border: #555;
+//             --color-scheme-item-hover: #111;
+//             --color-scheme-item-active: #222;
+//             svg{
+//                 fill: #fff;
+//             }
+//         }
+//     }
+// }
+.--segmented{
+    &.--color-scheme{
+        --segment-item-padding-sm: 0px;
+        --segmented-radius-sm: 20px;
+        width: 100px;
+    }
+}

@@ -1,0 +1,78 @@
+@use "../../scss/mixins.scss" as *;
+
+:root{
+    --switch-height: 24px;
+    --switch-width: 42px;
+    --switch-knob-size: 20px;
+    --switch-knob-left: 2px;
+    --switch-knob-top: 2px;
+    --switch-knob-left-on: 18px;
+    --switch-checked: rgb(46, 161, 42);
+    --switch-unchecked: rgb(203, 203, 203);
+    --switch-knob: #fff;
+    --switch-knob-shadow: #000;
+    --switch-knob-shadow-size: 2px;
+}
+
+.--switch{
+
+    &.--md{
+        --switch-height: 20px;
+        --switch-width: 36px;
+        --switch-knob-size: 16px;
+        --switch-knob-left-on: 16px;
+    }
+    &.--sm{
+        --switch-height: 10px;
+        --switch-width: 34px;
+        --switch-knob-size: 16px;
+        --switch-knob-left: 0px;
+        --switch-knob-top: -3px;
+    }
+
+    height: var(--switch-height);
+    width: var(--switch-width);
+    min-height: var(--switch-height);
+    min-width: var(--switch-width);
+    max-height: var(--switch-height);
+    max-width: var(--switch-width);
+    
+    cursor: pointer;
+    input[type=checkbox]{
+        z-index: 0;
+        left: 10px;
+        top: 10px;
+        opacity: 0;
+    }
+    &:before{
+        content: "";
+        position: absolute;
+        height: var(--switch-height);
+        width: var(--switch-width);
+        background: var(--switch-unchecked);
+        border-radius: 50px;
+        z-index: 1;
+        @include anim($duration: 0.3s);
+    }
+    &:after{
+        content: "";
+        position: absolute;
+        width: var(--switch-knob-size);
+        height: var(--switch-knob-size);
+        background: var(--switch-knob);
+        border-radius: 50px;
+        z-index: 2;
+        top: var(--switch-knob-top);
+        left: var(--switch-knob-left);
+        box-shadow: 0px 0px var(--switch-knob-shadow-size) var(--switch-knob-shadow);
+        @include anim($duration: 0.75s, $fun: var(--bounce));
+    }
+    &.is-checked {
+        &:before{
+            box-shadow: inset 0px 0px 0px 15px var(--switch-checked);
+        }
+        &:after{
+            transform: translateX(var(--switch-knob-left-on));
+        }
+    }
+}

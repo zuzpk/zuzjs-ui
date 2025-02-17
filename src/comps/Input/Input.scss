@@ -1,0 +1,57 @@
+:root{
+    --input: var(--gray-200);
+    --input-border: 0px;
+    --input-color: var(--black-900);
+
+    --input-padding-lg: 16px 20px;
+    --input-font-size-lg: 18px;
+    --input-radius-lg: 6px;
+
+    --input-padding-md: 12px 15px;
+    --input-font-size-md: 16px;
+    --input-radius-md: 4px;
+
+    --input-padding-sm: 8px 12px;
+    --input-font-size-sm: 15px;
+    --input-radius-sm: 2px;
+
+}
+
+.--input{
+
+    
+
+    &.--lg{
+        padding: var(--input-padding-lg);
+        font-size: var(--input-font-size-lg);
+        border-radius: var(--input-radius-lg);
+    }
+    &.--md{
+        padding: var(--input-padding-md);
+        font-size: var(--input-font-size-md);
+        border-radius: var(--input-radius-md);
+    }
+    &.--sm{
+        padding: var(--input-padding-sm);
+        font-size: var(--input-font-size-sm);
+        border-radius: var(--input-radius-sm);
+    }
+
+    background: var(--input);    
+    border: var(--input-border);
+    color: var(--input-color);
+    width: 100%;
+
+    &.--otp{
+        letter-spacing: 1ch;
+        font-feature-settings: 'tnum';
+        font-variant: tabular-nums;
+        font-family: monospace;
+        line-height: 1;
+        text-indent: 1.45ch;
+        clip-path: inset(0 1ch 0 1ch);
+        height: 2ch;
+    }
+
+}
+
