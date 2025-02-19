@@ -1,3 +1,4 @@
+"use client"
 import React, { forwardRef } from 'react';
 import { EditorHandler, EditorMode, EditorProps } from './types';
 import ActionBar from '../Actionbar';

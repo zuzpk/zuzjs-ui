@@ -1,3 +1,4 @@
+"use client";
 import { jsx as _jsx } from "react/jsx-runtime";
 import React, { forwardRef } from 'react';
 import { EditorMode } from './types';

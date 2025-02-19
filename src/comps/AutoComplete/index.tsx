@@ -1,3 +1,4 @@
+"use client"
 import { forwardRef, KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
 import { AutoCompleteProps } from "./types";
 import { useBase, useDebounce } from "../../hooks";

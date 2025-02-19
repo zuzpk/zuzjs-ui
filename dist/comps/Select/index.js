@@ -1,7 +1,7 @@
+"use client";
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, useEffect, useId, useMemo, useRef, useState } from "react";
 import SVGIcons from "../svgicons";
-import { uuid } from "../../funs";
 import Box from "../Box";
 import { useBase } from "../../hooks";
 import Button from "../Button";
@@ -17,7 +17,7 @@ const Select = forwardRef((props, ref) => {
     const [query, setQuery] = useState(null);
     const _ref = useRef(null);
     const _search = useRef(null);
-    const _id = useMemo(() => name || uuid(), []);
+    const _id = useMemo(() => name || useId(), []);
     const { className, style, rest } = useBase(pops);
     const updateValue = (o) => {
         setValue(o);

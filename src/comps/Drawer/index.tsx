@@ -1,3 +1,4 @@
+"use client"
 import { forwardRef, ReactNode, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import Overlay, { OverlayProps } from "../Overlay";
 import Box, { BoxProps } from "../Box";

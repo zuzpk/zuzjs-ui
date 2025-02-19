@@ -1,3 +1,4 @@
+"use client"
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import Box, { BoxProps } from "../Box";
 import { ContextItem, ContextMenuHandler, ContextMenuProps, MenuItemProps } from "./types";

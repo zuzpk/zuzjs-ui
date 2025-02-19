@@ -1,3 +1,4 @@
+"use client"
 import { forwardRef, useEffect } from "react";
 import { AVATAR, Size } from "../../types/enums";
 import { Props } from "../../types";

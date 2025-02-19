@@ -1,3 +1,4 @@
+"use client"
 import { forwardRef, useState } from "react";
 import { AccordionHandler, AccordionProps } from "./types";
 import Box from "../Box";
