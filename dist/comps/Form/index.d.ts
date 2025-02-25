@@ -1,6 +1,6 @@
 import { BoxProps } from "../Box";
 import { dynamicObject } from "../../types";
-import { SpinnerProps } from "../Spinner";
+import { SPINNER } from "../../types/enums";
 export type FormProps = BoxProps & {
     /** Name of form, will be appended to --form-{name} in className
      * whitespace will be replaced with dash (-)
@@ -11,7 +11,7 @@ export type FormProps = BoxProps & {
     /** List of error messages for form validation */
     errors?: dynamicObject;
     /** Spinner properties for loading indicator */
-    spinner?: SpinnerProps;
+    spinner?: SPINNER;
     /** Additional data to include with form submission */
     withData?: dynamicObject;
     /** Handler function called before form submission with validated form data */
@@ -60,7 +60,7 @@ declare const Form: import("react").ForwardRefExoticComponent<BoxProps & {
     /** List of error messages for form validation */
     errors?: dynamicObject;
     /** Spinner properties for loading indicator */
-    spinner?: SpinnerProps;
+    spinner?: SPINNER;
     /** Additional data to include with form submission */
     withData?: dynamicObject;
     /** Handler function called before form submission with validated form data */

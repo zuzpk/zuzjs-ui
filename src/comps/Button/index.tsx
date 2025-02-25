@@ -10,7 +10,7 @@ import { Size } from '../../types/enums';
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
 
-    const { reset, size, icon, iconSize, children, withLabel, spinner, state, ...pops } = props
+    const { reset, size, variant, icon, iconSize, children, withLabel, spinner, state, ...pops } = props
     const {
         style,
         className,
@@ -19,7 +19,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     
     return <button
         // className={`${reset ? `flex` : `--button ${size ? `--${size}` : ``} flex aic jcc`.trim()} ${icon ? `ico-btn` : ``} ${className}`.trim()}
-        className={`--button ${size ? `--${size}` : ``} flex aic ${!reset ? `jcc` : ``} ${icon ? `ico-btn` : ``} ${className}`.trim()}
+        className={`--button ${variant ? `--${variant}` : ``} ${size ? `--${size}` : ``} flex aic ${!reset ? `jcc` : ``} ${icon ? `ico-btn` : ``} ${className}`.trim()}
         style={style}
         ref={ref}
         {...rest}>

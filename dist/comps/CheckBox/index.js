@@ -6,7 +6,7 @@ import Label from "../Label";
 import Input from "../Input";
 import SVGIcons from "../svgicons";
 const CheckBox = forwardRef((props, ref) => {
-    const { name, required, type, value, size, checked: defaultCheck, onChange, ...pops } = props;
+    const { name, required, type, value, size, checked: defaultCheck, onSwitch, ...pops } = props;
     const [checked, _setChecked] = useState(defaultCheck || false);
     const bRef = useRef(null);
     useImperativeHandle(ref, () => ({
@@ -15,19 +15,19 @@ const CheckBox = forwardRef((props, ref) => {
             if (bRef.current) {
                 bRef.current.checked = mod;
             }
-            if (triggerChange && onChange)
-                onChange(mod, value || `cb`);
+            if (triggerChange && onSwitch)
+                onSwitch(mod, value || `cb`);
         },
         toggle(triggerChange = true) {
             if (bRef.current)
                 bRef.current.checked = !checked;
-            if (triggerChange && onChange)
-                onChange && onChange(!checked, value || `cb`);
+            if (triggerChange && onSwitch)
+                onSwitch && onSwitch(!checked, value || `cb`);
             _setChecked(!checked);
         }
     }));
     return _jsxs(Label, { className: `--${(type || CHECKBOX.Default).toLowerCase()} ${!type || type == CHECKBOX.Default ? `--checkbox` : `--switch`} --${size || Size.Default} flex aic jcc ${checked ? `is-checked` : ``} rel`.trim(), ...pops, children: [(!type || type == CHECKBOX.Default) && SVGIcons.check, _jsx(Input, { ...{}, ref: bRef, defaultChecked: checked, value: value || `cb`, type: `checkbox`, className: `abs`, name: name, required: required || false, onChange: (e) => {
-                    onChange && onChange(e.target.checked, value || `cb`);
+                    onSwitch && onSwitch(e.target.checked, value || `cb`);
                     _setChecked(e.target.checked);
                 } })] });
 });

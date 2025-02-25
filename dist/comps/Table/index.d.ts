@@ -7,6 +7,7 @@ declare const Table: import("react").ForwardRefExoticComponent<import("../Box").
     rowsPerPage?: number;
     currentPage?: number;
     pagination?: boolean;
+    animateRows?: boolean;
     onPageChange?: import("../Pagination/types").PaginationCallback;
 } & import("react").RefAttributes<HTMLDivElement>>;
 export default Table;

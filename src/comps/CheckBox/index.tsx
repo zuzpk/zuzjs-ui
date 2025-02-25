@@ -8,7 +8,7 @@ import SVGIcons from "../svgicons";
 
 const CheckBox = forwardRef<CheckboxHandler, CheckBoxProps>((props, ref) => {
     
-    const { name, required, type, value, size, checked: defaultCheck, onChange, ...pops } = props;
+    const { name, required, type, value, size, checked: defaultCheck, onSwitch, ...pops } = props;
     const [ checked, _setChecked ] = useState(defaultCheck || false)
 
     const bRef = useRef<HTMLInputElement>(null)
@@ -19,15 +19,15 @@ const CheckBox = forwardRef<CheckboxHandler, CheckBoxProps>((props, ref) => {
             if (bRef.current) {
                 bRef.current.checked = mod;
             }
-            if ( triggerChange && onChange )
-                onChange(mod, value || `cb`)
+            if ( triggerChange && onSwitch )
+                onSwitch(mod, value || `cb`)
         },
         toggle(triggerChange=true){
             if (bRef.current)
                 bRef.current.checked = !checked;
             
-            if ( triggerChange && onChange )
-                onChange && onChange(!checked, value || `cb`)
+            if ( triggerChange && onSwitch )
+                onSwitch && onSwitch(!checked, value || `cb`)
 
             _setChecked(!checked)            
         }
@@ -47,7 +47,7 @@ const CheckBox = forwardRef<CheckboxHandler, CheckBoxProps>((props, ref) => {
             name={name}
             required={required || false}
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                onChange && onChange(e.target.checked, value || `cb`)
+                onSwitch && onSwitch(e.target.checked, value || `cb`)
                 _setChecked(e.target.checked)
             }} />
     </Label>

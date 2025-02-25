@@ -1,4 +1,6 @@
+import { MouseEvent, RefObject } from "react";
 import { BoxProps } from "../Box";
+import { animationProps } from "../../types/interfaces";
 
 export interface ContextItem{
     label: string;
@@ -11,7 +13,10 @@ export interface ContextItem{
 }
 
 export type ContextMenuProps = BoxProps & {
-    items?: ContextItem[]
+    parent?: HTMLElement,
+    items?: ContextItem[],
+    offsetX?: number,
+    offsetY?: number,
 }
 
 export type MenuItemProps = ContextItem & {
@@ -20,6 +25,6 @@ export type MenuItemProps = ContextItem & {
 }
 
 export interface ContextMenuHandler {
-    show: (e: MouseEvent | TouchEvent, items?: ContextItem[]) => void;
+    show: (e: MouseEvent<Element, MouseEvent> | TouchEvent, items?: ContextItem[]) => void;
     hide: (e: MouseEvent | TouchEvent) => void;
 }

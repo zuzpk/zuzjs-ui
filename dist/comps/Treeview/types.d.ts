@@ -10,7 +10,7 @@ export type TreeViewProps = Omit<BoxProps, `tag`> & {
     tag?: string;
     roots: string[];
     nodes: TreeNode[];
-    onSelect: (tag: string) => void;
+    onNodeSelect: (tag: string) => void;
     icons?: TreeNodeIcons;
     selected?: string;
 };

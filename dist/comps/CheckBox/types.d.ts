@@ -11,7 +11,7 @@ import { CHECKBOX, Size } from "../../types/enums";
 export type CheckBoxProps = Props<"input"> & {
     type?: CHECKBOX;
     size?: Size;
-    onChange?: (checked: boolean, value: string | number | readonly string[]) => void;
+    onSwitch?: (checked: boolean, value: string | number | readonly string[]) => void;
 };
 /**
  * Interface for handling checkbox state.

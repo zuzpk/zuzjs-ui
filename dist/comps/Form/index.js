@@ -197,7 +197,7 @@ const Form = forwardRef((props, ref) => {
                     }
                 })
                     .catch(err => {
-                    console.warn(`Error occurred while submitting form`, err);
+                    // console.warn(`Error occurred while submitting form`, err)
                     setLoading(false);
                     // submit.current?.reset()
                     if (onError)

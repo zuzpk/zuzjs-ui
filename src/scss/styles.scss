@@ -4,6 +4,7 @@
 @use "./transitions.scss";
 
 @use "../comps/AutoComplete/AutoComplete.scss";
+@use "../comps/Avatar/Avatar.scss";
 @use "../comps/Button/Button.scss";
 @use "../comps/Checkbox/Checkbox.scss";
 @use "../comps/ColorScheme/ColorScheme.scss";
@@ -146,8 +147,6 @@ input{
     --alert-padding: 12px;;
     --alert-radius: 10px;
     --alert-gap: 10px;
-
-    --avatar-bg: #fff;
 
     --accordion: #fff;
     --accordion-label: #111;
@@ -995,35 +994,6 @@ button{
             fill: var(--alert-success-color);
         }
     }
-}
-
-.--avatar{
-    
-    overflow: hidden;
-    #squareRadiusClipPath{
-        position: absolute;
-        top: -1000000000;
-        left: -1000000000;
-        opacity: 0;
-    }
-    img{
-        background: var(--avatar-bg);
-        width: 100%;
-        height: 100%;
-        display: block;
-    }
-
-    &.--circle{
-        img{
-            border-radius: 50%;
-        }
-    }
-    &.--square{
-        clip-path: url(#squareRadiusClipPath);
-        -webkit-clip-path: url(#squareRadiusClipPath);
-    }
-
-    
 }
 
 .--actionbar{

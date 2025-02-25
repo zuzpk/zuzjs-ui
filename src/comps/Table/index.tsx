@@ -16,6 +16,7 @@ const Table = forwardRef<HTMLDivElement, TableProps>((props, ref) => {
         rowsPerPage,
         currentPage,
         pagination,
+        animateRows,
         onPageChange,
         ...pops 
     } = props
@@ -47,7 +48,8 @@ const Table = forwardRef<HTMLDivElement, TableProps>((props, ref) => {
             index={index} 
             schema={schema} 
             ids={_cols}
-            styles={_schemaParsed} 
+            styles={_schemaParsed}
+            animate={animateRows} 
             data={row} />)}
         { pagination && <Box as={`--row flex aic --row-footer`}>
             <Pagination 

@@ -6,7 +6,7 @@ import { useBase } from "../../hooks";
 import { SpinnerProps } from "../Spinner";
 import Sheet, { SheetHandler } from "../Sheet";
 import Cover, { CoverProps } from "../Cover";
-import { FORMVALIDATION, SHEET } from "../../types/enums";
+import { FORMVALIDATION, SHEET, SPINNER } from "../../types/enums";
 import { addPropsToChildren, isEmail, withPost } from "../../funs";
 import { ButtonHandler, ButtonState } from "../Button/types";
 
@@ -20,7 +20,7 @@ export type FormProps = BoxProps & {
     /** List of error messages for form validation */
     errors?: dynamicObject;
     /** Spinner properties for loading indicator */
-    spinner?: SpinnerProps;
+    spinner?: SPINNER;
     /** Additional data to include with form submission */
     withData?: dynamicObject;
     /** Handler function called before form submission with validated form data */
@@ -300,7 +300,7 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
                 })
                 .catch(err => {
 
-                    console.warn(`Error occurred while submitting form`, err)
+                    // console.warn(`Error occurred while submitting form`, err)
                     setLoading(false)
                     // submit.current?.reset()
 

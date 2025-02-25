@@ -7,6 +7,7 @@ declare const Button: import("react").ForwardRefExoticComponent<import("../../ty
     spinner?: import("../Spinner").SpinnerProps;
     state?: ButtonState;
     size?: Size;
+    variant?: Size | import("../../types/enums").Variant;
     reset?: boolean;
 } & import("react").RefAttributes<HTMLButtonElement>>;
 export default Button;

@@ -5,19 +5,19 @@ enum DBMode {
     readWrite = "readwrite",
 }
 
-type IDBOptions = {
+export type IDBOptions = {
     name: string;
     version: number;
     meta: IDBMeta[];
 }
 
-interface IDBMeta {
+export interface IDBMeta {
     name: string
     config: { keyPath: string, autoIncrement: boolean },
     schema: IDBSchema[]
 }
 
-interface IDBSchema {
+export interface IDBSchema {
     name: string
     key?: string
     unique?: boolean
@@ -77,6 +77,25 @@ const useDB = (options: IDBOptions) => {
         return { store }
     }
 
+    const getStore = <T>(storeName: string, id: string | number) => new Promise<T>((resolve, reject) => {
+        connect().then((db) => {
+            const { store } = createTransaction(storeName, DBMode.readOnly)
+            const request = store.getAll()
+            request.onsuccess = (evt: any) => {
+                const result = evt.target.result as T
+                if ( undefined == result ) reject('Record not found');
+                resolve(evt.target.result as T);
+            };
+        
+            request.onerror = (evt: any) => {
+                reject(`SELECT Failed. ${evt.target.result}`);
+            };
+        })
+        .catch(err => {
+            reject('Database either corrupted or not initialized');
+        })
+    })
+
     const getByID = <T>(storeName: string, id: string | number) => new Promise<T>((resolve, reject) => {
         connect().then((db) => {
             const { store } = createTransaction(storeName, DBMode.readOnly)
@@ -93,6 +112,7 @@ const useDB = (options: IDBOptions) => {
             };
         })
         .catch(err => {
+            // console.log(`getByID`, err)
             reject('Database either corrupted or not initialized');
         })
     })
@@ -118,7 +138,7 @@ const useDB = (options: IDBOptions) => {
 
     })   
     
-    const update = <T>(storeName: string, value: T, key?: IDBValidKey) => new Promise<void>((resolve, reject) => {
+    const update = <T>(storeName: string, value: T, key: IDBValidKey) => new Promise<void>((resolve, reject) => {
         connect().then((db) => {
             const { store } = createTransaction(storeName, DBMode.readWrite)
             const request = store.put(value, key);
@@ -132,10 +152,26 @@ const useDB = (options: IDBOptions) => {
         })
     })
 
+    const remove = (storeName: string, key: IDBValidKey) => new Promise<void>((resolve, reject) => {
+        connect().then((db) => {
+            const { store } = createTransaction(storeName, DBMode.readWrite)
+            const request = store.delete(key)
+            request.onsuccess = (evt: any) => {
+                resolve();
+            };
+        })
+        .catch(err => {
+            console.log(err)
+            reject(`Delete failed from ${storeName} with key: ${key}`)
+        })
+    })
+
     return { 
         getByID,
+        getStore,
         insert, 
         update,
+        remove,
         error }
 
 }

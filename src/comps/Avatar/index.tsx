@@ -5,26 +5,19 @@ import { Props } from "../../types";
 import { useBase, useImage } from "../../hooks";
 import Image from "../Image";
 import Box, { BoxProps } from "../Box";
+import { AvatarHandler, AvatarProps } from "./types";
+import Text from "../Text";
 
-export type AvatarProps = Props<"img"> & {
-    type?: AVATAR,
-    size?: number,
-    src: string,
-    crossOrigin?: 'anonymous' | 'use-credentials', 
-    referrerPolicy?: 'no-referrer' | 'no-referrer-when-downgrade' | 'origin' | 'origin-when-cross-origin' | 'same-origin' | 'strict-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url' 
-}
-
-export interface AvatarHandler {}
 
 const Avatar = forwardRef<AvatarHandler, AvatarProps>((props, ref) => {
     
     const { 
-        src, size, type, crossOrigin, referrerPolicy, 
-        animate, as,
+        src, size, variant, type, crossOrigin, referrerPolicy, 
+        animate, as, alt, color,
         ...pops 
     } = props;
 
-    const [ img, imgStatus, imgError ] = useImage(src, crossOrigin, referrerPolicy);
+    const [ img, imgStatus, imgError ] = src ? useImage(src, crossOrigin, referrerPolicy) : [`x`,`y`,`z`];
 
     const {
         className,
@@ -55,18 +48,17 @@ const Avatar = forwardRef<AvatarHandler, AvatarProps>((props, ref) => {
     }, [])
 
     return <Box
-            className={`--avatar --${(type || AVATAR.Circle).toLowerCase()} rel ${className}`.trim()}
+            className={`--avatar --${variant || Size.Small} --${(type || AVATAR.Circle).toLowerCase()} rel flex aic jcc ${className}`.trim()}
             style={{
-                width: size || `auto`, 
-                height: size || `auto`,
+                background: color || `var(--primary)`,
                 ...style,
             }}
             {...rest as BoxProps}>
-        <Image   
+        { src ? <Image   
             src={img}
             crossOrigin={crossOrigin} 
             referrerPolicy={referrerPolicy}
-            {...pops } />
+            {...pops } /> : <Text className={`--avatar-label`}>{(alt ? alt.charAt(0) : `A`).toUpperCase()}</Text>}
     </Box>
 })
 

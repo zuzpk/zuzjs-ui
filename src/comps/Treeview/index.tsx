@@ -6,16 +6,16 @@ import TreeItem from "./item";
 
 const TreeView = forwardRef<TreeViewHandler, TreeViewProps>((props, ref) => {
 
-    const { as, nodes, onSelect, tag: treeViewTag, icons, roots, selected: _selected, ...rest } = props
+    const { as, nodes, onNodeSelect, tag: treeViewTag, icons, roots, selected: _selected, ...rest } = props
     const [ selected, setSelected ] = useState<string>(_selected!)
 
     useImperativeHandle(ref, () => ({ 
         getSelected: () => selected
-    }), [onSelect])
+    }), [onNodeSelect])
 
     const handleSelect = (tag: string) => {
         setSelected(tag)
-        onSelect && onSelect(tag)
+        onNodeSelect && onNodeSelect(tag)
     }
 
     useEffect(() => {

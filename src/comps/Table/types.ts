@@ -8,6 +8,7 @@ export type Row = {
     schema: Column[],
     styles: dynamicObject,
     ids?: string[],
+    animate?: boolean,
     data?: dynamicObject
 }
 
@@ -33,5 +34,6 @@ export type TableProps = BoxProps & {
     rowsPerPage?: number,
     currentPage?: number,
     pagination?: boolean,
+    animateRows?: boolean,
     onPageChange?: PaginationCallback
 }

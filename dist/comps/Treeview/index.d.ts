@@ -4,7 +4,7 @@ declare const TreeView: import("react").ForwardRefExoticComponent<Omit<BoxProps,
     tag?: string;
     roots: string[];
     nodes: import("./types").TreeNode[];
-    onSelect: (tag: string) => void;
+    onNodeSelect: (tag: string) => void;
     icons?: import("./types").TreeNodeIcons;
     selected?: string;
 } & import("react").RefAttributes<TreeViewHandler>>;

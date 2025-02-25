@@ -46,6 +46,24 @@ const useDB = (options) => {
         const store = transaction.objectStore(storeName);
         return { store };
     };
+    const getStore = (storeName, id) => new Promise((resolve, reject) => {
+        connect().then((db) => {
+            const { store } = createTransaction(storeName, DBMode.readOnly);
+            const request = store.getAll();
+            request.onsuccess = (evt) => {
+                const result = evt.target.result;
+                if (undefined == result)
+                    reject('Record not found');
+                resolve(evt.target.result);
+            };
+            request.onerror = (evt) => {
+                reject(`SELECT Failed. ${evt.target.result}`);
+            };
+        })
+            .catch(err => {
+            reject('Database either corrupted or not initialized');
+        });
+    });
     const getByID = (storeName, id) => new Promise((resolve, reject) => {
         connect().then((db) => {
             const { store } = createTransaction(storeName, DBMode.readOnly);
@@ -61,6 +79,7 @@ const useDB = (options) => {
             };
         })
             .catch(err => {
+            // console.log(`getByID`, err)
             reject('Database either corrupted or not initialized');
         });
     });
@@ -91,10 +110,25 @@ const useDB = (options) => {
             reject('Database either corrupted or not initialized');
         });
     });
+    const remove = (storeName, key) => new Promise((resolve, reject) => {
+        connect().then((db) => {
+            const { store } = createTransaction(storeName, DBMode.readWrite);
+            const request = store.delete(key);
+            request.onsuccess = (evt) => {
+                resolve();
+            };
+        })
+            .catch(err => {
+            console.log(err);
+            reject(`Delete failed from ${storeName} with key: ${key}`);
+        });
+    });
     return {
         getByID,
+        getStore,
         insert,
         update,
+        remove,
         error
     };
 };

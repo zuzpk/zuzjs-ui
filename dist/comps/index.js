@@ -8,6 +8,7 @@ export * from './Alert/types';
 export { default as AutoComplete } from './AutoComplete';
 export * from './AutoComplete/types';
 export { default as Avatar } from './Avatar';
+export * from './Avatar/types';
 export { default as Box } from './Box';
 export { default as Button } from './Button';
 export * from './Button/types';

@@ -1,3 +1,4 @@
+import { ChangeEventHandler } from "react";
 import { Props } from "../../types";
 import { CHECKBOX, Size } from "../../types/enums";
 
@@ -12,7 +13,7 @@ import { CHECKBOX, Size } from "../../types/enums";
 export type CheckBoxProps = Props<"input"> & { 
     type?: CHECKBOX, 
     size?: Size,
-    onChange?: (checked: boolean, value: string | number | readonly string[]) => void,
+    onSwitch?: (checked: boolean, value: string | number | readonly string[]) => void,
 }
 
 /**

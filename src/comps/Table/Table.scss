@@ -4,12 +4,15 @@
     --table-row-even: #f1f1f1;
     --table-row-odd: #f9f9f9;
     --table-row-gap: 2px;
+    --table-row-radius: 0px;
     --table-radius: 10px;
     --table-head-padding: 0px;
     --table-row-padding: 0px;
     --table-head-col-padding: 10px;
     --table-col-padding: 10px;
     --table-border: 1px #eee solid;
+    --table-head-radius: var(--table-radius) var(--table-radius) 0px 0px;
+    --table-footer-radius: 0px 0px var(--table-radius) var(--table-radius);
 }
 
 [color-scheme="dark"]{
@@ -23,6 +26,7 @@
     gap: var(--table-row-gap);
     .--row{
         background: var(--table-row);
+        border-radius: var(--table-row-radius);
         &:not(.--row-head){
             padding: var(--table-row-padding);
             .--col{
@@ -30,10 +34,10 @@
             }
         }
         &:nth-child(1){
-            border-radius: var(--table-radius) var(--table-radius) 0px 0px;
+            border-radius: var(--table-head-radius);
         }
         &:last-child{
-            border-radius: 0px 0px var(--table-radius) var(--table-radius);
+            border-radius: var(--table-footer-radius);
         }
         &:nth-child(even){
             background: var(--table-row-even);

@@ -3,7 +3,9 @@ const useContextMenu = (menu) => {
     const show = (e, items) => {
         e.preventDefault();
         e.stopPropagation();
-        menu.current?.show(e, items);
+        setTimeout(() => {
+            menu.current?.show(e, items);
+        }, 0);
     };
     const hide = (e) => {
         menu.current?.hide(e);

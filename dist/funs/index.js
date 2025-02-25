@@ -253,10 +253,10 @@ export const withPost = async (uri, data, timeout = 60, onProgress) => {
             }
         })
             .catch(err => {
-            if (err.response.data)
+            if (err?.response?.data)
                 reject(err.response.data);
             else
-                reject(err);
+                reject(err.code && err.code == `ERR_NETWORK` ? { error: err.code, message: navigator.onLine ? `Unable to connect to the server. It may be temporarily down.` : `Network error: Unable to connect. Please check your internet connection and try again.` } : err);
         });
     });
 };

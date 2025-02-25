@@ -4,12 +4,12 @@ import { Props } from '../../types';
 import { useBase } from '../../hooks';
 import Icon, { IconProps } from '../Icon';
 import Span, { SpanProps } from '../Span';
-import { FORMVALIDATION, Size } from '../../types/enums';
+import { FORMVALIDATION, Size, Variant } from '../../types/enums';
 
 export type InputProps = Props<`input`> & {
     numeric?: boolean,
     size?: Size,
-    variant?: Size,
+    variant?: Variant,
     with?: FORMVALIDATION
 }
 

@@ -1,13 +1,14 @@
 "use client";
 import { jsx as _jsx } from "react/jsx-runtime";
 import { forwardRef, useEffect } from "react";
-import { AVATAR } from "../../types/enums";
+import { AVATAR, Size } from "../../types/enums";
 import { useBase, useImage } from "../../hooks";
 import Image from "../Image";
 import Box from "../Box";
+import Text from "../Text";
 const Avatar = forwardRef((props, ref) => {
-    const { src, size, type, crossOrigin, referrerPolicy, animate, as, ...pops } = props;
-    const [img, imgStatus, imgError] = useImage(src, crossOrigin, referrerPolicy);
+    const { src, size, variant, type, crossOrigin, referrerPolicy, animate, as, alt, color, ...pops } = props;
+    const [img, imgStatus, imgError] = src ? useImage(src, crossOrigin, referrerPolicy) : [`x`, `y`, `z`];
     const { className, style, rest } = useBase({ animate, as });
     useEffect(() => {
         if (type == AVATAR.Square && !document.getElementById('squareRadiusClipPath')) {
@@ -27,10 +28,9 @@ const Avatar = forwardRef((props, ref) => {
             document.body.appendChild(svg);
         }
     }, []);
-    return _jsx(Box, { className: `--avatar --${(type || AVATAR.Circle).toLowerCase()} rel ${className}`.trim(), style: {
-            width: size || `auto`,
-            height: size || `auto`,
+    return _jsx(Box, { className: `--avatar --${variant || Size.Small} --${(type || AVATAR.Circle).toLowerCase()} rel flex aic jcc ${className}`.trim(), style: {
+            background: color || `var(--primary)`,
             ...style,
-        }, ...rest, children: _jsx(Image, { src: img, crossOrigin: crossOrigin, referrerPolicy: referrerPolicy, ...pops }) });
+        }, ...rest, children: src ? _jsx(Image, { src: img, crossOrigin: crossOrigin, referrerPolicy: referrerPolicy, ...pops }) : _jsx(Text, { className: `--avatar-label`, children: (alt ? alt.charAt(0) : `A`).toUpperCase() }) });
 });
 export default Avatar;

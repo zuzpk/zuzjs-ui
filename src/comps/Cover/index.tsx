@@ -10,7 +10,7 @@ import Text, { TextProps } from "../Text";
 
 export type CoverProps = BoxProps & {
     message?: string,
-    spinner?: SpinnerProps,
+    spinner?: SPINNER,
     color?: string,
     when?: boolean,
     hideMessage?: boolean
@@ -37,7 +37,7 @@ const Cover = forwardRef<HTMLDivElement, CoverProps >((props, ref) => {
             backgroundColor: `var(--cover-bg)`
         }}
         {...rest as BoxProps}>
-        {<Spinner {...spinner} />}
+        {<Spinner type={spinner || SPINNER.Simple} />}
         {!hideMessage && <Text 
             className={`--label`}
             style={{ color: `var(--cover-label)`  }}>{message || `loading`}</Text>}

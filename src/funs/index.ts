@@ -317,9 +317,8 @@ export const withPost = async (uri: string, data: dynamicObject | FormData, time
             }            
         })
         .catch(err => {
-            if ( err.response.data ) reject(err.response.data)
-            else reject(err)
-
+            if ( err?.response?.data ) reject(err.response.data)
+            else reject(err.code && err.code == `ERR_NETWORK` ? { error: err.code, message: navigator.onLine ? `Unable to connect to the server. It may be temporarily down.` : `Network error: Unable to connect. Please check your internet connection and try again.` } : err)
         });
     })
 }

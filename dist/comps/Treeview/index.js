@@ -3,14 +3,14 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import Box from "../Box";
 import TreeItem from "./item";
 const TreeView = forwardRef((props, ref) => {
-    const { as, nodes, onSelect, tag: treeViewTag, icons, roots, selected: _selected, ...rest } = props;
+    const { as, nodes, onNodeSelect, tag: treeViewTag, icons, roots, selected: _selected, ...rest } = props;
     const [selected, setSelected] = useState(_selected);
     useImperativeHandle(ref, () => ({
         getSelected: () => selected
-    }), [onSelect]);
+    }), [onNodeSelect]);
     const handleSelect = (tag) => {
         setSelected(tag);
-        onSelect && onSelect(tag);
+        onNodeSelect && onNodeSelect(tag);
     };
     useEffect(() => {
         if (selected != _selected) {

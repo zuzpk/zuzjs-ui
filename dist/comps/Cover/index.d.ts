@@ -1,15 +1,15 @@
 import { BoxProps } from "../Box";
-import { SpinnerProps } from "../Spinner";
+import { SPINNER } from "../../types/enums";
 export type CoverProps = BoxProps & {
     message?: string;
-    spinner?: SpinnerProps;
+    spinner?: SPINNER;
     color?: string;
     when?: boolean;
     hideMessage?: boolean;
 };
 declare const Cover: import("react").ForwardRefExoticComponent<BoxProps & {
     message?: string;
-    spinner?: SpinnerProps;
+    spinner?: SPINNER;
     color?: string;
     when?: boolean;
     hideMessage?: boolean;

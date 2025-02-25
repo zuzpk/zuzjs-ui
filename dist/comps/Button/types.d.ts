@@ -1,6 +1,9 @@
 import { Props } from "../../types";
-import { Size } from "../../types/enums";
+import { Size, Variant } from "../../types/enums";
 import { SpinnerProps } from "../Spinner";
+/**
+ * @deprecated Use `variant` instead.
+ */
 export type ButtonProps = Props<`button`> & {
     icon?: string;
     iconSize?: Size;
@@ -8,6 +11,7 @@ export type ButtonProps = Props<`button`> & {
     spinner?: SpinnerProps;
     state?: ButtonState;
     size?: Size;
+    variant?: Size | Variant;
     reset?: boolean;
 };
 export interface ButtonHandler extends HTMLButtonElement {

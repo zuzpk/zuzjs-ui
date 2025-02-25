@@ -252,6 +252,13 @@ export var Size;
     Size["Medium"] = "md";
     Size["Large"] = "lg";
 })(Size || (Size = {}));
+export var Variant;
+(function (Variant) {
+    Variant["Default"] = "def";
+    Variant["Small"] = "sm";
+    Variant["Medium"] = "md";
+    Variant["Large"] = "lg";
+})(Variant || (Variant = {}));
 export var Position;
 (function (Position) {
     Position["Auto"] = "auto";

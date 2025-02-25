@@ -262,6 +262,14 @@ export enum Size {
     Large = `lg`
 }
 
+export enum Variant {
+    Default = `def`,
+    Small = `sm`,
+    Medium = `md`,
+    Large = `lg`
+}
+
+
 export enum Position {
     Auto = `auto`,
     Top = `top`,

@@ -210,6 +210,12 @@ export declare enum Size {
     Medium = "md",
     Large = "lg"
 }
+export declare enum Variant {
+    Default = "def",
+    Small = "sm",
+    Medium = "md",
+    Large = "lg"
+}
 export declare enum Position {
     Auto = "auto",
     Top = "top",

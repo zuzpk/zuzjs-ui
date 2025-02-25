@@ -1,8 +1,9 @@
+export { default as useAnchorPosition } from './useAnchorPosition';
 export { default as useBase } from './useBase';
 export { default as useCalendar } from './useCalendar';
 export { useColorScheme } from './useColorScheme';
 export { default as useContextMenu } from './useContextMenu';
-export { default as useDB } from './useDB';
+export { type IDBOptions, type IDBSchema, default as useDB } from './useDB';
 export { default as useDebounce } from './useDebounce';
 export { default as useDevice } from './useDevice';
 export { default as useDimensions } from './useDimensions';
