@@ -1,5 +1,6 @@
 "use client"
 import React, { Context, createContext, memo, ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { ColorTheme } from "../types/enums";
 
 const MATCH_MEDIA = `(prefers-color-scheme: dark)`
 const SSR = typeof window === 'undefined'
@@ -11,6 +12,7 @@ export type ThemeContextProps = {
 }
 export interface ThemeProviderProps {
     children: ReactNode,
+    forceTheme?: ColorTheme,
     storageKey?: string
 }
 
@@ -30,17 +32,18 @@ export const useColorScheme = () => {
 
 export const ThemeProvider = ({ 
     children, 
-    storageKey = `--ucs`
+    storageKey = `--ucs`,
+    forceTheme
 } : ThemeProviderProps) => {
 
-    return <Theme storageKey={storageKey}>{children}</Theme>
+    return <Theme storageKey={storageKey} forceTheme={forceTheme}>{children}</Theme>
     
 }
 
-const Theme = ({ children, storageKey } : ThemeProviderProps) => {
+const Theme = ({ children, storageKey, forceTheme } : ThemeProviderProps) => {
 
-    const [colorScheme, setThemeState] = useState(() => getTheme(storageKey!, `system`))
-    const [resolvedTheme, setResolvedTheme] = useState(() => getTheme(storageKey!));
+    const [colorScheme, setThemeState] = useState(() => forceTheme || getTheme(storageKey!, `system`))
+    const [resolvedTheme, setResolvedTheme] = useState(() => forceTheme || getTheme(storageKey!));
     // const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark' | undefined>(() => {
     //     if ( SSR ) return undefined
     //     return colorScheme === 'system' ? window?.matchMedia(MATCH_MEDIA).matches ? 'dark' : 'light' : colorScheme
@@ -113,7 +116,7 @@ const Theme = ({ children, storageKey } : ThemeProviderProps) => {
 
 
     useEffect(() => {
-        applyColorScheme((colorScheme || `system`) as ColorScheme)
+        applyColorScheme((forceTheme || colorScheme || `system`) as ColorScheme)
     }, [colorScheme])
 
     return (
@@ -121,7 +124,7 @@ const Theme = ({ children, storageKey } : ThemeProviderProps) => {
             <script 
                 suppressHydrationWarning
                 dangerouslySetInnerHTML={{ 
-                    __html: `const el = document.documentElement
+                    __html: forceTheme ? `` : `const el = document.documentElement
                     const themes = ['light', 'dark']
                     let theme = localStorage.getItem(\`${storageKey}\`) || "system";
                     if (theme === "system") {

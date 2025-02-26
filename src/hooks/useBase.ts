@@ -32,7 +32,7 @@ const buildSkeletonStyle = (s: Skeleton) : dynamicObject => {
         }
     }
     else {
-        style.minWidth = style.minHeight = `100%`
+        style.minWidth = style.minHeight = s.defaultSize || `100%`
     }
         
     return style

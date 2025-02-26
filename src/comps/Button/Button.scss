@@ -54,7 +54,7 @@
         background: var(--button-hover);
     }
 
-    &:disabled{
+    &:not(.--skeleton):disabled{
         background: var(--button-disabled);
         color: var(--button-disabled-color);
         cursor: auto !important;

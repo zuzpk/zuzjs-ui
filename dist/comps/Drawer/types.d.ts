@@ -5,7 +5,7 @@ export type DrawerProps = BoxProps & {
     as?: string;
     speed?: number;
     from?: DRAWER_SIDE;
-    children: string | ReactNode | ReactNode[];
+    children?: string | ReactNode | ReactNode[];
     prerender?: boolean;
 };
 export interface DrawerHandler {

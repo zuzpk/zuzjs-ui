@@ -34,9 +34,11 @@ const TreeItem = forwardRef<TreeItemHandler, TreeItemProps>((props, ref) => {
         <Box 
             className={`--node --node-${tag} flex aic${selected == tag ? ` --selected` : ``}`}>
             <Button
+                skeleton={rest.skeleton}
                 onClick={toggle}
                 className={`--node-aro-btn`}>
                 <Icon 
+                    skeleton={rest.skeleton}
                     className={`--node-aro-icon`}
                     name={isOpen ? icons?.arrowOpen : icons?.arrowClose} />
             </Button>
@@ -44,9 +46,10 @@ const TreeItem = forwardRef<TreeItemHandler, TreeItemProps>((props, ref) => {
                 className={`--node-meta flex aic`}
                 onClick={(e) => onSelect(tag)}>
                 <Icon 
+                    skeleton={rest.skeleton}
                     className={`--node-icon`}
                     name={icon || ( isOpen ? icons?.dirOpen : icons?.dirClose )} />
-                <Text {...{ className: `--node-label`} as TextProps}>{label}</Text>
+                <Text {...{ className: `--node-label`} as TextProps} skeleton={rest.skeleton}>{label}</Text>
             </Button>
         </Box>
 

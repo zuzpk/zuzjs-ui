@@ -16,6 +16,7 @@
     border: 1px var(--checkbox-unchecked) solid;
     border-radius: var(--checkbox-radius);
     overflow: hidden;
+    background-color: var(--checkbox-unchecked);
     input[type=checkbox]{
         z-index: 0;
         opacity: 0;
@@ -31,8 +32,12 @@
         &:before{
             opacity: 1;
         }
+        svg{
+            fill: var(--checkbox-check-color);
+        }
     }
     svg{
-        fill: var(--checkbox-check-color);
+        fill: var(--checkbox-unchecked);
     }
+    
 }

@@ -34,7 +34,8 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
     const [ query, setQuery ] = useState<string | null>(null)
     const _ref = useRef<HTMLButtonElement>(null);
     const _search = useRef<HTMLInputElement>(null);
-    const _id = useMemo(() => name || useId(), [])
+    const _did = useId()
+    const _id = useMemo(() => name || _did, [])
 
     const {
         className,

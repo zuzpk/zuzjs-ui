@@ -17,7 +17,8 @@ const Select = forwardRef((props, ref) => {
     const [query, setQuery] = useState(null);
     const _ref = useRef(null);
     const _search = useRef(null);
-    const _id = useMemo(() => name || useId(), []);
+    const _did = useId();
+    const _id = useMemo(() => name || _did, []);
     const { className, style, rest } = useBase(pops);
     const updateValue = (o) => {
         setValue(o);

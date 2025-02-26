@@ -9,30 +9,31 @@ import { OptionValues } from "commander"
 
 class CSS {
 
-    cx: string[]
     cache: dynamicObject
     PROPS: dynamicObject
     DIRECT: dynamicObject
+    IGNORE: string[]
+    PROPS_KEYS: string[]
+    DIRECT_KEYS: string[]
+    cx: string[]
     hashids: Hashids
     chars: string
     rgbaRegex: RegExp
-    IGNORE: string[]
     unit: any
     keysWithoutCommaToSpace: string[]
     propCounter: dynamicObject
     seperator: string
     pseudoList: string[]
     ids: string[]
-    mediaQueries: dynamicObject
-    _mediaQueries: dynamicObject
-    _mediaQueriesLabels: dynamicObject
-    PROPS_KEYS: string[]
-    DIRECT_KEYS: string[]
-    _cli: boolean
     DIRECT_VALUES: string[]
     PROPS_VALUES: string[]
-    _currentFile: string
+    mediaQueries: dynamicObject
     debug: OptionValues | undefined
+    _darkQueries: dynamicObject
+    _mediaQueries: dynamicObject
+    _mediaQueriesLabels: dynamicObject
+    _cli: boolean
+    _currentFile: string
 
     constructor(options?: dynamicObject | undefined, debug?: OptionValues){
 
@@ -41,6 +42,7 @@ class CSS {
         this.debug = debug
         this._cli = false
 
+        this._darkQueries = []
         this._mediaQueries = {}
         this._mediaQueriesLabels = {
             ph: `Extra Small Devices (Phones)`,
@@ -70,7 +72,7 @@ class CSS {
         ]
         
         this.IGNORE = [
-            `flex`, `opacity`, `z-index`, `zIndex`, `color`, `line-height`, `anim`, `scale`, `saturate`
+            `flex`, `opacity`, `z-index`, `zIndex`, `color`, `line-height`, `anim`, `scale`, `saturate`, `brightness`
         ]
         this.keysWithoutCommaToSpace = [
             `transform`, `translate`, `color`, `background`, `background-color`, `backgroundColor`, `backgroundImage`, `background-image`,
@@ -108,12 +110,26 @@ class CSS {
         Object.keys(queries).forEach((key: string) => {
             scss.push(`/**\n*${self._mediaQueriesLabels[key]}\n*/`)
             scss.push(`@media screen and ${self.mediaQueries[key]}{`)
-            scss.push(queries[key].join(`\n`))
+            scss.push(`\t${queries[key].join(`\n\t`)}`)
             scss.push(`}`)
         })
 
         return scss.join(`\n`)
 
+    }
+
+    buildDarkModeQueries ( queries : dynamicObject ) : string {
+        const self = this
+        const scss : string[] = [`\n`]
+        if ( Object.keys(queries).length > 0 ){
+            scss.push(`/**\n*Dark Scheme\n*/`)
+            scss.push(`[color-scheme="dark"]{`)
+            Object.keys(queries).forEach((key: string) => {
+                scss.push(`\t.${key}{${queries[key]}${queries[key].endsWith(`;`) ? `` : `;`}}`);
+            })
+            scss.push(`}`)
+        }
+        return scss.join(`\n`)
     }
 
     styleSheet(cache: dynamicObject, pseudo = ``) : string {
@@ -347,14 +363,19 @@ class CSS {
                 if ( !_[_id] ){
 
                     const cleaned = self.deepClean(cache[_k], level + 1)
+                    
                     if ( 
                         level == 0 && 
-                        (self.pseudoList.includes(`@${__k}`) || __k in self.mediaQueries )
+                        (
+                            self.pseudoList.includes(`@${__k}`) || 
+                            __k in self.mediaQueries || 
+                            __k in self._darkQueries
+                        )
                     ){
                         self.cx.push(_id)
                         _[_id] = { [__k] :  cleaned }    
                     }
-                    else 
+                    else if ( __k !== `dark`)
                         _[__k] = cleaned
                 }
 
@@ -411,8 +432,6 @@ class CSS {
 
         const self = this
         
-        // console.log(`makeValue`, k, v)
-
         if(k in this.PROPS){
             const key = this.PROPS[k]
             let value;
@@ -814,7 +833,7 @@ class CSS {
             const value = (_k: string, pseudo = ``) => {
 
                 let _mediaQuery = null
-
+                
                 if ( _k.includes(`@`) ){
                     const [ _x, _y ] = _k.split(`@`)
                     _k = _x
@@ -845,6 +864,13 @@ class CSS {
                             self.mediaQueries[_mediaQuery].push({ [_id] : _out } )
                             return {}
                         }
+
+                        if ( pseudo.startsWith(`dark`) ){
+                            self._darkQueries[_id] = _out
+                            self.cx.push(_id)
+                            return {}
+                        }
+
                         return { [_id] : _out } 
                     }
                     else if( key in self.DIRECT ){
@@ -935,6 +961,13 @@ class CSS {
                             self.mediaQueries[_mediaQuery].push({ [_id] : _out } )
                             return {}
                         }
+
+                        if ( pseudo.startsWith(`dark`) ){
+                            self._darkQueries[_id] = _out
+                            self.cx.push(_id)
+                            return {}
+                        }
+
                         return { [_id] : _out } 
                     }
 
@@ -950,9 +983,16 @@ class CSS {
                         self.mediaQueries[_mediaQuery].push({ [_id] : _out } )
                         return {}
                     }
+
+                    if ( pseudo.startsWith(`dark`) ){
+                        self._darkQueries[_id] = _out
+                        self.cx.push(_id)
+                        return {}
+                    }
+
                     return { [_id] : _out } 
                 }            
-                else if (_k.trim().match(/^[a-zA-Z0-9\-]+$/g)){
+                else if ( _k.trim().match(/^[a-zA-Z0-9\-]+$/g)){
                     self.cx.push(_k.trim())
                     // self.cx.push(`--${_k.trim()}`)
                 }
@@ -1020,20 +1060,23 @@ class CSS {
     Build( css : string | string[][], cli = false, ff: string = `` ) : {
         cx: string[],
         sheet: string,
-        mediaQuery: dynamicObject
+        mediaQuery: dynamicObject,
+        darkQueries: dynamicObject
     }{
         
         let self = this
         self._cli = cli
         self.cx = []
         self.cache = {}
+        self._darkQueries = {}
         self._mediaQueries = {}
         self._currentFile = ff
 
         if ( undefined == css ) return {
             cx: self.cx,
             sheet: ``,
-            mediaQuery: {}
+            mediaQuery: {},
+            darkQueries: []
         }
 
         if ( `string` == typeof css ){
@@ -1059,6 +1102,7 @@ class CSS {
         const _cleaned = self.deepClean(self.cache)
         const _stylesheet = self.styleSheet(_cleaned)
         
+        // console.log(_cleaned, _stylesheet)
         // const _mediaQueries : dynamicObject = {}
 
         
@@ -1079,11 +1123,14 @@ class CSS {
             console.log(pc.cyan(`[sheet]`), _stylesheet)
         if ( self.debug?.media )
             console.log(pc.cyan(`[mediaquery]`), self._mediaQueries)
+        if ( self.debug?.dark )
+            console.log(pc.cyan(`[darkquery]`), self._darkQueries)
         
         const _ = {
             cx: self.cx,
             sheet: _stylesheet,
-            mediaQuery: self._mediaQueries
+            mediaQuery: self._mediaQueries,
+            darkQueries: self._darkQueries
         }
 
         // console.log(css, _)

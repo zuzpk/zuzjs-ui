@@ -1,5 +1,5 @@
 import { Props } from "../../types";
-import { CHECKBOX, Size } from "../../types/enums";
+import { CHECKBOX, Size, Variant } from "../../types/enums";
 /**
  * Props for the CheckBox component.
  *
@@ -11,6 +11,7 @@ import { CHECKBOX, Size } from "../../types/enums";
 export type CheckBoxProps = Props<"input"> & {
     type?: CHECKBOX;
     size?: Size;
+    variant?: Variant;
     onSwitch?: (checked: boolean, value: string | number | readonly string[]) => void;
 };
 /**

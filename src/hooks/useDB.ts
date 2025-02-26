@@ -92,7 +92,7 @@ const useDB = (options: IDBOptions) => {
             };
         })
         .catch(err => {
-            reject('Database either corrupted or not initialized');
+            reject(err.message || 'Database either corrupted or not initialized');
         })
     })
 
@@ -133,7 +133,7 @@ const useDB = (options: IDBOptions) => {
             };
         })
         .catch(err => {
-            reject('Database either corrupted or not initialized');
+            reject(err.message || 'Database either corrupted or not initialized');
         })
 
     })   

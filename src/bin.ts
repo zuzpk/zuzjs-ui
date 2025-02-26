@@ -20,6 +20,7 @@ program
     .option(`-e, --cleaned`)
     .option(`-t, --sheet`)
     .option(`-m, --media`)
+    .option(`-s, --dark`)
 
 program.parse()
 
@@ -143,6 +144,7 @@ const rebuildAll = () => {
         else{
 
             const mediaQueries : dynamicObject =  {}
+            let darkQueries : dynamicObject = {}
 
             files.map(f => {
                 // if ( f.endsWith(`header.jsx`) ){
@@ -154,7 +156,7 @@ const rebuildAll = () => {
                         //  : cssBuilder.Build([r], true).sheet)
                         const _built = cssBuilder.Build([r], true, f.replace(path.resolve(`./`), ``))
                         as.push(_built.sheet)
-
+                        darkQueries = { ...darkQueries, ..._built.darkQueries }
                         Object.keys(_built.mediaQuery).map(mq => {
                             if ( !mediaQueries[mq] ) mediaQueries[mq] = []
                             mediaQueries[mq] = [
@@ -169,6 +171,7 @@ const rebuildAll = () => {
             })
 
             as.push(cssBuilder.buildMediaQueries(mediaQueries))
+            as.push(cssBuilder.buildDarkModeQueries(darkQueries))
 
 
         }

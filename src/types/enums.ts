@@ -266,7 +266,8 @@ export enum Variant {
     Default = `def`,
     Small = `sm`,
     Medium = `md`,
-    Large = `lg`
+    Large = `lg`,
+    XLarge = `xl`,
 }
 
 
@@ -276,4 +277,10 @@ export enum Position {
     Bottom = `bottom`,
     Left = `left`,
     Right = `right`
+}
+
+export enum ColorTheme {
+    Light = "light",
+    Dark = "dark",
+    System = "system",
 }

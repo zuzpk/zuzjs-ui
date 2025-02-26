@@ -258,6 +258,7 @@ export var Variant;
     Variant["Small"] = "sm";
     Variant["Medium"] = "md";
     Variant["Large"] = "lg";
+    Variant["XLarge"] = "xl";
 })(Variant || (Variant = {}));
 export var Position;
 (function (Position) {
@@ -267,3 +268,9 @@ export var Position;
     Position["Left"] = "left";
     Position["Right"] = "right";
 })(Position || (Position = {}));
+export var ColorTheme;
+(function (ColorTheme) {
+    ColorTheme["Light"] = "light";
+    ColorTheme["Dark"] = "dark";
+    ColorTheme["System"] = "system";
+})(ColorTheme || (ColorTheme = {}));

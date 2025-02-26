@@ -6,7 +6,7 @@ declare const Drawer: import("react").ForwardRefExoticComponent<BoxProps & {
     as?: string;
     speed?: number;
     from?: DRAWER_SIDE;
-    children: string | ReactNode | ReactNode[];
+    children?: string | ReactNode | ReactNode[];
     prerender?: boolean;
 } & import("react").RefAttributes<DrawerHandler>>;
 export default Drawer;

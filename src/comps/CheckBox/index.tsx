@@ -1,6 +1,6 @@
 "use client"
 import { ChangeEvent, forwardRef, useImperativeHandle, useRef, useState } from "react";
-import { CHECKBOX, Size } from "../../types/enums";
+import { CHECKBOX, Size, Variant } from "../../types/enums";
 import Label, { LabelProps } from "../Label";
 import Input, { InputProps } from "../Input";
 import { CheckboxHandler, CheckBoxProps } from "./types";
@@ -8,7 +8,7 @@ import SVGIcons from "../svgicons";
 
 const CheckBox = forwardRef<CheckboxHandler, CheckBoxProps>((props, ref) => {
     
-    const { name, required, type, value, size, checked: defaultCheck, onSwitch, ...pops } = props;
+    const { name, required, type, value, size, variant, checked: defaultCheck, onSwitch, ...pops } = props;
     const [ checked, _setChecked ] = useState(defaultCheck || false)
 
     const bRef = useRef<HTMLInputElement>(null)
@@ -34,7 +34,7 @@ const CheckBox = forwardRef<CheckboxHandler, CheckBoxProps>((props, ref) => {
     }))
 
     return <Label 
-        className={`--${(type || CHECKBOX.Default).toLowerCase()} ${!type || type == CHECKBOX.Default ? `--checkbox` : `--switch`} --${size || Size.Default} flex aic jcc ${checked ? `is-checked` : ``} rel`.trim()}
+        className={`--${(type || CHECKBOX.Default).toLowerCase()} ${!type || type == CHECKBOX.Default ? `--checkbox` : `--switch`} --${(variant || size) || Variant.Default} flex aic jcc ${checked ? `is-checked` : ``} rel`.trim()}
         {...pops as LabelProps } >
         {(!type || type == CHECKBOX.Default) && SVGIcons.check}
         <Input
@@ -54,27 +54,5 @@ const CheckBox = forwardRef<CheckboxHandler, CheckBoxProps>((props, ref) => {
 
 });
 
-// import { DetailedHTMLProps, HTMLAttributes, ReactNode, Ref, useState } from "react";
-// import { cleanProps, css } from "../funs";
-// import { UIProps } from "../types/interfaces";
-
-// const CheckBox = ( props : UIProps<HTMLInputElement> ) => {
-
-//     const { cx } = css.Build(props.as)
-//     const [ checked, setChecked ] = useState(props.checked || false)
-
-//     return <label { ...({
-//         className: `zuz-checkbox${checked ? ` is-checked` : ``} rel${cx.length > 0 ? ` ` + cx.join(` `) : ``}`
-//     }) as UIProps<HTMLLabelElement>}>
-//         <input type='checkbox' 
-//             ref={props.ref}
-//             onChange={e => {
-//                 setChecked(e.target.checked)
-//             }}
-//             className={`abs`}
-//             {...(cleanProps(props) as UIProps<HTMLInputElement>)} />
-//     </label>
-
-// }
 
 export default CheckBox

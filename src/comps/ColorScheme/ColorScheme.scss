@@ -1,4 +1,5 @@
-// :root{
+:root{
+    --color-scheme-border: 1px #fff solid;
 //     --color-scheme-radius: 20px;
 //     --color-scheme: #fff;
 //     --color-scheme-gap: 4px;
@@ -8,7 +9,7 @@
 //     --color-scheme-item-hover: #eee;
 //     --color-scheme-item-active: #ccc;
 //     --color-scheme-item-padding: 3px;
-// }
+}
 // .--color-scheme{
 //     background: var(--color-scheme);
 //     border: 1px var(--color-scheme-border) solid;
@@ -56,6 +57,7 @@
     &.--color-scheme{
         --segment-item-padding-sm: 0px;
         --segmented-radius-sm: 20px;
+        --segmented-border: var(--color-scheme-border);
         width: 100px;
     }
 }

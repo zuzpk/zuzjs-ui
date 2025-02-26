@@ -9,7 +9,6 @@ import Button from "../Button";
 const Accordion = forwardRef<AccordionHandler, AccordionProps>((props, ref) => {
     
     const { title, message, ...rest } = props;
-
     const [ visible, setVisible ] = useState(false)
 
     return <Box className={`--accordion flex cols`} { ...rest }>

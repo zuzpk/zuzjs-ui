@@ -3,6 +3,7 @@
 @use "./keyframes.scss";
 @use "./transitions.scss";
 
+@use "../comps/Accordion/Accordion.scss";
 @use "../comps/AutoComplete/AutoComplete.scss";
 @use "../comps/Avatar/Avatar.scss";
 @use "../comps/Button/Button.scss";
@@ -10,10 +11,12 @@
 @use "../comps/ColorScheme/ColorScheme.scss";
 @use "../comps/ContextMenu/Contextmenu.scss";
 @use "../comps/Cover/Cover.scss";
+@use "../comps/Drawer/Drawer.scss";
 @use "../comps/Fab/Fab.scss";
 @use "../comps/Input/Input.scss";
 @use "../comps/List/List.scss";
 @use "../comps/Network/Network.scss";
+@use "../comps/Overlay/Overlay.scss";
 @use "../comps/Pagination/Pagination.scss";
 @use "../comps/Password/Password.scss";
 @use "../comps/PinInput/PinInput.scss";
@@ -61,14 +64,6 @@ input{
     --text-wheel-speed: 2;
     --text-wheel-transition: translate calc(var(--text-wheel-speed) * 1s) var(--ease);
 
-    --overlay: rgba(0, 0, 0, 0.7);
-    --overlay-blur: 0;
-    --drawer-color: #fff;
-    --drawer-handle-color: #ccc;
-    --drawer-radius-v: 0px;
-    --drawer-radius-h: 0px;
-    --drawer-shadow: var(--zuz-shadow);
-    
     --tab-head: #fff;
     --tab-head-padding: 3px 3px 0px 3px;
     --tab-head-radius: 6px 6px 0px 0px;
@@ -148,21 +143,6 @@ input{
     --alert-radius: 10px;
     --alert-gap: 10px;
 
-    --accordion: #fff;
-    --accordion-label: #111;
-    --accordion-radius: 5px;
-    --accordion-border: 1px #ddd solid;
-    --accordion-head: #fff;
-
-    --accordion-head-padding: 10px;
-    --accordion-head-font-size: 16px;
-    --accordion-head-font-weight: normal;
-    --accordion-head-arrow-size: 18px;
-    --accordion-head-arrow: #111;
-
-    --accordion-detail-padding: 10px;
-    --accordion-detail-font-size: 15px;
-    
     --select-width: auto;
     --select: #fff;
     --select-radius: 5px;
@@ -294,49 +274,6 @@ button{
         }
     }
 }
-
-.--overlay{
-    background: var(--overlay);
-    z-index: var(--max-z-index);
-    backdrop-filter: blur(var(--overlay-blur));
-}
-
-
-.--accordion{
-
-    background: var(--accordion);
-    border: var(--accordion-border);
-    border-radius: var(--accordion-radius);
-    overflow: hidden;
-
-    .--toggle{
-        border: 0px;
-        background: var(--accordion-head);
-        padding: var(--accordion-head-padding);
-        border-radius: var(--accordian-radius);
-        flex: 1;
-        width: 100%;
-        .--label{
-            flex: 1;
-            color: var(--accordion-label);
-            font-size: var(--accordion-head-font-size);
-            font-weight: var(--accordion-head-font-weight);
-        }
-        .--arrow{
-            width: var(--accordion-head-arrow-size);
-            svg{
-                path{
-                    fill: var(--accordion-head-arrow);
-                }
-            }
-        }
-    }
-    .--detail{
-        padding: var(--accordion-detail-padding);
-        font-size: var(--accordion-detail-font-size);
-    }
-}
-
 
 .--select{
 
@@ -483,12 +420,15 @@ button{
 
 .--skeleton{
     
-
     overflow: hidden;
     border-radius: var(--skeleton-radius);
-    height: 1lh;
+    min-height: 1lh;
     background: var(--skeleton);
+    color: var(--skeleton);
     position: relative;
+    pointer-events: none;
+    cursor: auto !important;
+    user-select: none;
     
     &:after{
         content: "";
@@ -653,52 +593,6 @@ button{
 //     z-index: 2147483645;
 //     backdrop-filter: blur(var(--zuz-overlay-blur));
 // }
-
-.drawer-h{
-    min-width: 320px;
-    max-width: 90vw;
-    top: 0px;
-    bottom: 0px;
-    border-radius: var(--drawer-radius-h);
-}
-.drawer-v{
-    min-height: 10vh;
-    max-height: 90vh;
-    left: 0px;
-    right: 0px;
-    border-radius: var(--drawer-radius-v);
-}
-.--drawer{
-    background: var(--drawer-color);
-    border: var(--drawer-border);
-    box-shadow: var(--drawer-shadow);
-    z-index: var(--max-z-index);
-    overflow-x: hidden;
-    overflow-y: auto;   
-    &.--left{
-        left: 0px;        
-        @extend .drawer-h;
-    }
-    &.--right{
-        right: 0px;        
-        @extend .drawer-h;
-    }
-    &.--top{
-        top: 0px;        
-        @extend .drawer-v;
-    }
-    &.--bottom{
-        bottom: 0px;        
-        @extend .drawer-v;
-    }
-    .--handle{
-        width: 100px;
-        height: 6px;
-        border-radius: 10px;
-        background: var(--drawer-handle-color);
-        margin: 12px auto 0px auto;
-    }
-}
 
 .--icon{
     &.--sm{ font-size: 14px; }

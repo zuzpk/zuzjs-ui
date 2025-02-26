@@ -214,7 +214,8 @@ export declare enum Variant {
     Default = "def",
     Small = "sm",
     Medium = "md",
-    Large = "lg"
+    Large = "lg",
+    XLarge = "xl"
 }
 export declare enum Position {
     Auto = "auto",
@@ -222,4 +223,9 @@ export declare enum Position {
     Bottom = "bottom",
     Left = "left",
     Right = "right"
+}
+export declare enum ColorTheme {
+    Light = "light",
+    Dark = "dark",
+    System = "system"
 }

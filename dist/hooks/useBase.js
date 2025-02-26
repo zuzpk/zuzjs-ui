@@ -24,7 +24,7 @@ const buildSkeletonStyle = (s) => {
         }
     }
     else {
-        style.minWidth = style.minHeight = `100%`;
+        style.minWidth = style.minHeight = s.defaultSize || `100%`;
     }
     return style;
 };

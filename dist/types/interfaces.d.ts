@@ -44,6 +44,12 @@ export interface Skeleton {
      * size: 100 | 100px | 100%
     */
     size?: number | string;
+    /** Default size of the skeleton if `size` is not specified
+     * @default 100%
+     * @example
+     * defaultSize: 100 | 100px | 100%
+    */
+    defaultSize?: number | string;
     /** Width of the skeleton placeholder
      * @example
      * width: 100 | 100px | 100%

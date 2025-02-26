@@ -61,7 +61,7 @@ const useDB = (options) => {
             };
         })
             .catch(err => {
-            reject('Database either corrupted or not initialized');
+            reject(err.message || 'Database either corrupted or not initialized');
         });
     });
     const getByID = (storeName, id) => new Promise((resolve, reject) => {
@@ -95,7 +95,7 @@ const useDB = (options) => {
             };
         })
             .catch(err => {
-            reject('Database either corrupted or not initialized');
+            reject(err.message || 'Database either corrupted or not initialized');
         });
     });
     const update = (storeName, value, key) => new Promise((resolve, reject) => {
