@@ -1,0 +1,71 @@
+:root{
+    --avatar-bg: #fff;
+    --avatar-size-xl: 100px;
+    --avatar-size-lg: 75px;
+    --avatar-size-md: 50px;
+    --avatar-size-sm: 30px;
+}
+
+.--avatar{
+    
+    overflow: hidden;
+    #squareRadiusClipPath{
+        position: absolute;
+        top: -1000000000;
+        left: -1000000000;
+        opacity: 0;
+    }
+
+    &.--xl{
+        width: var(--avatar-size-xl);
+        height: var(--avatar-size-xl);
+        &.--circle{
+            border-radius: calc(var(--avatar-size-xl)/2);
+        }
+    }
+    &.--lg{
+        width: var(--avatar-size-lg);
+        height: var(--avatar-size-lg);
+        &.--circle{
+            border-radius: calc(var(--avatar-size-lg)/2);
+        }
+    }
+    &.--md{
+        width: var(--avatar-size-md);
+        height: var(--avatar-size-md);
+        &.--circle{
+            border-radius: calc(var(--avatar-size-md)/2);
+        }
+    }
+    &.--sm{
+        width: var(--avatar-size-sm);
+        height: var(--avatar-size-sm);
+        &.--circle{
+            border-radius: calc(var(--avatar-size-sm)/2);
+        }
+    }
+
+    img{
+        background: var(--avatar-bg);
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    &.--circle{
+        img{
+            border-radius: 50%;
+        }
+    }
+    &.--square{
+        clip-path: url(#squareRadiusClipPath);
+        -webkit-clip-path: url(#squareRadiusClipPath);
+    }
+
+    .--avatar-label{
+        color: #fff;
+        font-size: 14px;
+        font-weight: 900;
+    }
+    
+}

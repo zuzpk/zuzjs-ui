@@ -1,0 +1,55 @@
+:root{
+    --accordion: #fff;
+    --accordion-label: #111;
+    --accordion-radius: 5px;
+    --accordion-border: 1px #ddd solid;
+    --accordion-head: #fff;
+    --accordion-head-hover: #f1f1f1;
+
+    --accordion-head-padding: 10px;
+    --accordion-head-font-size: 16px;
+    --accordion-head-font-weight: normal;
+    --accordion-head-arrow-size: 18px;
+    --accordion-head-arrow: #111;
+
+    --accordion-detail-padding: 10px;
+    --accordion-detail-font-size: 15px;
+}
+
+.--accordion{
+
+    background: var(--accordion);
+    border: var(--accordion-border);
+    border-radius: var(--accordion-radius);
+    overflow: hidden;
+
+    .--toggle{
+        border: 0px;
+        background: var(--accordion-head);
+        padding: var(--accordion-head-padding);
+        border-radius: var(--accordian-radius);
+        flex: 1;
+        width: 100%;
+        .--label{
+            flex: 1;
+            color: var(--accordion-label);
+            font-size: var(--accordion-head-font-size);
+            font-weight: var(--accordion-head-font-weight);
+        }
+        .--arrow{
+            width: var(--accordion-head-arrow-size);
+            svg{
+                path{
+                    fill: var(--accordion-head-arrow);
+                }
+            }
+        }
+        &:hover{
+            background: var(--accordion-head-hover);
+        }
+    }
+    .--detail{
+        padding: var(--accordion-detail-padding);
+        font-size: var(--accordion-detail-font-size);
+    }
+}

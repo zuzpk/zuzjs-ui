@@ -3,7 +3,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, startTransition, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import Box from "../Box";
 import { useBase } from "../../hooks";
-import Sheet from "../Sheet";
+import Sheet, { isSheetHandler } from "../Sheet";
 import Cover from "../Cover";
 import { FORMVALIDATION, SHEET } from "../../types/enums";
 import { addPropsToChildren, isEmail, withPost } from "../../funs";
@@ -17,7 +17,7 @@ import { addPropsToChildren, isEmail, withPost } from "../../funs";
  * @param ref - Reference to the {@link FormHandler} interface, exposing methods to control loading and error states from the parent.
  */
 const Form = forwardRef((props, ref) => {
-    const { name, cover, spinner, errors, action, children, withData, beforeSubmit, onSubmit, onError, onSuccess, ...pops } = props;
+    const { name, cover, spinner, errors, action, children, withData, beforeSubmit, onSubmit, onError, onSuccess, resetOnSuccess, ...pops } = props;
     const { className, style, rest } = useBase(pops);
     const [loading, setLoading] = useState(false);
     const innerRef = useRef(null);
@@ -181,14 +181,28 @@ const Form = forwardRef((props, ref) => {
             // If `action` is defined, submit the form data to the specified endpoint
             startTransition(async () => {
                 beforeSubmit && beforeSubmit(payload);
-                setLoading(true);
+                if (isSheetHandler(cover)) {
+                    cover.setLoading(true);
+                }
+                else
+                    setLoading(true);
                 sheet.current.hide();
                 // submit.current?.setState(ButtonState.Loading)
                 withPost(action, { ...payload, ...(withData || {}) })
                     .then(_resp => {
                     const resp = _resp;
-                    setLoading(false);
                     // submit.current?.reset()
+                    if (isSheetHandler(cover)) {
+                        cover.setLoading(false);
+                    }
+                    else
+                        setLoading(false);
+                    if (resetOnSuccess) {
+                        Array.from(_nodes(`[name]`)).forEach((el) => {
+                            if (el instanceof HTMLInputElement)
+                                el.value = ``;
+                        });
+                    }
                     if (onSuccess)
                         onSuccess(resp);
                     else {
@@ -198,7 +212,11 @@ const Form = forwardRef((props, ref) => {
                 })
                     .catch(err => {
                     // console.warn(`Error occurred while submitting form`, err)
-                    setLoading(false);
+                    if (isSheetHandler(cover)) {
+                        cover.setLoading(false);
+                    }
+                    else
+                        setLoading(false);
                     // submit.current?.reset()
                     if (onError)
                         onError(err);
@@ -244,6 +262,6 @@ const Form = forwardRef((props, ref) => {
         }
     }));
     useEffect(_init, []);
-    return _jsxs(Box, { ref: innerRef, style: style, className: `--form flex rel ${className} ${name ? `--form-${name.replace(/\s+/g, `-`)}` : ``}`, propsToRemove: [`withData`, `action`, `onSubmit`, `onSuccess`, `onError`], children: [_jsx(Sheet, { ref: sheet, as: `--sheet-form` }), _jsx(Cover, { message: cover ? cover.message || undefined : `working`, spinner: spinner, color: cover ? `color` in cover ? cover.color : `#ffffff` : `#ffffff`, when: loading }), buildChildren] });
+    return _jsxs(Box, { ref: innerRef, style: style, className: `--form flex rel ${className} ${name ? `--form-${name.replace(/\s+/g, `-`)}` : ``}`, propsToRemove: [`withData`, `action`, `onSubmit`, `onSuccess`, `onError`], children: [_jsx(Sheet, { ref: sheet, as: `--sheet-form` }), !isSheetHandler(cover) && _jsx(Cover, { message: cover ? cover.message || undefined : `working`, spinner: spinner, color: cover ? `color` in cover ? cover.color : `#ffffff` : `#ffffff`, when: loading }), buildChildren] });
 });
 export default Form;

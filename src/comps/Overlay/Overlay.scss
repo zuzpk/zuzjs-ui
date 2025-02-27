@@ -1,0 +1,10 @@
+:root{
+    --overlay: rgba(0, 0, 0, 0.7);
+    --overlay-blur: 0;
+}
+
+.--overlay{
+    background: var(--overlay);
+    z-index: var(--max-z-index);
+    backdrop-filter: blur(var(--overlay-blur));
+}

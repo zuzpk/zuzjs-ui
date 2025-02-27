@@ -18,6 +18,6 @@ export type PaginationProps = BoxProps & {
     breakLabel?: string,
     nextLabel?: string,
     prevLabel?: string,
-    renderEmpty?: boolean,
+    renderOnZeroPageCount?: boolean,
     onPageChange?: PaginationCallback
 }

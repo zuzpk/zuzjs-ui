@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { SHEET, SHEET_ACTION_POSITION, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
+import { SHEET, SHEET_ACTION_POSITION, SPINNER, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
 import { ZuzProps } from "../../types";
 export type SheetProps = ZuzProps & {
     title?: string;
@@ -8,6 +8,8 @@ export type SheetProps = ZuzProps & {
     curve?: TRANSITION_CURVES;
     speed?: Number;
     type?: SHEET;
+    spinner?: SPINNER;
+    loadingMessage?: string;
     actionPosition?: SHEET_ACTION_POSITION;
 };
 export interface SheetActionHandler {
@@ -17,6 +19,7 @@ export interface SheetActionHandler {
     onClick?: () => void;
 }
 export interface SheetHandler {
+    setLoading: (mode: boolean) => void;
     showDialog: (title: string | ReactNode, message: string | ReactNode, action?: SheetActionHandler[], onShow?: () => void) => void;
     dialog: (title: string | ReactNode, message: string | ReactNode, action?: SheetActionHandler[], onShow?: () => void) => void;
     show: (message: string | ReactNode, duration?: number, type?: SHEET) => void;
@@ -32,6 +35,9 @@ declare const Sheet: import("react").ForwardRefExoticComponent<ZuzProps & {
     curve?: TRANSITION_CURVES;
     speed?: Number;
     type?: SHEET;
+    spinner?: SPINNER;
+    loadingMessage?: string;
     actionPosition?: SHEET_ACTION_POSITION;
 } & import("react").RefAttributes<SheetHandler>>;
+export declare const isSheetHandler: (src: unknown) => src is SheetHandler;
 export default Sheet;

@@ -6,7 +6,7 @@ import Box from "../Box";
 import Button from "../Button";
 import SVGIcons from "../svgicons";
 const Pagination = forwardRef((props, ref) => {
-    const { itemCount, itemsPerPage, startPage, pageRange, paginationStyle, breakLabel, prevLabel, nextLabel, renderEmpty, onPageChange, ...pops } = props;
+    const { itemCount, itemsPerPage, startPage, pageRange, paginationStyle, breakLabel, prevLabel, nextLabel, renderOnZeroPageCount, onPageChange, ...pops } = props;
     const [_currentPage, setCurrentPage] = useState(startPage || 1);
     const _breakLabel = useMemo(() => breakLabel || `...`, [breakLabel]);
     /**
@@ -42,9 +42,11 @@ const Pagination = forwardRef((props, ref) => {
         setCurrentPage(newPage);
         onPageChange?.(newPage);
     }, [itemCount, itemsPerPage, _currentPage]);
-    return _jsxs(Box, { as: `--pagination --pgt-${paginationStyle || PaginationStyle.Table} flex aic w:100% jcc ${className}`, children: [_jsx(Box, { as: `flex flex:1 aic --pgt-btns`, children: pages.map((page, index, items) => _jsx(Button, { disabled: page == _breakLabel, className: page == getPageValue(_currentPage) ? `--current-page` : ``, onClick: (ev) => typeof page == `number` && handlePage(page), children: page }, `--pg-${index}-${page}`)) }), _jsx(Box, { as: `flex aic jcc --pagination-label`, children: [
+    if (pages.length <= 1 && ((renderOnZeroPageCount == undefined ? false : renderOnZeroPageCount) === false))
+        return null;
+    return _jsxs(Box, { as: `--pagination --pgt-${paginationStyle || PaginationStyle.Table} flex aic w:100% jcc ${className}`, children: [_jsx(Box, { as: `flex flex:1 aic --pgt-btns`, children: (pages.length > 1 ? pages : [1, _breakLabel]).map((page, index, items) => _jsx(Button, { disabled: page == _breakLabel || getPageValue(_currentPage) == page, className: page == getPageValue(_currentPage) ? `--current-page` : ``, onClick: (ev) => typeof page == `number` && handlePage(page), children: page }, `--pg-${index}-${page}`)) }), _jsx(Box, { as: `flex aic jcc flex:1 --pagination-label`, children: [
                     `Showing ${(getPageValue(_currentPage) - 1) * itemsPerPage + 1} - `,
                     `${Math.min(getPageValue(_currentPage) * itemsPerPage, itemCount)} of ${itemCount} items`
-                ].join(` `) }), _jsxs(Box, { as: `flex aic jce --pgt-btns --pgt-nav`, children: [_jsx(Button, { onClick: (ev) => handlePage(getPageValue(_currentPage) - 1), children: SVGIcons.chevronLeftOutline }), _jsx(Button, { onClick: (ev) => handlePage(getPageValue(_currentPage) - 1), children: SVGIcons.chevronRightOutline })] })] });
+                ].join(` `) }), _jsxs(Box, { as: `flex aic jce flex:1 --pgt-btns --pgt-nav`, children: [_jsx(Button, { disabled: getPageValue(_currentPage) <= 1, onClick: (ev) => handlePage(getPageValue(_currentPage) - 1), children: SVGIcons.chevronLeftOutline }), _jsx(Button, { disabled: pages.length <= 1 || getPageValue(_currentPage) == pages[pages.length - 1], onClick: (ev) => handlePage(getPageValue(_currentPage) - 1), children: SVGIcons.chevronRightOutline })] })] });
 });
 export default Pagination;

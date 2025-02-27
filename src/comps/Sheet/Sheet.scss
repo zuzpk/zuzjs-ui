@@ -1,0 +1,165 @@
+@use "../../scss/mixins.scss" as *;
+
+:root{
+    --sheet-bg: #fff;
+    --sheet-shadow: var(--zuz-shadow);
+    --sheet-body: #fff;
+    --sheet-radius: 10px;
+    --sheet-padding: 6px 12px;
+    --sheet-head-padding: 10px;
+    --sheet-body-padding: 10px;
+    --sheet-footer: #ddd;
+    --sheet-footer-padding: 10px;
+    --sheet-action: #222;
+    --sheet-action-color: #fff;
+    --sheet-action-hover: #333;
+    --sheet-action-radius: 7px;
+    --sheet-action-padding: 7px 20px;
+    --sheet-action-font-size: 16px;
+    --sheet-action-font-weight: bold;
+    --sheet-closer-color: #111;
+    --sheet-closer-hover: rgba(255,255,255,0.2);
+    --sheet-closer-opacity: 0.75;
+    --sheet-closer-hover-opacity: 1;
+    --sheet-font-size: 15px;
+    --sheet-title-opacity: 0.75;
+    --sheet-title-font-size: 16px;
+    --sheet-closer-font-size: 36px;
+    --sheet-error: #ff4747;    
+    --sheet-warn: #ffba00;
+    --sheet-success: #23ac28;
+}
+.--toast{
+    border-radius: var(--sheet-radius);
+    padding: var(--sheet-padding);
+    font-size: var(--sheet-font-size);
+    white-space: pre;
+}
+.--sheet{
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: var(--max-z-index);
+    transform-origin: top left;
+    
+    @include anim($duration: 0.5s, $fun: cubic-bezier(0.2, -0.36, 0, 1.46));
+
+    &.--wobble{
+        transform-origin: inherit !important;
+        // transform: scale(0.8) !important;
+        // @include anim($duration: 0.5s, $fun: cubic-bezier(0.68, -0.2, 0.27, 1.5));
+    }
+
+    &.--sheet-default{
+        background: #333;
+        color: #fff;
+        top: 10px !important;
+        @extend .--toast;
+    }
+    &.--sheet-error{
+        background: var(--sheet-error);
+        color: #fff;
+        top: 10px;
+        @extend .--toast;
+    }
+    &.--sheet-success{
+        background: var(--sheet-success);
+        color: #fff;
+        top: 10px;
+        @extend .--toast;
+    }
+    &.--sheet-warn{
+        background: var(--sheet-warn);
+        color: #111;
+        top: 10px;
+        @extend .--toast;
+    }
+    &.--sheet-form{
+        position: absolute !important;
+    }
+
+    &.--sheet-dialog{
+        background: var(--sheet-bg);
+        border-radius: var(--sheet-radius);
+        box-shadow: var(--sheet-shadow);
+        transform-origin: top left !important;
+        .--cover{
+            border-radius: var(--sheet-radius);
+        }
+    }
+
+    .--head{
+        // margin-bottom: 20px;
+        padding: var(--sheet-head-padding);
+        .--title{
+            flex: 1;
+            font-size: var(--sheet-title-font-size);
+            opacity: var(--sheet-title-opacity);
+            text-align: center;
+            padding: 0px 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .--dot{
+            flex: 1;
+        }
+        .--closer{
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            font-size: var(--sheet-closer-font-size);
+            color: var(--sheet-closer-color);
+            background: transparent;
+            border: 0px;
+            line-height: 0;
+            padding: 0px;
+            font-weight: normal;
+            border-radius: 20px;
+            opacity: var(--sheet-closer-opacity);
+            top: 15px;
+            right: 5px;
+            transform: translateY(-50%);
+            font-size: var(--sheet-closer-font-size);
+            &:hover{
+                background: var(--sheet-closer-hover);
+                opacity: var(--sheet-closer-hover-opacity);
+            }
+        }
+    }   
+    .--body{
+        background: var(--sheet-body);
+        padding: var(--sheet-body-padding);
+
+        &.--no-action{
+            border-radius: 0px 0px var(--sheet-radius) var(--sheet-radius);
+        }
+    }
+
+    .--footer{
+        padding: var(--sheet-footer-padding);
+        background: var(--sheet-footer);
+        border-radius: 0px 0px var(--sheet-radius) var(--sheet-radius);
+        .--action{
+            background: var(--sheet-action);
+            color: var(--sheet-action-color);
+            border-radius: var(--sheet-action-radius);
+            padding: var(--sheet-action-padding);
+            font-size: var(--sheet-action-font-size);
+            font-weight: var(--sheet-action-font-weight);
+            border: 0px;
+            &:hover{
+                background: var(--sheet-action-hover);
+            }
+        }
+    }
+    // &.is-visible{
+    //     // transform: translate(-50%, 0vh);
+    //     &.wobble{
+    //         // transform: translate(-50%, 10px);
+    //         // @include anim($duration: 0.5s, $fun: cubic-bezier(0.68, -0.2, 0.27, 1.5));
+    //     }
+    // }
+
+}

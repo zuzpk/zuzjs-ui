@@ -10,21 +10,11 @@ const TColumn : React.FC<Column & {
 
     const { idx, id, weight, style, value, render, resize, sort } = props
 
-    // const style = useMemo(() : CSSStyleDeclaration => style || {
-    //     ...(w && { width: w }),
-    //     ...(maxW && { maxWidth: maxW }),
-    //     ...(minW && { minWidth: minW }),
-    //     ...(h && { height: h }),
-    //     ...(maxH && { maxHeight: maxH }),
-    //     ...(minH && { minHeight: minH }),
-    // }), [w, maxW, minW, h, minH, maxH, weight]);
-
     return <Box style={{
         flex: weight || 1,
         ...style
     }} as={`--col flex aic`}>
         {value as ReactNode}
-        {/* {idx && idx > -1 && render ? render(value) : value} */}
     </Box>
 
 }

@@ -5,9 +5,13 @@
     --table-row-odd: #f9f9f9;
     --table-row-gap: 2px;
     --table-row-radius: 0px;
-    --table-radius: 10px;
-    --table-head-padding: 0px;
     --table-row-padding: 0px;
+    --table-row-hover: #fff;
+    --table-row-cursor: auto;
+    --table-radius: 10px;
+    --table-head-font-weight: bold;
+    --table-head-padding: 0px;
+    --table-head-font-size: 15px;
     --table-head-col-padding: 10px;
     --table-col-padding: 10px;
     --table-border: 1px #eee solid;
@@ -27,10 +31,14 @@
     .--row{
         background: var(--table-row);
         border-radius: var(--table-row-radius);
-        &:not(.--row-head){
+        &:not(.--row-head):not(.--row-footer){
             padding: var(--table-row-padding);
+            cursor: var(--table-row-cursor);
             .--col{
                 padding: var(--table-col-padding);
+            }
+            &:hover{
+                background: var(--table-row-hover);
             }
         }
         &:nth-child(1){
@@ -46,8 +54,9 @@
             background: var(--table-row-odd);
         }
         &.--row-head{
-            font-weight: bold;
+            font-weight: var(--table-head-font-weight);
             padding: var(--table-head-padding) !important;
+            font-size: var(--table-head-font-size);
             .--col{
                 padding: var(--table-head-col-padding);
             }

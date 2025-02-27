@@ -1,5 +1,6 @@
 import { BoxProps } from "../Box";
 import { dynamicObject } from "../../types";
+import { SheetHandler } from "../Sheet";
 import { SPINNER } from "../../types/enums";
 export type FormProps = BoxProps & {
     /** Name of form, will be appended to --form-{name} in className
@@ -28,7 +29,8 @@ export type FormProps = BoxProps & {
         color?: string;
         /** Message displayed during loading */
         message?: string;
-    };
+    } | SheetHandler;
+    resetOnSuccess?: boolean;
 };
 /**
  * Exposes control methods for the Form component, such as setting loading states or hiding errors.
@@ -77,6 +79,7 @@ declare const Form: import("react").ForwardRefExoticComponent<BoxProps & {
         color?: string;
         /** Message displayed during loading */
         message?: string;
-    };
+    } | SheetHandler;
+    resetOnSuccess?: boolean;
 } & import("react").RefAttributes<FormHandler>>;
 export default Form;

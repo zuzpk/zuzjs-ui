@@ -44,8 +44,12 @@
         &.--current-page{
             background: var(--pagination-current-page-bg) !important;
             color: var(--pagination-current-page-color) !important;
+            &:disabled{
+                pointer-events: none !important;
+                cursor: auto !important;
+            }
         }
-        &:disabled{
+        &:disabled:not(.--current-page){
             pointer-events: none !important;
             cursor: auto !important;
             background: transparent !important;
@@ -88,6 +92,14 @@
             svg{
                 fill: var(--pagination-table-button-color);
                 width: var(--pagination-table-icon-size);
+            }
+            &.--current-page{
+                border: 1px var(--pagination-current-page-bg) solid !important;
+            }
+            &:disabled{
+                svg {
+                    opacity: 0.4;
+                }
             }
         }
     }

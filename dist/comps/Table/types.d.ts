@@ -9,10 +9,12 @@ export type Row = {
     ids?: string[];
     animate?: boolean;
     data?: dynamicObject;
+    rowClassName?: string;
+    onContextMenu?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, row: dynamicObject) => void;
 };
 export type Column = {
     id: string | number;
-    value: string | dynamicObject;
+    value: string | ReactNode | dynamicObject;
     weight?: number;
     w?: number | string;
     maxW?: number | string;
@@ -22,15 +24,20 @@ export type Column = {
     minH?: number | string;
     resize?: boolean;
     sort?: boolean;
-    render?: (row: dynamicObject) => ReactNode;
+    renderWhenHeader?: boolean;
+    render?: (row: dynamicObject, index: number) => ReactNode;
 };
 export type TableProps = BoxProps & {
     schema: Column[];
     rows?: dynamicObject[];
     rowCount?: number;
     rowsPerPage?: number;
+    rowClassName?: string;
     currentPage?: number;
     pagination?: boolean;
+    showPaginationOnZeroPageCount?: boolean;
     animateRows?: boolean;
+    header?: boolean;
+    onRowContextMenu?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, row: dynamicObject) => void;
     onPageChange?: PaginationCallback;
 };

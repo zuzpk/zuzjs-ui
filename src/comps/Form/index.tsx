@@ -4,7 +4,7 @@ import Box, { BoxProps } from "../Box";
 import { dynamicObject, FormInputs } from "../../types";
 import { useBase } from "../../hooks";
 import { SpinnerProps } from "../Spinner";
-import Sheet, { SheetHandler } from "../Sheet";
+import Sheet, { isSheetHandler, SheetHandler } from "../Sheet";
 import Cover, { CoverProps } from "../Cover";
 import { FORMVALIDATION, SHEET, SPINNER } from "../../types/enums";
 import { addPropsToChildren, isEmail, withPost } from "../../funs";
@@ -37,7 +37,9 @@ export type FormProps = BoxProps & {
         color?: string;
         /** Message displayed during loading */
         message?: string;
-    };
+    } | SheetHandler;
+
+    resetOnSuccess?: boolean;
 }
 
 /**
@@ -76,6 +78,7 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
         onSubmit,
         onError,
         onSuccess,
+        resetOnSuccess,
         ...pops } = props
 
     const {
@@ -280,7 +283,11 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
             startTransition( async () => {
                 
                 beforeSubmit && beforeSubmit(payload)
-                setLoading(true)
+
+                if ( isSheetHandler(cover) ){
+                    (cover as SheetHandler).setLoading(true)
+                }
+                else setLoading(true)
                 sheet.current!.hide()
                 
                 // submit.current?.setState(ButtonState.Loading)
@@ -288,8 +295,20 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
                 withPost(action, { ...payload, ...(withData || {}) })
                 .then( _resp  => {
                     const resp = _resp as dynamicObject
-                    setLoading(false)
+                    
                     // submit.current?.reset()
+
+                    if ( isSheetHandler(cover) ){
+                        (cover as SheetHandler).setLoading(false)
+                    }
+                    else setLoading(false)
+
+                    if ( resetOnSuccess ){
+                        Array.from(_nodes(`[name]`)).forEach((el : any) => {
+                            if ( el instanceof HTMLInputElement) el.value = ``
+                        })
+                    }
+
                     if ( onSuccess ) 
                         onSuccess(resp)
                     else{
@@ -301,7 +320,11 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
                 .catch(err => {
 
                     // console.warn(`Error occurred while submitting form`, err)
-                    setLoading(false)
+
+                    if ( isSheetHandler(cover) ){
+                        (cover as SheetHandler).setLoading(false)
+                    }
+                    else setLoading(false)
                     // submit.current?.reset()
 
                     if( onError ) 
@@ -370,12 +393,12 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
 
         {<Sheet ref={sheet} as={`--sheet-form`} />}
 
-        <Cover 
+        { !isSheetHandler(cover) && <Cover 
             message={cover ? cover.message || undefined : `working`} 
             spinner={spinner}
             color={cover ? `color` in cover ? cover.color : `#ffffff` : `#ffffff`}
             when={loading}
-        />
+        />}
 
         {buildChildren}
 

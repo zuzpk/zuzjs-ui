@@ -8,7 +8,7 @@ declare const Pagination: import("react").ForwardRefExoticComponent<import("../B
     breakLabel?: string;
     nextLabel?: string;
     prevLabel?: string;
-    renderEmpty?: boolean;
+    renderOnZeroPageCount?: boolean;
     onPageChange?: import("./types").PaginationCallback;
 } & import("react").RefAttributes<HTMLDivElement>>;
 export default Pagination;

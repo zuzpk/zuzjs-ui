@@ -1,0 +1,53 @@
+:root{
+    --drawer-color: #fff;
+    --drawer-handle-color: #ccc;
+    --drawer-radius-v: 0px;
+    --drawer-radius-h: 0px;
+    --drawer-shadow: var(--zuz-shadow);
+}
+
+.drawer-h{
+    min-width: 320px;
+    max-width: 90vw;
+    top: 0px;
+    bottom: 0px;
+    border-radius: var(--drawer-radius-h);
+}
+.drawer-v{
+    min-height: 10vh;
+    max-height: 90vh;
+    left: 0px;
+    right: 0px;
+    border-radius: var(--drawer-radius-v);
+}
+.--drawer{
+    background: var(--drawer-color);
+    border: var(--drawer-border);
+    box-shadow: var(--drawer-shadow);
+    z-index: var(--max-z-index);
+    overflow-x: hidden;
+    overflow-y: auto;   
+    &.--left{
+        left: 0px;        
+        @extend .drawer-h;
+    }
+    &.--right{
+        right: 0px;        
+        @extend .drawer-h;
+    }
+    &.--top{
+        top: 0px;        
+        @extend .drawer-v;
+    }
+    &.--bottom{
+        bottom: 0px;        
+        @extend .drawer-v;
+    }
+    .--handle{
+        width: 100px;
+        height: 6px;
+        border-radius: 10px;
+        background: var(--drawer-handle-color);
+        margin: 12px auto 0px auto;
+    }
+}

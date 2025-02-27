@@ -17,7 +17,11 @@ const Table = forwardRef<HTMLDivElement, TableProps>((props, ref) => {
         currentPage,
         pagination,
         animateRows,
+        header,
+        showPaginationOnZeroPageCount,
+        rowClassName,
         onPageChange,
+        onRowContextMenu,
         ...pops 
     } = props
     const _schemaParsed = useMemo(() => schema.reduce((prev, c: Column) => {
@@ -34,7 +38,7 @@ const Table = forwardRef<HTMLDivElement, TableProps>((props, ref) => {
         return prev
     }, {} as dynamicObject), [schema])
     const _cols = useMemo(() => Object.keys(_schemaParsed), [schema])
-
+    const _header = useMemo(() => header == undefined ? true : header, [header])
     const {
         style,
         className,
@@ -42,17 +46,20 @@ const Table = forwardRef<HTMLDivElement, TableProps>((props, ref) => {
     } = useBase(pops)
 
     return <Box as={`--table flex cols ${className}`}>
-        <TRow index={-1} schema={schema} styles={_schemaParsed}  />
-        {rows && rows.map((row: any, index: number) => <TRow 
+        {_header == true && <TRow index={-1} schema={schema} styles={_schemaParsed}  /> }
+        {rows && rows.map((row, index: number) => <TRow 
             key={`--trow-${index}`} 
             index={index} 
             schema={schema} 
             ids={_cols}
             styles={_schemaParsed}
             animate={animateRows} 
-            data={row} />)}
+            data={row} 
+            rowClassName={rowClassName}
+            onContextMenu={onRowContextMenu} />)}
         { pagination && <Box as={`--row flex aic --row-footer`}>
-            <Pagination 
+            <Pagination
+                renderOnZeroPageCount={showPaginationOnZeroPageCount}
                 onPageChange={onPageChange}
                 paginationStyle={PaginationStyle.Table}
                 itemCount={rowCount || (rows ? rows.length : 0)}

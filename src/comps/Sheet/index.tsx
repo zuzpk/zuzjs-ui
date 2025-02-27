@@ -1,6 +1,6 @@
 "use client"
 import { forwardRef, ReactNode, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { SHEET, SHEET_ACTION_POSITION, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
+import { SHEET, SHEET_ACTION_POSITION, SPINNER, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
 import Box, { BoxProps } from "../Box";
 import { useBase } from "../../hooks";
 import { uuid } from "../../funs";
@@ -19,6 +19,8 @@ export type SheetProps = ZuzProps & {
     curve?: TRANSITION_CURVES,
     speed?: Number,
     type?: SHEET,
+    spinner?: SPINNER,
+    loadingMessage?: string,
     actionPosition?: SHEET_ACTION_POSITION,
 }
 
@@ -30,6 +32,7 @@ export interface SheetActionHandler {
 }
 
 export interface SheetHandler {
+    setLoading: ( mode: boolean ) => void,
     showDialog: ( 
         title : string | ReactNode, 
         message : string | ReactNode, 
@@ -54,7 +57,7 @@ let _sheetWobbleTimeout: NodeJS.Timeout | null = null
 
 const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
 
-    const { title : _title, message, transition, curve, speed, type, actionPosition, ...pops } = props
+    const { title : _title, message, transition, curve, speed, type, actionPosition, spinner, loadingMessage, ...pops } = props
 
     const {
         className,
@@ -62,8 +65,8 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
         rest
     } = useBase(pops as BoxProps)
 
-    const [ title, setTitle ] = useState<string | ReactNode>(``)
-    const [ msg, setMsg ] = useState<string | ReactNode>(``)
+    const [ title, setTitle ] = useState<string | ReactNode>(_title || ``)
+    const [ msg, setMsg ] = useState<string | ReactNode>(message || ``)
     const [ action, setAction ] = useState<SheetActionHandler[] | null>(null)
     const [ sheetType, setSheetType ] = useState<SHEET>(type || SHEET.Default);
     const sheetID = useMemo(() => uuid(), [])
@@ -74,13 +77,15 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
     const [ render, setRender ] = useState(true)
     const _render = useRef<NodeJS.Timeout>(null)
 
+    const renderMessage = msg //useMemo(() => msg, [msg])
+
     useImperativeHandle(ref, () => ({
         setLoading(mode: boolean){
             setLoading(mode)
         },
         showDialog( 
-            title: string | ReactNode, 
-            message: string | ReactNode, 
+            title?: string | ReactNode | null, 
+            message?: string | ReactNode | null, 
             action?: SheetActionHandler[],
             onShow?: () => void ){
 
@@ -98,8 +103,8 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
             }
 
             setSheetType(SHEET.Dialog)
-            setMsg(message);
-            setTitle(title);
+            if ( message ) setMsg(message);
+            if ( title ) setTitle(title);
             if ( action ) setAction(action.reduce((ar, b) => {
                 ar.push({
                     ...b,
@@ -115,6 +120,7 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
             title: string | ReactNode, 
             message: string | ReactNode, 
             action?: SheetActionHandler[],
+            // actionRef?: React.RefObject<HTMLElement>,
             onShow?: () => void ){
 
             if ( _sheetTimeout ){
@@ -190,7 +196,7 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
         }
     }))
 
-    const buildAnimation = useCallback(() => {
+    const buildAnimation = useMemo(() => {
 
         const base = {
             when: visible,
@@ -228,7 +234,7 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
                 ...base
             }
         }
-    }, [visible])
+    }, [visible, sheetType])
 
     useEffect(() => {
         if ( _render.current ) clearTimeout(_render.current)
@@ -248,11 +254,11 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
             <Box
                 className={`--sheet --sheet-${sheetType.toLowerCase()} ${className} fixed`.trim()}
                 style={style}
-                animate={buildAnimation() as animationProps}
+                animate={buildAnimation as animationProps}
                 {...rest as BoxProps}
                 ref={innerRef}>
 
-                <Cover when={loading} />
+                <Cover when={loading} spinner={spinner} message={loadingMessage} />
                 
                 {/* Header */}
                 <Box className={`--head flex aic rel`}>
@@ -263,7 +269,7 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
                 </Box>
                 {/* Body */}
                 <Box className={`--body flex aic rel ${action ? `` : `--no-action`}`.trim()}>
-                    {render ? msg : null}
+                    {render ? renderMessage : null}
                 </Box>
                 {/* Footer */}
                 { action && <Box className={`--footer flex aic rel ${actionPosition ? actionPosition == SHEET_ACTION_POSITION.Center ? `jcc` : `` : `jce`}`.trim()}>
@@ -282,10 +288,19 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
         className={`--sheet --sheet-${sheetType.toLowerCase()} ${className} abs`.trim()}
         style={style}
         {...rest as BoxProps}
-        animate={buildAnimation() as animationProps}
+        animate={buildAnimation as animationProps}
         ref={innerRef}>
         {visible ? msg : null}
     </Box>
 })
+
+export const isSheetHandler = (src: unknown): src is SheetHandler => {
+    return typeof src === `object` 
+        && null != src 
+        && `setLoading` in src
+        && `success` in src
+        && `error` in src
+}
+
 
 export default Sheet

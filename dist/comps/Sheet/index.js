@@ -1,6 +1,6 @@
 "use client";
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { SHEET, SHEET_ACTION_POSITION, TRANSITION_CURVES } from "../../types/enums";
 import Box from "../Box";
 import { useBase } from "../../hooks";
@@ -12,10 +12,10 @@ import Overlay from "../Overlay";
 let _sheetTimeout = null;
 let _sheetWobbleTimeout = null;
 const Sheet = forwardRef((props, ref) => {
-    const { title: _title, message, transition, curve, speed, type, actionPosition, ...pops } = props;
+    const { title: _title, message, transition, curve, speed, type, actionPosition, spinner, loadingMessage, ...pops } = props;
     const { className, style, rest } = useBase(pops);
-    const [title, setTitle] = useState(``);
-    const [msg, setMsg] = useState(``);
+    const [title, setTitle] = useState(_title || ``);
+    const [msg, setMsg] = useState(message || ``);
     const [action, setAction] = useState(null);
     const [sheetType, setSheetType] = useState(type || SHEET.Default);
     const sheetID = useMemo(() => uuid(), []);
@@ -25,6 +25,7 @@ const Sheet = forwardRef((props, ref) => {
     const [loading, setLoading] = useState(false);
     const [render, setRender] = useState(true);
     const _render = useRef(null);
+    const renderMessage = msg; //useMemo(() => msg, [msg])
     useImperativeHandle(ref, () => ({
         setLoading(mode) {
             setLoading(mode);
@@ -43,8 +44,10 @@ const Sheet = forwardRef((props, ref) => {
                 }, 500);
             }
             setSheetType(SHEET.Dialog);
-            setMsg(message);
-            setTitle(title);
+            if (message)
+                setMsg(message);
+            if (title)
+                setTitle(title);
             if (action)
                 setAction(action.reduce((ar, b) => {
                     ar.push({
@@ -56,7 +59,9 @@ const Sheet = forwardRef((props, ref) => {
             setVisible(true);
             setTimeout(() => onShow ? onShow() : () => { }, 1000);
         },
-        dialog(title, message, action, onShow) {
+        dialog(title, message, action, 
+        // actionRef?: React.RefObject<HTMLElement>,
+        onShow) {
             if (_sheetTimeout) {
                 clearTimeout(_sheetTimeout);
                 if (_sheetWobbleTimeout) {
@@ -125,7 +130,7 @@ const Sheet = forwardRef((props, ref) => {
             setVisible(false);
         }
     }));
-    const buildAnimation = useCallback(() => {
+    const buildAnimation = useMemo(() => {
         const base = {
             when: visible,
             duration: speed || 0.3,
@@ -156,7 +161,7 @@ const Sheet = forwardRef((props, ref) => {
                 ...base
             };
         }
-    }, [visible]);
+    }, [visible, sheetType]);
     useEffect(() => {
         if (_render.current)
             clearTimeout(_render.current);
@@ -168,8 +173,15 @@ const Sheet = forwardRef((props, ref) => {
         }
     }, [visible]);
     if (sheetType == SHEET.Dialog) {
-        return _jsxs(_Fragment, { children: [_jsx(Overlay, { when: visible }), _jsxs(Box, { className: `--sheet --sheet-${sheetType.toLowerCase()} ${className} fixed`.trim(), style: style, animate: buildAnimation(), ...rest, ref: innerRef, children: [_jsx(Cover, { when: loading }), _jsxs(Box, { className: `--head flex aic rel`, children: [_jsx(Box, { className: `--${title ? `title` : `dot`} flex aic rel`, children: title || `` }), _jsx(Button, { onClick: (e) => setVisible(false), className: `--closer abs`, children: "\u00D7" })] }), _jsx(Box, { className: `--body flex aic rel ${action ? `` : `--no-action`}`.trim(), children: render ? msg : null }), action && _jsx(Box, { className: `--footer flex aic rel ${actionPosition ? actionPosition == SHEET_ACTION_POSITION.Center ? `jcc` : `` : `jce`}`.trim(), children: action.map((a, i) => _jsx(Button, { onClick: (e) => a.handler ? a.handler() : a.onClick ? a.onClick() : console.log(`onClick Handler missing`), className: `--action`, children: a.label }, `sheet-${sheetID}-action-${a.key}`)) })] })] });
+        return _jsxs(_Fragment, { children: [_jsx(Overlay, { when: visible }), _jsxs(Box, { className: `--sheet --sheet-${sheetType.toLowerCase()} ${className} fixed`.trim(), style: style, animate: buildAnimation, ...rest, ref: innerRef, children: [_jsx(Cover, { when: loading, spinner: spinner, message: loadingMessage }), _jsxs(Box, { className: `--head flex aic rel`, children: [_jsx(Box, { className: `--${title ? `title` : `dot`} flex aic rel`, children: title || `` }), _jsx(Button, { onClick: (e) => setVisible(false), className: `--closer abs`, children: "\u00D7" })] }), _jsx(Box, { className: `--body flex aic rel ${action ? `` : `--no-action`}`.trim(), children: render ? renderMessage : null }), action && _jsx(Box, { className: `--footer flex aic rel ${actionPosition ? actionPosition == SHEET_ACTION_POSITION.Center ? `jcc` : `` : `jce`}`.trim(), children: action.map((a, i) => _jsx(Button, { onClick: (e) => a.handler ? a.handler() : a.onClick ? a.onClick() : console.log(`onClick Handler missing`), className: `--action`, children: a.label }, `sheet-${sheetID}-action-${a.key}`)) })] })] });
     }
-    return _jsx(Box, { className: `--sheet --sheet-${sheetType.toLowerCase()} ${className} abs`.trim(), style: style, ...rest, animate: buildAnimation(), ref: innerRef, children: visible ? msg : null });
+    return _jsx(Box, { className: `--sheet --sheet-${sheetType.toLowerCase()} ${className} abs`.trim(), style: style, ...rest, animate: buildAnimation, ref: innerRef, children: visible ? msg : null });
 });
+export const isSheetHandler = (src) => {
+    return typeof src === `object`
+        && null != src
+        && `setLoading` in src
+        && `success` in src
+        && `error` in src;
+};
 export default Sheet;
