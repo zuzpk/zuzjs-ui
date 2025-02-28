@@ -14,6 +14,7 @@
     --table-head-font-size: 15px;
     --table-head-col-padding: 10px;
     --table-col-padding: 10px;
+    --table-col-selector-size: 40px;
     --table-border: 1px #eee solid;
     --table-head-radius: var(--table-radius) var(--table-radius) 0px 0px;
     --table-footer-radius: 0px 0px var(--table-radius) var(--table-radius);
@@ -62,5 +63,12 @@
             }
         }
         
+        .--col{
+            &.--selector{
+                min-width: var(--table-col-selector-size);
+                max-width: var(--table-col-selector-size);
+            }
+        }
+
     }
 }

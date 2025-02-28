@@ -1,20 +1,27 @@
-import { ReactNode } from "react"
+import { ReactNode, RefObject } from "react"
 import { BoxProps } from "../Box"
 import { dynamicObject } from "../../types"
 import { PaginationCallback, PaginationPage } from "../Pagination/types"
+import { PubSub } from "../.."
 
-export type Row = {
+export type RowSelectCallback<T> = (row: T, selected: boolean) => void;
+
+export type Row<T> = {
     index: number,
-    schema: Column[],
+    schema: Column<T>[],
     styles: dynamicObject,
     ids?: string[],
     animate?: boolean,
-    data?: dynamicObject,
+    data?: T,
     rowClassName?: string,
-    onContextMenu?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, row: dynamicObject) => void,
+    selectable?: boolean,
+    onSelect?: RowSelectCallback<T>,
+    pubsub: PubSub,
+    tableRef?: RefObject<HTMLDivElement | null>,
+    onContextMenu?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, row: T) => void,
 }
 
-export type Column = {
+export type Column<T> = {
     id: string | number,
     value: string | ReactNode | dynamicObject,
     weight?: number,
@@ -26,13 +33,14 @@ export type Column = {
     minH?: number | string,
     resize?: boolean
     sort?: boolean,
+    as?: string,
     renderWhenHeader?: boolean,
-    render?: (row: dynamicObject, index: number) => ReactNode
+    render?: (row: T, index: number) => ReactNode
 }
 
-export type TableProps = BoxProps & {
-    schema: Column[],
-    rows?: dynamicObject[],
+export type TableProps<T> = BoxProps & {
+    schema: Column<T>[],
+    rows: T[],
     rowCount?: number,
     rowsPerPage?: number,
     rowClassName?: string,
@@ -41,6 +49,9 @@ export type TableProps = BoxProps & {
     showPaginationOnZeroPageCount?: boolean,
     animateRows?: boolean,
     header?: boolean,
-    onRowContextMenu?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, row: dynamicObject) => void,
+    selectableRows?: boolean,
+    // onRowSelectToggle?: (row: T, selected: boolean) => void,
+    onRowSelectToggle?: RowSelectCallback<T>,
+    onRowContextMenu?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, row: T) => void,
     onPageChange?: PaginationCallback
 }

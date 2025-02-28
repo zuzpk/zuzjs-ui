@@ -1,12 +1,14 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { forwardRef, useMemo } from "react";
+import { forwardRef, useMemo, useRef } from "react";
 import Box from "../Box";
 import { useBase } from "../../hooks";
 import TRow from "./row";
 import Pagination from "../Pagination";
 import { PaginationStyle } from "../Pagination/types";
-const Table = forwardRef((props, ref) => {
-    const { schema, rows, rowCount, rowsPerPage, currentPage, pagination, animateRows, header, showPaginationOnZeroPageCount, rowClassName, onPageChange, onRowContextMenu, ...pops } = props;
+import { PubSub, uuid } from "../..";
+// const Table = forwardRef<HTMLDivElement, TableProps>((props, ref) => {
+const Table = (props, ref) => {
+    const { schema, rows, rowCount, rowsPerPage, currentPage, pagination, animateRows, header, showPaginationOnZeroPageCount, rowClassName, selectableRows, onRowSelectToggle, onPageChange, onRowContextMenu, ...pops } = props;
     const _schemaParsed = useMemo(() => schema.reduce((prev, c) => {
         prev[c.id] = {
             flex: c.weight || 1,
@@ -23,6 +25,10 @@ const Table = forwardRef((props, ref) => {
     const _cols = useMemo(() => Object.keys(_schemaParsed), [schema]);
     const _header = useMemo(() => header == undefined ? true : header, [header]);
     const { style, className, rest } = useBase(pops);
-    return _jsxs(Box, { as: `--table flex cols ${className}`, children: [_header == true && _jsx(TRow, { index: -1, schema: schema, styles: _schemaParsed }), rows && rows.map((row, index) => _jsx(TRow, { index: index, schema: schema, ids: _cols, styles: _schemaParsed, animate: animateRows, data: row, rowClassName: rowClassName, onContextMenu: onRowContextMenu }, `--trow-${index}`)), pagination && _jsx(Box, { as: `--row flex aic --row-footer`, children: _jsx(Pagination, { renderOnZeroPageCount: showPaginationOnZeroPageCount, onPageChange: onPageChange, paginationStyle: PaginationStyle.Table, itemCount: rowCount || (rows ? rows.length : 0), itemsPerPage: rowsPerPage || 10 }) })] });
-});
-export default Table;
+    const _tableRef = useRef(null);
+    const pubsub = useMemo(() => new PubSub(), []);
+    const rowKeys = useMemo(() => rows.map(() => uuid()), [rows]);
+    return _jsxs(Box, { as: `--table flex cols ${className}`, ref: _tableRef, children: [_header == true && _jsx(TRow, { tableRef: _tableRef, pubsub: pubsub, selectable: selectableRows, index: -1, schema: schema, styles: _schemaParsed }), rows && rows.map((row, index) => _jsx(TRow, { tableRef: _tableRef, pubsub: pubsub, index: index, schema: schema, ids: _cols, styles: _schemaParsed, animate: animateRows, data: row, rowClassName: rowClassName, selectable: selectableRows, onSelect: onRowSelectToggle, onContextMenu: onRowContextMenu }, `--trow-${rowKeys[index]}-${schema[0].id}`)), pagination && _jsx(Box, { as: `--row flex aic --row-footer`, children: _jsx(Pagination, { renderOnZeroPageCount: showPaginationOnZeroPageCount, onPageChange: onPageChange, paginationStyle: PaginationStyle.Table, itemCount: rowCount || (rows ? rows.length : 0), itemsPerPage: rowsPerPage || 10 }) })] });
+};
+const ForwardedTable = forwardRef(Table);
+export default ForwardedTable;

@@ -1,4 +1,4 @@
-import { forwardRef, useMemo } from "react";
+import { forwardRef, useMemo, useRef, JSX, Ref } from "react";
 import type { TableProps, Row, Column } from "./types";
 import Box from "../Box";
 import { useBase } from "../../hooks";
@@ -6,8 +6,10 @@ import TRow from "./row";
 import Pagination from "../Pagination";
 import { PaginationStyle } from "../Pagination/types";
 import { dynamicObject } from "../../types";
+import { PubSub, uuid } from "../..";
 
-const Table = forwardRef<HTMLDivElement, TableProps>((props, ref) => {
+// const Table = forwardRef<HTMLDivElement, TableProps>((props, ref) => {
+const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
 
     const { 
         schema, 
@@ -20,11 +22,13 @@ const Table = forwardRef<HTMLDivElement, TableProps>((props, ref) => {
         header,
         showPaginationOnZeroPageCount,
         rowClassName,
+        selectableRows,
+        onRowSelectToggle,
         onPageChange,
         onRowContextMenu,
         ...pops 
     } = props
-    const _schemaParsed = useMemo(() => schema.reduce((prev, c: Column) => {
+    const _schemaParsed = useMemo(() => schema.reduce((prev, c: Column<T>) => {
         prev[c.id] = {
             flex: c.weight || 1,
             ...(c.w && { width: c.w }),
@@ -44,18 +48,25 @@ const Table = forwardRef<HTMLDivElement, TableProps>((props, ref) => {
         className,
         rest
     } = useBase(pops)
+    const _tableRef = useRef<HTMLDivElement>(null)
+    const pubsub = useMemo(() => new PubSub(), [])
+    const rowKeys = useMemo(() => rows.map(() => uuid()), [rows]);
 
-    return <Box as={`--table flex cols ${className}`}>
-        {_header == true && <TRow index={-1} schema={schema} styles={_schemaParsed}  /> }
+    return <Box as={`--table flex cols ${className}`} ref={_tableRef}>
+        {_header == true && <TRow tableRef={_tableRef} pubsub={pubsub} selectable={selectableRows} index={-1} schema={schema} styles={_schemaParsed}  /> }
         {rows && rows.map((row, index: number) => <TRow 
-            key={`--trow-${index}`} 
+            key={`--trow-${rowKeys[index]}-${schema[0].id}`} 
+            tableRef={_tableRef}
+            pubsub={pubsub}
             index={index} 
-            schema={schema} 
+            schema={schema}  
             ids={_cols}
             styles={_schemaParsed}
             animate={animateRows} 
             data={row} 
             rowClassName={rowClassName}
+            selectable={selectableRows}
+            onSelect={onRowSelectToggle}
             onContextMenu={onRowContextMenu} />)}
         { pagination && <Box as={`--row flex aic --row-footer`}>
             <Pagination
@@ -68,6 +79,8 @@ const Table = forwardRef<HTMLDivElement, TableProps>((props, ref) => {
         </Box> }
     </Box>
 
-})
+}
 
-export default Table
+const ForwardedTable = forwardRef(Table) as <T>(props: TableProps<T> & { ref?: Ref<HTMLDivElement> }) => JSX.Element
+
+export default ForwardedTable
