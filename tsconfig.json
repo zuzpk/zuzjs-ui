@@ -8,6 +8,7 @@
       "esModuleInterop": true,
       "downlevelIteration": true,
       "preserveWatchOutput": true,
+      "outDir": "dist/cjs",
       "rootDir": "./src",
       "jsx": "react-jsx",
       "noFallthroughCasesInSwitch": true,
@@ -17,6 +18,6 @@
       "stripInternal": true,
       "removeComments": false,
     },
-    "include": ["src/**/*.ts", "src/**/*.tsx", "src/styles/package.json"],
-    "exclude": ["node_modules", "src/**/_*.*", "dist/esm"]
+    "include": ["src/**/*.ts", "src/**/*.tsx"],
+    "exclude": ["node_modules", "src/**/_*.*"]
 }

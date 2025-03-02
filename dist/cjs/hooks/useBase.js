@@ -1,7 +1,7 @@
 import { cleanProps, css } from "../funs";
 import { buildWithStyles, getAnimationCurve, getAnimationTransition } from "../funs/css";
-import useDrag from "./useDrag";
 import { cssFilterKeys, cssTransformKeys, cssWithKeys } from "../funs/stylesheet";
+import useDrag from "./useDrag";
 const buildSkeletonStyle = (s) => {
     const makeValue = (v, unit = `px`) => {
         return v ?
@@ -29,12 +29,12 @@ const buildSkeletonStyle = (s) => {
     return style;
 };
 const useBase = (props) => {
-    const { as, animate, skeleton, className, shimmer, propsToRemove, draggable, dragOptions, ...rest } = props || {};
+    const { as, fx, animate, skeleton, className, shimmer, propsToRemove, draggable, dragOptions, ...rest } = props || {};
     let cx = [];
     if (as) {
         cx = css().Build(`string` == typeof as ? as : as.join(` `)).cx;
     }
-    const { transition, from, to, when, duration, delay, curve } = animate || {};
+    const { transition, from, to, when, duration, delay, curve } = fx || animate || {};
     let _style = {};
     if (undefined === when) {
         _style = transition ? getAnimationTransition(transition, true) : { ...from, ...to };

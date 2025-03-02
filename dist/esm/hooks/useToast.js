@@ -1,3 +1,0 @@
-const useContextMenu = (menu) => {
-};
-export {};

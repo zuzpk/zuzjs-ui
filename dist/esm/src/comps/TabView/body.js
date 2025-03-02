@@ -1,7 +1,7 @@
 "use client";
 import { jsx as _jsx } from "react/jsx-runtime";
-import { Box } from '@zuzjs/ui';
 import { useEffect, useRef, useState } from 'react';
+import Box from '../Box';
 const TabBody = ({ size, index, active, render, content }) => {
     const _ref = useRef(null);
     const [style, setStyle] = useState({});

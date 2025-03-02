@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from "react"
+import { useEffect } from "react"
 import { FILTER } from "../../types/enums"
 
 export type FilterProps = {

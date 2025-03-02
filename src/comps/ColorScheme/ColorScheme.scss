@@ -1,7 +1,13 @@
 :root{
     --color-scheme-border: 1px #fff solid;
+
+    --color-scheme-height-sm: 30px;
+    --color-scheme-height-md: 34px;
+    --color-scheme-height-lg: 36px;
+    --color-scheme: #fff;
+    --color-scheme-active: var(--slate-100);
+
 //     --color-scheme-radius: 20px;
-//     --color-scheme: #fff;
 //     --color-scheme-gap: 4px;
 //     --color-scheme-padding: 2px;
 //     --color-scheme-border: #ddd;
@@ -43,6 +49,8 @@
 [color-scheme="dark"] {
 
     --color-scheme-border: 1px #555 solid;
+    --color-scheme: #555;
+    --color-scheme-active: #333;
 //     body{
 //         .--color-scheme{
 //             --color-scheme: #444;
@@ -61,6 +69,18 @@
         --segment-item-padding-sm: 0px;
         --segmented-radius-sm: 20px;
         --segmented-border: var(--color-scheme-border);
+        --segmented: var(--color-scheme);
+        --segment-tab: var(--color-scheme-active);
         width: 100px;
+
+        &.--sm{
+            height: var(--color-scheme-height-sm);
+        }
+        &.--md{
+            height: var(--color-scheme-height-md);
+        }
+        &.--lg{
+            height: var(--color-scheme-height-lg);
+        }
     }
 }
