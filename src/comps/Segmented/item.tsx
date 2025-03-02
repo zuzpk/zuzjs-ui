@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react"
-import { Segment, SegmentItemProps } from "./types"
+import Box from "../Box"
 import Button from "../Button"
-import Box, { BoxProps } from "../Box"
 import { ButtonHandler } from "../Button/types"
 import Icon from "../Icon"
+import { Segment, SegmentItemProps } from "./types"
 
 
 const SegmentItem = ({ onSelect, meta, selected } : SegmentItemProps) => {
@@ -44,7 +44,7 @@ const SegmentItem = ({ onSelect, meta, selected } : SegmentItemProps) => {
         suppressHydrationWarning
         className={`--segment-item flex aic rel ${selected ? `--segement-active` : ``}`.trim()}>
         {icon ? 
-            `string` == typeof icon ? <Icon name={icon} as={`--segment-icon`} /> : <Box as={`--segment-icon`}>{icon}</Box>
+            `string` == typeof icon ? <Icon name={icon} as={`--segment-icon`} /> : <Box as={`--segment-icon flex aic jcc`}>{icon}</Box>
             : null} 
         {/* <Box 
             className={`--segment-icon ${icon instanceof String ? `icon-${icon}` : `flex aic jcc`}`}>{typeof icon !== `string` && icon}</Box>} */}

@@ -1,7 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useRef, useState } from "react";
-import Button from "../Button";
 import Box from "../Box";
+import Button from "../Button";
 import Icon from "../Icon";
 const SegmentItem = ({ onSelect, meta, selected }) => {
     const ref = useRef(null);
@@ -32,7 +32,7 @@ const SegmentItem = ({ onSelect, meta, selected }) => {
     return _jsxs(Button, { onClick: () => onSelect(index, pos.width, pos.x, meta, false), ref: ref, 
         // data-x={pos.x}
         suppressHydrationWarning: true, className: `--segment-item flex aic rel ${selected ? `--segement-active` : ``}`.trim(), children: [icon ?
-                `string` == typeof icon ? _jsx(Icon, { name: icon, as: `--segment-icon` }) : _jsx(Box, { as: `--segment-icon`, children: icon })
+                `string` == typeof icon ? _jsx(Icon, { name: icon, as: `--segment-icon` }) : _jsx(Box, { as: `--segment-icon flex aic jcc`, children: icon })
                 : null, label && String(label).trim() != `` && _jsx(Box, { className: `--segment-label`, children: label || `Item ${index}` })] });
 };
 export default SegmentItem;

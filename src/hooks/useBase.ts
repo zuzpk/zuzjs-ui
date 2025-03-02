@@ -1,10 +1,10 @@
+import { ComponentPropsWithRef, CSSProperties, JSX } from "react";
 import { cleanProps, css } from "../funs";
-import { cssShortKey, dynamicObject, Props, ZuzProps } from "../types";
 import { buildWithStyles, getAnimationCurve, getAnimationTransition } from "../funs/css";
-import useDrag from "./useDrag";
-import { ComponentProps, ComponentPropsWithRef, CSSProperties, JSX } from "react";
-import { Skeleton } from "../types/interfaces";
 import { cssFilterKeys, cssTransformKeys, cssWithKeys } from "../funs/stylesheet";
+import { cssShortKey, dynamicObject, Props, ZuzProps } from "../types";
+import { Skeleton } from "../types/interfaces";
+import useDrag from "./useDrag";
 
 const buildSkeletonStyle = (s: Skeleton) : dynamicObject => {
 
@@ -46,6 +46,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>) : {
 
     const {
         as,
+        fx,
         animate,
         skeleton,
         className,
@@ -61,7 +62,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>) : {
         cx = css().Build(`string` == typeof as ? as : as.join(` `)).cx;
     }
 
-    const { transition, from, to, when, duration, delay, curve } = animate || {}
+    const { transition, from, to, when, duration, delay, curve } = fx || animate || {}
 
     let _style : dynamicObject = {};
     

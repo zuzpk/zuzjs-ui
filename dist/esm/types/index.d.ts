@@ -1,7 +1,7 @@
 import { ComponentPropsWithoutRef, ElementType } from "react";
+import { DragOptions } from "../hooks";
 import { SHIMMER, SORT } from "./enums";
 import { animationProps, Skeleton } from "./interfaces";
-import { DragOptions } from "../hooks";
 export type Deprecated<T, M extends string> = T & {
     __deprecatedMessage?: M;
 };
@@ -39,6 +39,7 @@ export interface ZuzProps {
     as?: string | string[];
     /**
      * @deprecated
+     * Use `fx`.
      * Animation configuration using {@link animationProps}
      * */
     animate?: animationProps;

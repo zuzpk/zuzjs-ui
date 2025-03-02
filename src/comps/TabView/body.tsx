@@ -1,6 +1,6 @@
 "use client"
-import { Box, Size, Text } from '@zuzjs/ui';
 import React, { CSSProperties, ReactNode, useEffect, useRef, useState } from 'react';
+import Box from '../Box';
 
 const TabBody : React.FC<{
     size: { width: number },
@@ -23,7 +23,7 @@ const TabBody : React.FC<{
         }
     }, [_ref.current])
 
-    return <Box 
+    return <Box
         ref={_ref}
         style={{ 
             width: size.width,
