@@ -23,6 +23,7 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
         showPaginationOnZeroPageCount,
         rowClassName,
         selectableRows,
+        hoverable,
         onRowSelectToggle,
         onPageChange,
         onRowContextMenu,
@@ -52,7 +53,7 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
     const pubsub = useMemo(() => new PubSub(), [])
     const rowKeys = useMemo(() => rows.map(() => uuid()), [rows]);
 
-    return <Box as={`--table flex cols ${className}`} ref={_tableRef}>
+    return <Box as={`--table ${(hoverable ?? true) ? `--hoverable` : ``} flex cols ${className}`} ref={_tableRef}>
         {_header == true && <TRow tableRef={_tableRef} pubsub={pubsub} selectable={selectableRows} index={-1} schema={schema} styles={_schemaParsed}  /> }
         {rows && rows.map((row, index: number) => <TRow 
             key={`--trow-${rowKeys[index]}-${schema[0].id}`} 

@@ -1,12 +1,11 @@
 import { Deprecated, Props } from "../../types"
-import { Size, Variant } from "../../types/enums"
-import { SpinnerProps } from "../Spinner"
+import { Size, SPINNER, Variant } from "../../types/enums"
 
 export type ButtonProps = Props<`button`> & {
     icon?: string,
     iconSize?: Size,
     withLabel?: boolean,
-    spinner?: SpinnerProps,
+    spinner?: SPINNER,
     state?: ButtonState,
     /**
      * @deprecated "Use `variant` instead. `size` will be removed in the next major release."

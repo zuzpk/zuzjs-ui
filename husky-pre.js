@@ -19,7 +19,7 @@ fs.writeFileSync(backupPath, JSON.stringify(packageJson, null, 2))
 const paperPack = JSON.parse(fs.readFileSync(path.join(import.meta.url, "..", "..", "packages", "paper", "package.json")))
 
 // packageJson.dependencies["@zuzjs/paper"] = `^${paperPack.version}`
-delete packageJson.dependencies["@zuzjs/paper"]
+// delete packageJson.dependencies["@zuzjs/paper"]
 
 fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))
 

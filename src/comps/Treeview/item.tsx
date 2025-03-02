@@ -4,12 +4,13 @@ import Box, { BoxProps } from "../Box";
 import Button from "../Button";
 import Icon, { IconProps } from "../Icon";
 import Text, { TextProps } from "../Text";
+import SVGIcons from "../svgicons";
 
 
 const TreeItem = forwardRef<TreeItemHandler, TreeItemProps>((props, ref) => {
 
     const { as, meta, nodes, icons, onSelect, treeTag, selected, ...rest } = props
-    const { tag, label, icon, under } = meta
+    const { tag, label, icon, under, isHead } = meta
     
     const [isOpen, setIsOpen] = useState( tag == `root` );
 
@@ -36,19 +37,21 @@ const TreeItem = forwardRef<TreeItemHandler, TreeItemProps>((props, ref) => {
             <Button
                 skeleton={rest.skeleton}
                 onClick={toggle}
-                className={`--node-aro-btn`}>
-                <Icon 
+                className={`--node-aro-btn`}
+                disabled={_nodes.length == 0}>
+                { icons ? <Icon 
                     skeleton={rest.skeleton}
                     className={`--node-aro-icon`}
-                    name={isOpen ? icons?.arrowOpen : icons?.arrowClose} />
+                    name={_nodes.length == 0 ? icons?.arrowDisabled || icons?.arrowClose : isOpen ? icons?.arrowOpen : icons?.arrowClose} /> 
+                    : _nodes.length == 0 ? SVGIcons.chevronBottom : isOpen ? SVGIcons.chevronBottom : SVGIcons.chevronRight }
             </Button>
             <Button 
                 className={`--node-meta flex aic`}
                 onClick={(e) => onSelect(tag)}>
-                <Icon 
+                { icons?.nodeOpen && icons?.nodeClose && <Icon 
                     skeleton={rest.skeleton}
                     className={`--node-icon`}
-                    name={icon || ( isOpen ? icons?.dirOpen : icons?.dirClose )} />
+                    name={icon || ( isOpen ? icons?.nodeOpen : icons?.nodeClose )} /> }
                 <Text {...{ className: `--node-label`} as TextProps} skeleton={rest.skeleton}>{label}</Text>
             </Button>
         </Box>

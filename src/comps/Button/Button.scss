@@ -6,6 +6,11 @@
     --button-disabled: var(--gray-200);
     --button-disabled-color: var(--gray-400);
 
+    --button-padding: 15px 20px;
+    --button-radius: 6px;
+    --button-font-size: 16px;
+    --button-width: 140px;
+
     --button-padding-lg: 16px 24px;
     --button-radius-lg: 8px;
     --button-font-size-lg: 18px;
@@ -24,6 +29,12 @@
 }
 .--button{
 
+    &.--def {
+        padding: var(--button-padding);
+        font-size: var(--button-font-size);
+        width: fit-content;
+        border-radius: var(--button-radius);
+    }
     &.--lg {
         padding: var(--button-padding-lg);
         font-size: var(--button-font-size-lg);

@@ -617,3 +617,17 @@ export function mergeRefs<T>(...refs: (Ref<T> | undefined)[]): Ref<T> {
         });
     };
 }
+
+export const slugify = (text: string, separator: string = "-") => {
+    if ( undefined == text ){
+        console.log(text, `is undefined`)
+        return ``
+    }
+    return text
+      .normalize("NFKD") // Normalize accents (e.g., é → e)
+      .replace(/[\u0300-\u036f]/g, "") // Remove diacritic marks
+      .toLowerCase()
+      .replace(/[^a-z0-9\p{L}\p{N}]+/gu, separator) // Keep letters/numbers from all languages
+      .replace(new RegExp(`\\${separator}{2,}`, "g"), separator) // Remove duplicate separators
+      .replace(new RegExp(`^\\${separator}|\\${separator}$`, "g"), ""); // Trim separators from ends
+  };

@@ -40,7 +40,9 @@
 //     }
 // }
 
-// [color-scheme="dark"] {
+[color-scheme="dark"] {
+
+    --color-scheme-border: 1px #555 solid;
 //     body{
 //         .--color-scheme{
 //             --color-scheme: #444;
@@ -52,7 +54,8 @@
 //             }
 //         }
 //     }
-// }
+}
+
 .--segmented{
     &.--color-scheme{
         --segment-item-padding-sm: 0px;

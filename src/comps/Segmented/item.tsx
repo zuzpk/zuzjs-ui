@@ -3,6 +3,7 @@ import { Segment, SegmentItemProps } from "./types"
 import Button from "../Button"
 import Box, { BoxProps } from "../Box"
 import { ButtonHandler } from "../Button/types"
+import Icon from "../Icon"
 
 
 const SegmentItem = ({ onSelect, meta, selected } : SegmentItemProps) => {
@@ -42,9 +43,12 @@ const SegmentItem = ({ onSelect, meta, selected } : SegmentItemProps) => {
         // data-x={pos.x}
         suppressHydrationWarning
         className={`--segment-item flex aic rel ${selected ? `--segement-active` : ``}`.trim()}>
-        {icon && <Box 
-            className={`--segment-icon ${icon instanceof String ? `icon-${icon}` : `flex aic jcc`}`}>{typeof icon !== `string` && icon}</Box>}
-        {label && label.trim() != `` && <Box className={`--segment-label`}>{label || `Item ${index}`}</Box>}
+        {icon ? 
+            `string` == typeof icon ? <Icon name={icon} as={`--segment-icon`} /> : <Box as={`--segment-icon`}>{icon}</Box>
+            : null} 
+        {/* <Box 
+            className={`--segment-icon ${icon instanceof String ? `icon-${icon}` : `flex aic jcc`}`}>{typeof icon !== `string` && icon}</Box>} */}
+        {label && String(label).trim() != `` && <Box className={`--segment-label`}>{label || `Item ${index}`}</Box>}
     </Button>
 
 }
