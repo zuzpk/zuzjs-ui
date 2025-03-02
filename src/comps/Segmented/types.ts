@@ -12,8 +12,8 @@ import { Size } from "../../types/enums"
 export interface Segment {
     tag?: string,
     index: number,
-    icon?: string | ReactNode,
-    label?: string
+    icon?: ReactNode,
+    label?: ReactNode
 }
 
 /**

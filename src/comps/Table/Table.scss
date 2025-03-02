@@ -29,6 +29,15 @@
 .--table{
     background: var(--table);
     gap: var(--table-row-gap);
+    &.--hoverable{
+        .--row{
+            &:not(.--row-head):not(.--row-footer){
+                &:hover{
+                    background: var(--table-row-hover);
+                }
+            }   
+        }
+    }
     .--row{
         background: var(--table-row);
         border-radius: var(--table-row-radius);
@@ -37,9 +46,6 @@
             cursor: var(--table-row-cursor);
             .--col{
                 padding: var(--table-col-padding);
-            }
-            &:hover{
-                background: var(--table-row-hover);
             }
         }
         &:nth-child(1){

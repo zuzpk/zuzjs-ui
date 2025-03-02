@@ -2,10 +2,11 @@ import { ReactNode } from "react"
 import { BoxProps } from "../Box"
 
 export interface TreeNodeIcons {
-    dirOpen: ReactNode,
-    dirClose: ReactNode,
+    nodeOpen?: ReactNode,
+    nodeClose?: ReactNode,
     arrowOpen: ReactNode,
-    arrowClose: ReactNode
+    arrowClose: ReactNode,
+    arrowDisabled?: ReactNode
 }
 
 export type TreeViewProps = Omit<BoxProps, `tag`> & {
@@ -28,6 +29,7 @@ export interface TreeNode {
     under?: string,
     selected?: string,
     expanded?: boolean,
+    isHead?: boolean
 }
 
 export type TreeItemProps = BoxProps & {

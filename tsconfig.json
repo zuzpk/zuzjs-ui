@@ -8,14 +8,15 @@
       "esModuleInterop": true,
       "downlevelIteration": true,
       "preserveWatchOutput": true,
-      "outDir": "dist",
+      "rootDir": "./src",
       "jsx": "react-jsx",
       "noFallthroughCasesInSwitch": true,
       "skipLibCheck": true,
-      "moduleResolution": "Node",
+      "moduleResolution": "bundler",
+      "composite": true,
       "stripInternal": true,
       "removeComments": false,
     },
-    "include": ["src/**/*.ts", "src/**/*.tsx"],
-    "exclude": ["node_modules", "src/**/_*.*"]
+    "include": ["src/**/*.ts", "src/**/*.tsx", "src/styles/package.json"],
+    "exclude": ["node_modules", "src/**/_*.*", "dist/esm"]
 }

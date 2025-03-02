@@ -46,8 +46,14 @@ export interface ZuzProps {
     /** CSS Styles, such as "w:100" for "width: 100px"; */
     as?: string | string[];
 
-    /** Animation configuration using {@link animationProps} */
+    /** 
+     * @deprecated
+     * Animation configuration using {@link animationProps} 
+     * */
     animate?: animationProps;
+
+    /** Animation configuration using {@link animationProps} */
+    fx?: animationProps;
 
     /** Skeleton placeholder configuration using {@link Skeleton} */
     skeleton?: Skeleton;

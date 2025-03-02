@@ -50,7 +50,7 @@ export type TableProps<T> = BoxProps & {
     animateRows?: boolean,
     header?: boolean,
     selectableRows?: boolean,
-    // onRowSelectToggle?: (row: T, selected: boolean) => void,
+    hoverable?: boolean,
     onRowSelectToggle?: RowSelectCallback<T>,
     onRowContextMenu?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, row: T) => void,
     onPageChange?: PaginationCallback

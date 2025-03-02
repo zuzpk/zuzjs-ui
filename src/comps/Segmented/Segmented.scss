@@ -7,19 +7,23 @@
     --segment-item-border: 0px;
     --segment-item-font-weight: normal;
     --segment-item-color: #999;
+    --segment-item-hover-color: #777;
     --segment-item-active-color: #111;
     --segment-tab: #fff;
     --segment-tab-radius: calc(var(--segmented-radius) - var(--segmented-padding));
     --segmented-speed: 0.5s;
-
+    
     --segmented-radius-sm: 8px;
     --segmented-padding-sm: 2px;
+    --segment-item-gap-sm: 6px;
     
     --segmented-radius-md: 8px;
     --segmented-padding-md: 2px;
+    --segment-item-gap-md: 8px;
     
     --segmented-radius-lg: 8px;
     --segmented-padding-lg: 2px;
+    --segment-item-gap-lg: 10px;
 
     --segment-item-padding-sm: 5px 12px;
     --segment-item-font-size-sm: 15px;
@@ -61,9 +65,11 @@
             padding: var(--segment-item-padding-sm);
             font-size: var(--segment-item-font-size-sm);
             border-radius: var(--segment-item-radius-sm);
+            gap: var(--segment-item-gap-sm);
             svg{
                 width: var(--segment-item-svg-size-sm);
             }
+
         }
         .--segment-tab{
             border-radius: calc(var(--segmented-radius-sm) - var(--segmented-padding-sm));
@@ -79,6 +85,7 @@
             padding: var(--segment-item-padding-md);
             font-size: var(--segment-item-font-size-md);
             border-radius: var(--segment-item-radius-md);
+            gap: var(--segment-item-gap-md);
             svg{
                 width: var(--segment-item-svg-size-md);
             }
@@ -97,6 +104,7 @@
             padding: var(--segment-item-padding-lg);
             font-size: var(--segment-item-font-size-lg);
             border-radius: var(--segment-item-radius-lg);
+            gap: var(--segment-item-gap-lg);
             svg{
                 width: var(--segment-item-svg-size-lg);
             }
@@ -117,6 +125,10 @@
         font-weight: var(--segment-item-font-weight);
         z-index: 1;
         flex: 1;
+
+        &:hover{
+            color: var(--segment-item-hover-color);
+        }
 
         .--segment-label{
             white-space: pre;

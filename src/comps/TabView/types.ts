@@ -5,7 +5,7 @@ export interface Tab {
     onSelect: (tab: Tab, index: number) => void
     tag?: string,
     key?: string,
-    icon?: string | ReactNode | ReactNode[]
+    icon?: ReactNode | ReactNode[]
     label: string | ReactNode | ReactNode[]
     body: string | ReactNode | ReactNode[]
     render?: boolean,
@@ -21,6 +21,7 @@ export type TabProps = {
 export type TabViewProps = BoxProps & {
     onChange?: (tab: Tab, index: number) => void,
     speed?: number,
+    variant?: "fixed" | "default",
     tabs: Tab[],
     prerender?: boolean,
 }
