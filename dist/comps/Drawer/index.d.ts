@@ -8,5 +8,6 @@ declare const Drawer: import("react").ForwardRefExoticComponent<BoxProps & {
     from?: DRAWER_SIDE;
     children?: string | ReactNode | ReactNode[];
     prerender?: boolean;
+    onClose?: () => void;
 } & import("react").RefAttributes<DrawerHandler>>;
 export default Drawer;

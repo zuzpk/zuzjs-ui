@@ -1,4 +1,4 @@
-import { dynamicObject } from "../types";
+import { dynamicObject } from "../types/index.js";
 import Hashids from "hashids";
 import { TRANSITION_CURVES, TRANSITIONS } from "../types/enums.js";
 import { OptionValues } from "commander";

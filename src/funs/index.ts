@@ -9,7 +9,7 @@ import axios, { AxiosProgressEvent } from "axios";
 import Cookies from "js-cookie";
 import moment from "moment";
 import { KeyCode, SORT } from "../types/enums.js";
-import { Skeleton } from "../types/interfaces";
+import { Skeleton } from "../types/interfaces.js";
 import { Children, cloneElement, isValidElement, ReactElement, ReactNode, Ref, RefObject } from "react";
 
 let __css : CSS;

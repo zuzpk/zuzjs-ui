@@ -8,7 +8,7 @@ import { DRAWER_SIDE, KeyCode, TRANSITION_CURVES } from "../../types/enums";
 
 const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
     
-    const { as, from, speed, children, prerender, ...pops } = props;
+    const { as, from, speed, children, prerender, onClose, ...pops } = props;
 
     const [ render, setRender ] = useState(undefined == prerender ? true : prerender)   
     const [ visible, setVisible ] = useState(false)
@@ -22,7 +22,12 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
     useEffect(() => {
         bindKey(
             KeyCode.Escape,
-            () => visible && setVisible(false)
+            () => {
+                if(visible){
+                    onClose?.();
+                    setVisible(false);
+                }
+            }
         )
     }, [])
 
@@ -47,6 +52,7 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
             setVisible(true)            
         },
         close(){
+            onClose?.()
             setVisible(false)
         }
     }))
@@ -55,7 +61,10 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
 
         <Overlay
             onClick={(e) => {
-                if ( visible ){ setVisible(false) }
+                if ( visible ){ 
+                    onClose?.();
+                    setVisible(false) 
+                }
             }}
             when={visible} />
         

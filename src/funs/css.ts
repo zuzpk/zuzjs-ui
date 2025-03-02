@@ -1,5 +1,5 @@
 import { __SALT, FIELNAME_KEY, isColor, isHexColor, isNumber, LINE_KEY, setDeep } from "./index.js"
-import { cssShortKey, dynamicObject } from "../types"
+import { cssShortKey, dynamicObject } from "../types/index.js"
 import { cssAnimationCurves, cssDirect, cssFilterKeys, cssProps, cssPropsWithColor, cssTransformKeys, cssWithKeys } from "./stylesheet.js"
 import Hashids from "hashids"
 import { TRANSITION_CURVES, TRANSITIONS } from "../types/enums.js"

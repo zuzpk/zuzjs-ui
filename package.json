@@ -26,17 +26,12 @@
   "scripts": {
     "dev:css": "sass --watch --no-source-map --silence-deprecation=legacy-js-api src/scss:dist --style compressed",
     "dev:dist": "tsc -d -w -p tsconfig.json",
-    "dev": "npm-run-all -p dev:*",
-    "prepare": "husky"
+    "dev": "npm-run-all -p dev:*"
   },
   "engines": {
     "node": ">=18.17.0"
   },
   "dependencies": {
-    "@types/md5": "^2.3.5",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@zuzjs/paper": "workspace:*",
     "axios": "^1.7.9",
     "chokidar": "^3.6.0",
     "commander": "^13.1.0",
@@ -51,7 +46,11 @@
     "sass": "^1.84.0"
   },
   "devDependencies": {
+    "@types/md5": "^2.3.5",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "node-loader": "^2.1.0",
+    "npm-run-all": "^4.1.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   }
