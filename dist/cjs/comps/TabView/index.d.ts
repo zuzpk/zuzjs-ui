@@ -1,6 +1,5 @@
 import { Tab, TabViewHandler } from "./types";
-import { BoxProps } from "../Box";
-declare const TabView: import("react").ForwardRefExoticComponent<BoxProps & {
+declare const TabView: import("react").ForwardRefExoticComponent<import("..").BoxProps & {
     onChange?: (tab: Tab, index: number) => void;
     speed?: number;
     variant?: "fixed" | "default";

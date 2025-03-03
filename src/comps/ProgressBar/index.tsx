@@ -1,7 +1,8 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
-import { ProgressBarProps, ProgressHandler } from "./types"
-import Box, { BoxProps } from "../Box"
+"use client"
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react"
 import { useBase } from "../../hooks"
+import Box, { BoxProps } from "../Box"
+import { ProgressBarProps, ProgressHandler } from "./types"
 
 const ProgressBar = forwardRef<ProgressHandler, ProgressBarProps>((props, ref) => {
 

@@ -1,13 +1,13 @@
 "use client";
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { useBase, useDebounce } from "../../hooks";
-import Box from "../Box";
-import { Size, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
-import Input from "../Input";
-import SVGIcons from "../svgicons";
 import { clamp, isArray, uuid, withPost } from "../../funs";
+import { useBase, useDebounce } from "../../hooks";
+import { Size, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
+import Box from "../Box";
+import Input from "../Input";
 import List from "../List";
+import SVGIcons from "../svgicons";
 const AutoComplete = forwardRef((props, ref) => {
     const { animate, action, data, withStyle, onChange, ...pops } = props;
     const { className: autoCompleteStyle } = useBase({ as: withStyle || `` });

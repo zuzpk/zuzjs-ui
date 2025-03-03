@@ -1,9 +1,10 @@
+"use client";
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { SelectTabs } from "../..";
 import { uuid } from "../../funs";
 import { useBase, useResizeObserver } from "../../hooks";
 import Box from "../Box";
-import { SelectTabs } from "../..";
 import TabBody from "./body";
 const TabView = forwardRef((props, ref) => {
     const { tabs: _tabs, speed, prerender, variant, onChange, ...rest } = props;

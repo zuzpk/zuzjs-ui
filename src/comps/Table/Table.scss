@@ -13,6 +13,9 @@
     --table-head-padding: 0px;
     --table-head-font-size: 15px;
     --table-head-col-padding: 10px;
+    --table-head-arrow: 14px;
+    --table-head-arrow-margin: 5px;
+    --table-head-arrow-color: #111;
     --table-col-padding: 10px;
     --table-col-selector-size: 40px;
     --table-border: 1px #eee solid;
@@ -70,6 +73,17 @@
         }
         
         .--col{
+            .--arrow{
+                width: var(--table-head-arrow);
+                margin-left: var(--table-head-arrow-margin);
+                svg{
+                    fill: var(--table-head-arrow-color);
+                }
+            }
+            &.--sortable{
+                cursor: pointer;
+                user-select: none;
+            }
             &.--selector{
                 min-width: var(--table-col-selector-size);
                 max-width: var(--table-col-selector-size);

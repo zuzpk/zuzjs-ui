@@ -1,9 +1,10 @@
-import { forwardRef, ReactNode, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { Segment, SegmentProps } from "./types";
+"use client"
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { useBase } from "../../hooks";
+import { Size } from "../../types/enums";
 import Box, { BoxProps } from "../Box";
 import SegmentItem from "./item";
-import { Size } from "../../types/enums";
+import { Segment, SegmentProps } from "./types";
 
 
 /**
@@ -26,12 +27,11 @@ import { Size } from "../../types/enums";
  */
 const Segmented = forwardRef<HTMLDivElement, SegmentProps>((props, ref) => {
 
-    const { animate, items, selected, size, onSwitch, ...pops } = props
+    const { animate, fx, items, selected, size, onSwitch, ...pops } = props
     const [ _selected, setSelected ] = useState(selected || 0)
     const { className, style, rest } = useBase(pops)
     const _tab = useRef<HTMLDivElement | null>(null)
     const _segmented = useRef<HTMLDivElement | null>(null)
-    const [ mounted, setMounted ] = useState(false)
     
     /**
      * Handles selection of a segment.

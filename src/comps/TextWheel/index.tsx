@@ -1,8 +1,8 @@
-import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { forwardRef, ComponentPropsWithoutRef } from 'react';
-import { TextWheelHandler, TextWheelProps } from './types';
+"use client"
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Box from '../Box';
 import Span from '../Span';
+import { TextWheelHandler, TextWheelProps } from './types';
 
 const TextWheel = forwardRef<TextWheelHandler, TextWheelProps>((props, ref) => {
 
@@ -41,19 +41,19 @@ const TextWheel = forwardRef<TextWheelHandler, TextWheelProps>((props, ref) => {
     }, [value])
 
     return <Box
-      className={`text-wheel flex aic jcc rel`} 
+      className={`--text-wheel flex aic jcc rel`} 
       aria-hidden={true}
       as={as} 
       ref={divRef}
       {...rest} >
         {(_value||0).toString().split('').map((char, index) => {
           if ( isNaN(parseInt(char, 10))){
-            return <Span key={`wheel-char-${index}`} className="wheel-char wheel-char-symbol grid">{char}</Span>
+            return <Span key={`wheel-char-${index}`} className="--wheel-char wheel-char-symbol grid">{char}</Span>
           }
           return <Span key={`wheel-char-${index}`} 
             data-value={char} 
-            className={`wheel-char grid ${index > char.toString().split('').length - 3 ? 'wheel-fraction' : ''}`.trim()}>
-              <Span className={`wheel-char-track wheel-track-${direction || `down`} grid`} 
+            className={`--wheel-char grid ${index > char.toString().split('').length - 3 ? '--wheel-fraction' : ''}`.trim()}>
+              <Span className={`--wheel-char-track --wheel-track-${direction || `down`} grid`} 
                 style={{ 
                     '--v': char
                 } as React.CSSProperties}>

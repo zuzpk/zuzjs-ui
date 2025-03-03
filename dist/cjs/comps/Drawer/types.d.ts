@@ -7,6 +7,7 @@ export type DrawerProps = BoxProps & {
     from?: DRAWER_SIDE;
     children?: string | ReactNode | ReactNode[];
     prerender?: boolean;
+    onClose?: () => void;
 };
 export interface DrawerHandler {
     open: (child?: string | ReactNode | ReactNode[]) => void;

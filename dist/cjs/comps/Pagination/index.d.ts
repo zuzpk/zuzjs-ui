@@ -1,10 +1,13 @@
-import { PaginationPage, PaginationStyle } from "./types";
+import { PaginationStyle } from "./types";
 declare const Pagination: import("react").ForwardRefExoticComponent<import("..").BoxProps & {
     itemCount: number;
     itemsPerPage: number;
-    startPage?: PaginationPage;
+    startPage?: number | string;
     pageRange?: number;
     paginationStyle?: PaginationStyle;
+    hash?: number | null;
+    seperator?: string;
+    loading?: boolean;
     breakLabel?: string;
     nextLabel?: string;
     prevLabel?: string;
