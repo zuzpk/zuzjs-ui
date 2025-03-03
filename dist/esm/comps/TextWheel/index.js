@@ -1,6 +1,6 @@
+"use client";
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Box from '../Box';
 import Span from '../Span';
 const TextWheel = forwardRef((props, ref) => {
@@ -34,11 +34,11 @@ const TextWheel = forwardRef((props, ref) => {
         // console.log(value)
         _setValue(value || 0);
     }, [value]);
-    return _jsxs(Box, { className: `text-wheel flex aic jcc rel`, "aria-hidden": true, as: as, ref: divRef, ...rest, children: [(_value || 0).toString().split('').map((char, index) => {
+    return _jsxs(Box, { className: `--text-wheel flex aic jcc rel`, "aria-hidden": true, as: as, ref: divRef, ...rest, children: [(_value || 0).toString().split('').map((char, index) => {
                 if (isNaN(parseInt(char, 10))) {
-                    return _jsx(Span, { className: "wheel-char wheel-char-symbol grid", children: char }, `wheel-char-${index}`);
+                    return _jsx(Span, { className: "--wheel-char wheel-char-symbol grid", children: char }, `wheel-char-${index}`);
                 }
-                return _jsx(Span, { "data-value": char, className: `wheel-char grid ${index > char.toString().split('').length - 3 ? 'wheel-fraction' : ''}`.trim(), children: _jsxs(Span, { className: `wheel-char-track wheel-track-${direction || `down`} grid`, style: {
+                return _jsx(Span, { "data-value": char, className: `--wheel-char grid ${index > char.toString().split('').length - 3 ? '--wheel-fraction' : ''}`.trim(), children: _jsxs(Span, { className: `--wheel-char-track --wheel-track-${direction || `down`} grid`, style: {
                             '--v': char
                         }, children: [_jsx(Span, { children: !direction || direction == `down` ? 0 : 9 }), (!direction || direction == `down` ?
                                 [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]

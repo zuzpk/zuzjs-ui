@@ -1,13 +1,14 @@
+"use client"
 import { ChangeEvent, forwardRef, useRef, useState } from "react";
-import { RadioHandler, RadioProps } from "./types";
-import Label, { LabelProps } from "../Label";
 import { RADIO, Size } from "../../types/enums";
-import Input, { InputProps } from "../Input";
 import Box from "../Box";
+import Input, { InputProps } from "../Input";
+import Label, { LabelProps } from "../Label";
+import { RadioHandler, RadioProps } from "./types";
 
-const Radio = forwardRef<RadioHandler, RadioProps>((props, ref) => {
+const Radio = forwardRef<RadioHandler, RadioProps>((props, _ref) => {
 
-    const { children, className, name, required, type, value, size, checked: defaultCheck, onChange, ...pops } = props;
+    const { children, className, name, required, type, value, size, checked: defaultCheck, onSwitch, ...pops } = props;
     const [ checked, _setChecked ] = useState(defaultCheck || false)
 
     const bRef = useRef<HTMLInputElement>(null)
@@ -25,7 +26,7 @@ const Radio = forwardRef<RadioHandler, RadioProps>((props, ref) => {
             name={name}
             required={required || false}
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                onChange && onChange(e.target.checked, value || `cb`)
+                if( onSwitch ) onSwitch(e.target.checked, value || `cb`)
                 _setChecked(e.target.checked)
             }} />
         <Box className={`--dot rel`}>

@@ -8,13 +8,16 @@ export type PaginationPageItem = {
     label: string | number;
 };
 export type PaginationPage = number | PaginationPageItem;
-export type PaginationCallback = (page: PaginationPage) => void;
+export type PaginationCallback = (page: PaginationPageItem) => void;
 export type PaginationProps = BoxProps & {
     itemCount: number;
     itemsPerPage: number;
-    startPage?: PaginationPage;
+    startPage?: number | string;
     pageRange?: number;
     paginationStyle?: PaginationStyle;
+    hash?: number | null;
+    seperator?: string;
+    loading?: boolean;
     breakLabel?: string;
     nextLabel?: string;
     prevLabel?: string;

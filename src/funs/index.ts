@@ -1,16 +1,16 @@
-import Hashids from "hashids";
-import CSS from "./css.js";
-import { nanoid } from "nanoid";
-import md5 from "md5";
-import { colorNames } from "./colors.js";
-import { dynamicObject, FormatNumberParams, sortOptions } from "../types/index.js";
-import { cssProps } from "./stylesheet.js";
 import axios, { AxiosProgressEvent } from "axios";
+import Hashids from "hashids";
 import Cookies from "js-cookie";
+import md5 from "md5";
 import moment from "moment";
-import { KeyCode, SORT } from "../types/enums.js";
-import { Skeleton } from "../types/interfaces";
+import { nanoid } from "nanoid";
 import { Children, cloneElement, isValidElement, ReactElement, ReactNode, Ref, RefObject } from "react";
+import { KeyCode, SORT } from "../types/enums.js";
+import { dynamicObject, FormatNumberParams, sortOptions } from "../types/index.js";
+import { Skeleton } from "../types/interfaces";
+import { colorNames } from "./colors.js";
+import CSS from "./css.js";
+import { cssProps } from "./stylesheet.js";
 
 let __css : CSS;
 
@@ -158,9 +158,9 @@ export const toLowerCase = (o: string) => (String.prototype.toLocaleLowerCase ||
 
 export const ucfirst = (o: any) => `${o.charAt(0).toUpperCase()}${o.substring(1, o.length)}`
     
-export const toHash = (n: number, len = 6) : string => new Hashids(__SALT, len).encode(n)
+export const toHash = (n: number, len = 6, SALT : string | null = null) : string => new Hashids(SALT || __SALT, len).encode(n)
 
-export const fromHash = (n: string) : number => Number(new Hashids(__SALT).decode(n))
+export const fromHash = (n: string, SALT : string | null = null) : number => Number(new Hashids(SALT || __SALT).decode(n))
 
 export const css = () : CSS => __css ? __css : __css = new CSS()
 
@@ -267,7 +267,7 @@ export const removeDuplicatesFromArray = <T>(array: T[]): T[] => {
     }, []);
 }
 
-export const withPost = async (uri: string, data: dynamicObject | FormData, timeout: number = 60, onProgress?: (ev: AxiosProgressEvent) => void ) : Promise<dynamicObject> => {
+export const withPost = async <T>(uri: string, data: dynamicObject | FormData, timeout: number = 60, onProgress?: (ev: AxiosProgressEvent) => void ) : Promise<T> => {
     const _cookies = Cookies.get()
     if ( data instanceof FormData ){
         for ( const c in _cookies ){
@@ -321,6 +321,34 @@ export const withPost = async (uri: string, data: dynamicObject | FormData, time
             else reject(err.code && err.code == `ERR_NETWORK` ? { error: err.code, message: navigator.onLine ? `Unable to connect to the server. It may be temporarily down.` : `Network error: Unable to connect. Please check your internet connection and try again.` } : err)
         });
     })
+}
+
+export const withGet = async <T>(uri: string, timeout: number = 60): Promise<T> => {
+    return new Promise((resolve, reject) => {
+        axios
+            .get(uri, { timeout: timeout * 1000 })
+            .then((resp) => {
+                if (resp.data && "kind" in resp.data) {
+                    resolve(resp.data as T);
+                } else {
+                    reject(resp.data);
+                }
+            })
+            .catch((err) => {
+                if (err?.response?.data) reject(err.response.data);
+                else
+                    reject(
+                        err.code === `ERR_NETWORK`
+                            ? {
+                                  error: err.code,
+                                  message: navigator.onLine
+                                      ? `Unable to connect to the server. It may be temporarily down.`
+                                      : `Network error: Unable to connect. Please check your internet connection and try again.`,
+                              }
+                            : err
+                    );
+            });
+    });
 }
 
 export const withTime = ( fun : (...args: any[]) => any ) => {

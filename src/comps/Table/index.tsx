@@ -1,12 +1,13 @@
-import { forwardRef, useMemo, useRef, JSX, Ref } from "react";
-import type { TableProps, Row, Column } from "./types";
-import Box from "../Box";
+"use client"
+import { forwardRef, JSX, Ref, useMemo, useRef, useState } from "react";
+import { PubSub, uuid } from "../..";
 import { useBase } from "../../hooks";
-import TRow from "./row";
+import { dynamicObject } from "../../types";
+import Box from "../Box";
 import Pagination from "../Pagination";
 import { PaginationStyle } from "../Pagination/types";
-import { dynamicObject } from "../../types";
-import { PubSub, uuid } from "../..";
+import TRow from "./row";
+import type { Column, TableProps, TableSortCallback } from "./types";
 
 // const Table = forwardRef<HTMLDivElement, TableProps>((props, ref) => {
 const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
@@ -18,12 +19,15 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
         rowsPerPage,
         currentPage,
         pagination,
+        paginationHash,
+        showPaginationOnZeroPageCount,
         animateRows,
         header,
-        showPaginationOnZeroPageCount,
         rowClassName,
         selectableRows,
         hoverable,
+        sortBy,
+        onSort,
         onRowSelectToggle,
         onPageChange,
         onRowContextMenu,
@@ -52,9 +56,23 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
     const _tableRef = useRef<HTMLDivElement>(null)
     const pubsub = useMemo(() => new PubSub(), [])
     const rowKeys = useMemo(() => rows.map(() => uuid()), [rows]);
+    const [_sortBy, setSortBy] = useState<string | null>(sortBy || null)
+    
+    const handleSort : TableSortCallback = (col, dir) => {
+        setSortBy(col)
+        onSort?.(col, dir)
+    }
 
     return <Box as={`--table ${(hoverable ?? true) ? `--hoverable` : ``} flex cols ${className}`} ref={_tableRef}>
-        {_header == true && <TRow tableRef={_tableRef} pubsub={pubsub} selectable={selectableRows} index={-1} schema={schema} styles={_schemaParsed}  /> }
+        {_header == true && <TRow 
+            sortBy={_sortBy}
+            onSort={handleSort} 
+            tableRef={_tableRef} 
+            pubsub={pubsub} 
+            selectable={selectableRows} 
+            index={-1} 
+            schema={schema} 
+            styles={_schemaParsed}  /> }
         {rows && rows.map((row, index: number) => <TRow 
             key={`--trow-${rowKeys[index]}-${schema[0].id}`} 
             tableRef={_tableRef}
@@ -71,9 +89,11 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
             onContextMenu={onRowContextMenu} />)}
         { pagination && <Box as={`--row flex aic --row-footer`}>
             <Pagination
+                hash={paginationHash}
                 renderOnZeroPageCount={showPaginationOnZeroPageCount}
                 onPageChange={onPageChange}
                 paginationStyle={PaginationStyle.Table}
+                startPage={currentPage}
                 itemCount={rowCount || (rows ? rows.length : 0)}
                 itemsPerPage={rowsPerPage || 10}
             />

@@ -1,14 +1,14 @@
 "use client"
 import { forwardRef, ReactNode, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import Overlay, { OverlayProps } from "../Overlay";
-import Box, { BoxProps } from "../Box";
-import { DrawerHandler, DrawerProps } from "./types";
 import { bindKey } from "../../funs";
 import { DRAWER_SIDE, KeyCode, TRANSITION_CURVES } from "../../types/enums";
+import Box, { BoxProps } from "../Box";
+import Overlay from "../Overlay";
+import { DrawerHandler, DrawerProps } from "./types";
 
 const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
     
-    const { as, from, speed, children, prerender, ...pops } = props;
+    const { as, from, speed, children, prerender, onClose, ...pops } = props;
 
     const [ render, setRender ] = useState(undefined == prerender ? true : prerender)   
     const [ visible, setVisible ] = useState(false)
@@ -22,7 +22,12 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
     useEffect(() => {
         bindKey(
             KeyCode.Escape,
-            () => visible && setVisible(false)
+            () => {
+                if(visible){
+                    onClose?.();
+                    setVisible(false);
+                }
+            }
         )
     }, [])
 
@@ -47,6 +52,7 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
             setVisible(true)            
         },
         close(){
+            onClose?.()
             setVisible(false)
         }
     }))
@@ -55,14 +61,17 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
 
         <Overlay
             onClick={(e) => {
-                if ( visible ){ setVisible(false) }
+                if ( visible ){ 
+                    onClose?.()
+                    setVisible(false) 
+                }
             }}
             when={visible} />
         
         <Box
             ref={divRef}
             className={`--drawer flex cols --${from ? from.toLowerCase() : `left`} fixed`}
-            animate={{
+            fx={{
                 from: { ...style.from, opacity: 0 },
                 to: { ...style.to, opacity: 1 },
                 when: visible,

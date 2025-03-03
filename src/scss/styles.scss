@@ -21,12 +21,14 @@
 @use "../comps/Password/Password.scss";
 @use "../comps/PinInput/PinInput.scss";
 @use "../comps/Search/Search.scss";
+@use "../comps/Radio/Radio.scss";
 @use "../comps/Segmented/Segmented.scss";
 @use "../comps/Sheet/Sheet.scss";
 @use "../comps/Spinner/Spinner.scss";
 @use "../comps/Switch/Switch.scss";
 @use "../comps/Table/Table.scss";
 @use "../comps/TabView/TabView.scss";
+@use "../comps/TextWheel/Textwheel.scss";
 @use "../comps/Tooltip/Tooltip.scss";
 @use "../comps/Treeview/Treeview.scss";
 
@@ -63,9 +65,7 @@ input{
 
     --max-z-index: 2147483647;
     --zuz-shadow: 0px 0px 0px 1px #d4d4d4, 0px 0px 6px #ccc;
-    --text-wheel-speed: 2;
-    --text-wheel-transition: translate calc(var(--text-wheel-speed) * 1s) var(--ease);
-
+    
     --progress-width: 100%;
     --progress-height: 6px;
     --progress-radius: 6px;
@@ -329,50 +329,6 @@ button{
     }
 }
 
-.--radio{
-    --radio-size: 16px;
-    --radio: var(--black-900);
-    --radio-fill: #fff;
-    --radio-border: 1px var(--radio) solid;
-    --radio-gap: 5px;
-    --radio-padding: 6px;
-
-    gap: var(--radio-gap);
-    line-height: 1;
-
-    input[type=radio]{
-        z-index: 0;
-        left: 0px;
-        top: 0px;
-        opacity: 0;
-    }
-
-    .--dot{
-        width: var(--radio-size);
-        height: var(--radio-size);
-        background: var(--radio-fill);
-        border: var(--radio-border);
-        border-radius: 50%;
-        .--rod{
-            width: calc( var(--radio-size) - ( var(--radio-padding) * 1.5) );
-            height: calc(var(--radio-size) - ( var(--radio-padding) * 1.5) );
-            border-radius: 50%;
-        }
-    }
-    .--value{
-        flex: 1;
-    }
-
-    input[type=radio]:checked ~ .--dot{
-        background: var(--radio);
-        .--rod{
-            background: var(--radio-fill);
-        }
-    }
-
-}
-
-
 .--skeleton{
     
     overflow: hidden;
@@ -423,36 +379,7 @@ button{
     &.--lg{  font-size: 18px; }
 }
 
-.text-wheel{
-    transform-style: flat;
-    // .tmp{
-    //     background: linear-gradient(hsl(0 0% 98%) 50%, hsl(0 0% 45%));
-    //     background-attachment: fixed;
-    //     background-clip: text;
-    //     color: transparent;
-    //     transform-style: flat;
-    // }
-    .wheel-char{
-        font-variant: tabular-nums;
-        overflow: hidden;
-        height: 1lh;
-        // mask: linear-gradient(transparent, white calc(1lh * var(--mask-size)) calc(100% - (1lh * var(--mask-size))), transparent);
-        // @extend .tmp;
-        .wheel-char-track{
-            transition: var(--text-wheel-transition);
-            &.wheel-track-down{
-                translate: 0 calc((10 - var(--v)) * -1lh);
-            }
-            &.wheel-track-up{
-                translate: 0 calc((var(--v) + 1) * (1lh * -1));
-            }
-            span{
-                height: 1lh;
-                transition: opacity 0.5s;
-            }
-        }
-    }
-}
+
 
 .--progress{
 

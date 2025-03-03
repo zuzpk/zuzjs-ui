@@ -1,6 +1,6 @@
-import { Segment } from "./types";
-import { BoxProps } from "../Box";
 import { Size } from "../../types/enums";
+import { BoxProps } from "../Box";
+import { Segment } from "./types";
 /**
  * `SelectTabs` component is a segmented control that allows switching between segments.
  *

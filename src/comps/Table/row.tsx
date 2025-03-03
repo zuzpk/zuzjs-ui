@@ -1,17 +1,19 @@
-import { Fragment, ReactNode, useEffect, useId, useMemo, useRef } from "react"
-import Box from "../Box"
-import TColumn from "./col"
-import type { Column, Row } from "./types"
-import { animationProps } from "../../types/interfaces"
-import { CHECKBOX, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums"
+import { Fragment, useEffect, useMemo, useRef } from "react"
+import { dynamicObject } from "../.."
 import { useDelayed } from "../../hooks"
+import { CHECKBOX, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums"
+import { animationProps } from "../../types/interfaces"
+import Box from "../Box"
 import CheckBox from "../CheckBox"
 import { CheckboxHandler } from "../CheckBox/types"
-import { dynamicObject } from "../.."
+import TColumn from "./col"
+import type { Column, Row } from "./types"
 
 const TRow = <T, >(props: Row<T>) => {
 
-    const { index, pubsub, schema, data, ids, styles, animate, selectable, tableRef, rowClassName, onSelect, onContextMenu } = props
+    const { 
+        index, pubsub, schema, data, ids, styles, animate, sortBy, selectable, tableRef, rowClassName, 
+        onSort, onSelect, onContextMenu } = props
     const mounted = useDelayed()
     const _animation = useMemo(() => ({
         transition: TRANSITIONS.SlideInBottom,
@@ -104,6 +106,8 @@ const TRow = <T, >(props: Row<T>) => {
                 {selectable && i == 0 && Selector(-1, `--selector-${c.id}`, `all`)}
                 <TColumn 
                     idx={-1}
+                    onSort={onSort}
+                    sortBy={sortBy}
                     // value={renderWhenHeader && render ? render!(index == -1 ? c as dynamicObject : data as T, index) : value as string} 
                     value={value as string} 
                     {...cc} 
@@ -121,7 +125,7 @@ const TRow = <T, >(props: Row<T>) => {
                     idx={i} 
                     id={String(c.id)}
                     style={styles[String(c.id)]}
-                    value={c.render ? c.render!(data, index) : (data as dynamicObject)[c.id]} 
+                    value={c.render ? c.render!(data, index) : (data as dynamicObject)[ String(c.id).includes(`.`) ? String(c.id).split(`.`).reverse()[0] : c.id ]} 
                 /> : null}
             </ Fragment>
         })}

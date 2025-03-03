@@ -1,11 +1,11 @@
-import { forwardRef, ReactNode, useEffect, useMemo, useRef, useState } from "react";
-import { Tab, TabProps, TabViewHandler, TabViewProps } from "./types";
+"use client"
+import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { Segment, SelectTabs } from "../..";
 import { uuid } from "../../funs";
 import { useBase, useResizeObserver } from "../../hooks";
-import Box, { BoxProps } from "../Box";
-import TabItem from "./tab";
-import { Segment, SelectTabs } from "../..";
+import Box from "../Box";
 import TabBody from "./body";
+import { Tab, TabViewHandler, TabViewProps } from "./types";
 
 
 const TabView = forwardRef<TabViewHandler, TabViewProps>((props, ref) => {

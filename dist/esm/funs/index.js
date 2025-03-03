@@ -1,14 +1,14 @@
-import Hashids from "hashids";
-import CSS from "./css.js";
-import { nanoid } from "nanoid";
-import md5 from "md5";
-import { colorNames } from "./colors.js";
-import { cssProps } from "./stylesheet.js";
 import axios from "axios";
+import Hashids from "hashids";
 import Cookies from "js-cookie";
+import md5 from "md5";
 import moment from "moment";
-import { SORT } from "../types/enums.js";
+import { nanoid } from "nanoid";
 import { Children, cloneElement, isValidElement } from "react";
+import { SORT } from "../types/enums.js";
+import { colorNames } from "./colors.js";
+import CSS from "./css.js";
+import { cssProps } from "./stylesheet.js";
 let __css;
 export const __SALT = `zuzjs-ui`;
 export const FIELNAME_KEY = `__FILENAME__`;
@@ -129,8 +129,8 @@ export const isEmail = (e) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.te
 export const isUrl = (o) => /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/.test(o);
 export const toLowerCase = (o) => (String.prototype.toLocaleLowerCase || String.prototype.toLowerCase)(o);
 export const ucfirst = (o) => `${o.charAt(0).toUpperCase()}${o.substring(1, o.length)}`;
-export const toHash = (n, len = 6) => new Hashids(__SALT, len).encode(n);
-export const fromHash = (n) => Number(new Hashids(__SALT).decode(n));
+export const toHash = (n, len = 6, SALT = null) => new Hashids(SALT || __SALT, len).encode(n);
+export const fromHash = (n, SALT = null) => Number(new Hashids(SALT || __SALT).decode(n));
 export const css = () => __css ? __css : __css = new CSS();
 export const withCSS = (cx) => css().Build([[`string` == typeof cx ? cx : cx.join(` `)]]).cx.join(` `);
 export const uuid = (len) => nanoid(len);
@@ -257,6 +257,33 @@ export const withPost = async (uri, data, timeout = 60, onProgress) => {
                 reject(err.response.data);
             else
                 reject(err.code && err.code == `ERR_NETWORK` ? { error: err.code, message: navigator.onLine ? `Unable to connect to the server. It may be temporarily down.` : `Network error: Unable to connect. Please check your internet connection and try again.` } : err);
+        });
+    });
+};
+export const withGet = async (uri, timeout = 60) => {
+    return new Promise((resolve, reject) => {
+        axios
+            .get(uri, { timeout: timeout * 1000 })
+            .then((resp) => {
+            if (resp.data && "kind" in resp.data) {
+                resolve(resp.data);
+            }
+            else {
+                reject(resp.data);
+            }
+        })
+            .catch((err) => {
+            if (err?.response?.data)
+                reject(err.response.data);
+            else
+                reject(err.code === `ERR_NETWORK`
+                    ? {
+                        error: err.code,
+                        message: navigator.onLine
+                            ? `Unable to connect to the server. It may be temporarily down.`
+                            : `Network error: Unable to connect. Please check your internet connection and try again.`,
+                    }
+                    : err);
         });
     });
 };

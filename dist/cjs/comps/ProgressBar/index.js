@@ -1,7 +1,8 @@
+"use client";
 import { jsx as _jsx } from "react/jsx-runtime";
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
-import Box from "../Box";
 import { useBase } from "../../hooks";
+import Box from "../Box";
 const ProgressBar = forwardRef((props, ref) => {
     const { progress, type, ...pops } = props;
     const bar = useRef(null);

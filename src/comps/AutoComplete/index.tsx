@@ -1,14 +1,14 @@
 "use client"
 import { forwardRef, KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
-import { AutoCompleteProps } from "./types";
+import { clamp, isArray, uuid, withPost } from "../../funs";
 import { useBase, useDebounce } from "../../hooks";
 import { Props } from "../../types";
-import Box from "../Box";
 import { Size, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
+import Box from "../Box";
 import Input from "../Input";
-import SVGIcons from "../svgicons";
-import { clamp, isArray, isUrl, uuid, withPost } from "../../funs";
 import List from "../List";
+import SVGIcons from "../svgicons";
+import { AutoCompleteProps } from "./types";
 
 const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) => {
 
@@ -32,7 +32,9 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
             setItems([]);
         }
         else if ( action && e.target.value.trim() != `` ){
-            withPost(action, { query: e.target.value })
+            withPost<{
+                items: []
+            }>(action, { query: e.target.value })
             .then((resp) => {
                 if ( `items` in resp && isArray(resp.items) ){
                     setItems(resp.items)

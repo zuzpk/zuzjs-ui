@@ -1,12 +1,12 @@
 "use client";
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import Overlay from "../Overlay";
-import Box from "../Box";
 import { bindKey } from "../../funs";
 import { DRAWER_SIDE, KeyCode, TRANSITION_CURVES } from "../../types/enums";
+import Box from "../Box";
+import Overlay from "../Overlay";
 const Drawer = forwardRef((props, ref) => {
-    const { as, from, speed, children, prerender, ...pops } = props;
+    const { as, from, speed, children, prerender, onClose, ...pops } = props;
     const [render, setRender] = useState(undefined == prerender ? true : prerender);
     const [visible, setVisible] = useState(false);
     const divRef = useRef(null);
@@ -15,7 +15,12 @@ const Drawer = forwardRef((props, ref) => {
         setContent(children);
     }, [children]);
     useEffect(() => {
-        bindKey(KeyCode.Escape, () => visible && setVisible(false));
+        bindKey(KeyCode.Escape, () => {
+            if (visible) {
+                onClose?.();
+                setVisible(false);
+            }
+        });
     }, []);
     const style = useMemo(() => {
         switch (from) {
@@ -38,14 +43,16 @@ const Drawer = forwardRef((props, ref) => {
             setVisible(true);
         },
         close() {
+            onClose?.();
             setVisible(false);
         }
     }));
     return _jsxs(_Fragment, { children: [_jsx(Overlay, { onClick: (e) => {
                     if (visible) {
+                        onClose?.();
                         setVisible(false);
                     }
-                }, when: visible }), _jsxs(Box, { ref: divRef, className: `--drawer flex cols --${from ? from.toLowerCase() : `left`} fixed`, animate: {
+                }, when: visible }), _jsxs(Box, { ref: divRef, className: `--drawer flex cols --${from ? from.toLowerCase() : `left`} fixed`, fx: {
                     from: { ...style.from, opacity: 0 },
                     to: { ...style.to, opacity: 1 },
                     when: visible,

@@ -1,14 +1,23 @@
+"use client";
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, useCallback, useMemo, useState } from "react";
-import { PaginationStyle } from "./types";
+import { numberInRange, toHash } from "../..";
 import { useBase } from "../../hooks";
 import Box from "../Box";
 import Button from "../Button";
 import SVGIcons from "../svgicons";
-const Pagination = forwardRef((props, ref) => {
-    const { itemCount, itemsPerPage, startPage, pageRange, paginationStyle, breakLabel, prevLabel, nextLabel, renderOnZeroPageCount, onPageChange, ...pops } = props;
-    const [_currentPage, setCurrentPage] = useState(startPage || 1);
+import { PaginationStyle } from "./types";
+const Pagination = forwardRef((props, _ref) => {
+    const { itemCount, itemsPerPage, startPage, pageRange, paginationStyle, breakLabel, prevLabel, nextLabel, hash, loading, seperator, renderOnZeroPageCount, onPageChange, ...pops } = props;
+    const _hashKey = useMemo(() => toHash(numberInRange(4, 8)), []);
+    const _hash = useCallback((input) => `${toHash(input, hash || 6, _hashKey)}${seperator || ``}${_hashKey}`, [_hashKey]);
     const _breakLabel = useMemo(() => breakLabel || `...`, [breakLabel]);
+    const [_currentPage, setCurrentPage] = useState({
+        id: hash ?
+            startPage ? `number` == typeof startPage ? _hash(startPage) : startPage
+                : 1 : startPage || 1,
+        label: startPage || 1
+    });
     /**
      * @internal
      * const _pageType = useMemo(() => startPage ? `number` === startPage, [breakLabel])
@@ -25,28 +34,29 @@ const Pagination = forwardRef((props, ref) => {
         const prevs = Math.max(getPageValue(_currentPage) - (pageRange || 2), 1);
         const nexts = Math.min(getPageValue(_currentPage) + (pageRange || 2), totalPages);
         if (prevs > 1)
-            _pages.push(1);
+            _pages.push({ id: hash ? _hash(1) : 1, label: 1 });
         if (prevs > 2)
-            _pages.push(_breakLabel);
+            _pages.push({ id: -1, label: _breakLabel });
         for (let i = prevs; i <= nexts; i++)
-            _pages.push(i);
+            _pages.push({ id: hash ? _hash(i) : i, label: i });
         if (nexts < totalPages - 1)
-            _pages.push(_breakLabel);
+            _pages.push({ id: -1, label: _breakLabel });
         if (nexts < totalPages)
-            _pages.push(totalPages);
+            _pages.push({ id: hash ? _hash(totalPages) : totalPages, label: totalPages });
         return _pages;
     }, [_currentPage]);
-    const handlePage = useCallback((newPage) => {
-        if (newPage < 1 || newPage > totalPages)
+    const handlePage = useCallback((_newPage) => {
+        const newPage = _newPage;
+        if (+newPage.label < 1 || +newPage.label > totalPages)
             return;
         setCurrentPage(newPage);
         onPageChange?.(newPage);
     }, [itemCount, itemsPerPage, _currentPage]);
     if (pages.length <= 1 && ((renderOnZeroPageCount == undefined ? false : renderOnZeroPageCount) === false))
         return null;
-    return _jsxs(Box, { as: `--pagination --pgt-${paginationStyle || PaginationStyle.Table} flex aic w:100% jcc ${className}`, children: [_jsx(Box, { as: `flex flex:1 aic --pgt-btns`, children: (pages.length > 1 ? pages : [1, _breakLabel]).map((page, index, items) => _jsx(Button, { disabled: page == _breakLabel || getPageValue(_currentPage) == page, className: page == getPageValue(_currentPage) ? `--current-page` : ``, onClick: (ev) => typeof page == `number` && handlePage(page), children: page }, `--pg-${index}-${page}`)) }), _jsx(Box, { as: `flex aic jcc flex:1 --pagination-label`, children: [
+    return _jsxs(Box, { as: `--pagination --pgt-${paginationStyle || PaginationStyle.Table} flex aic w:100% jcc ${className}`, children: [_jsx(Box, { as: `flex flex:1 aic --pgt-btns`, children: (pages.length > 1 ? pages : [{ id: 1, label: 1 }, { id: -1, label: _breakLabel }]).map((page, index, items) => _jsx(Button, { disabled: page.id == -1 || getPageValue(_currentPage) == +page.label, className: (`string` == typeof page ? page : page.label) == getPageValue(_currentPage) ? `--current-page` : ``, onClick: (ev) => handlePage(page), children: `string` == typeof page ? page : page.label }, `--pg-${index}-${page.id}`)) }), _jsx(Box, { as: `flex aic jcc flex:1 --pagination-label`, children: [
                     `Showing ${(getPageValue(_currentPage) - 1) * itemsPerPage + 1} - `,
                     `${Math.min(getPageValue(_currentPage) * itemsPerPage, itemCount)} of ${itemCount} items`
-                ].join(` `) }), _jsxs(Box, { as: `flex aic jce flex:1 --pgt-btns --pgt-nav`, children: [_jsx(Button, { disabled: getPageValue(_currentPage) <= 1, onClick: (ev) => handlePage(getPageValue(_currentPage) - 1), children: SVGIcons.chevronLeftOutline }), _jsx(Button, { disabled: pages.length <= 1 || getPageValue(_currentPage) == pages[pages.length - 1], onClick: (ev) => handlePage(getPageValue(_currentPage) - 1), children: SVGIcons.chevronRightOutline })] })] });
+                ].join(` `) }), _jsxs(Box, { as: `flex aic jce flex:1 --pgt-btns --pgt-nav`, children: [_jsx(Button, { disabled: getPageValue(_currentPage) <= 1, onClick: (ev) => handlePage({ id: hash ? _hash(getPageValue(_currentPage) - 1) : getPageValue(_currentPage) - 1, label: getPageValue(_currentPage) - 1 }), children: SVGIcons.chevronLeftOutline }), _jsx(Button, { disabled: pages.length <= 1 || getPageValue(_currentPage) == getPageValue(pages[pages.length - 1]), onClick: (ev) => handlePage({ id: hash ? _hash(getPageValue(_currentPage) + 1) : getPageValue(_currentPage) + 1, label: getPageValue(_currentPage) + 1 }), children: SVGIcons.chevronRightOutline })] })] });
 });
 export default Pagination;

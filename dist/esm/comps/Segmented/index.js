@@ -1,9 +1,10 @@
+"use client";
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, useEffect, useRef, useState } from "react";
 import { useBase } from "../../hooks";
+import { Size } from "../../types/enums";
 import Box from "../Box";
 import SegmentItem from "./item";
-import { Size } from "../../types/enums";
 /**
  * `SelectTabs` component is a segmented control that allows switching between segments.
  *
@@ -23,12 +24,11 @@ import { Size } from "../../types/enums";
  * <SelectTabs selected={1} items={segments} />
  */
 const Segmented = forwardRef((props, ref) => {
-    const { animate, items, selected, size, onSwitch, ...pops } = props;
+    const { animate, fx, items, selected, size, onSwitch, ...pops } = props;
     const [_selected, setSelected] = useState(selected || 0);
     const { className, style, rest } = useBase(pops);
     const _tab = useRef(null);
     const _segmented = useRef(null);
-    const [mounted, setMounted] = useState(false);
     /**
      * Handles selection of a segment.
      *

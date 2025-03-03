@@ -1,3 +1,4 @@
+"use client"
 import { useEffect } from "react"
 import { FILTER } from "../../types/enums"
 

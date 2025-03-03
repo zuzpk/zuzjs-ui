@@ -1,11 +1,13 @@
+"use client"
 import { forwardRef, useCallback, useMemo, useState } from "react";
-import { PaginationPage, PaginationPageItem, PaginationProps, PaginationStyle } from "./types";
+import { numberInRange, toHash } from "../..";
 import { useBase } from "../../hooks";
 import Box from "../Box";
 import Button from "../Button";
 import SVGIcons from "../svgicons";
+import { PaginationPage, PaginationPageItem, PaginationProps, PaginationStyle } from "./types";
 
-const Pagination = forwardRef<HTMLDivElement, PaginationProps>((props, ref) => {
+const Pagination = forwardRef<HTMLDivElement, PaginationProps>((props, _ref) => {
 
     const { 
         itemCount, 
@@ -16,13 +18,28 @@ const Pagination = forwardRef<HTMLDivElement, PaginationProps>((props, ref) => {
         breakLabel,
         prevLabel,
         nextLabel,
+        hash,
+        loading,
+        seperator,
         renderOnZeroPageCount,
         onPageChange,
         ...pops } = props
 
-    const [ _currentPage, setCurrentPage ] = useState<PaginationPage>(startPage || 1)
+    const _hashKey = useMemo(() => toHash(numberInRange(4, 8)), [])
+    const _hash = useCallback((input: number) => `${toHash(input, hash || 6, _hashKey)}${seperator || ``}${_hashKey}`, [_hashKey])
     const _breakLabel = useMemo(() => breakLabel || `...`, [breakLabel])
     
+    const [ _currentPage, setCurrentPage ] = useState<PaginationPage>({ 
+        id: hash ? 
+            startPage ? `number` == typeof startPage ? _hash(startPage) : startPage
+            : 1 : startPage || 1, 
+        label: startPage || 1 
+    })
+    
+    
+    
+    
+
     /**
      * @internal
      * const _pageType = useMemo(() => startPage ? `number` === startPage, [breakLabel])
@@ -41,24 +58,25 @@ const Pagination = forwardRef<HTMLDivElement, PaginationProps>((props, ref) => {
     if ( !itemCount ) throw new Error(`"itemCount" prop is required`)
     
     const totalPages = useMemo(() => Math.ceil(itemCount / itemsPerPage), [itemCount, itemsPerPage])
-    const pages : (number | string)[] = useMemo(() => {
+    const pages : PaginationPage[] = useMemo(() => {
 
-        const _pages : (number | string)[] = []
+        const _pages : PaginationPage[] = []
         const prevs = Math.max( getPageValue(_currentPage) - (pageRange || 2), 1)
         const nexts = Math.min( getPageValue(_currentPage) + (pageRange || 2), totalPages)
 
-        if (prevs > 1) _pages.push(1);
-        if (prevs > 2) _pages.push(_breakLabel);
-        for (let i = prevs; i <= nexts; i++) _pages.push(i);
-        if (nexts < totalPages - 1) _pages.push(_breakLabel);
-        if (nexts < totalPages) _pages.push(totalPages);
+        if (prevs > 1) _pages.push({ id: hash ? _hash(1) : 1, label : 1 });
+        if (prevs > 2) _pages.push({ id: -1, label: _breakLabel });
+        for (let i = prevs; i <= nexts; i++) _pages.push({ id: hash ? _hash(i) : i, label : i });
+        if (nexts < totalPages - 1) _pages.push({ id: -1, label: _breakLabel });
+        if (nexts < totalPages) _pages.push({ id: hash ? _hash(totalPages) : totalPages, label : totalPages });
 
         return _pages
 
     }, [_currentPage])
 
-    const handlePage = useCallback((newPage: number) => {
-        if ( newPage < 1 || newPage > totalPages ) return;
+    const handlePage = useCallback((_newPage: PaginationPage) => {
+        const newPage = _newPage as PaginationPageItem
+        if ( +newPage.label < 1 || +newPage.label > totalPages ) return;
         setCurrentPage(newPage)
         onPageChange?.(newPage);
     }, [itemCount, itemsPerPage, _currentPage])
@@ -67,11 +85,11 @@ const Pagination = forwardRef<HTMLDivElement, PaginationProps>((props, ref) => {
     
     return <Box as={`--pagination --pgt-${paginationStyle || PaginationStyle.Table} flex aic w:100% jcc ${className}`}>
         <Box as={`flex flex:1 aic --pgt-btns`}>
-            {(pages.length > 1 ? pages : [1, _breakLabel]).map((page, index, items) => <Button 
-                key={`--pg-${index}-${page}`}
-                disabled={page == _breakLabel || getPageValue(_currentPage) == page}
-                className={page == getPageValue(_currentPage) ? `--current-page` : ``}
-                onClick={(ev) => typeof page == `number` && handlePage(page)}>{page}</Button>)}
+            {(pages.length > 1 ? pages : [{ id: 1, label: 1 }, { id: -1, label: _breakLabel }] as PaginationPage[]).map((page, index, items) => <Button 
+                key={`--pg-${index}-${(page as PaginationPageItem).id}`}
+                disabled={(page as PaginationPageItem).id == -1 || getPageValue(_currentPage) == +(page as PaginationPageItem).label}
+                className={(`string` == typeof page ? page : (page as PaginationPageItem).label) == getPageValue(_currentPage) ? `--current-page` : ``}
+                onClick={(ev) => handlePage(page)}>{`string` == typeof page ? page : (page as PaginationPageItem).label}</Button>)}
         </Box>
         <Box as={`flex aic jcc flex:1 --pagination-label`}>
             {[
@@ -82,10 +100,11 @@ const Pagination = forwardRef<HTMLDivElement, PaginationProps>((props, ref) => {
         <Box as={`flex aic jce flex:1 --pgt-btns --pgt-nav`}>
             <Button 
                 disabled={getPageValue(_currentPage) <= 1}
-                onClick={(ev) => handlePage(getPageValue(_currentPage) - 1)}>{SVGIcons.chevronLeftOutline}</Button>
+                onClick={(ev) => handlePage({ id: hash ? _hash(getPageValue(_currentPage) - 1) : getPageValue(_currentPage) - 1, label: getPageValue(_currentPage) - 1})}>{SVGIcons.chevronLeftOutline}</Button>
             <Button 
-                disabled={pages.length <= 1 || getPageValue(_currentPage) == pages[pages.length - 1]}
-                onClick={(ev) => handlePage(getPageValue(_currentPage) - 1)}>{SVGIcons.chevronRightOutline}</Button>
+                disabled={pages.length <= 1 || getPageValue(_currentPage) == getPageValue(pages[pages.length - 1])}
+                onClick={(ev) => handlePage({ id: hash ? _hash(getPageValue(_currentPage) + 1) : getPageValue(_currentPage) + 1, label: getPageValue(_currentPage) + 1})}>{SVGIcons.chevronRightOutline}</Button>
+                {/* onClick={(ev) => handlePage(getPageValue(_currentPage) - 1)}>{SVGIcons.chevronRightOutline}</Button> */}
         </Box>
     </Box>
 
