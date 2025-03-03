@@ -1,3 +1,4 @@
+'use client';
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { forwardRef } from 'react';

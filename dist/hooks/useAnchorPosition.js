@@ -1,3 +1,4 @@
+'use client';
 import { useCallback, useEffect, useRef, useState } from "react";
 const useAnchorPosition = (parent, event, options = {}) => {
     const [position, setPosition] = useState({ top: 0, left: 0 });

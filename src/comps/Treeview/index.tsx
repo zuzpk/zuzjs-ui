@@ -1,3 +1,4 @@
+'use client'
 import { forwardRef, ReactNode, useCallback, useEffect, useImperativeHandle, useState } from "react";
 import { TreeItemProps, TreeViewHandler, TreeViewProps } from "./types";
 import Box, { BoxProps } from "../Box";

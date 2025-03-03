@@ -1,3 +1,4 @@
+'use client'
 import { forwardRef, ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { Tab, TabProps, TabViewHandler, TabViewProps } from "./types";
 import { uuid } from "../../funs";

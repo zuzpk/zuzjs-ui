@@ -50,6 +50,7 @@ export declare const withZuz: (cx: string | string[]) => string;
 export declare const setDeep: (object: dynamicObject, path: string, value: any, seperator?: string) => dynamicObject;
 export declare const removeDuplicatesFromArray: <T>(array: T[]) => T[];
 export declare const withPost: (uri: string, data: dynamicObject | FormData, timeout?: number, onProgress?: (ev: AxiosProgressEvent) => void) => Promise<dynamicObject>;
+export declare const withGet: <T>(uri: string, timeout?: number) => Promise<T>;
 export declare const withTime: (fun: (...args: any[]) => any) => {
     result: any;
     executionTime: number;

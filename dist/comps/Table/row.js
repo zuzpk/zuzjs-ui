@@ -24,6 +24,7 @@ const TRow = (props) => {
             pubsub.emit(`ROW_${chk ? `CHECKED` : `UNCHECKED`}`, chk, id);
         }
     };
+    const getNestedValue = (obj, path) => obj && path ? path.split('.').reduce((acc, key) => acc?.[key], obj) ?? null : null;
     const Selector = (idx, id, value) => _jsx(TColumn, { idx: idx, id: id, as: `--selector`, pubsub: pubsub, value: _jsx(CheckBox, { value: value, ref: checkbox, 
             // checked={checked || false} 
             onSwitch: handleSelector, type: CHECKBOX.Default }) });
@@ -79,7 +80,7 @@ const TRow = (props) => {
                             // value={renderWhenHeader && render ? render!(index == -1 ? c as dynamicObject : data as T, index) : value as string} 
                             value: value, ...cc, pubsub: pubsub, style: styles[c.id] })] }, `--col-${c.id}`);
             }), index > -1 && ids && data && schema.map((c, i) => {
-                return _jsxs(Fragment, { children: [selectable && i == 0 && Selector(i, `--selector-${c.id}`, c.id.toString()), ids.includes(String(c.id)) ? _jsx(TColumn, { pubsub: pubsub, idx: i, id: String(c.id), style: styles[String(c.id)], value: c.render ? c.render(data, index) : data[c.id] }) : null] }, `--${String(c.id)}-val-${i}`);
+                return _jsxs(Fragment, { children: [selectable && i == 0 && Selector(i, `--selector-${c.id}`, c.id.toString()), ids.includes(String(c.id)) ? _jsx(TColumn, { pubsub: pubsub, idx: i, id: String(c.id), style: styles[String(c.id)], value: c.render ? c.render(data, index) : getNestedValue(data, c.id + "") }) : null] }, `--${String(c.id)}-val-${i}`);
             })] });
 };
 export default TRow;

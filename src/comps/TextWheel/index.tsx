@@ -1,3 +1,4 @@
+'use client'
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { forwardRef, ComponentPropsWithoutRef } from 'react';
 import { TextWheelHandler, TextWheelProps } from './types';

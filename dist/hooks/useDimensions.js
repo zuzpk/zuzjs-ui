@@ -1,3 +1,4 @@
+'use client';
 import { useState, useEffect } from 'react';
 const useDimensions = (el) => {
     const [dims, setDims] = useState({

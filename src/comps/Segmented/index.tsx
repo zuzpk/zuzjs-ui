@@ -1,3 +1,4 @@
+'use client'
 import { forwardRef, ReactNode, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Segment, SegmentProps } from "./types";
 import { useBase } from "../../hooks";

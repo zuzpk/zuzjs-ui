@@ -3,7 +3,7 @@ import { RADIO, Size } from "../../types/enums";
 export type RadioProps = Props<"input"> & {
     type?: RADIO;
     size?: Size;
-    onChange?: (checked: boolean, value: string | number | readonly string[]) => void;
+    onSwitch?: (checked: boolean, value: string | number | readonly string[]) => void;
 };
 export interface RadioHandler {
     setChecked: (mode: boolean, triggerChange?: boolean) => void;

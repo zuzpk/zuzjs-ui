@@ -1,3 +1,4 @@
+'use client'
 import { forwardRef, useCallback, useMemo, useState } from "react";
 import { PaginationPage, PaginationPageItem, PaginationProps, PaginationStyle } from "./types";
 import { useBase } from "../../hooks";

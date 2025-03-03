@@ -1,3 +1,4 @@
+'use client'
 import { forwardRef, useEffect, useState } from "react";
 import Box from "../Box";
 import Text from "../Text";

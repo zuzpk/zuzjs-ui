@@ -1,3 +1,4 @@
+'use client'
 import { forwardRef, useMemo, useRef, JSX, Ref } from "react";
 import type { TableProps, Row, Column } from "./types";
 import Box from "../Box";

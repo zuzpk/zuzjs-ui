@@ -29,6 +29,7 @@ const TRow = <T, >(props: Row<T>) => {
             pubsub.emit(`ROW_${chk ? `CHECKED` : `UNCHECKED`}`, chk, id)
         }
     }
+    const getNestedValue = (obj: dynamicObject, path: string) => obj && path ? path.split('.').reduce((acc, key) => acc?.[key], obj) ?? null : null;
 
     const Selector = (idx: number, id: string, value: string) => <TColumn 
         idx={idx} 
@@ -90,7 +91,6 @@ const TRow = <T, >(props: Row<T>) => {
         }
 
     }, [])
-
     return <Box 
         onContextMenu={e => onContextMenu ? onContextMenu(e, data!) : null}
         data-index={index}
@@ -121,7 +121,7 @@ const TRow = <T, >(props: Row<T>) => {
                     idx={i} 
                     id={String(c.id)}
                     style={styles[String(c.id)]}
-                    value={c.render ? c.render!(data, index) : (data as dynamicObject)[c.id]} 
+                    value={c.render ? c.render!(data, index) : getNestedValue(data as dynamicObject, c.id + "")} 
                 /> : null}
             </ Fragment>
         })}

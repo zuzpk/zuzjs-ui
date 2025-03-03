@@ -267,60 +267,158 @@ export const removeDuplicatesFromArray = <T>(array: T[]): T[] => {
     }, []);
 }
 
-export const withPost = async (uri: string, data: dynamicObject | FormData, timeout: number = 60, onProgress?: (ev: AxiosProgressEvent) => void ) : Promise<dynamicObject> => {
-    const _cookies = Cookies.get()
-    if ( data instanceof FormData ){
-        for ( const c in _cookies ){
-            data.append(c, _cookies[c])
+// export const withPost = async (uri: string, data: dynamicObject | FormData, timeout: number = 60, onProgress?: (ev: AxiosProgressEvent) => void ) : Promise<dynamicObject> => {
+//     const _cookies = Cookies.get()
+//     if ( data instanceof FormData ){
+//         for ( const c in _cookies ){
+//             data.append(c, _cookies[c])
+//         }
+//         return new Promise((resolve, reject) => {
+//             axios({
+//                 method: 'post',
+//                 url: uri,
+//                 data: data,
+//                 timeout: timeout * 1000,
+//                 headers: {
+//                     'Content-Type': 'multipart/form-data',
+//                 },
+//                 onUploadProgress: ev => onProgress && onProgress(ev)
+//             })
+//             .then(resp => {
+//                 if(resp.data && "kind" in resp.data){
+//                     resolve(resp.data)
+//                 }else{
+//                     reject(resp.data)
+//                 }            
+//             })
+//             .catch(err => reject(err));
+//         })
+//     }
+//     return new Promise((resolve, reject) => {
+//         axios.post(
+//             uri,
+//             {
+//                 ...data,
+//                 // ..._cookies,
+//                 // __stmp: new Date().getTime() / 1000
+//             },
+//             {
+//                 timeout: 1000 * timeout,
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                 }
+//             }            
+//         )
+//         .then(resp => {
+//             if(resp.data && "kind" in resp.data){
+//                 resolve(resp.data)
+//             }else{
+//                 reject(resp.data)
+//             }            
+//         })
+//         .catch(err => {
+//             if ( err?.response?.data ) reject(err.response.data)
+//             else reject(err.code && err.code == `ERR_NETWORK` ? { error: err.code, message: navigator.onLine ? `Unable to connect to the server. It may be temporarily down.` : `Network error: Unable to connect. Please check your internet connection and try again.` } : err)
+//         });
+//     })
+// }
+export const withPost = async (
+    uri: string,
+    data: dynamicObject | FormData,
+    timeout: number = 60,
+    onProgress?: (ev: AxiosProgressEvent) => void
+): Promise<dynamicObject> => {
+    const _cookies = Cookies.get();
+
+    if (data instanceof FormData) {
+        for (const c in _cookies) {
+            data.append(c, _cookies[c]);
         }
         return new Promise((resolve, reject) => {
             axios({
-                method: 'post',
+                method: "post",
                 url: uri,
                 data: data,
                 timeout: timeout * 1000,
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    "Content-Type": "multipart/form-data",
                 },
-                onUploadProgress: ev => onProgress && onProgress(ev)
+                onUploadProgress: (ev) => onProgress && onProgress(ev),
             })
-            .then(resp => {
-                if(resp.data && "kind" in resp.data){
-                    resolve(resp.data)
-                }else{
-                    reject(resp.data)
-                }            
-            })
-            .catch(err => reject(err));
-        })
+                .then((resp) => {
+                    if (resp.data && "kind" in resp.data) {
+                        resolve(resp.data);
+                    } else {
+                        reject(resp.data);
+                    }
+                })
+                .catch((err) => reject(err));
+        });
     }
     return new Promise((resolve, reject) => {
-        axios.post(
-            uri,
-            {
-                ...data,
-                ..._cookies,
-                __stmp: new Date().getTime() / 1000
-            },
-            {
-                timeout: 1000 * timeout,
-                headers: {
-                    'Content-Type': 'application/json',
+        axios
+            .post(
+                uri,
+                {
+                    ...data,
+                },
+                {
+                    timeout: 1000 * timeout,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
                 }
-            }            
-        )
-        .then(resp => {
-            if(resp.data && "kind" in resp.data){
-                resolve(resp.data)
-            }else{
-                reject(resp.data)
-            }            
-        })
-        .catch(err => {
-            if ( err?.response?.data ) reject(err.response.data)
-            else reject(err.code && err.code == `ERR_NETWORK` ? { error: err.code, message: navigator.onLine ? `Unable to connect to the server. It may be temporarily down.` : `Network error: Unable to connect. Please check your internet connection and try again.` } : err)
-        });
-    })
+            )
+            .then((resp) => {
+                if (resp.data && "kind" in resp.data) {
+                    resolve(resp.data);
+                } else {
+                    reject(resp.data);
+                }
+            })
+            .catch((err) => {
+                if (err?.response?.data) reject(err.response.data);
+                else
+                    reject(
+                        err.code && err.code == `ERR_NETWORK`
+                            ? {
+                                  error: err.code,
+                                  message: navigator.onLine
+                                      ? `Unable to connect to the server. It may be temporarily down.`
+                                      : `Network error: Unable to connect. Please check your internet connection and try again.`,
+                              }
+                            : err
+                    );
+            });
+    });
+}
+
+export const withGet = async <T>(uri: string, timeout: number = 60): Promise<T> => {
+    return new Promise((resolve, reject) => {
+        axios
+            .get(uri, { timeout: timeout * 1000 })
+            .then((resp) => {
+                if (resp.data && "kind" in resp.data) {
+                    resolve(resp.data as T);
+                } else {
+                    reject(resp.data);
+                }
+            })
+            .catch((err) => {
+                if (err?.response?.data) reject(err.response.data);
+                else
+                    reject(
+                        err.code === `ERR_NETWORK`
+                            ? {
+                                  error: err.code,
+                                  message: navigator.onLine
+                                      ? `Unable to connect to the server. It may be temporarily down.`
+                                      : `Network error: Unable to connect. Please check your internet connection and try again.`,
+                              }
+                            : err
+                    );
+            });
+    });
 }
 
 export const withTime = ( fun : (...args: any[]) => any ) => {

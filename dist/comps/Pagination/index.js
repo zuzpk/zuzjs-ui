@@ -1,3 +1,4 @@
+'use client';
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, useCallback, useMemo, useState } from "react";
 import { PaginationStyle } from "./types";

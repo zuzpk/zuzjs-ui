@@ -20,7 +20,7 @@ export type Row<T> = {
 };
 export type Column<T> = {
     id: string | number;
-    value: string | ReactNode | dynamicObject;
+    value?: string | ReactNode | dynamicObject;
     weight?: number;
     w?: number | string;
     maxW?: number | string;
