@@ -1,10 +1,10 @@
 "use client"
-import { forwardRef, MouseEvent, useEffect, useImperativeHandle, useRef, useState } from "react";
-import Box, { BoxProps } from "../Box";
-import { ContextItem, ContextMenuHandler, ContextMenuProps, MenuItemProps } from "./types";
+import { forwardRef, MouseEvent, useImperativeHandle, useRef, useState } from "react";
 import { useAnchorPosition, useBase } from "../../hooks";
-import MenuItem from "./item";
 import { TRANSITION_CURVES } from "../../types/enums";
+import Box, { BoxProps } from "../Box";
+import MenuItem from "./item";
+import { ContextItem, ContextMenuHandler, ContextMenuProps, MenuItemProps } from "./types";
 // import { dynamicObject } from "../../types";
 
 const ContextMenu = forwardRef<ContextMenuHandler, ContextMenuProps>((props, ref ) => {
@@ -59,5 +59,7 @@ const ContextMenu = forwardRef<ContextMenuHandler, ContextMenuProps>((props, ref
     </Box>
 
 });
+
+ContextMenu.displayName = `ContextMenu`
 
 export default ContextMenu

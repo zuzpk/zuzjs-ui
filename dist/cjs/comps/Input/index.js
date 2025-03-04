@@ -12,4 +12,5 @@ const Input = forwardRef((props, ref) => {
     };
     return _jsx("input", { className: `--input ${size || variant ? `--${size || variant}` : ``} flex ${className}`.trim(), style: style, onInput: handleInput, ref: ref, ...rest });
 });
+Input.displayName = `Input`;
 export default Input;

@@ -171,4 +171,5 @@ const AutoComplete = forwardRef((props, ref) => {
                     }
                 })) })] });
 });
+AutoComplete.displayName = `AutoComplete`;
 export default AutoComplete;

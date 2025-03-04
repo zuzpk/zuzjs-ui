@@ -13,4 +13,5 @@ const Item = (props) => {
     });
     return _jsx("li", { style: style, className: className, ...rest, children: typeof meta == `string` ? meta : label });
 };
+Item.displayName = `ListItem`;
 export default Item;

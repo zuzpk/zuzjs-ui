@@ -1,11 +1,11 @@
 "use client"
 import { forwardRef } from 'react';
 import { useBase } from '../../hooks';
+import { Size, SPINNER } from '../../types/enums';
 import Icon from '../Icon';
 import Span from '../Span';
-import { ButtonProps, ButtonState } from './types';
 import Spinner from '../Spinner';
-import { Size, SPINNER } from '../../types/enums';
+import { ButtonProps, ButtonState } from './types';
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
 
@@ -17,7 +17,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     } = useBase<"button">(pops)
     
     return <button
-        className={`--button ${variant ? `--${variant}` : ``} ${size ? `--${size}` : ``} flex aic ${!reset ? `jcc` : ``} ${icon ? `ico-btn` : ``} ${className}`.trim()}
+        className={`--button ${variant ? `--${variant}` : ``} ${size ? `--${size}` : ``} flex aic ${!reset ? `jcc` : ``} ${icon ? `ico-btn` : ``} ${className}`.trim().replace(/\s+/g, ' ')}
         style={style}
         ref={ref}
         disabled={state == ButtonState.Loading || props.skeleton?.enabled || disabled}
@@ -35,5 +35,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
 
     </button>
 })
+
+Button.displayName = `Button`
 
 export default Button

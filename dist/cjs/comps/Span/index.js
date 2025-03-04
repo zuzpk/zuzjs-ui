@@ -7,4 +7,5 @@ const Span = forwardRef((props, ref) => {
     const { style: _style, className, rest } = useBase(pops);
     return _jsx("span", { ref: ref, style: style, className: className, ...rest });
 });
+Span.displayName = `Span`;
 export default Span;

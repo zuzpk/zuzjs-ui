@@ -50,4 +50,5 @@ const TextWheel = forwardRef((props, ref) => {
                     background: `linear-gradient(0deg, ${color}, transparent, transparent, transparent, ${color})`,
                 } })] });
 });
+TextWheel.displayName = `TextWheel`;
 export default TextWheel;

@@ -1,5 +1,5 @@
 "use client"
-import React, { Context, createContext, memo, ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import { ColorTheme } from "../types/enums";
 
 const MATCH_MEDIA = `(prefers-color-scheme: dark)`

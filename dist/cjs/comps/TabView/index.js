@@ -46,4 +46,5 @@ const TabView = forwardRef((props, ref) => {
                         transition: `all ${speed || 0.3}s ease-in-out 0s`, transform: `translate(-${activeTab * size.width}px, 0)`
                     }, children: tabs.map((tab, index) => _jsx(TabBody, { index: index, active: index === activeTab, size: size, render: render, content: tab.body }, `tab-body-${tab.key || index}-${tabViewID}`)) }) })] });
 });
+TabView.displayName = `TabView`;
 export default TabView;

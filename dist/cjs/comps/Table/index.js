@@ -36,5 +36,6 @@ const Table = (props, ref) => {
     };
     return _jsxs(Box, { as: `--table ${(hoverable ?? true) ? `--hoverable` : ``} flex cols ${className}`, ref: _tableRef, children: [_header == true && _jsx(TRow, { sortBy: _sortBy, onSort: handleSort, tableRef: _tableRef, pubsub: pubsub, selectable: selectableRows, index: -1, schema: schema, styles: _schemaParsed }), rows && rows.map((row, index) => _jsx(TRow, { tableRef: _tableRef, pubsub: pubsub, index: index, schema: schema, ids: _cols, styles: _schemaParsed, animate: animateRows, data: row, rowClassName: rowClassName, selectable: selectableRows, onSelect: onRowSelectToggle, onContextMenu: onRowContextMenu }, `--trow-${rowKeys[index]}-${schema[0].id}`)), pagination && _jsx(Box, { as: `--row flex aic --row-footer`, children: _jsx(Pagination, { hash: paginationHash, renderOnZeroPageCount: showPaginationOnZeroPageCount, onPageChange: onPageChange, paginationStyle: PaginationStyle.Table, startPage: currentPage, itemCount: rowCount || (rows ? rows.length : 0), itemsPerPage: rowsPerPage || 10 }) })] });
 };
+Table.displayName = `Table`;
 const ForwardedTable = forwardRef(Table);
 export default ForwardedTable;

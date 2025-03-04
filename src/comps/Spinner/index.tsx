@@ -1,10 +1,10 @@
 "use client"
 import { forwardRef } from "react";
-import Box, { BoxProps } from "../Box";
-import { Size, SPINNER } from "../../types/enums";
+import { hexToRgba } from "../../funs";
 import { useBase } from "../../hooks";
 import { dynamicObject } from "../../types";
-import { hexToRgba } from "../../funs";
+import { Size, SPINNER } from "../../types/enums";
+import Box, { BoxProps } from "../Box";
 
 export type SpinnerProps = BoxProps & {
     type?: SPINNER,
@@ -59,17 +59,14 @@ const Spinner = forwardRef<HTMLDivElement, SpinnerProps >((props, ref) => {
         switch( type || SPINNER.Simple ){
             case SPINNER.Simple:
                 return null
-                break;
             case SPINNER.Wave:
                 return  <>
                     <Box as={`--dot --dot-1`} />
                     <Box as={`--dot --dot-2`} />
                     <Box as={`--dot --dot-3`} />
                 </>
-                break;
             case SPINNER.Roller:
                 return null
-                break;
         }
     }
 
@@ -84,5 +81,7 @@ const Spinner = forwardRef<HTMLDivElement, SpinnerProps >((props, ref) => {
     </Box>
 
 })
+
+Spinner.displayName = `Spinner`
 
 export default Spinner;

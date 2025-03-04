@@ -60,4 +60,5 @@ const Drawer = forwardRef((props, ref) => {
                     duration: speed || .5,
                 }, ...pops, children: [from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? _jsx(Box, { className: `--handle` }) : null, render ? content : visible ? content : null] })] });
 });
+Drawer.displayName = `Drawer`;
 export default Drawer;

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { BoxProps } from "../Box";
 import { Size } from "../../types/enums";
+import { BoxProps } from "../Box";
 export type IconProps = Omit<BoxProps, `name`> & {
     name: string | ReactNode;
     pathCount?: number;

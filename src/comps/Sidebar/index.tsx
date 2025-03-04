@@ -1,6 +1,6 @@
 import { forwardRef } from "react"
-import { SidebarProps } from "./types"
 import Box from "../Box"
+import { SidebarProps } from "./types"
 
 const Sidebar = forwardRef<HTMLDivElement, SidebarProps>((props, ref) => {
 
@@ -22,5 +22,7 @@ const Sidebar = forwardRef<HTMLDivElement, SidebarProps>((props, ref) => {
 
 
 })
+
+Sidebar.displayName = `Sidebar`
 
 export default Sidebar

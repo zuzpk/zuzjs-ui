@@ -2,8 +2,8 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { CHECKBOX, Variant } from "../../types/enums";
-import Label from "../Label";
 import Input from "../Input";
+import Label from "../Label";
 import SVGIcons from "../svgicons";
 const CheckBox = forwardRef((props, ref) => {
     const { name, required, type, value, size, variant, checked: defaultCheck, onSwitch, ...pops } = props;
@@ -31,4 +31,5 @@ const CheckBox = forwardRef((props, ref) => {
                     _setChecked(e.target.checked);
                 } })] });
 });
+CheckBox.displayName = `CheckBox`;
 export default CheckBox;

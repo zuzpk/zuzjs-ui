@@ -14,8 +14,8 @@ export { default as useKeyBind } from './useKeyBind';
 /**
  * @deprecated use useDelayed hook instead
  */
-export { default as useMounted } from './useMounted';
-export { default as useDelayed } from './useMounted';
+export { default as useMounted } from './useDelayed';
+export { default as useDelayed } from './useDelayed';
 export { default as useNetworkStatus } from './useNetworkStatus';
 export { default as useResizeObserver } from './useResizeObserver';
 // export { default as useDomSelector } from './useDomSelector';

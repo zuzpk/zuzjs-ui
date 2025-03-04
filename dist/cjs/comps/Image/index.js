@@ -8,4 +8,5 @@ const Image = forwardRef((props, ref) => {
         return null;
     return _jsx("img", { ref: ref, style: style, className: `${className} flex`, ...rest });
 });
+Image.displayName = `Image`;
 export default Image;

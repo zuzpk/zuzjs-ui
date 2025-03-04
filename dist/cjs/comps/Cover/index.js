@@ -1,9 +1,9 @@
 "use client";
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef } from "react";
-import Box from "../Box";
-import { SPINNER } from "../../types/enums";
 import { useBase } from "../../hooks";
+import { SPINNER } from "../../types/enums";
+import Box from "../Box";
 import Spinner from "../Spinner";
 import Text from "../Text";
 const Cover = forwardRef((props, ref) => {
@@ -17,4 +17,5 @@ const Cover = forwardRef((props, ref) => {
             backgroundColor: `var(--cover-bg)`
         }, ...rest, children: [_jsx(Spinner, { type: spinner || SPINNER.Simple }), !hideMessage && _jsx(Text, { className: `--label`, style: { color: `var(--cover-label)` }, children: message || `loading` })] });
 });
+Cover.displayName = `Cover`;
 export default Cover;

@@ -1,10 +1,10 @@
 "use client";
 import { jsx as _jsx } from "react/jsx-runtime";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
-import Box from "../Box";
 import { useAnchorPosition, useBase } from "../../hooks";
-import MenuItem from "./item";
 import { TRANSITION_CURVES } from "../../types/enums";
+import Box from "../Box";
+import MenuItem from "./item";
 // import { dynamicObject } from "../../types";
 const ContextMenu = forwardRef((props, ref) => {
     const { as, offsetX, offsetY, parent, items: _items, ...pops } = props;
@@ -38,4 +38,5 @@ const ContextMenu = forwardRef((props, ref) => {
             when: visible
         }, ref: targetRef, ...rest, children: items.map((item, index) => _jsx(MenuItem, { ...{ ...item, index } }, `context-${item.label.toLowerCase()}-${index}`)) });
 });
+ContextMenu.displayName = `ContextMenu`;
 export default ContextMenu;

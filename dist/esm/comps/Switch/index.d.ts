@@ -1,5 +1,5 @@
-import { CheckboxHandler } from "../CheckBox/types";
 import { CHECKBOX } from "../../types/enums";
+import { CheckboxHandler } from "../CheckBox/types";
 declare const Switch: import("react").ForwardRefExoticComponent<import("../..").ZuzProps & Omit<Omit<import("react").DetailedHTMLProps<import("react").InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "ref">, keyof import("../..").ZuzProps> & {
     type?: CHECKBOX;
     size?: import("../..").Size;

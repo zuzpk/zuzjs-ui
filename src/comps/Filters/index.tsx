@@ -29,4 +29,6 @@ const Filters = (props : FilterProps) => {
 
 }
 
+Filters.displayName = `Filters`
+
 export default Filters

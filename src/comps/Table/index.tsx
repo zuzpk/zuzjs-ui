@@ -102,6 +102,8 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
 
 }
 
+Table.displayName = `Table`
+
 const ForwardedTable = forwardRef(Table) as <T>(props: TableProps<T> & { ref?: Ref<HTMLDivElement> }) => JSX.Element
 
 export default ForwardedTable

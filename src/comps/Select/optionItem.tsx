@@ -9,4 +9,6 @@ const OptionItem = ({ value, updateValue, o } : OptionItemProps) => {
             {`string` == typeof o ? o : o.label}</Button>
 }
 
+OptionItem.displayName = `Option`
+
 export default OptionItem

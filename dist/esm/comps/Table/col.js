@@ -19,4 +19,5 @@ const TColumn = (props) => {
                 && sortBy == id
                 && _jsx(Box, { as: `--arrow flex aib`, children: _sort == 1 ? SVGIcons.arrowUp : SVGIcons.arrowDown })] });
 };
+TColumn.displayName = `Column`;
 export default TColumn;

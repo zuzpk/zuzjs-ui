@@ -1,8 +1,7 @@
 "use client"
-import { createElement, forwardRef, HTMLAttributes, ReactNode } from 'react';
-import { Props } from '../../types';
+import { forwardRef } from 'react';
 import { useBase } from '../../hooks';
-import { isUrl } from '../../funs';
+import { Props } from '../../types';
 
 export type ImageProps = Props<`img`> & {
     
@@ -25,5 +24,7 @@ const Image = forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
         {...rest} />
 
 })
+
+Image.displayName = `Image`
 
 export default Image

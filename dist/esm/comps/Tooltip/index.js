@@ -2,9 +2,9 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { useBase, useDimensions } from '../../hooks';
+import { Position, TRANSITION_CURVES } from '../../types/enums';
 import Box from '../Box';
 import Text from '../Text';
-import { Position, TRANSITION_CURVES } from '../../types/enums';
 const ToolTip = forwardRef((props, ref) => {
     const { title, position, margin, children, ...pops } = props;
     const { style, className, rest } = useBase(pops);
@@ -53,4 +53,5 @@ const ToolTip = forwardRef((props, ref) => {
                     when: hovered
                 }, children: _jsx(Text, { className: `--text rel`, children: title }) })] });
 });
+ToolTip.displayName = `ToolTip`;
 export default ToolTip;

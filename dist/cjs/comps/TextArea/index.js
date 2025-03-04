@@ -10,4 +10,5 @@ const TextArea = forwardRef((props, ref) => {
     };
     return _jsx("textarea", { className: `--input --textarea --${variant || Variant.Small} flex ${className}`.trim(), style: style, onInput: handleInput, ref: ref, ...rest });
 });
+TextArea.displayName = `TextArea`;
 export default TextArea;

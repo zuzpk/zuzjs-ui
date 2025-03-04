@@ -86,4 +86,6 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
     </>
 })
 
+Drawer.displayName = `Drawer`
+
 export default Drawer

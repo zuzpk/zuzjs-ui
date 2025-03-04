@@ -1,6 +1,5 @@
 import { TreeViewHandler } from "./types";
-import { BoxProps } from "../Box";
-declare const TreeView: import("react").ForwardRefExoticComponent<Omit<BoxProps, "tag"> & {
+declare const TreeView: import("react").ForwardRefExoticComponent<Omit<import("..").BoxProps, "tag"> & {
     tag?: string;
     roots: string[];
     nodes: import("./types").TreeNode[];

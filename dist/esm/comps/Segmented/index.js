@@ -1,4 +1,3 @@
-"use client";
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, useEffect, useRef, useState } from "react";
 import { useBase } from "../../hooks";
@@ -54,9 +53,10 @@ const Segmented = forwardRef((props, ref) => {
             setSelected(selected);
         }
     }, [selected, _selected]);
-    return _jsxs(Box, { suppressHydrationWarning: true, ref: _segmented, "data-selected": _selected, className: `${className} --segmented --${size || Size.Small} flex aic rel`, style: style, ...rest, children: [_jsx(Box, { ref: _tab, className: `--segment-tab abs` }), items.map((item, i) => _jsx(SegmentItem, { onSelect: handleSelect, selected: _selected == i, meta: {
+    return _jsxs(Box, { ref: _segmented, "data-selected": _selected, className: `${className} --segmented --${size || Size.Small} flex aic rel`, style: style, ...rest, children: [_jsx(Box, { ref: _tab, className: `--segment-tab abs` }), items.map((item, i) => _jsx(SegmentItem, { onSelect: handleSelect, selected: _selected == i, meta: {
                     ...item,
                     index: i
                 } }, `segment-${item.label}-${i}`))] });
 });
+Segmented.displayName = `SelectTabs`;
 export default Segmented;

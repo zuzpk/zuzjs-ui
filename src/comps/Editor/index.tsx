@@ -1,10 +1,7 @@
 "use client"
 import React, { forwardRef } from 'react';
-import { EditorHandler, EditorMode, EditorProps } from './types';
-import ActionBar from '../Actionbar';
-import SVGIcons from '../svgicons';
 import Box from '../Box';
-import Timeline from './Timeline';
+import { EditorHandler, EditorMode, EditorProps } from './types';
 
 const Editor = forwardRef<EditorHandler, EditorProps>((props, ref) => {
 
@@ -26,5 +23,7 @@ const Editor = forwardRef<EditorHandler, EditorProps>((props, ref) => {
     </Box>
 
 })
+
+Editor.displayName = `Editor`
 
 export default Editor;

@@ -1,6 +1,5 @@
-import { BoxProps } from '../Box';
 import { Position } from '../../types/enums';
-declare const ToolTip: import("react").ForwardRefExoticComponent<BoxProps & {
+declare const ToolTip: import("react").ForwardRefExoticComponent<import("..").BoxProps & {
     position?: Position;
     margin?: number;
 } & import("react").RefAttributes<HTMLDivElement>>;

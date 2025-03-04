@@ -14,4 +14,5 @@ const List = forwardRef((props, ref) => {
         children: items.map((item, index) => _jsx(Item, { meta: item }, `list-item-${typeof item == `string` ? String(item) : item.label}-${index}`))
     });
 });
+List.displayName = `List`;
 export default List;

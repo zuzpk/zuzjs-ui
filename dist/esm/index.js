@@ -1,3 +1,4 @@
+String.prototype.trim = function () { return this.replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' '); };
 export * from "./comps";
 export { withCSS as css } from "./funs";
 export * from "./funs";

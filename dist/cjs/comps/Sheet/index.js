@@ -1,11 +1,11 @@
 "use client";
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { SHEET, SHEET_ACTION_POSITION, TRANSITION_CURVES } from "../../types/enums";
-import Box from "../Box";
-import { useBase } from "../../hooks";
 import { uuid } from "../../funs";
 import { animationTransition } from "../../funs/css";
+import { useBase } from "../../hooks";
+import { SHEET, SHEET_ACTION_POSITION, TRANSITION_CURVES } from "../../types/enums";
+import Box from "../Box";
 import Button from "../Button";
 import Cover from "../Cover";
 import Overlay from "../Overlay";
@@ -184,4 +184,5 @@ export const isSheetHandler = (src) => {
         && `success` in src
         && `error` in src;
 };
+Sheet.displayName = `Sheet`;
 export default Sheet;

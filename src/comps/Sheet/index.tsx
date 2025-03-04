@@ -1,16 +1,15 @@
 "use client"
-import { forwardRef, ReactNode, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { SHEET, SHEET_ACTION_POSITION, SPINNER, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
-import Box, { BoxProps } from "../Box";
-import { useBase } from "../../hooks";
+import { forwardRef, ReactNode, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { uuid } from "../../funs";
 import { animationTransition } from "../../funs/css";
-import Button from "../Button";
-import SVGIcons from "../svgicons";
-import Cover, { CoverProps } from "../Cover";
+import { useBase } from "../../hooks";
 import { ZuzProps } from "../../types";
-import Overlay, { OverlayProps } from "../Overlay";
+import { SHEET, SHEET_ACTION_POSITION, SPINNER, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
 import { animationProps } from "../../types/interfaces";
+import Box, { BoxProps } from "../Box";
+import Button from "../Button";
+import Cover from "../Cover";
+import Overlay from "../Overlay";
 
 export type SheetProps = ZuzProps & {
     title?: string,
@@ -302,5 +301,7 @@ export const isSheetHandler = (src: unknown): src is SheetHandler => {
         && `error` in src
 }
 
+
+Sheet.displayName = `Sheet`
 
 export default Sheet

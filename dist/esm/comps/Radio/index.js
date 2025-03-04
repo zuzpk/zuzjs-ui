@@ -15,4 +15,5 @@ const Radio = forwardRef((props, _ref) => {
                     _setChecked(e.target.checked);
                 } }), _jsx(Box, { className: `--dot rel`, children: _jsx(Box, { className: `--rod abs abc` }) }), _jsx(Box, { className: `--value`, children: children })] });
 });
+Radio.displayName = `Radio`;
 export default Radio;

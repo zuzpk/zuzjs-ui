@@ -1,14 +1,10 @@
 "use client"
 import { forwardRef, useState } from 'react';
-import { Props } from '../../types';
 import { useBase } from '../../hooks';
-import Icon, { IconProps } from '../Icon';
-import Span, { SpanProps } from '../Span';
-import Input, { InputProps } from '../Input';
-import Box, { BoxProps } from '../Box';
+import Box from '../Box';
 import Button from '../Button';
+import Input, { InputProps } from '../Input';
 import SVGIcons from '../svgicons';
-import { FORMVALIDATION } from '../../types/enums';
 
 export type PasswordProps = Omit<InputProps, `type` | `numeric`> & {
     
@@ -47,5 +43,7 @@ const Password = forwardRef<HTMLInputElement, PasswordProps>((props, ref) => {
     </Box>
         
 })
+
+Password.displayName = `Password`
 
 export default Password

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { SHEET, SHEET_ACTION_POSITION, SPINNER, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
 import { ZuzProps } from "../../types";
+import { SHEET, SHEET_ACTION_POSITION, SPINNER, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
 export type SheetProps = ZuzProps & {
     title?: string;
     message?: string | ReactNode;

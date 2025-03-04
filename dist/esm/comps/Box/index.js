@@ -1,4 +1,3 @@
-"use client";
 import { jsx as _jsx } from "react/jsx-runtime";
 import { forwardRef } from "react";
 import { useBase } from "../../hooks";
@@ -21,4 +20,5 @@ const Box = forwardRef((props, ref) => {
             ...(style || {})
         }, ...rest });
 });
+Box.displayName = `Box`;
 export default Box;

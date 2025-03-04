@@ -1,12 +1,10 @@
 "use client"
 import { forwardRef } from "react";
-import Box, { BoxProps } from "../Box";
-import { SPINNER } from "../../types/enums";
 import { useBase } from "../../hooks";
-import { dynamicObject } from "../../types";
-import { hexToRgba } from "../../funs";
-import Spinner, { SpinnerProps } from "../Spinner";
-import Text, { TextProps } from "../Text";
+import { SPINNER } from "../../types/enums";
+import Box, { BoxProps } from "../Box";
+import Spinner from "../Spinner";
+import Text from "../Text";
 
 export type CoverProps = BoxProps & {
     message?: string,
@@ -44,5 +42,7 @@ const Cover = forwardRef<HTMLDivElement, CoverProps >((props, ref) => {
     </Box>
 
 })
+
+Cover.displayName = `Cover`
 
 export default Cover

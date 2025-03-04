@@ -1,12 +1,12 @@
 "use client";
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, useEffect, useId, useMemo, useRef, useState } from "react";
-import SVGIcons from "../svgicons";
-import Box from "../Box";
 import { useBase } from "../../hooks";
+import Box from "../Box";
 import Button from "../Button";
-import Text from "../Text";
 import Input from "../Input";
+import SVGIcons from "../svgicons";
+import Text from "../Text";
 import OptionItem from "./optionItem";
 const Select = forwardRef((props, ref) => {
     const { selected, options, label, name, search: withSearch, searchPlaceholder, onChange, ...pops } = props;
@@ -58,4 +58,5 @@ const Select = forwardRef((props, ref) => {
                     }))
                         .map((o) => _jsx(OptionItem, { updateValue: updateValue, value: value, o: o }, `option-${(`string` == typeof o ? o : o.label).replace(/\s+/g, `-`)}-${`string` == typeof o ? o : o.value}`))] })] });
 });
+Select.displayName = `Select`;
 export default Select;

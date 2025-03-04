@@ -1,10 +1,10 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, useEffect } from "react";
-import Box from "../Box";
-import Text from "../Text";
-import { ALERT, Size, TRANSITION_CURVES } from "../../types/enums";
 import { useNetworkStatus } from "../../hooks";
+import { ALERT, Size, TRANSITION_CURVES } from "../../types/enums";
+import Box from "../Box";
 import SVGIcons from "../svgicons";
+import Text from "../Text";
 const NetworkManager = forwardRef((props, ref) => {
     const isOnline = useNetworkStatus();
     const { onlineMessage, offlineMessage, size } = props;
@@ -19,4 +19,5 @@ const NetworkManager = forwardRef((props, ref) => {
             delay: 2
         }, className: `--network-manager --${isOnline == true ? `online` : `offline`} --${size || Size.Small} fixed flex`, children: [_jsx(Box, { className: `--ico`, children: isOnline ? SVGIcons[ALERT.Success] : SVGIcons[ALERT.Error] }), _jsx(Text, { as: `--message`, children: isOnline ? onlineMessage || `internet connection restored :)` : offlineMessage || `no internet connection` })] });
 });
+NetworkManager.displayName = `NetWorkManager`;
 export default NetworkManager;

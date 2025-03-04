@@ -1,6 +1,6 @@
 import { forwardRef } from "react"
-import Box, { BoxProps } from "../Box"
 import { TRANSITIONS } from "../../types/enums"
+import Box, { BoxProps } from "../Box"
 
 export type OverlayProps = BoxProps & {
     when?: boolean,
@@ -21,5 +21,7 @@ export const Overlay = forwardRef<HTMLDivElement, OverlayProps>((props, ref) => 
         {...pops} />
 
 })
+
+Overlay.displayName = `Overlay`
 
 export default Overlay

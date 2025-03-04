@@ -1,6 +1,6 @@
+import { Position } from "../../types/enums";
 import { BoxProps } from "../Box";
 import { ActionBarHandler } from "./types";
-import { Position } from "../../types/enums";
 /**
  * ActionBar renders a list of buttons with tooltips.
  *

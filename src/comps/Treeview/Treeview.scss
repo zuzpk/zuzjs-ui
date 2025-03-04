@@ -15,6 +15,8 @@
     --treenode-label-selected-color: #111;
     --treenode-label-icon-color: #111;
     --treenode-label-icon-size: 15px;
+    --treenode-root-label-icon-size: var(--treenode-label-icon-size);
+    --treenode-root-label-font-weight: normal;
     --treenode-label-color: #111;
     --treenode-label-size: 15px;
     --treenode-label-gap: 6px;
@@ -30,6 +32,17 @@
 
         gap: var(--treenode-gap);
         
+        &.--node-root{
+            .--node-meta{
+                .--node-icon{
+                    font-size: var(--treenode-root-label-icon-size);
+                }
+            }
+            .--node-label{
+                font-weight: var(--treenode-root-label-font-weight);
+            }
+        }
+
         .--node-aro-btn{
             width: var(--treenode-arrow-btn-size);
             height: var(--treenode-arrow-btn-size);
@@ -42,13 +55,19 @@
             }
             &:disabled{
                 filter: grayscale(1);
-                opacity: 0.5;
+                opacity: 0;
             }
             .--node-aro-icon{
                 font-size: var(--treenode-arrow-icon-size);
                 &:not(.--skeleton){
                     color: var(--treenode-arrow-icon-color);
+                    svg{
+                        fill: var(--treenode-arrow-icon-color);
+                    }
                 }
+            }
+            svg{
+                fill: var(--treenode-arrow-icon-color);
             }
         }
 

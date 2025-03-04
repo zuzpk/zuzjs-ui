@@ -63,7 +63,8 @@ export declare const formatSize: (bytes: number | string) => string;
 export declare const copyToClipboard: (text: string) => Promise<unknown>;
 export declare const natsort: (options?: sortOptions) => (a: string | number, b: string | number) => number;
 export declare const bindKey: (key: KeyCode, fun: () => void, element?: HTMLElement) => void;
-export declare const camelCase: (str: string) => string;
+export declare const camelCase: (str: string, ucf?: boolean) => string;
+export declare const camelCaseToDash: (str: string) => string;
 export declare const pluralize: (word: string, count: number) => string;
 export declare const addPropsToChildren: (children: ReactNode, conditions: (child: ReactElement<any>) => boolean, newProps: object) => ReactNode;
 export declare const getPositionAroundElement: (x: number, y: number, distance: number, childCount: number) => {

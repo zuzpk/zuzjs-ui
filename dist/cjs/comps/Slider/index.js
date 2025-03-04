@@ -1,9 +1,9 @@
 "use client";
 import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, useEffect, useRef, useState } from "react";
-import Box from "../Box";
-import { SLIDER } from "../../types/enums";
 import { useBase } from "../../hooks";
+import { SLIDER } from "../../types/enums";
+import Box from "../Box";
 import Input from "../Input";
 import Text from "../Text";
 const Slider = forwardRef((props, ref) => {
@@ -78,4 +78,5 @@ const Slider = forwardRef((props, ref) => {
     }, [isDragging]);
     return _jsx(Box, { ref: slider, "data-value": value || 0, className: `--slider --${type || SLIDER.Default} flex rel ${className}`.trim(), style: { ...style }, children: SLIDER.Text === type ? _jsx(_Fragment, { children: _jsx(Text, { ref: text, onMouseDown: handleMouseDown, className: `--slider-text`, children: value || 0 }) }) : _jsxs(_Fragment, { children: [_jsx(Box, { ref: track, className: `--slider-track abs fill` }), _jsx(Box, { ref: knob, className: `--slider-knob abs` }), _jsx(Input, { ref: input, onInput: handleInput, className: `abs fill`, tabIndex: 0, type: type || SLIDER.Default, defaultValue: value || 0, step: step, max: max, min: min })] }) });
 });
+Slider.displayName = `Slider`;
 export default Slider;

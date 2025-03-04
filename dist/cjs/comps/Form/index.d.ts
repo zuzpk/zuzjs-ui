@@ -1,7 +1,7 @@
-import { BoxProps } from "../Box";
 import { dynamicObject } from "../../types";
-import { SheetHandler } from "../Sheet";
 import { SPINNER } from "../../types/enums";
+import { BoxProps } from "../Box";
+import { SheetHandler } from "../Sheet";
 export type FormProps = BoxProps & {
     /** Name of form, will be appended to --form-{name} in className
      * whitespace will be replaced with dash (-)

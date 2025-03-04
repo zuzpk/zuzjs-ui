@@ -1,12 +1,12 @@
 "use client";
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, startTransition, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import Box from "../Box";
-import { useBase } from "../../hooks";
-import Sheet, { isSheetHandler } from "../Sheet";
-import Cover from "../Cover";
-import { FORMVALIDATION, SHEET } from "../../types/enums";
 import { addPropsToChildren, isEmail, withPost } from "../../funs";
+import { useBase } from "../../hooks";
+import { FORMVALIDATION, SHEET } from "../../types/enums";
+import Box from "../Box";
+import Cover from "../Cover";
+import Sheet, { isSheetHandler } from "../Sheet";
 /**
  * {@link Form} is a controlled component designed to handle form data submission, validation, and display of loading or error states.
  * It allows for optional server-side submission through an action endpoint and customizable success/error handling callbacks.
@@ -89,15 +89,12 @@ const Form = forwardRef((props, ref) => {
             switch (_with.toUpperCase()) {
                 case FORMVALIDATION.Email:
                     return isEmail(el.value);
-                    break;
                 case FORMVALIDATION.Uri:
                     console.log(`Add FORMVALIDATION.Uri`);
                     return false;
-                    break;
                 case FORMVALIDATION.Password:
                     console.log(`Add FORMVALIDATION.Password`);
                     return false;
-                    break;
                 case FORMVALIDATION.MatchField:
                     const [__, field] = el.getAttribute(`with`).split(`@`);
                     const _el = document.querySelector(`[name=${field.trim()}]`);
@@ -264,4 +261,5 @@ const Form = forwardRef((props, ref) => {
     useEffect(_init, []);
     return _jsxs(Box, { ref: innerRef, style: style, className: `--form flex rel ${className} ${name ? `--form-${name.replace(/\s+/g, `-`)}` : ``}`, propsToRemove: [`withData`, `action`, `onSubmit`, `onSuccess`, `onError`], children: [_jsx(Sheet, { ref: sheet, as: `--sheet-form` }), !isSheetHandler(cover) && _jsx(Cover, { message: cover ? cover.message || undefined : `working`, spinner: spinner, color: cover ? `color` in cover ? cover.color : `#ffffff` : `#ffffff`, when: loading }), buildChildren] });
 });
+Form.displayName = `Form`;
 export default Form;

@@ -59,4 +59,5 @@ const Pagination = forwardRef((props, _ref) => {
                     `${Math.min(getPageValue(_currentPage) * itemsPerPage, itemCount)} of ${itemCount} items`
                 ].join(` `) }), _jsxs(Box, { as: `flex aic jce flex:1 --pgt-btns --pgt-nav`, children: [_jsx(Button, { disabled: getPageValue(_currentPage) <= 1, onClick: (ev) => handlePage({ id: hash ? _hash(getPageValue(_currentPage) - 1) : getPageValue(_currentPage) - 1, label: getPageValue(_currentPage) - 1 }), children: SVGIcons.chevronLeftOutline }), _jsx(Button, { disabled: pages.length <= 1 || getPageValue(_currentPage) == getPageValue(pages[pages.length - 1]), onClick: (ev) => handlePage({ id: hash ? _hash(getPageValue(_currentPage) + 1) : getPageValue(_currentPage) + 1, label: getPageValue(_currentPage) + 1 }), children: SVGIcons.chevronRightOutline })] })] });
 });
+Pagination.displayName = `Pagination`;
 export default Pagination;

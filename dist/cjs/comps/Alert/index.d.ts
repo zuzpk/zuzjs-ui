@@ -1,6 +1,6 @@
-import { AlertHandler } from "./types";
 import { ALERT } from "../../types/enums";
 import { BoxProps } from "../Box";
+import { AlertHandler } from "./types";
 declare const Alert: import("react").ForwardRefExoticComponent<BoxProps & {
     type?: ALERT;
     icon?: string;

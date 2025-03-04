@@ -96,4 +96,6 @@ const TabView = forwardRef<TabViewHandler, TabViewProps>((props, ref) => {
     
 })
 
+TabView.displayName = `TabView`
+
 export default TabView

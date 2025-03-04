@@ -1,9 +1,7 @@
 "use client"
 import { forwardRef } from 'react';
-import { Props } from '../../types';
 import { useBase } from '../../hooks';
-import Icon, { IconProps } from '../Icon';
-import Span, { SpanProps } from '../Span';
+import { Props } from '../../types';
 import { Variant } from '../../types/enums';
 
 export type TextAreaProps = Props<`textarea`> & {
@@ -33,5 +31,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => 
         {...rest} />
         
 })
+
+TextArea.displayName = `TextArea`
 
 export default TextArea

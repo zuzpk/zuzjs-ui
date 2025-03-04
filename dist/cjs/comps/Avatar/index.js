@@ -1,10 +1,10 @@
 "use client";
 import { jsx as _jsx } from "react/jsx-runtime";
 import { forwardRef, useEffect } from "react";
-import { AVATAR, Size } from "../../types/enums";
 import { useBase, useImage } from "../../hooks";
-import Image from "../Image";
+import { AVATAR, Size } from "../../types/enums";
 import Box from "../Box";
+import Image from "../Image";
 import Text from "../Text";
 const Avatar = forwardRef((props, ref) => {
     const { src, size, variant, type, crossOrigin, referrerPolicy, animate, as, alt, color, ...pops } = props;
@@ -33,4 +33,5 @@ const Avatar = forwardRef((props, ref) => {
             ...style,
         }, ...rest, children: src ? _jsx(Image, { src: img, crossOrigin: crossOrigin, referrerPolicy: referrerPolicy, ...pops }) : _jsx(Text, { className: `--avatar-label`, children: (alt ? alt.charAt(0) : `A`).toUpperCase() }) });
 });
+Avatar.displayName = `Avatar`;
 export default Avatar;

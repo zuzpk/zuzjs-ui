@@ -1,8 +1,6 @@
-import { FORMVALIDATION } from "../../types/enums";
-import { BoxProps } from "../Box";
 import { Option } from "./types";
-declare const Select: import("react").ForwardRefExoticComponent<BoxProps & {
-    required?: FORMVALIDATION;
+declare const Select: import("react").ForwardRefExoticComponent<import("..").BoxProps & {
+    required?: import("../..").FORMVALIDATION;
     options: Option[];
     label?: string;
     selected?: string | Option;

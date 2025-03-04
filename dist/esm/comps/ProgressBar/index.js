@@ -19,4 +19,5 @@ const ProgressBar = forwardRef((props, ref) => {
     const { className, style, rest } = useBase(pops);
     return _jsx(Box, { className: `--progress flex rel ${className}`.trim(), style: style, ...rest, children: _jsx(Box, { ref: bar, className: `--bar rel` }) });
 });
+ProgressBar.displayName = `ProgressBar`;
 export default ProgressBar;

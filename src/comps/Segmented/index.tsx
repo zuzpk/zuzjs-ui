@@ -1,4 +1,3 @@
-"use client"
 import { forwardRef, useEffect, useRef, useState } from "react";
 import { useBase } from "../../hooks";
 import { Size } from "../../types/enums";
@@ -60,7 +59,6 @@ const Segmented = forwardRef<HTMLDivElement, SegmentProps>((props, ref) => {
     }, [selected, _selected]);
 
     return <Box
-        suppressHydrationWarning
         ref={_segmented}
         data-selected={_selected}
         className={`${className} --segmented --${size || Size.Small} flex aic rel`}
@@ -69,7 +67,7 @@ const Segmented = forwardRef<HTMLDivElement, SegmentProps>((props, ref) => {
 
         <Box ref={_tab} className={`--segment-tab abs`} />
 
-        {items.map((item, i) => <SegmentItem 
+        {items.map((item, i) => <SegmentItem
             onSelect={handleSelect}
             selected={_selected == i} 
             key={`segment-${item.label}-${i}`} 
@@ -83,5 +81,7 @@ const Segmented = forwardRef<HTMLDivElement, SegmentProps>((props, ref) => {
 
 
 })
+
+Segmented.displayName = `SelectTabs`
 
 export default Segmented;

@@ -1,8 +1,8 @@
-import { createElement, forwardRef, Ref } from "react";
-import { ListItemObject, ListProps } from "./types";
+import { createElement, forwardRef } from "react";
 import { useBase } from "../../hooks";
 import { Size } from "../../types/enums";
 import Item from "./item";
+import { ListItemObject, ListProps } from "./types";
 
 const List = forwardRef<HTMLUListElement | HTMLOListElement, ListProps>((props, ref) => {
 
@@ -25,5 +25,7 @@ const List = forwardRef<HTMLUListElement | HTMLOListElement, ListProps>((props, 
     })
     
 })
+
+List.displayName = `List`
 
 export default List

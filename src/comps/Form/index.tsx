@@ -1,14 +1,13 @@
 "use client"
-import { Children, cloneElement, forwardRef, isValidElement, ReactElement, ReactNode, startTransition, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import Box, { BoxProps } from "../Box";
-import { dynamicObject, FormInputs } from "../../types";
-import { useBase } from "../../hooks";
-import { SpinnerProps } from "../Spinner";
-import Sheet, { isSheetHandler, SheetHandler } from "../Sheet";
-import Cover, { CoverProps } from "../Cover";
-import { FORMVALIDATION, SHEET, SPINNER } from "../../types/enums";
+import { forwardRef, ReactNode, startTransition, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { addPropsToChildren, isEmail, withPost } from "../../funs";
-import { ButtonHandler, ButtonState } from "../Button/types";
+import { useBase } from "../../hooks";
+import { dynamicObject, FormInputs } from "../../types";
+import { FORMVALIDATION, SHEET, SPINNER } from "../../types/enums";
+import Box, { BoxProps } from "../Box";
+import { ButtonHandler } from "../Button/types";
+import Cover from "../Cover";
+import Sheet, { isSheetHandler, SheetHandler } from "../Sheet";
 
 export type FormProps = BoxProps & {
     /** Name of form, will be appended to --form-{name} in className 
@@ -169,15 +168,12 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
             switch ( _with.toUpperCase() ){
                 case FORMVALIDATION.Email:
                     return isEmail(el.value)
-                    break;
                 case FORMVALIDATION.Uri:
                     console.log(`Add FORMVALIDATION.Uri`)
                     return false
-                    break;
                 case FORMVALIDATION.Password:
                     console.log(`Add FORMVALIDATION.Password`)
                     return false
-                    break;
                 case FORMVALIDATION.MatchField:
                     const [ __, field ] = el.getAttribute(`with`).split(`@`)
                     const _el = document.querySelector<FormInputs>(`[name=${field.trim()}]`)
@@ -405,5 +401,7 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
     </Box>
 
 })
+
+Form.displayName = `Form`
 
 export default Form;

@@ -468,15 +468,16 @@ export const bindKey = (key, fun, element) => {
     };
     (element || document.documentElement).addEventListener('keydown', handleKeydown);
 };
-export const camelCase = (str) => {
+export const camelCase = (str, ucf = false) => {
     return str
         .toLowerCase()
         .split(/[^a-zA-Z0-9]+/) // Split by any non-alphanumeric character
         .map((word, index) => index === 0
-        ? word
-        : word.charAt(0).toUpperCase() + word.slice(1))
+        ? ucf ? ucfirst(word) : word
+        : ucfirst(word))
         .join('');
 };
+export const camelCaseToDash = (str) => str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 export const pluralize = (word, count) => `${word}${count !== 1 ? 's' : ''}`;
 export const addPropsToChildren = (children, conditions, newProps) => {
     return Children.map(children, (child) => {

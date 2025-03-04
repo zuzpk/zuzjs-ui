@@ -1,5 +1,5 @@
-import { BoxProps } from "../Box";
 import { SPINNER } from "../../types/enums";
+import { BoxProps } from "../Box";
 export type CoverProps = BoxProps & {
     message?: string;
     spinner?: SPINNER;

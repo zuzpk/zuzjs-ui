@@ -1,14 +1,14 @@
 "use client";
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, useEffect, useRef, useState } from "react";
+import { DRAG_DIRECTION, SLIDER } from "../../../types/enums";
 import Box from "../../Box";
 import Button from "../../Button";
+import Slider from "../../Slider";
 import SVGIcons from "../../svgicons";
 import Text from "../../Text";
-import Layer from "./layer";
-import Slider from "../../Slider";
-import { DRAG_DIRECTION, SLIDER } from "../../../types/enums";
 import ToolTip from "../../Tooltip";
+import Layer from "./layer";
 const Timeline = forwardRef((props, ref) => {
     const { layers } = props;
     const [selected, setSelected] = useState([]);
@@ -55,4 +55,5 @@ const Timeline = forwardRef((props, ref) => {
                     }
                 }, className: `--cursor abs` })] });
 });
+Timeline.displayName = `Timeline`;
 export default Timeline;

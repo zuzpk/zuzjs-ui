@@ -32,6 +32,7 @@
 .--table{
     background: var(--table);
     gap: var(--table-row-gap);
+    flex: 1;
     &.--hoverable{
         .--row{
             &:not(.--row-head):not(.--row-footer){

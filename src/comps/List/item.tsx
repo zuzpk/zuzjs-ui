@@ -1,5 +1,5 @@
 import { useBase, useDelayed } from "../../hooks";
-import { ListItemObject, type ListItem } from "./types"
+import { ListItemObject, type ListItem } from "./types";
 
 const Item = (props : { meta: ListItem }) => {
 
@@ -26,5 +26,7 @@ const Item = (props : { meta: ListItem }) => {
         {...rest}>{typeof meta == `string` ? meta : label}</li>
 
 }
+
+Item.displayName = `ListItem`
 
 export default Item

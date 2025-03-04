@@ -3,5 +3,5 @@ declare const List: import("react").ForwardRefExoticComponent<import("../..").Zu
     size?: Size;
     items: import("./types").ListItem[];
     ol?: boolean;
-} & import("react").RefAttributes<HTMLOListElement | HTMLUListElement>>;
+} & import("react").RefAttributes<HTMLUListElement | HTMLOListElement>>;
 export default List;

@@ -1,5 +1,5 @@
-import { BoxProps } from "../Box";
 import { SLIDER } from "../../types/enums";
+import { BoxProps } from "../Box";
 export type SliderProps = BoxProps & {
     type?: SLIDER;
     value?: number;

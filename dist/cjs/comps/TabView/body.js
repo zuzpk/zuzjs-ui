@@ -21,4 +21,5 @@ const TabBody = ({ size, index, active, render, content }) => {
             ...style
         }, className: `--content`, children: (render || active) && content });
 };
+TabBody.displayName = `TabBody`;
 export default TabBody;

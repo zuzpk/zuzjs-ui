@@ -1,10 +1,10 @@
 "use client";
 import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef } from "react";
-import Box from "../Box";
-import { Size, SPINNER } from "../../types/enums";
-import { useBase } from "../../hooks";
 import { hexToRgba } from "../../funs";
+import { useBase } from "../../hooks";
+import { Size, SPINNER } from "../../types/enums";
+import Box from "../Box";
 const Spinner = forwardRef((props, ref) => {
     const { type, size, width, speed, color, background, foreground, ...pops } = props;
     const defaultColor = `#000000`;
@@ -39,13 +39,10 @@ const Spinner = forwardRef((props, ref) => {
         switch (type || SPINNER.Simple) {
             case SPINNER.Simple:
                 return null;
-                break;
             case SPINNER.Wave:
                 return _jsxs(_Fragment, { children: [_jsx(Box, { as: `--dot --dot-1` }), _jsx(Box, { as: `--dot --dot-2` }), _jsx(Box, { as: `--dot --dot-3` })] });
-                break;
             case SPINNER.Roller:
                 return null;
-                break;
         }
     };
     return _jsx(Box, { className: `${className} --spinner --${(type || SPINNER.Simple).toLowerCase()} --${size || Size.Default}`.trim(), style: {
@@ -53,4 +50,5 @@ const Spinner = forwardRef((props, ref) => {
             ...build()
         }, ...rest, children: child() });
 });
+Spinner.displayName = `Spinner`;
 export default Spinner;

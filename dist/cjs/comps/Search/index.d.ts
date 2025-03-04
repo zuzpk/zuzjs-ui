@@ -1,5 +1,5 @@
-import { InputProps } from '../Input';
 import { Size } from '../../types/enums';
+import { InputProps } from '../Input';
 export type SearchProps = InputProps & {
     onSubmit?: (value: string) => void;
     onChange?: (value: string) => void;

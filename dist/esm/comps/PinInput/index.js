@@ -2,8 +2,8 @@
 import { jsx as _jsx } from "react/jsx-runtime";
 import { forwardRef, useEffect, useRef } from 'react';
 import { useBase } from '../../hooks';
-import Input from '../Input';
 import Box from '../Box';
+import Input from '../Input';
 const PinInput = forwardRef((props, ref) => {
     const { size, length, mask, ...pops } = props;
     const inputs = useRef([]);
@@ -39,4 +39,5 @@ const PinInput = forwardRef((props, ref) => {
                 inputs.current[i] = el;
             }, numeric: true, onChange: handleInput, maxLength: 1, placeholder: `0`, type: mask ? `password` : 'text', ...pops }, `pin-${i}`)) });
 });
+PinInput.displayName = `PinInput`;
 export default PinInput;

@@ -73,7 +73,7 @@ const TRow = (props) => {
             };
         }
     }, []);
-    return _jsxs(Box, { onContextMenu: e => onContextMenu ? onContextMenu(e, data) : null, "data-index": index, ...(animate ? { animate: { ..._animation, when: mounted } } : {}), as: `--row flex aic ${index == -1 ? `--row-head` : ``} ${rowClassName || ``}`, children: [index == -1 && schema.map((c, i) => {
+    return _jsxs(Box, { onContextMenu: e => onContextMenu ? onContextMenu(e, data) : null, ...(animate ? { animate: { ..._animation, when: mounted } } : {}), as: `--row flex aic ${index == -1 ? `--row-head` : ``} ${rowClassName || ``}`, children: [index == -1 && schema.map((c, i) => {
                 const { renderWhenHeader, render, value, ...cc } = c;
                 return _jsxs(Fragment, { children: [selectable && i == 0 && Selector(-1, `--selector-${c.id}`, `all`), _jsx(TColumn, { idx: -1, onSort: onSort, sortBy: sortBy, 
                             // value={renderWhenHeader && render ? render!(index == -1 ? c as dynamicObject : data as T, index) : value as string} 
@@ -82,4 +82,5 @@ const TRow = (props) => {
                 return _jsxs(Fragment, { children: [selectable && i == 0 && Selector(i, `--selector-${c.id}`, c.id.toString()), ids.includes(String(c.id)) ? _jsx(TColumn, { pubsub: pubsub, idx: i, id: String(c.id), style: styles[String(c.id)], value: c.render ? c.render(data, index) : data[String(c.id).includes(`.`) ? String(c.id).split(`.`).reverse()[0] : c.id] }) : null] }, `--${String(c.id)}-val-${i}`);
             })] });
 };
+TRow.displayName = `Row`;
 export default TRow;

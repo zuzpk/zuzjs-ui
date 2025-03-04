@@ -1,14 +1,12 @@
 "use client"
 import { forwardRef, useEffect, useRef, useState } from 'react';
-import { Props } from '../../types';
 import { useBase } from '../../hooks';
-import Icon, { IconProps } from '../Icon';
-import Span, { SpanProps } from '../Span';
-import Input, { InputProps } from '../Input';
-import Box, { BoxProps } from '../Box';
-import Button from '../Button';
-import SVGIcons from '../svgicons';
+import { Props } from '../../types';
 import { Size } from '../../types/enums';
+import Box from '../Box';
+import Button from '../Button';
+import Input, { InputProps } from '../Input';
+import SVGIcons from '../svgicons';
 
 export type SearchProps = InputProps & {
     onSubmit?: (value: string) => void,
@@ -66,5 +64,7 @@ const Search = forwardRef<HTMLInputElement, SearchProps>((props, ref) => {
     </Box>
         
 })
+
+Search.displayName = `Search`
 
 export default Search

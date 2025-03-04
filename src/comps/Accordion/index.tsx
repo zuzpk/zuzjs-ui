@@ -1,10 +1,10 @@
 "use client"
 import { forwardRef, useState } from "react";
-import { AccordionHandler, AccordionProps } from "./types";
 import Box from "../Box";
+import Button from "../Button";
 import Text from "../Text";
 import SVGIcons from "../svgicons";
-import Button from "../Button";
+import { AccordionHandler, AccordionProps } from "./types";
 
 const Accordion = forwardRef<AccordionHandler, AccordionProps>((props, ref) => {
     
@@ -23,5 +23,7 @@ const Accordion = forwardRef<AccordionHandler, AccordionProps>((props, ref) => {
 
 
 })
+
+Accordion.displayName = `Accordion`
 
 export default Accordion

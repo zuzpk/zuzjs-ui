@@ -2,11 +2,11 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import { useBase } from '../../hooks';
-import Input from '../Input';
+import { Size } from '../../types/enums';
 import Box from '../Box';
 import Button from '../Button';
+import Input from '../Input';
 import SVGIcons from '../svgicons';
-import { Size } from '../../types/enums';
 const Search = forwardRef((props, ref) => {
     const { animate, withStyle, onChange, ...pops } = props;
     const { style } = useBase(pops);
@@ -34,4 +34,5 @@ const Search = forwardRef((props, ref) => {
     useEffect(() => { }, []);
     return _jsxs(Box, { style: style, className: `--search --${props.size || Size.Small} flex aic rel ${searchStyle}`.trim(), children: [_jsx(Input, { ref: innerRef, onChange: handleChange, className: `--${props.size || Size.Small}`, ...pops }), _jsx(Button, { tabIndex: -1, onClick: e => handleSubmit(), className: `--send flex aic jcc abs`, size: props.size || Size.Small, children: query !== `` ? SVGIcons.close : SVGIcons.search })] });
 });
+Search.displayName = `Search`;
 export default Search;

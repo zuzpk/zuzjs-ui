@@ -1,12 +1,14 @@
 "use client"
-import { forwardRef, useEffect, useMemo, useState } from "react";
-import { SegmentProps } from "../Segmented/types";
-import Segmented from "../Segmented";
-import SVGIcons from "../svgicons";
+import { forwardRef, useMemo } from "react";
+import { useDelayed } from "../..";
 import { ColorScheme, useColorScheme } from "../../hooks/useColorScheme";
+import Segmented from "../Segmented";
+import { SegmentProps } from "../Segmented/types";
+import SVGIcons from "../svgicons";
 
 const ColorScheme = forwardRef<HTMLDivElement, Omit<SegmentProps, `items`>>((props, ref) => {
 
+    const mounted = useDelayed()
     const { colorScheme, setColorScheme } = useColorScheme()
     const items = useMemo(() => [
         { tag: `light`, index: 0, label: "", icon: SVGIcons.colorSchemeLight },
@@ -16,7 +18,9 @@ const ColorScheme = forwardRef<HTMLDivElement, Omit<SegmentProps, `items`>>((pro
     
     const selected = useMemo(() => [`light`,`system`,`dark`].indexOf(colorScheme), [colorScheme])
     
-    return selected == -1 ? null : <Segmented 
+    if ( !mounted || selected == -1 ) return null;
+
+    return <Segmented 
         className={`--color-scheme`}
         onSwitch={({ tag }) => {
             setColorScheme(tag! as ColorScheme)
@@ -27,5 +31,7 @@ const ColorScheme = forwardRef<HTMLDivElement, Omit<SegmentProps, `items`>>((pro
     />
 
 })
+
+ColorScheme.displayName = `ColorScheme`
 
 export default ColorScheme
