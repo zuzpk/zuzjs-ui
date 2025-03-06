@@ -1,3 +1,4 @@
+'use client';
 import { useState, useEffect } from 'react';
 const useNetworkStatus = () => {
     const [isOnline, setIsOnline] = useState(null);

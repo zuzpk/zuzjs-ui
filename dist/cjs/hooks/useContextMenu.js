@@ -1,3 +1,4 @@
+'use client';
 import { useEffect } from "react";
 const useContextMenu = (menu) => {
     const show = (e, items) => {

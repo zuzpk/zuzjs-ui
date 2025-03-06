@@ -1,3 +1,4 @@
+'use client';
 import { useRef, useCallback } from "react";
 const useDebounce = (func, delay) => {
     const timeoutRef = useRef(null);

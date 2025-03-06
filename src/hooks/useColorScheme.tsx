@@ -1,4 +1,4 @@
-"use client"
+'use client'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import { ColorTheme } from "../types/enums";
 

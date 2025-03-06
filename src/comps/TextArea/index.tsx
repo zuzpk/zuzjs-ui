@@ -1,4 +1,3 @@
-"use client"
 import { forwardRef } from 'react';
 import { useBase } from '../../hooks';
 import { Props } from '../../types';
@@ -19,14 +18,14 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => 
         rest
     } = useBase<"textarea">(pops)
 
-    const handleInput = (event: React.FormEvent<HTMLTextAreaElement>) => {
+    // const handleInput = (event: React.FormEvent<HTMLTextAreaElement>) => {
         
-    }
+    // }
 
     return <textarea
         className={`--input --textarea --${variant || Variant.Small} flex ${className}`.trim()}
         style={style}
-        onInput={handleInput}
+        // onInput={handleInput}
         ref={ref}
         {...rest} />
         

@@ -1,3 +1,4 @@
+'use client'
 import { MouseEvent, Ref, RefObject, useEffect } from "react";
 import { ContextItem, ContextMenuHandler } from "../comps";
 

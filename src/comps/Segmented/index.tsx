@@ -1,3 +1,4 @@
+'use client'
 import { forwardRef, useEffect, useRef, useState } from "react";
 import { useBase } from "../../hooks";
 import { Size } from "../../types/enums";

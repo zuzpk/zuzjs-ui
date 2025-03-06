@@ -7,6 +7,7 @@ import Box from "../Box";
 import Overlay from "../Overlay";
 const Drawer = forwardRef((props, ref) => {
     const { as, from, speed, children, prerender, onClose, ...pops } = props;
+    console.log(`my as`, as);
     const [render, setRender] = useState(undefined == prerender ? true : prerender);
     const [visible, setVisible] = useState(false);
     const divRef = useRef(null);

@@ -1,3 +1,4 @@
+'use client';
 import { useState, useEffect } from 'react';
 const useIntersectionObserver = (refs, options = {}) => {
     const [intersectionRatio, setIntersectionRatio] = useState(refs && refs.length > 0 ? new Array(refs.length).fill(0) : []);

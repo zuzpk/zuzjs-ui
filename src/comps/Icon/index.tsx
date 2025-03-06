@@ -1,4 +1,3 @@
-"use client"
 import { forwardRef, ReactNode } from "react"
 import { useBase } from "../../hooks"
 import { Size } from "../../types/enums"

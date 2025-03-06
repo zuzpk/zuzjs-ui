@@ -1,7 +1,7 @@
 import { cleanProps, css } from "../funs";
 import { buildWithStyles, getAnimationCurve, getAnimationTransition } from "../funs/css";
 import { cssFilterKeys, cssTransformKeys, cssWithKeys } from "../funs/stylesheet";
-import useDrag from "./useDrag";
+let useDrag = null;
 const buildSkeletonStyle = (s) => {
     const makeValue = (v, unit = `px`) => {
         return v ?
@@ -67,19 +67,42 @@ const useBase = (props) => {
         });
         _transition.transition = _transitionList.join(`, `);
     }
-    // console.log(_style, _transition)
-    const drag = useDrag(dragOptions);
+    // // console.log(_style, _transition)
+    const is = typeof window !== "undefined";
     let dragProps = {};
     let dragStyle = {};
-    if (draggable) {
-        dragProps = {
-            onMouseDown: drag.onMouseDown,
-        };
-        dragStyle = {
-            transform: `translate(${drag.position.x}px, ${drag.position.y}px)`,
-        };
+    if (draggable && is) {
+        if (!useDrag) {
+            import("./useDrag")
+                .then(module => {
+                useDrag = module.default;
+            })
+                .catch(err => {
+                console.error("Error loading useDrag:", err);
+            });
+        }
+        if (useDrag) {
+            const drag = useDrag(dragOptions);
+            dragProps = {
+                onMouseDown: drag.onMouseDown,
+            };
+            dragStyle = {
+                transform: `translate(${drag.position.x}px, ${drag.position.y}px)`,
+            };
+        }
     }
-    // console.log(`x`, buildWithStyles(_style),)
+    // const drag = useDrag(dragOptions)
+    // let dragProps = {} 
+    // let dragStyle = {}
+    // if ( draggable ){
+    //     dragProps = {
+    //         onMouseDown: drag.onMouseDown,
+    //     }
+    //     dragStyle = {
+    //         transform: `translate(${drag.position.x}px, ${drag.position.y}px)`,
+    //     }
+    // }
+    // // console.log(`x`, buildWithStyles(_style),)
     return {
         style: {
             ...buildWithStyles(_style),

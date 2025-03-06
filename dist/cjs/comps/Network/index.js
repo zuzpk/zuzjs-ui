@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { forwardRef, useEffect } from "react";
+import { forwardRef } from "react";
 import { useNetworkStatus } from "../../hooks";
 import { ALERT, Size, TRANSITION_CURVES } from "../../types/enums";
 import Box from "../Box";
@@ -8,9 +8,7 @@ import Text from "../Text";
 const NetworkManager = forwardRef((props, ref) => {
     const isOnline = useNetworkStatus();
     const { onlineMessage, offlineMessage, size } = props;
-    useEffect(() => {
-    }, []);
-    return _jsxs(Box, { animate: {
+    return _jsxs(Box, { fx: {
             from: { x: `-50%`, y: 200, opacity: 0 },
             to: { x: `-50%`, y: 0, opacity: 1 },
             when: isOnline == false,
