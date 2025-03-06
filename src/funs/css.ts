@@ -1,11 +1,11 @@
-import { __SALT, FIELNAME_KEY, isColor, isHexColor, isNumber, LINE_KEY, setDeep } from "./index.js"
-import { cssShortKey, dynamicObject } from "../types"
-import { cssAnimationCurves, cssDirect, cssFilterKeys, cssProps, cssPropsWithColor, cssTransformKeys, cssWithKeys } from "./stylesheet.js"
+import { OptionValues } from "commander"
 import Hashids from "hashids"
-import { TRANSITION_CURVES, TRANSITIONS } from "../types/enums.js"
 import md5 from "md5"
 import pc from "picocolors"
-import { OptionValues } from "commander"
+import { cssShortKey, dynamicObject } from "../types"
+import { TRANSITION_CURVES, TRANSITIONS } from "../types/enums.js"
+import { __SALT, FIELNAME_KEY, isColor, isHexColor, isNumber, LINE_KEY, setDeep } from "./index.js"
+import { cssAnimationCurves, cssDirect, cssFilterKeys, cssProps, cssPropsWithColor, cssTransformKeys, cssWithKeys } from "./stylesheet.js"
 
 class CSS {
 
@@ -1199,41 +1199,42 @@ export const getAnimationCurve = ( curve?: string | TRANSITION_CURVES ): string 
     switch(curve.toUpperCase()){
         case TRANSITION_CURVES.Bounce:
             return `var(--bounce)`
-            // return `linear( 0, 0.0039, 0.0157, 0.0352, 0.0625 9.09%,
-            //     0.1407, 0.25, 0.3908, 0.5625, 0.7654,
-            //     1, 0.8907, 0.8125 45.45%, 0.7852, 0.7657,
-            //     0.7539, 0.75, 0.7539, 0.7657, 0.7852,
-            //     0.8125 63.64%, 0.8905, 1 72.73%, 0.9727, 0.9532,
-            //     0.9414, 0.9375, 0.9414, 0.9531, 0.9726,
-            //     1, 0.9883, 0.9844, 0.9883, 1 )`
-            break;
         case TRANSITION_CURVES.Spring:
             // return `cubic-bezier(0.2, -0.36, 0, 1.46)`
             return `var(--spring)`
-            break;
         case TRANSITION_CURVES.EaseInOut:
             // return `cubic-bezier(0.42, 0, 0.58, 1)`
             return `ease-in-out`
-            break;
         default:
             return `linear`
     }
 
 }
 
-export const animationTransition = (transition: TRANSITIONS) => {
+export const animationTransition = (transition: TRANSITIONS, offset = 0, dialog = false) => {
     let _from = {}
     let _to = {}
     switch(transition){
         case TRANSITIONS.SlideInLeft:
         case TRANSITIONS.SlideInRight:
-            _from = { x: transition == TRANSITIONS.SlideInLeft ? -20 : 20, opacity: 0 }
-            _to = { x: 0, opacity: 1 }
+            _from = { x: transition == TRANSITIONS.SlideInLeft ? 
+                    dialog ? `-${50 + (offset || 10)}%` : -20 : 
+                    dialog ? `-${50 - (offset || 10)}%` : 20, 
+                    y: dialog ? `-50%` : 0,
+                    opacity: 0 }
+            _to = { x: dialog ? `-50%` : 0, y: dialog ? `-50%` : 0, opacity: 1 }
             break;
         case TRANSITIONS.SlideInTop:
         case TRANSITIONS.SlideInBottom:
-            _from = { y: transition == TRANSITIONS.SlideInTop ? -20 : 20, opacity: 0 }
-            _to = { y: 0, opacity: 1 }
+            _from = { 
+                y: transition == TRANSITIONS.SlideInTop ? 
+                    //Top
+                    dialog ? `-${50 + (offset || 10)}%` : -20 
+                    //Bottom 
+                    : dialog ? `-${50 - (offset || 10)}%` : 20, 
+                x: dialog ? `-50%` : 0,
+                    opacity: 0 }
+            _to = { y: dialog ? `-50%` : 0, x: dialog ? `-50%` : 0, opacity: 1 }
             break;            
         case TRANSITIONS.ScaleIn:
             _from = { scale: 0, opacity: 0 }

@@ -18,12 +18,12 @@
 
     --tab-radius: 0px;
     --tab-padding: 10px 20px;
-    --tab-border: 1px #ddd solid;
-    --tab-border-top: var(--tab-border);
-    --tab-border-right: var(--tab-border);
-    --tab-border-bottom: var(--tab-border);
-    --tab-border-left: var(--tab-border);
-    // --tab-body: #fff;
+    --tab-border-width: 1px;
+    --tab-border-style: solid;
+    --tab-border-color: #ddd;
+
+    --tab-label-color: #999;
+    --tab-label-active-color: #111;
     // --tab-body-radius: 0px 5px 5px 5px;
     // --tab-body-padding: 0px;
 }
@@ -46,9 +46,17 @@
 
         .--segment-item{
             padding: var(--tab-padding) !important;
+
+            color: var(--tab-label-color);
+
             .--segment-label{
                 font-weight: var(--tab-label-weight) !important;
             }
+
+            &.--segment-active{
+                color: var(--tab-label-active-color);
+            }
+
         }
 
         .--segment-tab{
@@ -101,7 +109,9 @@
     //     }
     // }
     .--tabview-body{
-        border: var(--tab-border);
+        border-width: var(--tab-border-width) var(--tab-border-width) var(--tab-border-width) var(--tab-border-width);
+        border-style: var(--tab-border-style);
+        border-color: var(--tab-border-color);
         overflow: hidden;
         border-radius: var(--tab-body-radius);
         .--track{
@@ -114,4 +124,11 @@
             align-self: baseline;
         }
     }
+}
+
+[color-scheme="dark"]{
+    
+    --tab-label-color: #bcbcbc;
+    --tab-label-active-color: #fff;
+
 }

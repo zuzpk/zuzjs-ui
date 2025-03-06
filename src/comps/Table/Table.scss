@@ -21,6 +21,14 @@
     --table-border: 1px #eee solid;
     --table-head-radius: var(--table-radius) var(--table-radius) 0px 0px;
     --table-footer-radius: 0px 0px var(--table-radius) var(--table-radius);
+    --table-spinner-top: 100px;
+    --table-spinner-bg: rgba(255, 255, 255, 0.5);
+    --table-spinner-radius: 10px;
+    --table-spinner-padding: 10px;
+    --table-spinner-gap: 6px;
+    --table-spinner-border: 1px #eaeaea solid;
+    --table-spinner-shadow: 0px 0px 4px transparent;
+    --table-loading-message-size: 15px;
 }
 
 [color-scheme="dark"]{
@@ -33,6 +41,7 @@
     background: var(--table);
     gap: var(--table-row-gap);
     flex: 1;
+
     &.--hoverable{
         .--row{
             &:not(.--row-head):not(.--row-footer){
@@ -91,5 +100,19 @@
             }
         }
 
+    }
+
+    .--table-spinner{
+        top: var(--table-spinner-top);
+        background: var(--table-spinner-bg);
+        border-radius: var(--table-spinner-radius);
+        padding: var(--table-spinner-padding);
+        gap: var(--table-spinner-gap);
+        border: var(--table-spinner-border);
+        box-shadow: var(--table-spinner-shadow);
+        z-index: 3;
+    }
+    .--table-loading-message{
+        font-size: var(--table-loading-message-size);
     }
 }

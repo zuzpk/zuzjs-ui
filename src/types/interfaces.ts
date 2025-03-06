@@ -12,6 +12,9 @@ export interface animationProps {
      */
     transition?: TRANSITIONS;
 
+    /** This will be removed / added to default calculations for x, y */
+    offset?: number,
+
     /** Starting style properties for the animation */
     from?: dynamicObject;
 

@@ -1,6 +1,9 @@
 @use "../../scss/mixins.scss" as *;
 
 :root{
+    --treenode-root-label-icon-size: var(--treenode-label-icon-size);
+    --treenode-root-label-font-weight: normal;
+    --treenode-root-margin: 10px;
     --treeview-gap: 6px;
     --treenode-gap: 2px;
     --treenode-arrow-btn-size: 20px;
@@ -15,8 +18,6 @@
     --treenode-label-selected-color: #111;
     --treenode-label-icon-color: #111;
     --treenode-label-icon-size: 15px;
-    --treenode-root-label-icon-size: var(--treenode-label-icon-size);
-    --treenode-root-label-font-weight: normal;
     --treenode-label-color: #111;
     --treenode-label-size: 15px;
     --treenode-label-gap: 6px;
@@ -28,99 +29,112 @@
     gap: var(--treeview-gap);
     width: 100%;
 
-    .--node{
+    .--treenode{
 
-        gap: var(--treenode-gap);
-        
-        &.--node-root{
-            .--node-meta{
-                .--node-icon{
-                    font-size: var(--treenode-root-label-icon-size);
-                }
-            }
-            .--node-label{
-                font-weight: var(--treenode-root-label-font-weight);
-            }
-        }
+        &.--is-root{
 
-        .--node-aro-btn{
-            width: var(--treenode-arrow-btn-size);
-            height: var(--treenode-arrow-btn-size);
-            border: 0px;
-            background: transparent;
-            opacity: var(--treenode-arrow-btn-opacity);
-            @include anim($duration: 0.4s);
-            &:hover{
-                opacity: 1;
+            &:not(:first-child){
+                margin-top: var(--treenode-root-margin);
             }
-            &:disabled{
-                filter: grayscale(1);
-                opacity: 0;
-            }
-            .--node-aro-icon{
-                font-size: var(--treenode-arrow-icon-size);
-                &:not(.--skeleton){
-                    color: var(--treenode-arrow-icon-color);
-                    svg{
-                        fill: var(--treenode-arrow-icon-color);
+
+            .--node{
+
+                .--node-meta{
+                    .--node-icon.--icon-root{
+                        font-size: var(--treenode-root-label-icon-size);
                     }
                 }
-            }
-            svg{
-                fill: var(--treenode-arrow-icon-color);
+                .--node-label{
+                    font-weight: var(--treenode-root-label-font-weight);
+                }
+
             }
         }
 
-        .--node-meta{
-            background: transparent;
-            gap: var(--treenode-label-gap);
-            border: 0px;
+        .--node{
+
+            gap: var(--treenode-gap);
             
-            .--node-icon{
-                font-size: var(--treenode-label-icon-size);
-                min-width: var(--treenode-label-icon-size) !important;
-                &:not(.--skeleton){
-                    color: var(--treenode-label-icon-color);
+            .--node-aro-btn{
+                width: var(--treenode-arrow-btn-size);
+                height: var(--treenode-arrow-btn-size);
+                border: 0px;
+                background: transparent;
+                opacity: var(--treenode-arrow-btn-opacity);
+                @include anim($duration: 0.4s);
+                &:hover{
+                    opacity: 1;
                 }
-            }
-
-            .--node-label{
-                font-size: var(--treenode-label-size);
-                padding: var(--treenode-label-padding);
-                border-radius: var(--treenode-label-radius);
-                cursor: pointer;
-                &:not(.--skeleton){
-                    background: var(--treenode-label-bg);
-                    color: var(--treenode-label-color);
+                &:disabled{
+                    filter: grayscale(1);
+                    opacity: 0;
                 }
-            }
-
-            &:hover{
-                .--node-label{
-                    background: var(--treenode-label-hover);
-                }
-            }
-
-        }
-
-        &.--selected{
-            .--node-meta{
-                .--node-label{
+                .--node-aro-icon{
+                    font-size: var(--treenode-arrow-icon-size);
                     &:not(.--skeleton){
-                        background: var(--treenode-label-selected-bg);
-                        color: var(--treenode-label-selected-color);
+                        color: var(--treenode-arrow-icon-color);
+                        svg{
+                            fill: var(--treenode-arrow-icon-color);
+                        }
+                    }
+                }
+                svg{
+                    fill: var(--treenode-arrow-icon-color);
+                }
+            }
+
+            .--node-meta{
+                background: transparent;
+                gap: var(--treenode-label-gap);
+                border: 0px;
+                
+                .--node-icon{
+                    font-size: var(--treenode-label-icon-size);
+                    min-width: var(--treenode-label-icon-size) !important;
+                    &:not(.--skeleton){
+                        color: var(--treenode-label-icon-color);
+                    }
+                }
+
+                .--node-label{
+                    font-size: var(--treenode-label-size);
+                    padding: var(--treenode-label-padding);
+                    border-radius: var(--treenode-label-radius);
+                    cursor: pointer;
+                    &:not(.--skeleton){
+                        background: var(--treenode-label-bg);
+                        color: var(--treenode-label-color);
+                    }
+                }
+
+                &:hover{
+                    .--node-label{
+                        background: var(--treenode-label-hover);
+                    }
+                }
+
+            }
+
+            &.--selected{
+                .--node-meta{
+                    .--node-label{
+                        &:not(.--skeleton){
+                            background: var(--treenode-label-selected-bg);
+                            color: var(--treenode-label-selected-color);
+                        }
                     }
                 }
             }
+
+            
+
         }
 
-        
+        .--sub-node{
+            margin-top: var(--treeview-gap);
+            gap: var(--treeview-gap);
+            padding-left: var(--treenode-sub-margin);
+        }
 
-    }
-
-    .--sub-node{
-        margin-top: var(--treeview-gap);
-        gap: var(--treeview-gap);
-        padding-left: var(--treenode-sub-margin);
     }
 }

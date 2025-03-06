@@ -1,0 +1,88 @@
+:root{
+    --scrollbar-track-size: 8px;
+    --scrollbar-track: rgba(0, 0, 0, 0);
+    --scrollbar-track-hover: rgba(0, 0, 0, 0.1);
+    --scrollbar-thumb: rgba(0, 0, 0, 0);
+    --scrollbar-thumb-hover: rgba(0, 0, 0, 0.5);
+}
+.--scrollview{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    .--scroll-content{
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        padding-right: 10px;
+        -webkit-overflow-scrolling: touch; 
+
+    }
+    
+    &.--scrolling{
+        .--scroll-track{
+            background: var(--scrollbar-track-hover) !important;
+            .--scroll-thumb{
+                background: var(--scrollbar-thumb-hover) !important;
+            }
+        }
+    }
+
+    &.--no-need{
+        .--scroll-thumb{
+            pointer-events: none;
+        }
+    }
+
+    &:not(.--no-need){
+
+        &:hover{
+            .--scroll-track{
+                .--scroll-thumb{
+                    background: var(--scrollbar-thumb-hover);
+                }
+            }
+        }
+
+        .--scroll-track{
+            &:hover{
+                background: var(--scrollbar-track-hover);
+            }
+            .--scroll-thumb{
+                cursor: pointer;
+            }
+        }
+    }
+
+    .--scroll-track{
+
+        right: 0;
+        top: 0;
+        width: var(--scrollbar-track-size);
+        height: 100%;
+        background: var(--scrollbar-track);
+        border-radius: 5px;
+        transition: background 0.2s;
+
+        
+
+        .--scroll-thumb{
+            
+            width: var(--scrollbar-track-size);
+            background: var(--scrollbar-thumb);
+            border-radius: 4px;
+            position: absolute;
+            top: 0;
+            transition: background 0.2s;
+
+            &:hover{
+                opacity: 1;
+            }
+            
+            &:active{
+                cursor: grabbing;
+            }
+
+        }
+
+    }
+}

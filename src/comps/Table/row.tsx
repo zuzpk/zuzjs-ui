@@ -1,18 +1,19 @@
 import { Fragment, useEffect, useMemo, useRef } from "react"
-import { dynamicObject } from "../.."
 import { useDelayed } from "../../hooks"
+import { dynamicObject } from "../../types"
 import { CHECKBOX, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums"
 import { animationProps } from "../../types/interfaces"
 import Box from "../Box"
 import CheckBox from "../CheckBox"
 import { CheckboxHandler } from "../CheckBox/types"
+import Text from "../Text"
 import TColumn from "./col"
 import type { Column, Row } from "./types"
 
 const TRow = <T, >(props: Row<T>) => {
 
     const { 
-        index, pubsub, schema, data, ids, styles, animate, sortBy, selectable, tableRef, rowClassName, 
+        index, pubsub, schema, data, ids, styles, animate, sortBy, selectable, tableRef, loading, rowClassName, 
         onSort, onSelect, onContextMenu } = props
     const mounted = useDelayed()
     const _animation = useMemo(() => ({
@@ -95,7 +96,6 @@ const TRow = <T, >(props: Row<T>) => {
 
     return <Box 
         onContextMenu={e => onContextMenu ? onContextMenu(e, data!) : null}
-        // data-index={index}
         {...( animate ? { animate: { ..._animation, when: mounted } } : {} )}
         as={`--row flex aic ${index == -1 ? `--row-head` : ``} ${rowClassName || ``}`}>
         
@@ -117,7 +117,8 @@ const TRow = <T, >(props: Row<T>) => {
         })}        
 
         {/* Data */}
-        {index > -1 && ids && data && schema.map((c: Column<T>, i: number) => {
+        {loading && index > -1 && <Box as={`--col`}><Text as={`opacity:0`}>...</Text></Box>}
+        {!loading && index > -1 && ids && data && schema.map((c: Column<T>, i: number) => {
             return <Fragment key={`--${String(c.id)}-val-${i}`}>
                 {selectable && i == 0 && Selector(i, `--selector-${c.id}`, c.id.toString())}
                 {ids.includes(String(c.id)) ? <TColumn 

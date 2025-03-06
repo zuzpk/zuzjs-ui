@@ -207,11 +207,14 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
 
             if ( transition ){
 
-                const { from, to } = animationTransition(transition)
+                const { from, to } = animationTransition(transition, 20, true)
 
                 return{
-                    from: { ...from, x: `-50%`, y: `-50%` },
-                    to: { ...to, x: `-50%`, y: `-50%` },
+                    // from: { ...from, x: `-50%`, y: `-50%` },
+                    // to: { ...to, x: `-50%`, y: `-50%` },
+                    // from: { ...from, x: `-50%` },
+                    // to: { ...to, x: `-50%` },
+                    from, to,
                     curve: curve || TRANSITION_CURVES.EaseInOut,
                     ...base
                 }    
@@ -253,7 +256,7 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
             <Box
                 className={`--sheet --sheet-${sheetType.toLowerCase()} ${className} fixed`.trim()}
                 style={style}
-                animate={buildAnimation as animationProps}
+                fx={buildAnimation as animationProps}
                 {...rest as BoxProps}
                 ref={innerRef}>
 

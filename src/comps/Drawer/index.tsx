@@ -1,6 +1,6 @@
 "use client"
 import { forwardRef, ReactNode, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { bindKey } from "../../funs";
+import { useShortcuts } from "../../hooks";
 import { DRAWER_SIDE, KeyCode, TRANSITION_CURVES } from "../../types/enums";
 import Box, { BoxProps } from "../Box";
 import Overlay from "../Overlay";
@@ -15,21 +15,18 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
     const divRef = useRef<HTMLDivElement>(null);
     const [ content, setContent ] = useState(children)
 
+    useShortcuts([
+        { keys: [KeyCode.Escape], callback: () => {
+            if(visible){
+                onClose?.();
+                setVisible(false);
+            }
+        }}
+    ])
+
     useEffect(() => {
         setContent(children);
     }, [children]);
-
-    useEffect(() => {
-        bindKey(
-            KeyCode.Escape,
-            () => {
-                if(visible){
-                    onClose?.();
-                    setVisible(false);
-                }
-            }
-        )
-    }, [])
 
     const style = useMemo(() => {
         switch (from){

@@ -9,9 +9,10 @@ import { TreeItemHandler, TreeItemProps } from "./types";
 
 const TreeItem = forwardRef<TreeItemHandler, TreeItemProps>((props, ref) => {
 
-    const { as, meta, nodes, icons, onSelect, treeTag, selected, isRoot, expanded, ...rest } = props
+    const { as, meta, nodes, icons, onSelect, treeTag, selected, roots, expanded, ...rest } = props
     const { tag, label, icon, under, isHead } = meta
     
+    const isRoot = useMemo(() => roots.includes(tag), [roots])
     const [isOpen, setIsOpen] = useState( expanded );
     
     const toggle = () => {
@@ -30,10 +31,10 @@ const TreeItem = forwardRef<TreeItemHandler, TreeItemProps>((props, ref) => {
 
     const _nodes = useMemo(() => nodes.filter(x => x.under == tag), [nodes, tag])
 
-    return <Box className={`--treenode --treenode-${tag} flex cols`}>
+    return <Box className={`--treenode ${isRoot ? `--is-root` : ``} --treenode-${tag} flex cols`}>
 
         <Box 
-            className={`--node --node-${tag} flex aic ${isRoot ? `--node-root` : ``} ${selected == tag ? ` --selected` : ``}`}>
+            className={`--node --node-${tag} flex aic ${selected == tag ? ` --selected` : ``}`}>
             <Button
                 skeleton={rest.skeleton}
                 onClick={toggle}
@@ -52,7 +53,7 @@ const TreeItem = forwardRef<TreeItemHandler, TreeItemProps>((props, ref) => {
                     ( (icons?.nodeOpen && icons?.nodeClose) || (isRoot && icons?.rootOpen && icons?.rootClose) ) && 
                     <Icon 
                         skeleton={rest.skeleton}
-                        className={`--node-icon`}
+                        className={`--node-icon ${isRoot ? `--icon-root` : ``}`}
                         name={
                             icon || ( isOpen ? 
                                     isRoot ? icons?.rootOpen || icons.nodeOpen : icons.nodeOpen 
@@ -70,7 +71,7 @@ const TreeItem = forwardRef<TreeItemHandler, TreeItemProps>((props, ref) => {
                 selected={selected} 
                 onSelect={onSelect}
                 icons={icons}
-                isRoot={false}
+                roots={roots}
                 expanded={node.expanded || false}
                 meta={node}
                 nodes={nodes}

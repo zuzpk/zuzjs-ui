@@ -7,7 +7,7 @@ import Button from "../Button";
 import SVGIcons from "../svgicons";
 import { PaginationPage, PaginationPageItem, PaginationProps, PaginationStyle } from "./types";
 
-const Pagination = forwardRef<HTMLDivElement, PaginationProps>((props, _ref) => {
+const Pagination = forwardRef<HTMLDivElement, PaginationProps>((props, ref) => {
 
     const { 
         itemCount, 
@@ -83,7 +83,7 @@ const Pagination = forwardRef<HTMLDivElement, PaginationProps>((props, _ref) => 
 
     if ( pages.length <= 1 && ( ( renderOnZeroPageCount == undefined ? false : renderOnZeroPageCount ) === false ) ) return null
     
-    return <Box as={`--pagination --pgt-${paginationStyle || PaginationStyle.Table} flex aic w:100% jcc ${className}`}>
+    return <Box ref={ref} as={`--pagination --pgt-${paginationStyle || PaginationStyle.Table} flex aic w:100% jcc ${className}`}>
         <Box as={`flex flex:1 aic --pgt-btns`}>
             {(pages.length > 1 ? pages : [{ id: 1, label: 1 }, { id: -1, label: _breakLabel }] as PaginationPage[]).map((page, index, items) => <Button 
                 key={`--pg-${index}-${(page as PaginationPageItem).id}`}
