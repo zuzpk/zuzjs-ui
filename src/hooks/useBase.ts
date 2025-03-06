@@ -48,6 +48,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>) : {
         as,
         fx,
         animate,
+        transition: autoTransition,
         skeleton,
         className,
         shimmer,
@@ -62,7 +63,10 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>) : {
         cx = css().Build(`string` == typeof as ? as : as.join(` `)).cx;
     }
 
-    const { transition, from, to, when, duration, delay, curve } = fx || animate || {}
+    const { transition, from, to, when, duration, delay, curve } = autoTransition ? {
+        transition: autoTransition,
+        duration: 0.3
+    } : fx || animate || {}
 
     let _style : dynamicObject = {};
     

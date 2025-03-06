@@ -33,8 +33,8 @@ export type TreeItemProps = BoxProps & {
     treeTag: string;
     meta: TreeNode;
     nodes: TreeNode[];
-    isRoot: boolean;
     expanded: boolean;
+    roots: string[];
     onSelect: (tag: string) => void;
     selected?: String;
     icons?: TreeNodeIcons;

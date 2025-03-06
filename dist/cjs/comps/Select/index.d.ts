@@ -1,5 +1,5 @@
 import { Option } from "./types";
-declare const Select: import("react").ForwardRefExoticComponent<import("..").BoxProps & {
+declare const Select: import("react").ForwardRefExoticComponent<Omit<import("..").BoxProps, "onChange"> & {
     required?: import("../..").FORMVALIDATION;
     options: Option[];
     label?: string;

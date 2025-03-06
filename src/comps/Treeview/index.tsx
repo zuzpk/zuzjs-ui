@@ -34,7 +34,7 @@ const TreeView = forwardRef<TreeViewHandler, TreeViewProps>((props, ref) => {
                 onSelect={e => handleSelect(e as string)}
                 icons={icons}
                 meta={node}
-                isRoot={true}
+                roots={roots}
                 expanded={node.expanded || false}
                 skeleton={rest.skeleton}
                 nodes={nodes} />)}

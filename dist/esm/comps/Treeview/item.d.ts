@@ -3,8 +3,8 @@ declare const TreeItem: import("react").ForwardRefExoticComponent<import("..").B
     treeTag: string;
     meta: import("./types").TreeNode;
     nodes: import("./types").TreeNode[];
-    isRoot: boolean;
     expanded: boolean;
+    roots: string[];
     onSelect: (tag: string) => void;
     selected?: String;
     icons?: import("./types").TreeNodeIcons;

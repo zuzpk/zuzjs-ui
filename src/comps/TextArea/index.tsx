@@ -6,12 +6,13 @@ import { Variant } from '../../types/enums';
 
 export type TextAreaProps = Props<`textarea`> & {
     autoResize?: boolean,
+    resize?: `none` | `block` | `both` | `horizontal` | `vertical`,
     variant?: Variant
 }
 
 const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => {
 
-    const { autoResize, variant, ...pops } = props
+    const { autoResize, variant, resize, ...pops } = props
 
     const {
         style,
@@ -25,7 +26,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => 
 
     return <textarea
         className={`--input --textarea --${variant || Variant.Small} flex ${className}`.trim()}
-        style={style}
+        style={{ ...style, resize: resize || `none` }}
         onInput={handleInput}
         ref={ref}
         {...rest} />

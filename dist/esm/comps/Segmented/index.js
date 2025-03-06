@@ -37,7 +37,7 @@ const Segmented = forwardRef((props, ref) => {
      */
     const handleSelect = (index, width, x, meta, force) => {
         // console.log(selected, _selected, index, mounted)
-        if (force || _selected != index) {
+        if (force || (_selected != index && _selected != -2)) {
             setSelected(index);
             if (onSwitch)
                 onSwitch(meta);

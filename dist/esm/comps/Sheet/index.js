@@ -138,10 +138,13 @@ const Sheet = forwardRef((props, ref) => {
         };
         if (sheetType == SHEET.Dialog) {
             if (transition) {
-                const { from, to } = animationTransition(transition);
+                const { from, to } = animationTransition(transition, 20, true);
                 return {
-                    from: { ...from, x: `-50%`, y: `-50%` },
-                    to: { ...to, x: `-50%`, y: `-50%` },
+                    // from: { ...from, x: `-50%`, y: `-50%` },
+                    // to: { ...to, x: `-50%`, y: `-50%` },
+                    // from: { ...from, x: `-50%` },
+                    // to: { ...to, x: `-50%` },
+                    from, to,
                     curve: curve || TRANSITION_CURVES.EaseInOut,
                     ...base
                 };
@@ -173,7 +176,7 @@ const Sheet = forwardRef((props, ref) => {
         }
     }, [visible]);
     if (sheetType == SHEET.Dialog) {
-        return _jsxs(_Fragment, { children: [_jsx(Overlay, { when: visible }), _jsxs(Box, { className: `--sheet --sheet-${sheetType.toLowerCase()} ${className} fixed`.trim(), style: style, animate: buildAnimation, ...rest, ref: innerRef, children: [_jsx(Cover, { when: loading, spinner: spinner, message: loadingMessage }), _jsxs(Box, { className: `--head flex aic rel`, children: [_jsx(Box, { className: `--${title ? `title` : `dot`} flex aic rel`, children: title || `` }), _jsx(Button, { onClick: (e) => setVisible(false), className: `--closer abs`, children: "\u00D7" })] }), _jsx(Box, { className: `--body flex aic rel ${action ? `` : `--no-action`}`.trim(), children: render ? renderMessage : null }), action && _jsx(Box, { className: `--footer flex aic rel ${actionPosition ? actionPosition == SHEET_ACTION_POSITION.Center ? `jcc` : `` : `jce`}`.trim(), children: action.map((a, i) => _jsx(Button, { onClick: (e) => a.handler ? a.handler() : a.onClick ? a.onClick() : console.log(`onClick Handler missing`), className: `--action`, children: a.label }, `sheet-${sheetID}-action-${a.key}`)) })] })] });
+        return _jsxs(_Fragment, { children: [_jsx(Overlay, { when: visible }), _jsxs(Box, { className: `--sheet --sheet-${sheetType.toLowerCase()} ${className} fixed`.trim(), style: style, fx: buildAnimation, ...rest, ref: innerRef, children: [_jsx(Cover, { when: loading, spinner: spinner, message: loadingMessage }), _jsxs(Box, { className: `--head flex aic rel`, children: [_jsx(Box, { className: `--${title ? `title` : `dot`} flex aic rel`, children: title || `` }), _jsx(Button, { onClick: (e) => setVisible(false), className: `--closer abs`, children: "\u00D7" })] }), _jsx(Box, { className: `--body flex aic rel ${action ? `` : `--no-action`}`.trim(), children: render ? renderMessage : null }), action && _jsx(Box, { className: `--footer flex aic rel ${actionPosition ? actionPosition == SHEET_ACTION_POSITION.Center ? `jcc` : `` : `jce`}`.trim(), children: action.map((a, i) => _jsx(Button, { onClick: (e) => a.handler ? a.handler() : a.onClick ? a.onClick() : console.log(`onClick Handler missing`), className: `--action`, children: a.label }, `sheet-${sheetID}-action-${a.key}`)) })] })] });
     }
     return _jsx(Box, { className: `--sheet --sheet-${sheetType.toLowerCase()} ${className} abs`.trim(), style: style, ...rest, animate: buildAnimation, ref: innerRef, children: visible ? msg : null });
 });

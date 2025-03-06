@@ -1,7 +1,7 @@
 "use client";
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { bindKey } from "../../funs";
+import { useShortcuts } from "../../hooks";
 import { DRAWER_SIDE, KeyCode, TRANSITION_CURVES } from "../../types/enums";
 import Box from "../Box";
 import Overlay from "../Overlay";
@@ -11,17 +11,17 @@ const Drawer = forwardRef((props, ref) => {
     const [visible, setVisible] = useState(false);
     const divRef = useRef(null);
     const [content, setContent] = useState(children);
+    useShortcuts([
+        { keys: [KeyCode.Escape], callback: () => {
+                if (visible) {
+                    onClose?.();
+                    setVisible(false);
+                }
+            } }
+    ]);
     useEffect(() => {
         setContent(children);
     }, [children]);
-    useEffect(() => {
-        bindKey(KeyCode.Escape, () => {
-            if (visible) {
-                onClose?.();
-                setVisible(false);
-            }
-        });
-    }, []);
     const style = useMemo(() => {
         switch (from) {
             case DRAWER_SIDE.Left:

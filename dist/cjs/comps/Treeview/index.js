@@ -19,7 +19,7 @@ const TreeView = forwardRef((props, ref) => {
     }, [_selected]);
     return _jsx(Box, { className: `--treeview flex cols`, children: nodes
             .filter(node => roots.includes(node.tag))
-            .map(node => _jsx(TreeItem, { treeTag: treeViewTag ? `-${treeViewTag}` : ``, selected: selected, onSelect: e => handleSelect(e), icons: icons, meta: node, isRoot: true, expanded: node.expanded || false, skeleton: rest.skeleton, nodes: nodes }, `--node-${node.tag}`)) });
+            .map(node => _jsx(TreeItem, { treeTag: treeViewTag ? `-${treeViewTag}` : ``, selected: selected, onSelect: e => handleSelect(e), icons: icons, meta: node, roots: roots, expanded: node.expanded || false, skeleton: rest.skeleton, nodes: nodes }, `--node-${node.tag}`)) });
 });
 TreeView.displayName = `TreeView`;
 export default TreeView;

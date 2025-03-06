@@ -4,9 +4,10 @@ import { useDelayed } from "../../hooks";
 import { CHECKBOX, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
 import Box from "../Box";
 import CheckBox from "../CheckBox";
+import Text from "../Text";
 import TColumn from "./col";
 const TRow = (props) => {
-    const { index, pubsub, schema, data, ids, styles, animate, sortBy, selectable, tableRef, rowClassName, onSort, onSelect, onContextMenu } = props;
+    const { index, pubsub, schema, data, ids, styles, animate, sortBy, selectable, tableRef, loading, rowClassName, onSort, onSelect, onContextMenu } = props;
     const mounted = useDelayed();
     const _animation = useMemo(() => ({
         transition: TRANSITIONS.SlideInBottom,
@@ -78,7 +79,7 @@ const TRow = (props) => {
                 return _jsxs(Fragment, { children: [selectable && i == 0 && Selector(-1, `--selector-${c.id}`, `all`), _jsx(TColumn, { idx: -1, onSort: onSort, sortBy: sortBy, 
                             // value={renderWhenHeader && render ? render!(index == -1 ? c as dynamicObject : data as T, index) : value as string} 
                             value: value, ...cc, pubsub: pubsub, style: styles[c.id] })] }, `--col-${c.id}`);
-            }), index > -1 && ids && data && schema.map((c, i) => {
+            }), loading && index > -1 && _jsx(Box, { as: `--col`, children: _jsx(Text, { as: `opacity:0`, children: "..." }) }), !loading && index > -1 && ids && data && schema.map((c, i) => {
                 return _jsxs(Fragment, { children: [selectable && i == 0 && Selector(i, `--selector-${c.id}`, c.id.toString()), ids.includes(String(c.id)) ? _jsx(TColumn, { pubsub: pubsub, idx: i, id: String(c.id), style: styles[String(c.id)], value: c.render ? c.render(data, index) : data[String(c.id).includes(`.`) ? String(c.id).split(`.`).reverse()[0] : c.id] }) : null] }, `--${String(c.id)}-val-${i}`);
             })] });
 };

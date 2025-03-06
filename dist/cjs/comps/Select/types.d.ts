@@ -20,7 +20,7 @@ export interface OptionItemProps {
 /**
  * Props for the Select component.
  */
-export type SelectProps = BoxProps & {
+export type SelectProps = Omit<BoxProps, "onChange"> & {
     /**
      * Indicates if the select field is required and its validation type.
      */

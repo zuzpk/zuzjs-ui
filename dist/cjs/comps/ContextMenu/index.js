@@ -5,7 +5,6 @@ import { useAnchorPosition, useBase } from "../../hooks";
 import { TRANSITION_CURVES } from "../../types/enums";
 import Box from "../Box";
 import MenuItem from "./item";
-// import { dynamicObject } from "../../types";
 const ContextMenu = forwardRef((props, ref) => {
     const { as, offsetX, offsetY, parent, items: _items, ...pops } = props;
     const { className, style, rest } = useBase(pops);
@@ -30,7 +29,7 @@ const ContextMenu = forwardRef((props, ref) => {
             ...style,
             top: position.top,
             left: position.left
-        }, animate: {
+        }, fx: {
             from: { opacity: 0, y: 20 },
             to: { opacity: 1, y: 0 },
             curve: TRANSITION_CURVES.EaseInOut,

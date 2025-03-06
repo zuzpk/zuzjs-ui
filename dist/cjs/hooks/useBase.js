@@ -29,12 +29,15 @@ const buildSkeletonStyle = (s) => {
     return style;
 };
 const useBase = (props) => {
-    const { as, fx, animate, skeleton, className, shimmer, propsToRemove, draggable, dragOptions, ...rest } = props || {};
+    const { as, fx, animate, transition: autoTransition, skeleton, className, shimmer, propsToRemove, draggable, dragOptions, ...rest } = props || {};
     let cx = [];
     if (as) {
         cx = css().Build(`string` == typeof as ? as : as.join(` `)).cx;
     }
-    const { transition, from, to, when, duration, delay, curve } = fx || animate || {};
+    const { transition, from, to, when, duration, delay, curve } = autoTransition ? {
+        transition: autoTransition,
+        duration: 0.3
+    } : fx || animate || {};
     let _style = {};
     if (undefined === when) {
         _style = transition ? getAnimationTransition(transition, true) : { ...from, ...to };

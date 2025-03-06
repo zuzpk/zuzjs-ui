@@ -5,7 +5,6 @@ import { TRANSITION_CURVES } from "../../types/enums";
 import Box, { BoxProps } from "../Box";
 import MenuItem from "./item";
 import { ContextItem, ContextMenuHandler, ContextMenuProps, MenuItemProps } from "./types";
-// import { dynamicObject } from "../../types";
 
 const ContextMenu = forwardRef<ContextMenuHandler, ContextMenuProps>((props, ref ) => {
     
@@ -44,7 +43,7 @@ const ContextMenu = forwardRef<ContextMenuHandler, ContextMenuProps>((props, ref
             top: position.top,
             left: position.left
         }}
-        animate={{
+        fx={{
             from: { opacity: 0, y: 20 },
             to: { opacity: 1, y: 0 },
             curve: TRANSITION_CURVES.EaseInOut,

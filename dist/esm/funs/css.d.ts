@@ -1,7 +1,7 @@
-import { dynamicObject } from "../types";
-import Hashids from "hashids";
-import { TRANSITION_CURVES, TRANSITIONS } from "../types/enums.js";
 import { OptionValues } from "commander";
+import Hashids from "hashids";
+import { dynamicObject } from "../types";
+import { TRANSITION_CURVES, TRANSITIONS } from "../types/enums.js";
 declare class CSS {
     cache: dynamicObject;
     PROPS: dynamicObject;
@@ -52,7 +52,7 @@ declare class CSS {
 export default CSS;
 export declare const buildWithStyles: (source: dynamicObject) => dynamicObject;
 export declare const getAnimationCurve: (curve?: string | TRANSITION_CURVES) => string;
-export declare const animationTransition: (transition: TRANSITIONS) => {
+export declare const animationTransition: (transition: TRANSITIONS, offset?: number, dialog?: boolean) => {
     from: {};
     to: {};
 };

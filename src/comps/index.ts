@@ -15,7 +15,7 @@ export * from './AutoComplete/types';
 export { default as Avatar } from './Avatar';
 export * from './Avatar/types';
 
-export { type BoxProps, default as Box } from './Box';
+export { default as Box, type BoxProps } from './Box';
 export { default as Button } from './Button';
 export * from './Button/types';
 
@@ -30,7 +30,7 @@ export * from './ContextMenu/types';
 export { default as CookiesConsent } from './CookiesConsent';
 export * from './CookiesConsent/types';
 
-export { type CoverProps, default as Cover } from './Cover';
+export { default as Cover, type CoverProps } from './Cover';
 
 export { default as Drawer } from './Drawer';
 export * from './Drawer/types';
@@ -44,13 +44,14 @@ export { default as withEditor } from './Editor/withEditor';
 export { default as Fab } from './Fab';
 export * from './Fab/types';
 
-export { type FilterProps, default as Filters } from './Filters';
+export { default as Filters, type FilterProps } from './Filters';
 
-export { type FormProps, default as Form } from './Form';
-export { type IconProps, default as Icon } from './Icon';
-export { type ImageProps, default as Image } from './Image';
-export { type InputProps, default as Input } from './Input';
-export { type LabelProps, default as Label } from './Label';
+export { default as Form } from './Form';
+export * from './Form/types';
+export { default as Icon, type IconProps } from './Icon';
+export { default as Image, type ImageProps } from './Image';
+export { default as Input, type InputProps } from './Input';
+export { default as Label, type LabelProps } from './Label';
 
 export { default as List } from './List';
 export * from './List/types';
@@ -58,9 +59,9 @@ export * from './List/types';
 export { default as NetworkStatus } from './Network';
 export * from './Network/types';
 
-export { type OverlayProps, default as Overlay } from './Overlay';
-export { type PasswordProps, default as Password } from './Password';
-export { type PinInputProps, default as PinInput } from './PinInput';
+export { default as Overlay, type OverlayProps } from './Overlay';
+export { default as Password, type PasswordProps } from './Password';
+export { default as PinInput, type PinInputProps } from './PinInput';
 
 export { default as Pagination } from './Pagination';
 export * from './Pagination/types';
@@ -71,7 +72,10 @@ export * from './ProgressBar/types';
 export { default as Radio } from './Radio';
 export * from './Radio/types';
 
-export { type SearchProps, default as Search } from './Search';
+export { default as ScrollView } from './ScrollView';
+export * from './ScrollView/types';
+
+export { default as Search, type SearchProps } from './Search';
 
 export { default as SelectTabs } from './Segmented';
 export * from './Segmented/types';
@@ -79,14 +83,14 @@ export * from './Segmented/types';
 export { default as Select } from './Select';
 export * from './Select/types';
 
-export { type SheetProps, type SheetHandler, default as Sheet } from './Sheet';
+export { default as Sheet, type SheetHandler, type SheetProps } from './Sheet';
 
 export { default as SideBar } from './Sidebar';
 export * from './Sidebar/types';
 
-export { type SliderProps, default as Slider } from './Slider';
-export { type SpanProps, default as Span } from './Span';
-export { type SpinnerProps, default as Spinner } from './Spinner';
+export { default as Slider, type SliderProps } from './Slider';
+export { default as Span, type SpanProps } from './Span';
+export { default as Spinner, type SpinnerProps } from './Spinner';
 export { default as Switch } from './Switch';
 
 export { default as Table } from './Table';
@@ -95,8 +99,8 @@ export * from './Table/types';
 export { default as TabView } from './TabView';
 export * from './TabView/types';
 
-export { type TextProps, default as Text } from './Text';
-export { type TextAreaProps, default as Textarea } from './TextArea';
+export { default as Text, type TextProps } from './Text';
+export { default as Textarea, type TextAreaProps } from './TextArea';
 
 export { default as TextWheel } from './TextWheel';
 export * from './TextWheel/types';
@@ -107,4 +111,4 @@ export * from './Tooltip/types';
 export { default as TreeView } from './Treeview';
 export * from './Treeview/types';
 
-export { ThemeProvider } from '../hooks/useColorScheme'
+export { ThemeProvider } from '../hooks/useColorScheme';

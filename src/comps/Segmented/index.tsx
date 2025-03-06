@@ -41,7 +41,7 @@ const Segmented = forwardRef<HTMLDivElement, SegmentProps>((props, ref) => {
      */
     const handleSelect = (index: number, width: number, x: number, meta: Segment, force: boolean) => {
         // console.log(selected, _selected, index, mounted)
-        if ( force || _selected != index ){
+        if ( force || ( _selected != index && _selected != -2 ) ){
             setSelected(index)
             if ( onSwitch ) onSwitch(meta)
         }
