@@ -1,10 +1,11 @@
+'use client'
 import { useEffect } from "react";
 import { KeyCode } from "../types/enums";
 
 export type Shortcut = {
     keys: KeyCode[];
     callback: (event: KeyboardEvent) => void;
-};
+}
 
 const useShortcuts  = (
     shortcuts: Shortcut[],

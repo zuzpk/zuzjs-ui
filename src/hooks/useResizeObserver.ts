@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect, useRef, RefObject } from 'react';
-
 interface Size {
     width: number;
     height: number;
