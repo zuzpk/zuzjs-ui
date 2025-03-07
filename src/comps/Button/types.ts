@@ -1,8 +1,8 @@
-import { Deprecated, Props } from "../../types"
+import { Props } from "../../types"
 import { Size, SPINNER, Variant } from "../../types/enums"
 
 export type ButtonProps = Props<`button`> & {
-    icon?: string,
+    icon?: string | null,
     iconSize?: Size,
     withLabel?: boolean,
     spinner?: SPINNER,

@@ -1,0 +1,43 @@
+:root{
+    --crumb-padding: 6px 2px;
+    --crumb-item-gap: 5px;
+    --crumb-item-color: #111;
+    --crumb-item-hover: rgba(0, 0, 0, 0.7);
+    --crumb-item-hover-color: #fff;
+    --crumb-item-radius: 6px;
+    --crumb-item-padding: 2px 5px;
+}
+.--crumb{
+    gap: var(--crumb-gap);
+    li{
+        padding: var(--crumb-padding) !important;
+    }
+    .--crumb-item{
+        background: transparent;
+        color: var(--crumb-item-color);
+        gap: var(--crumb-item-gap);
+        padding: var(--crumb-item-padding);
+        border-radius: var(--crumb-item-radius);
+        .--crumb-icon{}
+        .--crumb-label{}
+
+        --button-disabled-color: var(--gray-500) !important;
+
+        &:hover{
+            background: var(--crumb-item-hover);
+            color: var(--crumb-item-hover-color);
+        }
+        &:disabled{
+            background: transparent !important;
+            pointer-events: none;
+        }
+    }
+    .--crumb-chevron{
+        width: 20px;
+        line-height: 0;
+    }
+
+    .--list-seperator{
+        padding: 0px !important;
+    }
+}

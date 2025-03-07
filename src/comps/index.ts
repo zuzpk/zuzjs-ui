@@ -32,6 +32,9 @@ export * from './CookiesConsent/types';
 
 export { default as Cover, type CoverProps } from './Cover';
 
+export { default as Crumb } from './Crumb';
+export * from './Crumb/types';
+
 export { default as Drawer } from './Drawer';
 export * from './Drawer/types';
 
