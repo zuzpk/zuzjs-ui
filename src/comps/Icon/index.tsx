@@ -1,9 +1,9 @@
 "use client"
 import { forwardRef, ReactNode } from "react"
 import { useBase } from "../../hooks"
-import { BoxProps } from "../Box"
-import Span, { SpanProps } from "../Span"
 import { Size } from "../../types/enums"
+import { BoxProps } from "../Box"
+import Span from "../Span"
 
 export type IconProps = Omit<BoxProps, `name`> & {
     name: string | ReactNode,
@@ -33,5 +33,7 @@ const Icon = forwardRef<HTMLDivElement, IconProps>((props, ref) => {
         </div>
 
 })
+
+Icon.displayName = `Icon`
 
 export default Icon

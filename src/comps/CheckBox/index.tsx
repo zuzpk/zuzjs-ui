@@ -1,10 +1,10 @@
 "use client"
 import { ChangeEvent, forwardRef, useImperativeHandle, useRef, useState } from "react";
-import { CHECKBOX, Size, Variant } from "../../types/enums";
-import Label, { LabelProps } from "../Label";
+import { CHECKBOX, Variant } from "../../types/enums";
 import Input, { InputProps } from "../Input";
-import { CheckboxHandler, CheckBoxProps } from "./types";
+import Label, { LabelProps } from "../Label";
 import SVGIcons from "../svgicons";
+import { CheckboxHandler, CheckBoxProps } from "./types";
 
 const CheckBox = forwardRef<CheckboxHandler, CheckBoxProps>((props, ref) => {
     
@@ -54,5 +54,6 @@ const CheckBox = forwardRef<CheckboxHandler, CheckBoxProps>((props, ref) => {
 
 });
 
+CheckBox.displayName = `CheckBox`
 
 export default CheckBox

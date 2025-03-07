@@ -1,10 +1,10 @@
 "use client"
 import { forwardRef, useEffect, useState } from "react";
-import { CookieConsentProps } from "./types";
-import Box from "../Box";
-import Text from "../Text";
-import Button from "../Button";
 import { Position, TRANSITION_CURVES } from "../../types/enums";
+import Box from "../Box";
+import Button from "../Button";
+import Text from "../Text";
+import { CookieConsentProps } from "./types";
 
 const CookiesConsent = forwardRef<HTMLDivElement, CookieConsentProps>((props, ref) => {
 
@@ -44,5 +44,7 @@ const CookiesConsent = forwardRef<HTMLDivElement, CookieConsentProps>((props, re
     </Box>
 
 })
+
+CookiesConsent.displayName = `CookiesConsent`
 
 export default CookiesConsent;

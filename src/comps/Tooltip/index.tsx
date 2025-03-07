@@ -1,11 +1,9 @@
 "use client"
-import { Children, cloneElement, createElement, forwardRef, HTMLAttributes, ReactElement, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
-import { Props } from '../../types';
-import { useBase, useDimensions, useResizeObserver } from '../../hooks';
-import Span from '../Span';
-import Box, { BoxProps } from '../Box';
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import { useBase, useDimensions } from '../../hooks';
+import { Position, TRANSITION_CURVES } from '../../types/enums';
+import Box from '../Box';
 import Text from '../Text';
-import { Position, TRANSITION_CURVES, TRANSITIONS } from '../../types/enums';
 import { ToolTipProps } from './types';
 
 const ToolTip = forwardRef<HTMLDivElement, ToolTipProps>((props, ref) => {
@@ -85,5 +83,7 @@ const ToolTip = forwardRef<HTMLDivElement, ToolTipProps>((props, ref) => {
     </Box>
 
 })
+
+ToolTip.displayName = `ToolTip`
 
 export default ToolTip

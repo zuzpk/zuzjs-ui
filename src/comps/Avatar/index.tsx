@@ -1,12 +1,11 @@
 "use client"
 import { forwardRef, useEffect } from "react";
-import { AVATAR, Size } from "../../types/enums";
-import { Props } from "../../types";
 import { useBase, useImage } from "../../hooks";
-import Image from "../Image";
+import { AVATAR, Size } from "../../types/enums";
 import Box, { BoxProps } from "../Box";
-import { AvatarHandler, AvatarProps } from "./types";
+import Image from "../Image";
 import Text from "../Text";
+import { AvatarHandler, AvatarProps } from "./types";
 
 
 const Avatar = forwardRef<AvatarHandler, AvatarProps>((props, ref) => {
@@ -61,5 +60,7 @@ const Avatar = forwardRef<AvatarHandler, AvatarProps>((props, ref) => {
             {...pops } /> : <Text className={`--avatar-label`}>{(alt ? alt.charAt(0) : `A`).toUpperCase()}</Text>}
     </Box>
 })
+
+Avatar.displayName = `Avatar`
 
 export default Avatar

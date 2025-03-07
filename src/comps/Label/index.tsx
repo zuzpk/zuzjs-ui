@@ -1,8 +1,7 @@
 "use client"
-import { createElement, forwardRef, HTMLAttributes, ReactNode } from 'react';
-import { Props } from '../../types';
+import { forwardRef } from 'react';
 import { useBase } from '../../hooks';
-import { isUrl } from '../../funs';
+import { Props } from '../../types';
 
 export type LabelProps = Props<`label`> & {}
 
@@ -21,5 +20,7 @@ const Label = forwardRef<HTMLLabelElement, LabelProps>((props, ref) => {
         {...rest} />
 
 })
+
+Label.displayName = `Label`
 
 export default Label

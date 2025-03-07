@@ -1,9 +1,6 @@
-"use client"
-import React, { ComponentProps, createElement, ElementType, forwardRef, HTMLAttributes, Ref } from "react"
+import React, { forwardRef } from "react";
 import { useBase } from "../../hooks";
 import { Props } from "../../types";
-import { isBrowser } from "../../funs";
-import withEditor from "../Editor/withEditor";
 
 export interface BoxProps extends Partial<Props<`div`>> {
     name?: string
@@ -41,5 +38,7 @@ const Box = forwardRef<HTMLDivElement, BoxProps>((props, ref) => {
     />
     
 })
+
+Box.displayName = `Box`
 
 export default Box

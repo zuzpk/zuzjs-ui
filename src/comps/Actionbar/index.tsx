@@ -1,10 +1,10 @@
 "use client"
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
-import Box, { BoxProps } from "../Box";
 import { useBase } from "../../hooks";
-import { ActionBarHandler, ActionBarProps } from "./types";
-import ActionItem from "./item";
 import { Position } from "../../types/enums";
+import Box, { BoxProps } from "../Box";
+import ActionItem from "./item";
+import { ActionBarHandler, ActionBarProps } from "./types";
 
 
 /**
@@ -96,5 +96,7 @@ const ActionBar = forwardRef<ActionBarHandler, ActionBarProps>((props, ref) => {
     </Box>
 
 })
+
+ActionBar.displayName = `ActionBar`
 
 export default ActionBar;

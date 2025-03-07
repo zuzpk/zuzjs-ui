@@ -1,7 +1,6 @@
-"use client"
-import { createElement, forwardRef, HTMLAttributes, ReactNode } from 'react';
-import { Props } from '../../types';
+import { forwardRef, HTMLAttributes, ReactNode } from 'react';
 import { useBase } from '../../hooks';
+import { Props } from '../../types';
 import Span from '../Span';
 
 export type TextProps = Props<`h1` | `h2` | `h3` | `h4` | `h5` | `h6`> & {
@@ -28,5 +27,7 @@ const Text = forwardRef<HTMLHeadingElement, TextProps>((props, ref) => {
         {...rest as HTMLAttributes<HTMLHeadingElement>}>{html ? <Span dangerouslySetInnerHTML={{ __html: html }} /> : children}</Tag>
 
 })
+
+Text.displayName = `Text`
 
 export default Text

@@ -1,7 +1,7 @@
-import { forwardRef, ReactNode, useCallback, useEffect, useImperativeHandle, useState } from "react";
-import { TreeItemProps, TreeViewHandler, TreeViewProps } from "./types";
-import Box, { BoxProps } from "../Box";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import Box from "../Box";
 import TreeItem from "./item";
+import { TreeViewHandler, TreeViewProps } from "./types";
 
 
 const TreeView = forwardRef<TreeViewHandler, TreeViewProps>((props, ref) => {
@@ -34,10 +34,14 @@ const TreeView = forwardRef<TreeViewHandler, TreeViewProps>((props, ref) => {
                 onSelect={e => handleSelect(e as string)}
                 icons={icons}
                 meta={node}
+                roots={roots}
+                expanded={node.expanded || false}
                 skeleton={rest.skeleton}
                 nodes={nodes} />)}
     </Box>
 
 })
+
+TreeView.displayName = `TreeView`
 
 export default TreeView

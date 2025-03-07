@@ -2,7 +2,7 @@ import { ReactNode } from "react"
 import { BoxProps } from "../Box"
 
 export interface Tab {
-    onSelect: (tab: Tab, index: number) => void
+    onSelect?: (tab: Tab, index: number) => void
     tag?: string,
     key?: string,
     icon?: ReactNode | ReactNode[]
@@ -18,7 +18,7 @@ export type TabProps = {
     onClick: (index: number) => void,
 }
 
-export type TabViewProps = BoxProps & {
+export type TabViewProps = Omit<BoxProps, "onChange"> & {
     onChange?: (tab: Tab, index: number) => void,
     speed?: number,
     variant?: "fixed" | "default",

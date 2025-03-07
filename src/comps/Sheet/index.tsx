@@ -1,16 +1,15 @@
 "use client"
-import { forwardRef, ReactNode, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { SHEET, SHEET_ACTION_POSITION, SPINNER, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
-import Box, { BoxProps } from "../Box";
-import { useBase } from "../../hooks";
+import { forwardRef, ReactNode, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { uuid } from "../../funs";
 import { animationTransition } from "../../funs/css";
-import Button from "../Button";
-import SVGIcons from "../svgicons";
-import Cover, { CoverProps } from "../Cover";
+import { useBase } from "../../hooks";
 import { ZuzProps } from "../../types";
-import Overlay, { OverlayProps } from "../Overlay";
+import { SHEET, SHEET_ACTION_POSITION, SPINNER, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
 import { animationProps } from "../../types/interfaces";
+import Box, { BoxProps } from "../Box";
+import Button from "../Button";
+import Cover from "../Cover";
+import Overlay from "../Overlay";
 
 export type SheetProps = ZuzProps & {
     title?: string,
@@ -208,11 +207,14 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
 
             if ( transition ){
 
-                const { from, to } = animationTransition(transition)
+                const { from, to } = animationTransition(transition, 20, true)
 
                 return{
-                    from: { ...from, x: `-50%`, y: `-50%` },
-                    to: { ...to, x: `-50%`, y: `-50%` },
+                    // from: { ...from, x: `-50%`, y: `-50%` },
+                    // to: { ...to, x: `-50%`, y: `-50%` },
+                    // from: { ...from, x: `-50%` },
+                    // to: { ...to, x: `-50%` },
+                    from, to,
                     curve: curve || TRANSITION_CURVES.EaseInOut,
                     ...base
                 }    
@@ -254,7 +256,7 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
             <Box
                 className={`--sheet --sheet-${sheetType.toLowerCase()} ${className} fixed`.trim()}
                 style={style}
-                animate={buildAnimation as animationProps}
+                fx={buildAnimation as animationProps}
                 {...rest as BoxProps}
                 ref={innerRef}>
 
@@ -302,5 +304,7 @@ export const isSheetHandler = (src: unknown): src is SheetHandler => {
         && `error` in src
 }
 
+
+Sheet.displayName = `Sheet`
 
 export default Sheet

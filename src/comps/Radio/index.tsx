@@ -38,4 +38,6 @@ const Radio = forwardRef<RadioHandler, RadioProps>((props, _ref) => {
 
 })
 
+Radio.displayName = `Radio`
+
 export default Radio

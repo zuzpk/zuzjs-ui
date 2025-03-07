@@ -1,9 +1,8 @@
 import { forwardRef } from "react";
-import { FabProps } from "./types";
+import { Size } from "../../types/enums";
 import Button from "../Button";
-import Icon from "../Icon";
 import SVGIcons from "../svgicons";
-import { Position, Size } from "../../types/enums";
+import { FabProps } from "./types";
 
 const Fab = forwardRef<HTMLButtonElement, FabProps>((props, ref) => {
 
@@ -14,5 +13,7 @@ const Fab = forwardRef<HTMLButtonElement, FabProps>((props, ref) => {
     </Button>
 
 })
+
+Fab.displayName = `Fab`
 
 export default Fab

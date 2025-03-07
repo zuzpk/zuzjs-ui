@@ -41,4 +41,6 @@ const TColumn = <T, >(props: Column<T> & {
 
 }
 
+TColumn.displayName = `Column`
+
 export default TColumn

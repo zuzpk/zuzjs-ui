@@ -1,4 +1,3 @@
-import { ChangeEventHandler } from "react";
 import { Props } from "../../types";
 import { CHECKBOX, Size, Variant } from "../../types/enums";
 

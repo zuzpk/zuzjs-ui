@@ -211,4 +211,6 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
 
 })
 
+AutoComplete.displayName = `AutoComplete`
+
 export default AutoComplete

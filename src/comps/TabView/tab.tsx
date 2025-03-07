@@ -1,7 +1,7 @@
 import Button from "../Button"
-import Icon, { IconProps } from "../Icon"
-import Text, { TextProps } from "../Text"
-import { Tab, TabProps } from "./types"
+import Icon from "../Icon"
+import Text from "../Text"
+import { TabProps } from "./types"
 
 const TabItem = ({ tab, index, activeTab, onClick }: TabProps) => {
 
@@ -17,5 +17,7 @@ const TabItem = ({ tab, index, activeTab, onClick }: TabProps) => {
     </Button>
     
 }
+
+TabItem.displayName = `TabItem`
 
 export default TabItem

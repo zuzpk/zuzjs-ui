@@ -1,10 +1,8 @@
 "use client"
 import { FormEvent, forwardRef, useEffect, useRef, useState } from "react";
-import Box, { BoxProps } from "../Box";
-import { SLIDER, SPINNER } from "../../types/enums";
 import { useBase } from "../../hooks";
-import { dynamicObject } from "../../types";
-import { hexToRgba } from "../../funs";
+import { SLIDER } from "../../types/enums";
+import Box, { BoxProps } from "../Box";
 import Input from "../Input";
 import Text from "../Text";
 
@@ -148,5 +146,7 @@ const Slider = forwardRef<HTMLInputElement, SliderProps >((props, ref) => {
     </Box>
 
 })
+
+Slider.displayName = `Slider`
 
 export default Slider

@@ -1,6 +1,6 @@
 "use client"
-import { forwardRef, JSX, Ref, useMemo, useRef, useState } from "react";
-import { PubSub, uuid } from "../..";
+import { forwardRef, JSX, Ref, useEffect, useMemo, useRef, useState } from "react";
+import { PubSub, SPINNER, Spinner, Text, uuid } from "../..";
 import { useBase } from "../../hooks";
 import { dynamicObject } from "../../types";
 import Box from "../Box";
@@ -27,12 +27,17 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
         selectableRows,
         hoverable,
         sortBy,
+        loading,
+        loadingRowCount,
+        loadingMessage,
+        spinner,
         onSort,
         onRowSelectToggle,
         onPageChange,
         onRowContextMenu,
         ...pops 
     } = props
+    const _pagination = useRef<HTMLDivElement>(null)
     const _schemaParsed = useMemo(() => schema.reduce((prev, c: Column<T>) => {
         prev[c.id] = {
             flex: c.weight || 1,
@@ -55,15 +60,33 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
     } = useBase(pops)
     const _tableRef = useRef<HTMLDivElement>(null)
     const pubsub = useMemo(() => new PubSub(), [])
-    const rowKeys = useMemo(() => rows.map(() => uuid()), [rows]);
+    const rowKeys = useRef(rows.map(() => uuid()));
     const [_sortBy, setSortBy] = useState<string | null>(sortBy || null)
-    
+    // const placeholderRows = useMemo(() => {
+
+    // }, [loading, loadingRowCount])
+
+    useEffect(() => {
+        rowKeys.current = rows.map(() => uuid()); // Update only when rows change
+    }, [rows]);
+
     const handleSort : TableSortCallback = (col, dir) => {
         setSortBy(col)
         onSort?.(col, dir)
     }
 
-    return <Box as={`--table ${(hoverable ?? true) ? `--hoverable` : ``} flex cols ${className}`} ref={_tableRef}>
+    const _paginated = useMemo(() => <Pagination
+        hash={paginationHash}
+        ref={_pagination}
+        renderOnZeroPageCount={showPaginationOnZeroPageCount}
+        onPageChange={onPageChange}
+        paginationStyle={PaginationStyle.Table}
+        startPage={currentPage}
+        itemCount={rowCount || (rows ? rows.length : 0)}
+        itemsPerPage={rowsPerPage || 10}
+    />, [])
+
+    return <Box as={`--table ${(hoverable ?? true) ? `--hoverable` : ``} flex cols rel ${className}`} ref={_tableRef}>
         {_header == true && <TRow 
             sortBy={_sortBy}
             onSort={handleSort} 
@@ -72,11 +95,29 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
             selectable={selectableRows} 
             index={-1} 
             schema={schema} 
+            loading={true}
             styles={_schemaParsed}  /> }
-        {rows && rows.map((row, index: number) => <TRow 
-            key={`--trow-${rowKeys[index]}-${schema[0].id}`} 
+
+        {loading && <Box as={`abs center-x flex aic --table-spinner`}>
+            <Spinner type={spinner || SPINNER.Simple} />
+            {loadingMessage && <Text as={`--table-loading-message`}>{loadingMessage}</Text>}
+        </Box>}
+
+        {loading && Array(loadingRowCount || 5).fill({}).map((row, index) => <TRow 
+            key={`--trow-loading-${index}-${schema[0].id}`} 
+            tableRef={_tableRef}
+            index={index}
+            pubsub={pubsub}
+            schema={schema as any}  
+            styles={_schemaParsed}
+            loading={true}
+            animate={animateRows} 
+            />)}    
+        {!loading && rows && rows.map((row, index: number) => <TRow 
+            key={`--trow-${rowKeys.current[index] || index}-${schema[0].id}`} 
             tableRef={_tableRef}
             pubsub={pubsub}
+            loading={false}
             index={index} 
             schema={schema}  
             ids={_cols}
@@ -87,20 +128,12 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
             selectable={selectableRows}
             onSelect={onRowSelectToggle}
             onContextMenu={onRowContextMenu} />)}
-        { pagination && <Box as={`--row flex aic --row-footer`}>
-            <Pagination
-                hash={paginationHash}
-                renderOnZeroPageCount={showPaginationOnZeroPageCount}
-                onPageChange={onPageChange}
-                paginationStyle={PaginationStyle.Table}
-                startPage={currentPage}
-                itemCount={rowCount || (rows ? rows.length : 0)}
-                itemsPerPage={rowsPerPage || 10}
-            />
-        </Box> }
+        { pagination && _pagination.current != null && <Box as={`--row flex aic --row-footer`}>{_paginated}</Box> }
     </Box>
 
 }
+
+Table.displayName = `Table`
 
 const ForwardedTable = forwardRef(Table) as <T>(props: TableProps<T> & { ref?: Ref<HTMLDivElement> }) => JSX.Element
 

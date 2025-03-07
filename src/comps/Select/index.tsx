@@ -1,18 +1,14 @@
 "use client"
 import { ChangeEvent, forwardRef, useEffect, useId, useMemo, useRef, useState } from "react";
-import { dynamicObject } from "../../types";
-import { FORMVALIDATION } from "../../types/enums";
-import SVGIcons from "../svgicons";
-import { uuid } from "../../funs";
-import Box, { BoxProps } from "../Box";
 import { useBase } from "../../hooks";
+import Box from "../Box";
 import Button from "../Button";
-import Text, { TextProps } from "../Text";
-import { animationProps } from "../../types/interfaces";
-import Input, { InputProps } from "../Input";
-import { Option, SelectProps } from "./types";
-import OptionItem from "./optionItem";
 import { ButtonProps } from "../Button/types";
+import Input from "../Input";
+import SVGIcons from "../svgicons";
+import Text from "../Text";
+import OptionItem from "./optionItem";
+import { Option, SelectProps } from "./types";
 
 const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
 
@@ -116,5 +112,7 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
 
     </Box>
 })
+
+Select.displayName = `Select`
 
 export default Select

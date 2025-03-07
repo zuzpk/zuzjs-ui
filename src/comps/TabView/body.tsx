@@ -36,4 +36,6 @@ const TabBody : React.FC<{
         className={`--content`}>{(render || active) && content}</Box>
 }
 
+TabBody.displayName = `TabBody`
+
 export default TabBody;

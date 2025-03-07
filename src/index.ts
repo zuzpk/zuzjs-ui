@@ -1,15 +1,18 @@
-export * from "./comps"
-export { withCSS as css } from "./funs"
+String.prototype.trim = function(){ return this.replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' '); }
 
-export * from "./funs"
-export { 
-    default as PubSub 
-} from "./funs/events"
+export * from "./comps";
+export { withCSS as css } from "./funs";
 
-export * from "./hooks"
+export * from "./funs";
+export {
+    default as PubSub
+} from "./funs/events";
 
-export * from "./types"
-export * from "./types/enums"
-export * from "./types/interfaces"
+export * from "./hooks";
 
-export { default as SVGIcons } from "./comps/svgicons"
+export * from "./types";
+export * from "./types/enums";
+export * from "./types/interfaces";
+
+export { default as SVGIcons } from "./comps/svgicons";
+

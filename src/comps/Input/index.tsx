@@ -1,9 +1,7 @@
 "use client"
 import { forwardRef } from 'react';
-import { Props } from '../../types';
 import { useBase } from '../../hooks';
-import Icon, { IconProps } from '../Icon';
-import Span, { SpanProps } from '../Span';
+import { Props } from '../../types';
 import { FORMVALIDATION, Size, Variant } from '../../types/enums';
 
 export type InputProps = Props<`input`> & {
@@ -37,5 +35,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         {...rest} />
         
 })
+
+Input.displayName = `Input`
 
 export default Input

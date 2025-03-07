@@ -1,10 +1,10 @@
 import { forwardRef } from "react";
-import { AlertHandler, AlertProps } from "./types";
 import { useBase } from "../../hooks";
 import { ALERT } from "../../types/enums";
 import Box, { BoxProps } from "../Box";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
+import { AlertHandler, AlertProps } from "./types";
 
 const Alert = forwardRef<AlertHandler, AlertProps>((props, ref) => {
     
@@ -30,5 +30,7 @@ const Alert = forwardRef<AlertHandler, AlertProps>((props, ref) => {
 
 
 })
+
+Alert.displayName = `Alert`
 
 export default Alert    

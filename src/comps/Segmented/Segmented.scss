@@ -58,6 +58,9 @@
     border: var(--segmented-border);
     overflow: hidden;
 
+    .--segment-tab{
+        bottom: 0px;
+    }
     &.--sm{
         border-radius: var(--segmented-radius-sm);
         padding: var(--segmented-padding-sm);
@@ -75,7 +78,7 @@
             border-radius: calc(var(--segmented-radius-sm) - var(--segmented-padding-sm));
             transform: translateX(calc(var(--x) - var(--segmented-padding-sm)));
             top: var(--segmented-padding-sm);
-            bottom: var(--segmented-padding-sm);
+            // bottom: var(--segmented-padding-sm);
         }
     }
     &.--md{
@@ -94,7 +97,7 @@
             border-radius: calc(var(--segmented-radius-md) - var(--segmented-padding-md));
             transform: translateX(calc(var(--x) - var(--segmented-padding-md)));
             top: var(--segmented-padding-md);
-            bottom: var(--segmented-padding-md);
+            // bottom: var(--segmented-padding-md);
         }
     }
     &.--lg{
@@ -113,7 +116,7 @@
             border-radius: calc(var(--segmented-radius-lg) - var(--segmented-padding-lg));
             transform: translateX(calc(var(--x) - var(--segmented-padding-lg)));
             top: var(--segmented-padding-lg);
-            bottom: var(--segmented-padding-lg);
+            // bottom: var(--segmented-padding-lg);
         }
     }
 
@@ -145,7 +148,7 @@
             fill: var(--segment-item-color);
         }
 
-        &.--segement-active{
+        &.--segment-active{
             color: var(--segment-item-active-color);   
 
             svg{

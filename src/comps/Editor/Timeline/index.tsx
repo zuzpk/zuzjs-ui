@@ -1,14 +1,14 @@
 "use client"
 import { forwardRef, useEffect, useRef, useState } from "react"
+import { DRAG_DIRECTION, SLIDER } from "../../../types/enums"
 import Box from "../../Box"
 import Button from "../../Button"
+import Slider from "../../Slider"
 import SVGIcons from "../../svgicons"
 import Text from "../../Text"
-import Layer from "./layer"
-import { LayerProps, LayerType, TimeLineLayer, TimeLineProps } from "../types"
-import Slider from "../../Slider"
-import { DRAG_DIRECTION, SLIDER } from "../../../types/enums"
 import ToolTip from "../../Tooltip"
+import { TimeLineLayer, TimeLineProps } from "../types"
+import Layer from "./layer"
 
 const Timeline = forwardRef<HTMLDivElement, TimeLineProps>((props, ref) => {
 
@@ -111,5 +111,7 @@ const Timeline = forwardRef<HTMLDivElement, TimeLineProps>((props, ref) => {
 
     </Box>
 })
+
+Timeline.displayName = `Timeline`
 
 export default Timeline

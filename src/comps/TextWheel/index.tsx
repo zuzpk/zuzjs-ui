@@ -77,4 +77,6 @@ const TextWheel = forwardRef<TextWheelHandler, TextWheelProps>((props, ref) => {
     
 })
 
+TextWheel.displayName = `TextWheel`
+
 export default TextWheel;

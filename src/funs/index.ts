@@ -583,17 +583,19 @@ export const bindKey = (key: KeyCode, fun: () => void, element?: HTMLElement): v
 
 }
 
-export const camelCase = (str: string) => {
+export const camelCase = (str: string, ucf = false) => {
     return str
         .toLowerCase()
         .split(/[^a-zA-Z0-9]+/)    // Split by any non-alphanumeric character
         .map((word, index) =>
             index === 0
-                ? word
-                : word.charAt(0).toUpperCase() + word.slice(1)
+                ? ucf ? ucfirst(word) : word
+                : ucfirst(word)
         )
         .join('');
 }
+
+export const camelCaseToDash = (str: string) => str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 
 export const pluralize = (word: string, count : number) => `${word}${count !== 1 ? 's' : ''}`
 

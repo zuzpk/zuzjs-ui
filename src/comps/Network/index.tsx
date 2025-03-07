@@ -1,11 +1,10 @@
-import { forwardRef, useEffect, useState } from "react";
-import Box from "../Box";
-import Text from "../Text";
-import Button from "../Button";
-import { ALERT, Position, Size, TRANSITION_CURVES } from "../../types/enums";
+import { forwardRef, useEffect } from "react";
 import { useNetworkStatus } from "../../hooks";
-import { NetworkManagerprops } from "./types";
+import { ALERT, Size, TRANSITION_CURVES } from "../../types/enums";
+import Box from "../Box";
 import SVGIcons from "../svgicons";
+import Text from "../Text";
+import { NetworkManagerprops } from "./types";
 
 const NetworkManager = forwardRef<HTMLDivElement, NetworkManagerprops>((props, ref) => {
 
@@ -33,5 +32,7 @@ const NetworkManager = forwardRef<HTMLDivElement, NetworkManagerprops>((props, r
     </Box>
 
 })
+
+NetworkManager.displayName = `NetWorkManager`
 
 export default NetworkManager;

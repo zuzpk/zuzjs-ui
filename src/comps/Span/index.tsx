@@ -1,7 +1,7 @@
 "use client"
 import { forwardRef } from 'react';
-import { Props } from '../../types';
 import { useBase } from '../../hooks';
+import { Props } from '../../types';
 
 export type SpanProps = Props<`span`> & {}
 
@@ -22,5 +22,7 @@ const Span = forwardRef<HTMLSpanElement, SpanProps>((props, ref) => {
         { ...rest } />
 
 })
+
+Span.displayName = `Span`
 
 export default Span

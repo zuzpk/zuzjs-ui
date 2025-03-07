@@ -1,9 +1,8 @@
 "use client"
 import { FormEvent, forwardRef, useEffect, useRef } from 'react';
-import { Props } from '../../types';
 import { useBase } from '../../hooks';
+import Box from '../Box';
 import Input, { InputProps } from '../Input';
-import Box, { BoxProps } from '../Box';
 
 export type PinInputProps = InputProps & {
     mask?: boolean, 
@@ -71,5 +70,7 @@ const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
     </Box>
         
 })
+
+PinInput.displayName = `PinInput`
 
 export default PinInput

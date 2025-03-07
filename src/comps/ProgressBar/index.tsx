@@ -32,4 +32,6 @@ const ProgressBar = forwardRef<ProgressHandler, ProgressBarProps>((props, ref) =
 
 })
 
+ProgressBar.displayName = `ProgressBar`
+
 export default ProgressBar
