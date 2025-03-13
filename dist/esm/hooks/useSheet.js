@@ -1,3 +1,4 @@
+'use client';
 import { useEffect } from "react";
 const useSheet = (sheet) => {
     const show = (e) => {

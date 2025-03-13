@@ -24,7 +24,7 @@ const Text = forwardRef<HTMLHeadingElement, TextProps>((props, ref) => {
         ref={ref}
         style={style}
         className={className}
-        {...rest as HTMLAttributes<HTMLHeadingElement>}>{html ? <Span dangerouslySetInnerHTML={{ __html: html }} /> : children}</Tag>
+        {...rest as HTMLAttributes<HTMLHeadingElement>}>{html ? <Span dangerouslySetInnerHTML={{ __html: html+"" }} /> : children}</Tag>
 
 })
 

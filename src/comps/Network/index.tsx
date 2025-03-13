@@ -1,3 +1,4 @@
+'use client'
 import { forwardRef, useEffect } from "react";
 import { useNetworkStatus } from "../../hooks";
 import { ALERT, Size, TRANSITION_CURVES } from "../../types/enums";

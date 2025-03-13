@@ -1,3 +1,4 @@
+'use client'
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import Box from "../Box";
 import TreeItem from "./item";

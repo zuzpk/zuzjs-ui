@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useRef, useState } from "react";
 const useImage = (url, crossOrigin, referrerPolicy) => {
     const img = useRef(null);

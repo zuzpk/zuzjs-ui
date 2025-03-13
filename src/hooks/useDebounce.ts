@@ -1,3 +1,4 @@
+'use client'
 import { useRef, useCallback } from "react";
 
 const useDebounce = <T extends (...args: any[]) => void>(func: T, delay: number) => {

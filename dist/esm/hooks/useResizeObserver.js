@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useState } from 'react';
 const useResizeObserver = (ref) => {
     const [size, setSize] = useState({ width: 0, height: 0, top: 0, left: 0 });
