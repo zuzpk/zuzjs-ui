@@ -1,4 +1,5 @@
-import { MouseEvent, Ref, RefObject, useEffect } from "react";
+"use client"
+import { MouseEvent, RefObject, useEffect } from "react";
 import { SheetHandler } from "../comps";
 
 const useSheet = (sheet: RefObject<SheetHandler | null>) => {

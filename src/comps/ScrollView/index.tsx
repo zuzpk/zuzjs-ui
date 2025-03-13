@@ -6,12 +6,14 @@ import { ScrollViewProps } from "./types";
 const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
 
     const { speed, style: _style, ...pops } = props
-    const { rootRef, containerRef, thumbRef, handleDragStart } = useScrollbar()
+    const { rootRef, containerRef, thumbY, thumbX, onScrollY, onScrollX } = useScrollbar()
     const { 
         style, 
         className, 
         rest 
     } = useBase<`div`>(pops)
+
+    // useEffect(() => { }, [])
 
     return <Box 
         ref={rootRef}
@@ -22,14 +24,17 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
             {rest.children}
         </Box>
 
-        <Box as={`--scroll-track abs`}>
-            <Box as={`--scroll-thumb`} ref={thumbRef} onMouseDown={handleDragStart} />
+        <Box as={`--scroll-track --track-y abs`}>
+            <Box as={`--scroll-thumb abs`} ref={thumbY} onMouseDown={onScrollY} />
+        </Box>
+        <Box as={`--scroll-track --track-x abs`}>
+            <Box as={`--scroll-thumb abs`} ref={thumbX} onMouseDown={onScrollX} />
         </Box>
 
     </Box>
 
 })
 
-ScrollView.displayName = `ScrollView`
+ScrollView.displayName = `ZuzUI.ScrollView`
 
 export default ScrollView

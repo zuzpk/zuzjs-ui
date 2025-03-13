@@ -2,10 +2,13 @@ import { ComponentPropsWithRef, CSSProperties, JSX } from "react";
 import { cleanProps, css } from "../funs";
 import { buildWithStyles, getAnimationCurve, getAnimationTransition } from "../funs/css";
 import { cssFilterKeys, cssTransformKeys, cssWithKeys } from "../funs/stylesheet";
-import { cssShortKey, dynamicObject, Props, ZuzProps } from "../types";
+import {
+    cssShortKey,
+    dynamicObject, Props, ZuzProps
+} from "../types";
 import { Skeleton } from "../types/interfaces";
-import useDrag from "./useDrag";
 
+let useDrag: any = null;
 const buildSkeletonStyle = (s: Skeleton) : dynamicObject => {
 
     const makeValue = (v?: number | string, unit: string = `px`) : string => {
@@ -102,21 +105,31 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>) : {
         _transition.transition = _transitionList.join(`, `)
     }
 
-    // console.log(_style, _transition)
+    // // console.log(_style, _transition)
+    const is = typeof window !== "undefined";
+    let dragProps = {};
+    let dragStyle = {};
 
-    const drag = useDrag(dragOptions)
-    let dragProps = {} 
-    let dragStyle = {}
-    if ( draggable ){
-        dragProps = {
-            onMouseDown: drag.onMouseDown,
+    if ( draggable && is ) {
+        if (!useDrag) {
+            import("./useDrag")
+                .then(module => {
+                    useDrag = module.default;
+                })
+                .catch(err => {
+                    console.error("Error loading useDrag:", err);
+                });
         }
-        dragStyle = {
-            transform: `translate(${drag.position.x}px, ${drag.position.y}px)`,
+        if ( useDrag ) {
+            const drag = useDrag(dragOptions);
+            dragProps = {
+                onMouseDown: drag.onMouseDown,
+            }
+            dragStyle = {
+                transform: `translate(${drag.position.x}px, ${drag.position.y}px)`,
+            }
         }
     }
-
-    // console.log(`x`, buildWithStyles(_style),)
 
     return {
         style: {

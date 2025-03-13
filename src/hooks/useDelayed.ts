@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+"use client"
+import { useEffect, useState } from 'react';
 
 /**
  * Custom hook that sets a mounted state to true after a specified delay.

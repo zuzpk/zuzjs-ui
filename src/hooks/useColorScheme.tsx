@@ -121,10 +121,10 @@ const Theme = ({ children, storageKey, forceTheme } : ThemeProviderProps) => {
 
     return (
         <ThemeContext value={{ colorScheme: colorScheme as ColorScheme, resolvedScheme: resolvedTheme! as "dark" | "light", setColorScheme: switchColorScheme }}>
-            <script 
+            { forceTheme ? null : <script 
                 suppressHydrationWarning
                 dangerouslySetInnerHTML={{ 
-                    __html: forceTheme ? `` : `const el = document.documentElement
+                    __html: `const el = document.documentElement
                     const themes = ['light', 'dark']
                     let theme = localStorage.getItem(\`${storageKey}\`) || "system";
                     if (theme === "system") {
@@ -133,7 +133,7 @@ const Theme = ({ children, storageKey, forceTheme } : ThemeProviderProps) => {
                     document.documentElement.setAttribute("color-scheme", theme);
                     document.documentElement.style.colorScheme = theme;`
                 }}
-            />
+            /> }
             {children}
         </ThemeContext>
     );

@@ -1,4 +1,3 @@
-"use client"
 import { forwardRef } from 'react';
 import { useBase } from '../../hooks';
 import { Props } from '../../types';
@@ -33,6 +32,6 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => 
         
 })
 
-TextArea.displayName = `TextArea`
+TextArea.displayName = `ZuzUI.TextArea`
 
 export default TextArea

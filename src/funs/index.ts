@@ -660,4 +660,20 @@ export const slugify = (text: string, separator: string = "-") => {
       .replace(/[^a-z0-9\p{L}\p{N}]+/gu, separator) // Keep letters/numbers from all languages
       .replace(new RegExp(`\\${separator}{2,}`, "g"), separator) // Remove duplicate separators
       .replace(new RegExp(`^\\${separator}|\\${separator}$`, "g"), ""); // Trim separators from ends
-  };
+};
+
+export const truncate = (selector: string, lines = 2) => {
+
+    const elements = document.querySelectorAll(selector);
+  
+    elements.forEach((el) => {
+      const lineHeight = parseFloat(window.getComputedStyle(el).lineHeight);
+      const maxHeight = lineHeight * lines;
+  
+      while (el.scrollHeight > maxHeight) {
+        el.textContent = el.textContent?.trim().slice(0, -1) + '…';
+      }
+    });
+
+}
+  

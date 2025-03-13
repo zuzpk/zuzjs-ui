@@ -54,6 +54,10 @@ export * from './Form/types';
 export { default as Icon, type IconProps } from './Icon';
 export { default as Image, type ImageProps } from './Image';
 export { default as Input, type InputProps } from './Input';
+
+export { default as KeyboardKeys } from './KeyboardKeys';
+export * from './KeyboardKeys/types';
+
 export { default as Label, type LabelProps } from './Label';
 
 export { default as List } from './List';
@@ -78,7 +82,8 @@ export * from './Radio/types';
 export { default as ScrollView } from './ScrollView';
 export * from './ScrollView/types';
 
-export { default as Search, type SearchProps } from './Search';
+export { default as Search } from './Search';
+export * from './Search/types';
 
 export { default as SelectTabs } from './Segmented';
 export * from './Segmented/types';

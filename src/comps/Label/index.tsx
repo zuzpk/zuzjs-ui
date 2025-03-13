@@ -1,4 +1,3 @@
-"use client"
 import { forwardRef } from 'react';
 import { useBase } from '../../hooks';
 import { Props } from '../../types';

@@ -142,6 +142,7 @@ export enum KeyCode {
     Ctrl = 17,
     Alt = 18,
     PauseBreak = 19,
+    Command = 19,
     CapsLock = 20,
     Escape = 27,
     Space = 32,
