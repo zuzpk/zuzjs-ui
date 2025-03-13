@@ -1,11 +1,17 @@
 :root{
+    
     --color-scheme-border: 1px #fff solid;
-
-    --color-scheme-height-sm: 30px;
-    --color-scheme-height-md: 34px;
-    --color-scheme-height-lg: 36px;
+    --color-scheme-size-sm: 30px;
+    --color-scheme-size-md: 35px;
+    --color-scheme-size-lg: 36px;
+    --color-scheme-padding-sm: 4px;
+    --color-scheme-padding-md: 6px;
+    --color-scheme-padding-lg: 2px;
     --color-scheme: #fff;
     --color-scheme-active: var(--slate-100);
+    --color-scheme-hover: var(--slate-50);
+    --color-scheme-icon: #111;
+    --color-scheme-radius: 50px;
 
 //     --color-scheme-radius: 20px;
 //     --color-scheme-gap: 4px;
@@ -51,6 +57,8 @@
     --color-scheme-border: 1px #555 solid;
     --color-scheme: #555;
     --color-scheme-active: #333;
+    --color-scheme-hover: #444;
+    --color-scheme-icon: #e0e0e0;
 //     body{
 //         .--color-scheme{
 //             --color-scheme: #444;
@@ -74,13 +82,47 @@
         width: 100px;
 
         &.--sm{
-            height: var(--color-scheme-height-sm);
+            height: var(--color-scheme-size-sm);
         }
         &.--md{
-            height: var(--color-scheme-height-md);
+            height: var(--color-scheme-size-md);
         }
         &.--lg{
-            height: var(--color-scheme-height-lg);
+            height: var(--color-scheme-size-lg);
+        }
+    }
+}
+
+.--color-scheme-switch{
+    border: var(--color-scheme-border);
+    background: var(--color-scheme);
+    border-radius: var(--color-scheme-radius) !important;
+    &:active{
+        background: var(--color-scheme-active);
+    }
+    &:hover{
+        background: var(--color-scheme-hover);
+    }
+    &.--sm{
+        width: var(--color-scheme-size-sm);
+        height: var(--color-scheme-size-sm);
+        padding: var(--color-scheme-padding-sm);
+    }
+    &.--md{
+        width: var(--color-scheme-size-md);
+        height: var(--color-scheme-size-md);
+        padding: var(--color-scheme-padding-md);
+    }
+    &.--lg{
+        width: var(--color-scheme-size-lg);
+        height: var(--color-scheme-size-lg);
+        padding: var(--color-scheme-padding-lg);
+    }
+
+    svg{
+        circle, path, rect{
+            stroke: var(--color-scheme-icon);
+            fill: var(--color-scheme-icon);
         }
     }
 }

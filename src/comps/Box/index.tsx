@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 import { useBase } from "../../hooks";
 import { Props } from "../../types";
 
@@ -14,21 +14,21 @@ const Box = forwardRef<HTMLDivElement, BoxProps>((props, ref) => {
         rest 
     } = useBase<`div`>(pops)
 
-    const handleInternalClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        // if ( withEditor && isBrowser ) {
-        //     // window.dispatchEvent(new CustomEvent(`ZUZ_COMP_SELECTED`, {
-        //     //     detail: {
-        //     //         compName: 'Box',
-        //     //         target: e.target,
-        //     //         props
-        //     //     }
-        //     // }))
-        // }
-    }
+    // const handleInternalClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    //     // if ( withEditor && isBrowser ) {
+    //     //     // window.dispatchEvent(new CustomEvent(`ZUZ_COMP_SELECTED`, {
+    //     //     //     detail: {
+    //     //     //         compName: 'Box',
+    //     //     //         target: e.target,
+    //     //     //         props
+    //     //     //     }
+    //     //     // }))
+    //     // }
+    // }
 
     return <div
         ref={ref}
-        onClick={handleInternalClick}
+        // onClick={handleInternalClick}
         className={`${className} ${withEditor ? `--with-zuz-editor` : ``}`.trim()}
         style={{
             ..._style,

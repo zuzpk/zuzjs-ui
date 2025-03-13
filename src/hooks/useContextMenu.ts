@@ -1,4 +1,5 @@
-import { MouseEvent, Ref, RefObject, useEffect } from "react";
+"use client"
+import { MouseEvent, RefObject, useEffect } from "react";
 import { ContextItem, ContextMenuHandler } from "../comps";
 
 const useContextMenu = (menu: RefObject<ContextMenuHandler | null>) => {

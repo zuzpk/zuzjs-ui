@@ -1,4 +1,4 @@
-import { forwardRef, useEffect } from "react";
+import { forwardRef } from "react";
 import { useNetworkStatus } from "../../hooks";
 import { ALERT, Size, TRANSITION_CURVES } from "../../types/enums";
 import Box from "../Box";
@@ -11,12 +11,8 @@ const NetworkManager = forwardRef<HTMLDivElement, NetworkManagerprops>((props, r
     const isOnline = useNetworkStatus()
     const { onlineMessage, offlineMessage, size } = props
 
-    useEffect(() => {
-        
-    }, [])
-
     return <Box 
-        animate={{
+        fx={{
             from: { x: `-50%`, y: 200, opacity: 0 },
             to: { x: `-50%`, y: 0, opacity: 1 },
             when: isOnline == false,
@@ -33,6 +29,6 @@ const NetworkManager = forwardRef<HTMLDivElement, NetworkManagerprops>((props, r
 
 })
 
-NetworkManager.displayName = `NetWorkManager`
+NetworkManager.displayName = `ZuzUI.NetWorkManager`
 
 export default NetworkManager;

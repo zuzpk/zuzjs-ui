@@ -1,6 +1,7 @@
+'use client'
 import { forwardRef, useEffect, useRef, useState } from "react";
 import { useBase } from "../../hooks";
-import { Size } from "../../types/enums";
+import { Variant } from "../../types/enums";
 import Box, { BoxProps } from "../Box";
 import SegmentItem from "./item";
 import { Segment, SegmentProps } from "./types";
@@ -26,7 +27,7 @@ import { Segment, SegmentProps } from "./types";
  */
 const Segmented = forwardRef<HTMLDivElement, SegmentProps>((props, ref) => {
 
-    const { animate, fx, items, selected, size, onSwitch, ...pops } = props
+    const { animate, fx, items, selected, size, variant, onSwitch, ...pops } = props
     const [ _selected, setSelected ] = useState(selected || 0)
     const { className, style, rest } = useBase(pops)
     const _tab = useRef<HTMLDivElement | null>(null)
@@ -61,7 +62,7 @@ const Segmented = forwardRef<HTMLDivElement, SegmentProps>((props, ref) => {
     return <Box
         ref={_segmented}
         data-selected={_selected}
-        className={`${className} --segmented --${size || Size.Small} flex aic rel`}
+        className={`${className} --segmented --${variant || Variant.Small} flex aic rel`}
         style={style}
         {...rest as BoxProps}>
 
@@ -82,6 +83,6 @@ const Segmented = forwardRef<HTMLDivElement, SegmentProps>((props, ref) => {
 
 })
 
-Segmented.displayName = `SelectTabs`
+Segmented.displayName = `ZuzUI.SelectTabs`
 
 export default Segmented;

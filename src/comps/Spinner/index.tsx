@@ -1,4 +1,3 @@
-"use client"
 import { forwardRef } from "react";
 import { hexToRgba } from "../../funs";
 import { useBase } from "../../hooks";
@@ -82,6 +81,6 @@ const Spinner = forwardRef<HTMLDivElement, SpinnerProps >((props, ref) => {
 
 })
 
-Spinner.displayName = `Spinner`
+Spinner.displayName = `ZuzUI.Spinner`
 
 export default Spinner;

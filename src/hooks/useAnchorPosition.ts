@@ -1,5 +1,5 @@
-import { RefObject, useCallback, useEffect, useRef, useState } from "react"
-import { Position } from "../types/enums";
+"use client"
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type AnchorOptions = {
     offsetX?: number,

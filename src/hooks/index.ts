@@ -17,6 +17,11 @@ export { default as useDelayed, default as useMounted } from './useDelayed';
 export { default as useDevice } from './useDevice';
 export { default as useDimensions } from './useDimensions';
 
+export { default as useMediaPlayer, type MediaPlayerProps, type MediaType } from './useMediaPlayer';
+export { default as useMergedRefs } from './useMergedRefs';
+
+export { default as useMutationObserver, type MutationCallback } from './useMutationObserver';
+
 export { default as useDrag, type DragOptions } from './useDrag';
 
 export { default as useFileManager } from './useFileManager';
@@ -35,5 +40,7 @@ export { default as useResizeObserver } from './useResizeObserver';
 
 
 export { default as useSlider } from './useSlider';
+
+export { default as useTruncateText } from './useTruncateText';
 
 export { default as useViewTransition } from './useViewTransition';

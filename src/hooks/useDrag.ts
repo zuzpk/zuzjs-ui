@@ -1,4 +1,5 @@
-import { useRef, useState, useEffect } from 'react';
+"use client"
+import { useEffect, useRef, useState } from 'react';
 import { DRAG_DIRECTION } from '../types/enums';
 
 interface Position {

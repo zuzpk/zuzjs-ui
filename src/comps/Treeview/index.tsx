@@ -1,3 +1,4 @@
+"use client"
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import Box from "../Box";
 import TreeItem from "./item";
@@ -42,6 +43,6 @@ const TreeView = forwardRef<TreeViewHandler, TreeViewProps>((props, ref) => {
 
 })
 
-TreeView.displayName = `TreeView`
+TreeView.displayName = `ZuzUI.TreeView`
 
 export default TreeView

@@ -290,7 +290,7 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
         className={`--sheet --sheet-${sheetType.toLowerCase()} ${className} abs`.trim()}
         style={style}
         {...rest as BoxProps}
-        animate={buildAnimation as animationProps}
+        fx={buildAnimation as animationProps}
         ref={innerRef}>
         {visible ? msg : null}
     </Box>

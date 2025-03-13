@@ -1,4 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+"use client"
+import { useEffect, useRef, useState } from "react";
 import { dynamicObject } from "../types";
 
 const useImage = (

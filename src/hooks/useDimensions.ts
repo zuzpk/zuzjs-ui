@@ -1,4 +1,5 @@
-import { useState, useEffect, ReactNode } from 'react';
+"use client"
+import { ReactNode, useEffect, useState } from 'react';
 
 export interface Dimensions {
     width: number,
