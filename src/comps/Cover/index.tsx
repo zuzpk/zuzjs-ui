@@ -29,7 +29,7 @@ const Cover = forwardRef<HTMLDivElement, CoverProps >((props, ref) => {
     }
 
     return <Box
-        className={`--cover flex aic jcc cols abs fillx nope nous`}
+        className={`--cover flex aic jcc cols abs fillx nope nous ${className}`.trim()}
         style={{
             ...style,
             backgroundColor: `var(--cover-bg)`

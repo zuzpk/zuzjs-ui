@@ -17,7 +17,7 @@ const Alert = forwardRef<AlertHandler, AlertProps>((props, ref) => {
     } = useBase(pops)
 
     return <Box className={`--alert --${(type || ALERT.Info)} flex aic ${className}`.trim()} style={style} {...rest as BoxProps}>
-        <Box className={`--icon icon-${icon || `auto-matic`}`} style={iconSize ? { width: iconSize, height: iconSize } : {}}>
+        <Box className={`--icon icon-${icon || `auto-matic`}`} style={iconSize ? { fontSize: iconSize, width: iconSize, height: iconSize } : {}}>
             {!icon && SVGIcons[type || ALERT.Info]}
         </Box>
         <Box className={`--meta flex cols`}>

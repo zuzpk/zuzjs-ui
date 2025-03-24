@@ -23,6 +23,7 @@ export const cssProps : dynamicObject = {
     "backgroundColor": "background-color",
     "backgroundImage": "background-image",
     "bgi": "background-image",
+    "bgc": "background-color",
     "backgroundOrigin": "background-origin",
     "backgroundPosition": "background-position",
     "backgroundRepeat": "background-repeat",
@@ -250,6 +251,7 @@ export const cssProps : dynamicObject = {
     "textOverflow": "text-overflow",
     "textShadow": "text-shadow",
     "textTransform": "text-transform",
+    "textStroke": "-webkit-text-stroke",
     "top": "top",
     
     "transform": "transform",

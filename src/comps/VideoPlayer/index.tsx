@@ -3,9 +3,8 @@ import Box from "../Box";
 
 const VideoPlayer = forwardRef((props, ref) => {
 
-
     return <Box>
-        
+        <video />
     </Box>
 
 })

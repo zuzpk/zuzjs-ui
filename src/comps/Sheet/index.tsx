@@ -21,6 +21,8 @@ export type SheetProps = ZuzProps & {
     spinner?: SPINNER,
     loadingMessage?: string,
     actionPosition?: SHEET_ACTION_POSITION,
+    onShow?: () => void,
+    onHide?: () => void,
 }
 
 export interface SheetActionHandler {
@@ -56,7 +58,13 @@ let _sheetWobbleTimeout: NodeJS.Timeout | null = null
 
 const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
 
-    const { title : _title, message, transition, curve, speed, type, actionPosition, spinner, loadingMessage, ...pops } = props
+    const { 
+        title : _title, 
+        message, transition, 
+        curve, speed, type, actionPosition, spinner, 
+        loadingMessage, 
+        onShow, onHide,
+        ...pops } = props
 
     const {
         className,
@@ -189,9 +197,13 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
             setSheetType(type || SHEET.Default)
             setMsg(message);
             setVisible(true);
+
+            onShow?.()
+
         },
         hide(){
             setVisible(false)
+            onHide?.()
         }
     }))
 
