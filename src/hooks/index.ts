@@ -33,6 +33,9 @@ export { default as useImage } from './useImage';
 export { default as useIntersectionObserver } from './useIntersectionObserver';
 
 export { default as useScrollbar } from './useScrollbar';
+
+export { default as useSheet } from './useSheet';
+
 export { default as useShortcuts } from './useShortcuts';
 
 export { default as useNetworkStatus } from './useNetworkStatus';
@@ -44,3 +47,5 @@ export { default as useSlider } from './useSlider';
 export { default as useTruncateText } from './useTruncateText';
 
 export { default as useViewTransition } from './useViewTransition';
+
+export { default as useWebSocket, type WebSocketOptions } from './useWebSocket';

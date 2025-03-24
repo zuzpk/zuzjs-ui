@@ -323,12 +323,12 @@ export const withPost = async <T>(uri: string, data: dynamicObject | FormData, t
     })
 }
 
-export const withGet = async <T>(uri: string, timeout: number = 60): Promise<T> => {
+export const withGet = async <T>(uri: string, timeout: number = 60, ignoreKind = false): Promise<T> => {
     return new Promise((resolve, reject) => {
         axios
             .get(uri, { timeout: timeout * 1000 })
             .then((resp) => {
-                if (resp.data && "kind" in resp.data) {
+                if (ignoreKind || (resp.data && "kind" in resp.data)) {
                     resolve(resp.data as T);
                 } else {
                     reject(resp.data);
