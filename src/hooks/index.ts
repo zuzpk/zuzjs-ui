@@ -28,6 +28,9 @@ export { default as useFileManager } from './useFileManager';
 
 //useFilter
 
+export { default as useFacebookPixel } from './useFacebookPixel';
+export { default as useGoogleTagManager } from './useGoogleTagManager';
+
 export { default as useImage } from './useImage';
 
 export { default as useIntersectionObserver } from './useIntersectionObserver';
