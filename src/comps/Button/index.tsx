@@ -36,6 +36,6 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     </button>
 })
 
-Button.displayName = `Button`
+Button.displayName = `Zuz.Button`
 
 export default Button

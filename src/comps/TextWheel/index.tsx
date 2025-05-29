@@ -77,6 +77,6 @@ const TextWheel = forwardRef<TextWheelHandler, TextWheelProps>((props, ref) => {
     
 })
 
-TextWheel.displayName = `TextWheel`
+TextWheel.displayName = `Zuz.TextWheel`
 
 export default TextWheel;

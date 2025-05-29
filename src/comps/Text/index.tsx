@@ -33,6 +33,6 @@ const Text = forwardRef<HTMLHeadingElement, TextProps>((props, ref) => {
 
 })
 
-Text.displayName = `ZuzUI.Text`
+Text.displayName = `Zuz.Text`
 
 export default Text

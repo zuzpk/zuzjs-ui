@@ -59,7 +59,7 @@ const TreeItem = forwardRef<TreeItemHandler, TreeItemProps>((props, ref) => {
                                     isRoot ? icons?.rootOpen || icons.nodeOpen : icons.nodeOpen 
                                     : isRoot ? icons?.rootClose || icons?.nodeClose : icons?.nodeClose )
                         } /> }
-                <Text {...{ className: `--node-label`} as TextProps} skeleton={rest.skeleton}>{label}</Text>
+                <Text {...{ className: `--node-label ${isRoot ? `--node-label-root` : ``}`.trim()} as TextProps} skeleton={rest.skeleton}>{label}</Text>
             </Button>
         </Box>
 

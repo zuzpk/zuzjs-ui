@@ -267,6 +267,8 @@ export const removeDuplicatesFromArray = <T>(array: T[]): T[] => {
     }, []);
 }
 
+export const getCancelToken = () => axios.CancelToken.source();
+
 export const withPost = async <T>(uri: string, data: dynamicObject | FormData, timeout: number = 60, onProgress?: (ev: AxiosProgressEvent) => void ) : Promise<T> => {
     const _cookies = Cookies.get()
     if ( data instanceof FormData ){
@@ -677,3 +679,46 @@ export const truncate = (selector: string, lines = 2) => {
 
 }
   
+export const checkPasswordStrength = (password: string): {
+    score: number;
+    result: string,
+    suggestion: string[];
+} => {
+    const suggestions: string[] = [];
+    let score = 0;
+  
+    if (password.length >= 8) {
+      score++;
+    } else {
+      suggestions.push("Use at least 8 characters");
+    }
+  
+    if (/[a-z]/.test(password)) {
+      score++;
+    } else {
+      suggestions.push("Add lowercase letters");
+    }
+  
+    if (/[A-Z]/.test(password)) {
+      score++;
+    } else {
+      suggestions.push("Add uppercase letters");
+    }
+  
+    if (/\d/.test(password)) {
+      score++;
+    } else {
+      suggestions.push("Include numbers");
+    }
+  
+    if (/[^A-Za-z0-9]/.test(password)) {
+      score++;
+    } else {
+      suggestions.push("Add special characters (e.g. !, @, #)");
+    }
+  
+    return { 
+        score, 
+        result: score <= 2 ? "Weak" : score == 3 ? "Moderate" : score == 4 ? "Strong" : "Excellent",
+        suggestion: suggestions };
+}

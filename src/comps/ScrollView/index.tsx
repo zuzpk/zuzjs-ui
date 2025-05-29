@@ -35,6 +35,6 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
 
 })
 
-ScrollView.displayName = `ZuzUI.ScrollView`
+ScrollView.displayName = `Zuz.ScrollView`
 
 export default ScrollView

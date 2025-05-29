@@ -12,17 +12,17 @@ const Avatar = forwardRef<AvatarHandler, AvatarProps>((props, ref) => {
     
     const { 
         src, size, variant, type, crossOrigin, referrerPolicy, 
-        animate, as, alt, color,
+        fx, as, alt, color,
         ...pops 
     } = props;
 
-    const [ img, imgStatus, imgError ] = src ? useImage(src, crossOrigin, referrerPolicy) : [`x`,`y`,`z`];
+    const [ img, imgStatus, imgError ] = useImage(src ?? "", crossOrigin, referrerPolicy);
 
     const {
         className,
         style,
         rest
-    } = useBase({ animate, as })
+    } = useBase({ fx, as })
 
     useEffect(() => {
         if (type == AVATAR.Square && !document.getElementById('squareRadiusClipPath')) {
@@ -44,7 +44,7 @@ const Avatar = forwardRef<AvatarHandler, AvatarProps>((props, ref) => {
             svg.appendChild(defs);
             document.body.appendChild(svg);
         }
-    }, [])
+    }, [src])
 
     return <Box
             className={`--avatar --${variant || Size.Small} --${(type || AVATAR.Circle).toLowerCase()} rel flex aic jcc ${className}`.trim()}
@@ -61,6 +61,6 @@ const Avatar = forwardRef<AvatarHandler, AvatarProps>((props, ref) => {
     </Box>
 })
 
-Avatar.displayName = `Avatar`
+Avatar.displayName = `Zuz.Avatar`
 
 export default Avatar

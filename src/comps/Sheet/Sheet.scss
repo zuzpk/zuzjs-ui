@@ -22,6 +22,7 @@
     --sheet-closer-opacity: 0.75;
     --sheet-closer-hover-opacity: 1;
     --sheet-font-size: 15px;
+    --sheet-title-position: center;
     --sheet-title-opacity: 0.75;
     --sheet-title-font-size: 16px;
     --sheet-closer-font-size: 36px;
@@ -86,6 +87,10 @@
         transform-origin: top left !important;
         .--cover{
             border-radius: var(--sheet-radius);
+            &.fillx{
+                top: -40px !important;
+                bottom: -70px !important;
+            }
         }
     }
 
@@ -96,7 +101,7 @@
             flex: 1;
             font-size: var(--sheet-title-font-size);
             opacity: var(--sheet-title-opacity);
-            text-align: center;
+            text-align: var(--sheet-title-position);
             padding: 0px 45px;
             display: flex;
             align-items: center;

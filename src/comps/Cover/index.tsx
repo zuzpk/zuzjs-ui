@@ -43,6 +43,6 @@ const Cover = forwardRef<HTMLDivElement, CoverProps >((props, ref) => {
 
 })
 
-Cover.displayName = `Cover`
+Cover.displayName = `Zuz.Cover`
 
 export default Cover

@@ -26,4 +26,6 @@ const Crumb = forwardRef<HTMLUListElement | HTMLOListElement, CrumbProps>((props
 
 })
 
+Crumb.displayName = `Zuz.Crumb`
+
 export default Crumb

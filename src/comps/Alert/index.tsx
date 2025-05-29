@@ -31,6 +31,6 @@ const Alert = forwardRef<AlertHandler, AlertProps>((props, ref) => {
 
 })
 
-Alert.displayName = `Alert`
+Alert.displayName = `Zuz.Alert`
 
 export default Alert    

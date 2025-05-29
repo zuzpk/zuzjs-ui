@@ -42,6 +42,6 @@ const KeyBoardKeys = forwardRef<HTMLDivElement, KeyboardKeyProps>(({
 
 })
 
-KeyBoardKeys.displayName = `ZuzUI.KeyboardKeys`
+KeyBoardKeys.displayName = `Zuz.KeyboardKeys`
 
 export default KeyBoardKeys

@@ -5,6 +5,10 @@ import { animationProps, Skeleton } from "./interfaces";
 
 export type Deprecated<T, M extends string> = T & { __deprecatedMessage?: M };
 
+export type dynamic = { 
+    [x: string] : any 
+}
+
 export type dynamicObject = { 
     [x: string] : any 
 }

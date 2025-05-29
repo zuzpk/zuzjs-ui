@@ -147,6 +147,6 @@ const Slider = forwardRef<HTMLInputElement, SliderProps >((props, ref) => {
 
 })
 
-Slider.displayName = `Slider`
+Slider.displayName = `Zuz.Slider`
 
 export default Slider

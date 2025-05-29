@@ -22,6 +22,6 @@ export const Overlay = forwardRef<HTMLDivElement, OverlayProps>((props, ref) => 
 
 })
 
-Overlay.displayName = `Overlay`
+Overlay.displayName = `Zuz.Overlay`
 
 export default Overlay

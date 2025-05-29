@@ -12,7 +12,7 @@ const CheckBox = forwardRef<CheckboxHandler, CheckBoxProps>((props, ref) => {
     const [ checked, _setChecked ] = useState(defaultCheck || false)
 
     const bRef = useRef<HTMLInputElement>(null)
-
+    
     useImperativeHandle(ref, () => ({
         setChecked(mod, triggerChange=true){
             _setChecked(mod)
@@ -54,6 +54,6 @@ const CheckBox = forwardRef<CheckboxHandler, CheckBoxProps>((props, ref) => {
 
 });
 
-CheckBox.displayName = `CheckBox`
+CheckBox.displayName = `Zuz.CheckBox`
 
 export default CheckBox

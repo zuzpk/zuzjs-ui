@@ -43,6 +43,6 @@ const TreeView = forwardRef<TreeViewHandler, TreeViewProps>((props, ref) => {
 
 })
 
-TreeView.displayName = `ZuzUI.TreeView`
+TreeView.displayName = `Zuz.TreeView`
 
 export default TreeView

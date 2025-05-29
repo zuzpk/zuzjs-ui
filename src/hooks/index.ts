@@ -32,6 +32,7 @@ export { default as useFacebookPixel } from './useFacebookPixel';
 export { default as useGoogleTagManager } from './useGoogleTagManager';
 
 export { default as useImage } from './useImage';
+export { default as useImageCropper } from './useImageCropper';
 
 export { default as useIntersectionObserver } from './useIntersectionObserver';
 
@@ -48,6 +49,8 @@ export { default as useResizeObserver } from './useResizeObserver';
 export { default as useSlider } from './useSlider';
 
 export { default as useTruncateText } from './useTruncateText';
+
+export { default as useUploader } from './useUploader';
 
 export { default as useViewTransition } from './useViewTransition';
 

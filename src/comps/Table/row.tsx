@@ -134,6 +134,6 @@ const TRow = <T, >(props: Row<T>) => {
 
 }
 
-TRow.displayName = `Row`
+TRow.displayName = `Zuz.Row`
 
 export default TRow

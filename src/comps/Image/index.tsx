@@ -24,6 +24,6 @@ const Image = forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
 
 })
 
-Image.displayName = `Image`
+Image.displayName = `Zuz.Image`
 
 export default Image

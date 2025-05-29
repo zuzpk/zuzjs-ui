@@ -72,6 +72,6 @@ const Search = forwardRef<SearchHandler, SearchProps>((props, ref) => {
         
 })
 
-Search.displayName = `Search`
+Search.displayName = `Zuz.Search`
 
 export default Search

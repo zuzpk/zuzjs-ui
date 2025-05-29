@@ -9,4 +9,6 @@ const VideoPlayer = forwardRef((props, ref) => {
 
 })
 
+VideoPlayer.displayName = `Zuz.VideoPlayer`
+
 export default VideoPlayer

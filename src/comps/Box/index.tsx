@@ -39,6 +39,6 @@ const Box = forwardRef<HTMLDivElement, BoxProps>((props, ref) => {
     
 })
 
-Box.displayName = `Box`
+Box.displayName = `Zuz.Box`
 
 export default Box

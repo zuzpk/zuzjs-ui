@@ -57,6 +57,6 @@ const ColorScheme = forwardRef<HTMLDivElement, ColorSchemeProps>((props, ref) =>
 
 })
 
-ColorScheme.displayName = `ColorScheme`
+ColorScheme.displayName = `Zuz.ColorScheme`
 
 export default ColorScheme

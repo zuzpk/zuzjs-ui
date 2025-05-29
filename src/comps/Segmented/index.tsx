@@ -83,6 +83,6 @@ const Segmented = forwardRef<HTMLDivElement, SegmentProps>((props, ref) => {
 
 })
 
-Segmented.displayName = `ZuzUI.SelectTabs`
+Segmented.displayName = `Zuz.SelectTabs`
 
 export default Segmented;

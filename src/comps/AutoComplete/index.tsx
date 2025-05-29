@@ -211,6 +211,6 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
 
 })
 
-AutoComplete.displayName = `AutoComplete`
+AutoComplete.displayName = `Zuz.AutoComplete`
 
 export default AutoComplete

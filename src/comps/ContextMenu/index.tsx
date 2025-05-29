@@ -59,6 +59,6 @@ const ContextMenu = forwardRef<ContextMenuHandler, ContextMenuProps>((props, ref
 
 });
 
-ContextMenu.displayName = `ContextMenu`
+ContextMenu.displayName = `Zuz.ContextMenu`
 
 export default ContextMenu

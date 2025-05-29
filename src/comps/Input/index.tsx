@@ -8,7 +8,7 @@ export type InputProps = Props<`input`> & {
     numeric?: boolean,
     size?: Size,
     variant?: Variant,
-    with?: FORMVALIDATION
+    with?: FORMVALIDATION | `${FORMVALIDATION}${string}`
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
@@ -36,6 +36,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         
 })
 
-Input.displayName = `Input`
+Input.displayName = `Zuz.Input`
 
 export default Input

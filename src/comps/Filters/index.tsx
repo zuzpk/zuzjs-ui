@@ -29,6 +29,6 @@ const Filters = (props : FilterProps) => {
 
 }
 
-Filters.displayName = `Filters`
+Filters.displayName = `Zuz.Filters`
 
 export default Filters

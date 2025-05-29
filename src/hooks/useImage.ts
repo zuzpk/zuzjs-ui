@@ -8,8 +8,8 @@ const useImage = (
     referrerPolicy?: 'no-referrer' | 'no-referrer-when-downgrade' | 'origin' | 'origin-when-cross-origin' | 'same-origin' | 'strict-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url'
 ) => {
 
-    const img = useRef<HTMLImageElement>(null);
     const [ state, setState ] = useState<dynamicObject>({ loaded: false, error: null });
+    const img = useRef<HTMLImageElement>(null);
     
     useEffect(() => {
 
@@ -29,7 +29,7 @@ const useImage = (
 
         }
 
-    }, [])
+    }, [url])
 
     return [ img.current ? img.current.src : ``, state.loaded, state.error ];
 

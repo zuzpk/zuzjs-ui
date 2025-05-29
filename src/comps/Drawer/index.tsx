@@ -90,6 +90,6 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
     </>
 })
 
-Drawer.displayName = `Drawer`
+Drawer.displayName = `Zuz.Drawer`
 
 export default Drawer

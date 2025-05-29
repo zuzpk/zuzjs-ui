@@ -45,6 +45,6 @@ const CookiesConsent = forwardRef<HTMLDivElement, CookieConsentProps>((props, re
 
 })
 
-CookiesConsent.displayName = `CookiesConsent`
+CookiesConsent.displayName = `Zuz.CookiesConsent`
 
 export default CookiesConsent;

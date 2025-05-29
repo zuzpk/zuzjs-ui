@@ -28,6 +28,6 @@ const List = forwardRef<HTMLUListElement | HTMLOListElement, ListProps>((props, 
     
 })
 
-List.displayName = `List`
+List.displayName = `Zuz.List`
 
 export default List

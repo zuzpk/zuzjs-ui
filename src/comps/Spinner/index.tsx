@@ -81,6 +81,6 @@ const Spinner = forwardRef<HTMLDivElement, SpinnerProps >((props, ref) => {
 
 })
 
-Spinner.displayName = `ZuzUI.Spinner`
+Spinner.displayName = `Zuz.Spinner`
 
 export default Spinner;

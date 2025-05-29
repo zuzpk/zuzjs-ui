@@ -23,6 +23,6 @@ const Sidebar = forwardRef<HTMLDivElement, SidebarProps>((props, ref) => {
 
 })
 
-Sidebar.displayName = `Sidebar`
+Sidebar.displayName = `Zuz.Sidebar`
 
 export default Sidebar

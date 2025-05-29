@@ -9,6 +9,6 @@ const Switch = forwardRef<CheckboxHandler, CheckBoxProps>((props, ref) => {
 
 })
 
-Switch.displayName = `Switch`
+Switch.displayName = `Zuz.Switch`
 
 export default Switch

@@ -33,6 +33,6 @@ const Icon = forwardRef<HTMLDivElement, IconProps>((props, ref) => {
 
 })
 
-Icon.displayName = `Icon`
+Icon.displayName = `Zuz.Icon`
 
 export default Icon

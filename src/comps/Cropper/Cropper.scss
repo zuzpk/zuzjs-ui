@@ -1,0 +1,19 @@
+:root{
+    --cropper-border: 3px #333 solid;
+}
+.--cropper{
+    canvas{
+        cursor: move;
+        border: var(--cropper-border);
+        margin-bottom: 10px;
+    }
+    &.--circle{
+        canvas{
+            border-radius: 50%;
+        }
+    }
+    .--cropper-slider{
+        width: 250px;
+        margin: 15px auto 0px auto;
+    }
+}
