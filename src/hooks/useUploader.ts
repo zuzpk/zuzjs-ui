@@ -1,5 +1,5 @@
-import { CancelTokenSource } from "axios";
-import { dynamic, getCancelToken, uuid, withPost } from "..";
+import { CancelTokenSource, getCancelToken, UploadProgressEvent, withPost } from "@zuzjs/core";
+import { dynamic, uuid } from "..";
 
 export enum Status {
     Error = -1,
@@ -80,13 +80,17 @@ const useUploader = (conf: Uploader) => {
             `${self.que[self.index].server!.uri}/receive`,
             formData,
             86400,
-            (ev) => {
+            true,
+            (ev: UploadProgressEvent) => {
                 console.log(ev)
             }
         )
+        .catch(resp => {
+            console.log(`Uploaded`, resp)
+        })
         .catch(err => {
             self.que[self.index].status = Status.Error
-            self.status = Status.Error
+            self.status = Status.Idle
             sync()
             Que()
         })
@@ -112,13 +116,15 @@ const useUploader = (conf: Uploader) => {
         })
         .catch((err) => {
             self.que[self.index].status = Status.Error
-            self.status = Status.Error
+            self.status = Status.Idle
             sync()
             Que()
         })
     }
 
     const currentFile = () : QueItem => self.que[self.index]
+
+    const getQue = () : QueItem[] => self.que;
 
     const Que = () => {
         if( 
@@ -154,6 +160,7 @@ const useUploader = (conf: Uploader) => {
     }
 
     return {
+        getQue,
         addToQue,
     };
 

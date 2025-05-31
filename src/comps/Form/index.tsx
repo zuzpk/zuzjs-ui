@@ -1,6 +1,7 @@
 "use client"
+import { withPost } from "@zuzjs/core";
 import { forwardRef, ReactNode, startTransition, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { addPropsToChildren, isEmail, isEmpty, withPost } from "../../funs";
+import { addPropsToChildren, isEmail, isEmpty } from "../../funs";
 import { useBase } from "../../hooks";
 import { dynamicObject, FormInputs } from "../../types";
 import { FORMVALIDATION, SHEET } from "../../types/enums";

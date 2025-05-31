@@ -44,7 +44,7 @@
     "@types/md5": "^2.3.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "axios": "^1.7.9",
+    "@zuzjs/core": "workspace:*",
     "chokidar": "^3.6.0",
     "commander": "^13.1.0",
     "hashids": "^2.3.0",

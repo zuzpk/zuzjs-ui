@@ -159,14 +159,26 @@ const useDB = (options: IDBOptions) => {
 
     })   
     
-    const update_one = <T>(storeName: string, value: T, key?: IDBValidKey) => new Promise<void>((resolve, reject) => {
+    const update_one = <T extends Object>(storeName: string, value: Partial<T>, key: IDBValidKey) => new Promise<void>((resolve, reject) => {
         connect().then((db) => {
+
             const { store } = createTransaction(storeName, DBMode.readWrite)
             
-            const request = key ? store.put(value, key) : store.put(value);
+            const getReq = store.get(key);
+            getReq.onsuccess = () => {
+                const existing = getReq.result;
+                if (!existing) {
+                    reject(`Record with key ${key} not found.`);
+                    return;
+                }
+                const updateReq = store.put({ ...existing, ...value });
+                updateReq.onsuccess = () => resolve();
+                updateReq.onerror = (evt: any) => reject(`Update failed. ${evt.target.error}`);
 
-            request.onsuccess = (evt: any) => {
-                resolve();
+            }
+
+            getReq.onerror = (evt: any) => {
+                reject(`Failed to get existing record. ${evt.target.error}`);
             };
         })
         .catch(err => {
