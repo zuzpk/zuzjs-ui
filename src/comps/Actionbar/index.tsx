@@ -97,6 +97,6 @@ const ActionBar = forwardRef<ActionBarHandler, ActionBarProps>((props, ref) => {
 
 })
 
-ActionBar.displayName = `ActionBar`
+ActionBar.displayName = `Zuz.ActionBar`
 
 export default ActionBar;

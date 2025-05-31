@@ -20,6 +20,6 @@ const Label = forwardRef<HTMLLabelElement, LabelProps>((props, ref) => {
 
 })
 
-Label.displayName = `Label`
+Label.displayName = `Zuz.Label`
 
 export default Label

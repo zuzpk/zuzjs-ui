@@ -1,12 +1,12 @@
 "use client"
 import { useCallback, useEffect, useState } from "react";
-import { dynamicObject } from "..";
+import { dynamic } from "..";
 
 export type WebSocketOptions = {
   onOpen?: (event: Event) => void;
   onClose?: (event: CloseEvent) => void;
   onRawMessage?: (event: MessageEvent) => void;
-  onMessage?: (data: dynamicObject) => void;
+  onMessage?: (data: dynamic ) => void;
   onError?: (event: Event) => void;
   reconnect?: boolean;
 };
@@ -38,7 +38,23 @@ const useWebSocket = (url: string, options?: WebSocketOptions) => {
   
   const connect = useCallback(() => {
 
-    if (socketInstances.has(url)) return; // Prevent duplicate connection
+    if (socketInstances.has(url)) {
+      const Socket = socketInstances.get(url);
+      if ( Socket ){
+        Socket.onmessage = (event) => {
+
+          setMessages((prev) => [...prev, event.data]);
+
+          onRawMessage?.(event);
+
+          const raw = JSON.parse(Buffer.isBuffer(event) ? event.toString(`utf8`) : `string` == typeof event ? event : event.data)
+          onMessage?.(raw);
+        
+          listenersMap.get(url)?.forEach((listener) => listener(event));
+        };
+      }
+      return; // Prevent duplicate connection
+    }
 
 
     const socket = new WebSocket(url);
@@ -113,7 +129,7 @@ const useWebSocket = (url: string, options?: WebSocketOptions) => {
       const data = typeof message === "string" ? message : JSON.stringify(message);
       socket.send(data);
     } else {
-      console.warn("WebSocket is not connected.");
+      console.log("WebSocket is not connected.");
     }
   }, [url]);
 

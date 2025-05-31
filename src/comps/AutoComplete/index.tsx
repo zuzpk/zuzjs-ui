@@ -1,6 +1,7 @@
 "use client"
+import { withPost } from "@zuzjs/core";
 import { forwardRef, KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
-import { clamp, isArray, uuid, withPost } from "../../funs";
+import { clamp, isArray, uuid } from "../../funs";
 import { useBase, useDebounce } from "../../hooks";
 import { Props } from "../../types";
 import { Size, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
@@ -211,6 +212,6 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
 
 })
 
-AutoComplete.displayName = `AutoComplete`
+AutoComplete.displayName = `Zuz.AutoComplete`
 
 export default AutoComplete

@@ -23,6 +23,6 @@ const Span = forwardRef<HTMLSpanElement, SpanProps>((props, ref) => {
 
 })
 
-Span.displayName = `Span`
+Span.displayName = `Zuz.Span`
 
 export default Span

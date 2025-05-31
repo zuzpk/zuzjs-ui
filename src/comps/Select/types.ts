@@ -1,5 +1,5 @@
 import { FormEventHandler } from "react"
-import { FORMVALIDATION } from "../../types/enums"
+import { FORMVALIDATION, Variant } from "../../types/enums"
 import { BoxProps } from "../Box"
 
 /**
@@ -25,6 +25,14 @@ export interface OptionItemProps {
  * Props for the Select component.
  */
 export type SelectProps = Omit<BoxProps, "onChange" > & {
+
+
+    /**
+     * Size of the select field.
+     * @default "md"
+     */
+    variant?: Variant,
+
     /**
      * Indicates if the select field is required and its validation type.
      */

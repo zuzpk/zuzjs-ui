@@ -24,6 +24,6 @@ const Accordion = forwardRef<AccordionHandler, AccordionProps>((props, ref) => {
 
 })
 
-Accordion.displayName = `Accordion`
+Accordion.displayName = `Zuz.Accordion`
 
 export default Accordion

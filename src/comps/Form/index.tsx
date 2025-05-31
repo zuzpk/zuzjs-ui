@@ -1,6 +1,7 @@
 "use client"
+import { withPost } from "@zuzjs/core";
 import { forwardRef, ReactNode, startTransition, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { addPropsToChildren, isEmail, withPost } from "../../funs";
+import { addPropsToChildren, isEmail, isEmpty } from "../../funs";
 import { useBase } from "../../hooks";
 import { dynamicObject, FormInputs } from "../../types";
 import { FORMVALIDATION, SHEET } from "../../types/enums";
@@ -133,12 +134,30 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
                     console.log(`Add FORMVALIDATION.Password`)
                     return false
                 case FORMVALIDATION.MatchField:
-                    const [ __, field ] = el.getAttribute(`with`).split(`@`)
+                    const [ __, field, condition ] = el.getAttribute(`with`).split(`@`)
                     const _el = document.querySelector<FormInputs>(`[name=${field.trim()}]`)
                     if ( !_el ) return false
-                    // console.log(`matching`, _el.name, _el.value, el.name, el.value)                    
-                    if ( _el && _el.value != el.value ){
-                        return false
+
+                    switch( condition || `direct-match` ){
+                        //Self should not empty
+                        case "if-not-empty":
+                            if (_el && !isEmpty(_el.value) && _el.value != el.value ){
+                                return false;
+                            }
+                            break;
+                        case "direct-match":
+                            if( 
+                                _el &&
+                                _el.classList.contains(`--otp`) && 
+                                el.classList.contains(`--otp`) &&
+                                _getPinValue(_el) != _getPinValue(el)
+                            ){
+                                return false
+                            }
+                            else if ( _el && _el.value != el.value ){
+                                return false
+                            }
+                            break;
                     }
                     break;
                 default:
@@ -360,6 +379,6 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
 
 })
 
-Form.displayName = `Form`
+Form.displayName = `Zuz.Form`
 
 export default Form;

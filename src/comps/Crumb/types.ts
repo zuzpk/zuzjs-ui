@@ -9,5 +9,6 @@ export type CrumbItem = {
 }
 
 export type CrumbProps = BoxProps & {
-    items: CrumbItem[]
+    items: CrumbItem[],
+    maxItems?: number
 }

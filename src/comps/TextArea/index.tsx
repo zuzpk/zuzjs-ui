@@ -32,6 +32,6 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => 
         
 })
 
-TextArea.displayName = `ZuzUI.TextArea`
+TextArea.displayName = `Zuz.TextArea`
 
 export default TextArea

@@ -38,6 +38,6 @@ const Radio = forwardRef<RadioHandler, RadioProps>((props, _ref) => {
 
 })
 
-Radio.displayName = `Radio`
+Radio.displayName = `Zuz.Radio`
 
 export default Radio

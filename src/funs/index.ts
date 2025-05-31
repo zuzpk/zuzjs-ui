@@ -1,6 +1,4 @@
-import axios, { AxiosProgressEvent } from "axios";
 import Hashids from "hashids";
-import Cookies from "js-cookie";
 import md5 from "md5";
 import moment from "moment";
 import { nanoid } from "nanoid";
@@ -265,90 +263,6 @@ export const removeDuplicatesFromArray = <T>(array: T[]): T[] => {
         }
         return accumulator;
     }, []);
-}
-
-export const withPost = async <T>(uri: string, data: dynamicObject | FormData, timeout: number = 60, onProgress?: (ev: AxiosProgressEvent) => void ) : Promise<T> => {
-    const _cookies = Cookies.get()
-    if ( data instanceof FormData ){
-        for ( const c in _cookies ){
-            data.append(c, _cookies[c])
-        }
-        return new Promise((resolve, reject) => {
-            axios({
-                method: 'post',
-                url: uri,
-                data: data,
-                timeout: timeout * 1000,
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-                onUploadProgress: ev => onProgress && onProgress(ev)
-            })
-            .then(resp => {
-                if(resp.data && "kind" in resp.data){
-                    resolve(resp.data)
-                }else{
-                    reject(resp.data)
-                }            
-            })
-            .catch(err => reject(err));
-        })
-    }
-    return new Promise((resolve, reject) => {
-        axios.post(
-            uri,
-            {
-                ...data,
-                ..._cookies,
-                __stmp: new Date().getTime() / 1000
-            },
-            {
-                timeout: 1000 * timeout,
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            }            
-        )
-        .then(resp => {
-            if(resp.data && "kind" in resp.data){
-                resolve(resp.data)
-            }else{
-                reject(resp.data)
-            }            
-        })
-        .catch(err => {
-            if ( err?.response?.data ) reject(err.response.data)
-            else reject(err.code && err.code == `ERR_NETWORK` ? { error: err.code, message: navigator.onLine ? `Unable to connect to the server. It may be temporarily down.` : `Network error: Unable to connect. Please check your internet connection and try again.` } : err)
-        });
-    })
-}
-
-export const withGet = async <T>(uri: string, timeout: number = 60, ignoreKind = false): Promise<T> => {
-    return new Promise((resolve, reject) => {
-        axios
-            .get(uri, { timeout: timeout * 1000 })
-            .then((resp) => {
-                if (ignoreKind || (resp.data && "kind" in resp.data)) {
-                    resolve(resp.data as T);
-                } else {
-                    reject(resp.data);
-                }
-            })
-            .catch((err) => {
-                if (err?.response?.data) reject(err.response.data);
-                else
-                    reject(
-                        err.code === `ERR_NETWORK`
-                            ? {
-                                  error: err.code,
-                                  message: navigator.onLine
-                                      ? `Unable to connect to the server. It may be temporarily down.`
-                                      : `Network error: Unable to connect. Please check your internet connection and try again.`,
-                              }
-                            : err
-                    );
-            });
-    });
 }
 
 export const withTime = ( fun : (...args: any[]) => any ) => {
@@ -677,3 +591,46 @@ export const truncate = (selector: string, lines = 2) => {
 
 }
   
+export const checkPasswordStrength = (password: string): {
+    score: number;
+    result: string,
+    suggestion: string[];
+} => {
+    const suggestions: string[] = [];
+    let score = 0;
+  
+    if (password.length >= 8) {
+      score++;
+    } else {
+      suggestions.push("Use at least 8 characters");
+    }
+  
+    if (/[a-z]/.test(password)) {
+      score++;
+    } else {
+      suggestions.push("Add lowercase letters");
+    }
+  
+    if (/[A-Z]/.test(password)) {
+      score++;
+    } else {
+      suggestions.push("Add uppercase letters");
+    }
+  
+    if (/\d/.test(password)) {
+      score++;
+    } else {
+      suggestions.push("Include numbers");
+    }
+  
+    if (/[^A-Za-z0-9]/.test(password)) {
+      score++;
+    } else {
+      suggestions.push("Add special characters (e.g. !, @, #)");
+    }
+  
+    return { 
+        score, 
+        result: score <= 2 ? "Weak" : score == 3 ? "Moderate" : score == 4 ? "Strong" : "Excellent",
+        suggestion: suggestions };
+}

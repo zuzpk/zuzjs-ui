@@ -7,7 +7,7 @@ import Input, { InputProps } from '../Input';
 export type PinInputProps = InputProps & {
     mask?: boolean, 
     size?: number,
-    length?: number
+    length?: number,
 }
 
 const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
@@ -17,6 +17,11 @@ const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
     
     let name = `pinput`
     let required = false
+    let _with = {}
+    if ( `with` in pops ){
+        _with = { with: pops.with }
+        delete pops.with
+    }
     if ( `type` in pops ){
         delete pops.type
     }
@@ -54,8 +59,10 @@ const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
         style={style}
         className={`--otp flex aic rel`}
         data-required={required}
-        data-size={size || length || 4}>
+        data-size={size || length || 4}
+        {..._with}>
         {Array(size || length || 4).fill(1).map((a, i) => <Input 
+            autoComplete="new-password"
             data-index={i}
             key={`pin-${i}`}
             ref={(el : HTMLInputElement | null) => {
@@ -64,13 +71,13 @@ const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
             numeric={true}
             onChange={handleInput}
             maxLength={1}
-            placeholder={`0`}
+            placeholder={mask ? `·` : `0`}
             type={mask ? `password` : 'text'}
             {...pops} />)}
     </Box>
         
 })
 
-PinInput.displayName = `PinInput`
+PinInput.displayName = `Zuz.PinInput`
 
 export default PinInput

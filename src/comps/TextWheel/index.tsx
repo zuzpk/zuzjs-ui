@@ -21,11 +21,11 @@ const TextWheel = forwardRef<TextWheelHandler, TextWheelProps>((props, ref) => {
         this.updateValue(v);
         if (divRef.current) {
           const chars = v.toString().split('');
-          divRef.current.querySelectorAll('.wheel-char').forEach((charElement, index) => {
+          divRef.current.querySelectorAll('.--wheel-char').forEach((charElement, index) => {
             const char = chars[index];
             if (charElement instanceof HTMLElement) {
               charElement.setAttribute('data-value', char);
-              const track = charElement.querySelector('.wheel-char-track');
+              const track = charElement.querySelector('.--wheel-char-track');
               if (track instanceof HTMLElement) {
                 track.style.setProperty('--v', char);
               }
@@ -77,6 +77,6 @@ const TextWheel = forwardRef<TextWheelHandler, TextWheelProps>((props, ref) => {
     
 })
 
-TextWheel.displayName = `TextWheel`
+TextWheel.displayName = `Zuz.TextWheel`
 
 export default TextWheel;

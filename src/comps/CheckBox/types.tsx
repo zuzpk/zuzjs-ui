@@ -13,6 +13,7 @@ export type CheckBoxProps = Props<"input"> & {
     type?: CHECKBOX, 
     size?: Size,
     variant?: Variant,
+    checked?: boolean,
     onSwitch?: (checked: boolean, value: string | number | readonly string[]) => void,
 }
 

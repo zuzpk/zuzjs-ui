@@ -84,6 +84,6 @@ const ToolTip = forwardRef<HTMLDivElement, ToolTipProps>((props, ref) => {
 
 })
 
-ToolTip.displayName = `ToolTip`
+ToolTip.displayName = `Zuz.ToolTip`
 
 export default ToolTip

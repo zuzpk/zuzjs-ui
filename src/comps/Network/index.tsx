@@ -29,6 +29,6 @@ const NetworkManager = forwardRef<HTMLDivElement, NetworkManagerprops>((props, r
 
 })
 
-NetworkManager.displayName = `ZuzUI.NetWorkManager`
+NetworkManager.displayName = `Zuz.NetWorkManager`
 
 export default NetworkManager;

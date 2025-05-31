@@ -18,6 +18,6 @@ const TabItem = ({ tab, index, activeTab, onClick }: TabProps) => {
     
 }
 
-TabItem.displayName = `TabItem`
+TabItem.displayName = `Zuz.TabItem`
 
 export default TabItem

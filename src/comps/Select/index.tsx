@@ -17,6 +17,7 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
         options, 
         label,
         name,
+        variant,
         search: withSearch,
         searchPlaceholder,
         onChange,
@@ -62,7 +63,7 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
         }
     }, [choosing])
 
-    return <Box className={`--select ${name ? `--${name}` : ``} rel`.trim()} name={_id}>
+    return <Box className={`--select ${variant ? `--${variant}` : ``} ${name ? `--${name}` : ``} rel`.trim()} name={_id}>
 
         <Button
             data-value={value ? `string` == typeof value ? value : value.value : value || `-1`}
@@ -113,6 +114,6 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
     </Box>
 })
 
-Select.displayName = `Select`
+Select.displayName = `Zuz.Select`
 
 export default Select

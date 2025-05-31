@@ -317,6 +317,6 @@ export const isSheetHandler = (src: unknown): src is SheetHandler => {
 }
 
 
-Sheet.displayName = `Sheet`
+Sheet.displayName = `Zuz.Sheet`
 
 export default Sheet

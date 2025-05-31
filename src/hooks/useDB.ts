@@ -97,6 +97,26 @@ const useDB = (options: IDBOptions) => {
         })
     })
 
+    const getAll = <T>(storeName: string) => new Promise<T>((resolve, reject) => {
+        connect().then((db) => {
+            const { store } = createTransaction(storeName, DBMode.readOnly)
+            const request = store.getAll()
+            request.onsuccess = (evt: any) => {
+                const result = evt.target.result as T
+                if ( undefined == result ) reject('Record not found');
+                resolve(evt.target.result as T);
+            };
+        
+            request.onerror = (evt: any) => {
+                reject(`SELECT Failed. ${evt.target.result}`);
+            };
+        })
+        .catch(err => {
+            console.log(`[getAll]`, err)
+            reject('Database either corrupted or not initialized');
+        })
+    })
+
     const getByID = <T>(storeName: string, id: string | number) => new Promise<T>((resolve, reject) => {
         connect().then((db) => {
             const { store } = createTransaction(storeName, DBMode.readOnly)
@@ -113,7 +133,7 @@ const useDB = (options: IDBOptions) => {
             };
         })
         .catch(err => {
-            // console.log(`getByID`, err)
+            console.log(`[getByID]`, err)
             reject('Database either corrupted or not initialized');
         })
     })
@@ -139,17 +159,48 @@ const useDB = (options: IDBOptions) => {
 
     })   
     
-    const update = <T>(storeName: string, value: T, key: IDBValidKey) => new Promise<void>((resolve, reject) => {
+    const update_one = <T extends Object>(storeName: string, value: Partial<T>, key: IDBValidKey) => new Promise<void>((resolve, reject) => {
         connect().then((db) => {
-            const { store } = createTransaction(storeName, DBMode.readWrite)
-            const request = store.put(value, key);
 
-            request.onsuccess = (evt: any) => {
-                resolve();
+            const { store } = createTransaction(storeName, DBMode.readWrite)
+            
+            const getReq = store.get(key);
+            getReq.onsuccess = () => {
+                const existing = getReq.result;
+                if (!existing) {
+                    reject(`Record with key ${key} not found.`);
+                    return;
+                }
+                const updateReq = store.put({ ...existing, ...value });
+                updateReq.onsuccess = () => resolve();
+                updateReq.onerror = (evt: any) => reject(`Update failed. ${evt.target.error}`);
+
+            }
+
+            getReq.onerror = (evt: any) => {
+                reject(`Failed to get existing record. ${evt.target.error}`);
             };
         })
         .catch(err => {
             reject('Database either corrupted or not initialized');
+        })
+    })
+
+    const update = <T>(storeName: string, values: { [x: string | number | symbol ]: T }) => new Promise<void>((resolve, reject) => {
+        connect().then((db) => {
+            const { store } = createTransaction(storeName, DBMode.readWrite)
+            let completed = 0
+            const request = store.put(values);
+            request.onsuccess = (evt: any) => {
+                resolve();
+            };
+            request.onerror = (evt: any) => {
+                reject(`UPDATE Failed. ${evt.target.result}`);
+            };
+        })
+        .catch(err => {
+            reject(`UPDATE Failed. ${err}`);
+            // reject('Database either corrupted or not initialized');
         })
     })
 
@@ -168,12 +219,15 @@ const useDB = (options: IDBOptions) => {
     })
 
     return { 
+        getAll,
         getByID,
         getStore,
         insert, 
         update,
+        update_one,
         remove,
-        error }
+        error 
+    }
 
 }
 

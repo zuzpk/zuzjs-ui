@@ -111,6 +111,6 @@ const Pagination = forwardRef<HTMLDivElement, PaginationProps>((props, ref) => {
 
 })
 
-Pagination.displayName = `Pagination`
+Pagination.displayName = `Zuz.Pagination`
 
 export default Pagination

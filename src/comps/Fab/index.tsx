@@ -14,6 +14,6 @@ const Fab = forwardRef<HTMLButtonElement, FabProps>((props, ref) => {
 
 })
 
-Fab.displayName = `Fab`
+Fab.displayName = `Zuz.Fab`
 
 export default Fab
