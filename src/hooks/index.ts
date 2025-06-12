@@ -48,6 +48,8 @@ export { default as useResizeObserver } from './useResizeObserver';
 
 export { default as useSlider } from './useSlider';
 
+export { default as useToast } from './useToast';
+
 export { default as useTruncateText } from './useTruncateText';
 
 export { default as useUploader } from './useUploader';

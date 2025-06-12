@@ -66,7 +66,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>) : {
         cx = css().Build(`string` == typeof as ? as : as.join(` `)).cx;
     }
 
-    const { transition, from, to, when, duration, delay, curve } = autoTransition ? {
+    const { transition, from, to, exit, when, duration, delay, curve } = autoTransition ? {
         transition: autoTransition,
         duration: 0.3
     } : fx || animate || {}
@@ -81,6 +81,26 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>) : {
     else {
         _style = transition ? getAnimationTransition(transition, false, true) : from || {};
     }
+
+     // Track previous value of 'when'
+    // const prevWhenRef = useRef<boolean | undefined>(when);
+
+    // if (undefined === when) {
+    //     _style = transition ? getAnimationTransition(transition, true) : { ...from, ...to };
+    // } else if (true === when) {
+    //     _style = transition ? getAnimationTransition(transition, false) : { ...(to || {}) };
+    // } else {
+    //     // Check if exit style should be applied
+    //     const wasTrue = prevWhenRef.current === true;
+    //     if (wasTrue && exit) {
+    //         _style = { ...(exit || {}) };
+    //     } else {
+    //         _style = transition ? getAnimationTransition(transition, false, true) : from || {};
+    //     }
+    // }
+
+    // // Update previous value for next render
+    // prevWhenRef.current = when;
 
     const _transition : dynamicObject = {}
 

@@ -26,9 +26,10 @@ const Crumb = forwardRef<HTMLUListElement | HTMLOListElement, CrumbProps>((props
         direction={`rows`}
         seperator={<Box as={`--crumb-chevron`}>{SVGIcons.chevronRightOutline}</Box>}
         items={items.map((item, index, _items) => item.ID == `.` ? 
-            <Box as={`flex aic gap:3`}>{Array(3).fill(null).map(() => <Box as={`w:4 h:4 bg:$text r:10`} />)}</Box>
+            <Box as={`flex aic gap:3`}>{Array(3).fill(null).map(() => <Box key={`--crumb-placeholder-${index}`} as={`w:4 h:4 bg:$text r:10`} />)}</Box>
             : <Button 
                 onClick={() => item.action?.()}
+                key={`${item.label.replace(/\s+/g, `-`).toLowerCase()}-${index}`}
                 className={`--crumb-item`} disabled={!_items[index+1]}>
                 { item.icon && <Icon as={`--crumb-icon`} name={item.icon} />}
                 <Text as={`--crumb-label`}>{item.label}</Text>

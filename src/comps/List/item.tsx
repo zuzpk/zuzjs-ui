@@ -7,7 +7,7 @@ const Item = (props : { meta: ListItem }) => {
     const { meta } = props
     const mounted = useDelayed()
     const { label, ...pops } = isValidElement(meta) ? {} : meta as ListItemObject;
-
+    
     const {
         className,
         style,
@@ -34,6 +34,6 @@ const Item = (props : { meta: ListItem }) => {
 
 }
 
-Item.displayName = `ListItem`
+Item.displayName = `Zuz.ListItem`
 
 export default Item

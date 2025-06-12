@@ -9,15 +9,15 @@
 .drawer-h{
     min-width: 320px;
     max-width: 90vw;
-    top: 0px;
-    bottom: 0px;
+    top: calc(0px + var(--m));
+    bottom: calc(0px + var(--m));
     border-radius: var(--drawer-radius-h);
 }
 .drawer-v{
     min-height: 10vh;
     max-height: 90vh;
-    left: 0px;
-    right: 0px;
+    left: calc(0px + var(--m));
+    right: calc(0px + var(--m));
     border-radius: var(--drawer-radius-v);
 }
 .--drawer{
@@ -28,19 +28,19 @@
     overflow-x: hidden;
     overflow-y: auto;   
     &.--left{
-        left: 0px;        
+        left: calc(0px + var(--m));        
         @extend .drawer-h;
     }
     &.--right{
-        right: 0px;        
+        right: calc(0px + var(--m));        
         @extend .drawer-h;
     }
     &.--top{
-        top: 0px;        
+        top: calc(0px + var(--m));        
         @extend .drawer-v;
     }
     &.--bottom{
-        bottom: 0px;        
+        bottom: calc(0px + var(--m));        
         @extend .drawer-v;
     }
     .--handle{

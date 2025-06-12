@@ -21,6 +21,9 @@ export interface animationProps {
     /** Target style properties after the animation completes */
     to?: dynamicObject;
 
+    /** Target style properties for exit animation */
+    exit?: dynamicObject;
+
     /** Condition that determines when the animation should trigger */
     when?: boolean;
 

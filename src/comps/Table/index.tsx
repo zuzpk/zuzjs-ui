@@ -1,6 +1,6 @@
 "use client"
 import { forwardRef, JSX, Ref, useEffect, useMemo, useRef, useState } from "react";
-import { PubSub, SPINNER, Spinner, Text, uuid } from "../..";
+import { animationProps, PubSub, SPINNER, Spinner, Text, TRANSITION_CURVES, TRANSITIONS, uuid } from "../..";
 import { useBase } from "../../hooks";
 import { dynamicObject } from "../../types";
 import Box from "../Box";
@@ -129,7 +129,9 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
         onSort?.(col, dir)
     }
 
-    const _paginated = useMemo(() => <Pagination
+    const possiblePage = (rowCount || (rows ? rows.length : 0)) / (rowsPerPage || 10)
+
+    const _paginated = useMemo(() => (showPaginationOnZeroPageCount || (possiblePage > 1)) ? <Pagination
         hash={paginationHash}
         ref={_pagination}
         renderOnZeroPageCount={showPaginationOnZeroPageCount}
@@ -138,8 +140,9 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
         startPage={currentPage}
         itemCount={rowCount || (rows ? rows.length : 0)}
         itemsPerPage={rowsPerPage || 10}
-    />, [])
+    /> : null, [currentPage, rowCount])
 
+    
     return <Box as={`--table ${(hoverable ?? true) ? `--hoverable` : ``} flex cols rel ${className}`} ref={_tableRef}>
         {_header == true && <TRow 
             sortBy={_sortBy}
@@ -182,7 +185,15 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
             selectable={selectableRows}
             onSelect={onRowSelectToggle}
             onContextMenu={onRowContextMenu} />)}
-        { pagination && _pagination.current != null && <Box as={`--row flex aic --row-footer`}>{_paginated}</Box> }
+        <Box 
+            aria-hidden={!pagination || !_paginated}
+            {...( animateRows ? { fx: {
+                transition: TRANSITIONS.SlideInBottom,
+                curve: TRANSITION_CURVES.EaseInOut,
+                delay: .02 * (rows.length + 1),
+                when: !loading && rows && pagination && _paginated != null
+            } as animationProps} : {} )}
+            as={`--row flex aic --row-footer`}>{pagination && _paginated ? _paginated : null}</Box>
     </Box>
 
 }

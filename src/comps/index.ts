@@ -116,6 +116,9 @@ export { default as Textarea, type TextAreaProps } from './TextArea';
 export { default as TextWheel } from './TextWheel';
 export * from './TextWheel/types';
 
+export { default as ToastProvider } from './Toast';
+export * from './Toast/types';
+
 export { default as ToolTip } from './Tooltip';
 export * from './Tooltip/types';
 

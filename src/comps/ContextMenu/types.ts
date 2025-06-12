@@ -1,8 +1,7 @@
-import { MouseEvent, RefObject } from "react";
+import { FC, MouseEvent, ReactNode } from "react";
 import { BoxProps } from "../Box";
-import { animationProps } from "../../types/interfaces";
 
-export interface ContextItem{
+export interface ContextItem {
     label: string;
     labelColor?: string;
     icon?: string;
@@ -17,6 +16,8 @@ export type ContextMenuProps = BoxProps & {
     items?: ContextItem[],
     offsetX?: number,
     offsetY?: number,
+    header?: ReactNode | FC,
+    footer?: ReactNode | FC,
 }
 
 export type MenuItemProps = ContextItem & {

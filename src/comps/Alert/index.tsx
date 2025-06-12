@@ -1,3 +1,4 @@
+"use client"
 import { forwardRef } from "react";
 import { useBase } from "../../hooks";
 import { ALERT } from "../../types/enums";

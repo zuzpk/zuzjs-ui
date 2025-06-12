@@ -19,7 +19,7 @@ const ProgressBar = forwardRef<ProgressHandler, ProgressBarProps>((props, ref) =
         if ( progress && bar.current ) {
             bar.current!.style.width = `${progress * 100}%`
         }
-    }, [])
+    }, [progress, bar.current])
 
     const { className, style, rest } = useBase(pops)
 

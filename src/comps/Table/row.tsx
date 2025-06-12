@@ -96,7 +96,7 @@ const TRow = <T, >(props: Row<T>) => {
 
     return <Box 
         onContextMenu={e => onContextMenu ? onContextMenu(e, data!) : null}
-        {...( animate ? { animate: { ..._animation, when: mounted } } : {} )}
+        {...( animate ? { fx: { ..._animation, when: mounted } } : {} )}
         as={`--row flex aic ${index == -1 ? `--row-head` : ``} ${rowClassName || ``}`}>
         
         {/* Header */}

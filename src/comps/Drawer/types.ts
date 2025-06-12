@@ -8,6 +8,7 @@ export type DrawerProps = BoxProps & {
     from?: DRAWER_SIDE,
     children?: string | ReactNode | ReactNode[],
     prerender?: boolean,
+    margin?: number,
     onClose?: () => void,
 }
 
