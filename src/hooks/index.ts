@@ -52,7 +52,7 @@ export { default as useToast } from './useToast';
 
 export { default as useTruncateText } from './useTruncateText';
 
-export { default as useUploader } from './useUploader';
+export { QueItem as UploadQueItem, Status as UploadStatus, default as useUploader, type Uploadify } from './useUploader';
 
 export { default as useViewTransition } from './useViewTransition';
 

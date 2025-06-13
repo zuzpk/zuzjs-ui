@@ -266,7 +266,7 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
             <Overlay when={visible} />
 
             <Box
-                className={`--sheet --sheet-${sheetType.toLowerCase()} ${className} fixed`.trim()}
+                className={`--sheet --sheet-${sheetType.toLowerCase()} ${visible ? `is-visible` : ``} ${className} fixed`.trim()}
                 style={style}
                 fx={buildAnimation as animationProps}
                 {...rest as BoxProps}

@@ -44,6 +44,7 @@ export enum TRANSITION_CURVES {
     // Ease = "EASE",
     // EaseIn = "EASEIN",
     // EaseOut = "EASEOUT",
+    Liquid = "LIQUID",
     EaseInOut = "EASEINOUT",
     Bounce = "BOUNCE",
     // Linear = "LINEAR",

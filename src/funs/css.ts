@@ -1199,6 +1199,8 @@ export const getAnimationCurve = ( curve?: string | TRANSITION_CURVES ): string 
     switch(curve.toUpperCase()){
         case TRANSITION_CURVES.Bounce:
             return `var(--bounce)`
+        case TRANSITION_CURVES.Liquid:
+            return `var(--liquid)`
         case TRANSITION_CURVES.Spring:
             // return `cubic-bezier(0.2, -0.36, 0, 1.46)`
             return `var(--spring)`
