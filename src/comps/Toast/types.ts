@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { dynamic } from "../..";
 import { TRANSITION_CURVES } from "../../types/enums";
 
@@ -20,8 +21,8 @@ export interface ToastData {
   id: number;
   type: ToastType;
   icon?: string;
-  title?: string;
-  message?: string;
+  title?: string | ReactNode;
+  message?: string | ReactNode;
   duration?: number;
   onClick?: () => void;
 }

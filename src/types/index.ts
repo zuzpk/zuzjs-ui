@@ -89,7 +89,11 @@ export type FormInputs = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElem
 export type cssShortKey = keyof cssShortKeys
 export type cssShortKeys = {
     w: string | number,
+    minW: string | number,
+    maxW: string | number,
     h: string | number,
+    minH: string | number,
+    maxH: string | number,
     x: string | number,
     y: string | number,
     z: string | number,

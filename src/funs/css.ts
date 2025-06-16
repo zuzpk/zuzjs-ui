@@ -1156,6 +1156,12 @@ export const buildWithStyles = (source: dynamicObject) : dynamicObject => {
         for ( const _prop in source ){
             let prop = _prop as cssShortKey
             if ( prop in cssWithKeys ){
+                // console.log(
+                //     prop,
+                //     cssTransformKeys.includes(cssWithKeys[prop].toString()),
+                //     cssFilterKeys.includes(cssWithKeys[prop].toString()),
+                //     cssWithKeys[prop]
+                // )
                 if ( cssTransformKeys.includes(cssWithKeys[prop].toString()) ){
                     _transform.push(`${cssWithKeys[prop]}(${source[prop]}${_css.makeUnit(prop, source[prop])})`)
                 }
@@ -1187,7 +1193,6 @@ export const buildWithStyles = (source: dynamicObject) : dynamicObject => {
         // console.log(_, _transform)
 
     }  
-
     return _
     
 }

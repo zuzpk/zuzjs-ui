@@ -1,7 +1,7 @@
 import { ComponentPropsWithRef, CSSProperties, JSX } from "react";
 import { cleanProps, css } from "../funs";
 import { buildWithStyles, getAnimationCurve, getAnimationTransition } from "../funs/css";
-import { cssFilterKeys, cssTransformKeys, cssWithKeys } from "../funs/stylesheet";
+import { cssFilterKeys, cssProps, cssTransformKeys, cssWithKeys } from "../funs/stylesheet";
 import {
     cssShortKey,
     dynamicObject, Props, ZuzProps
@@ -114,7 +114,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>) : {
             if ( prop in cssWithKeys ){
                 _subTrans = cssTransformKeys.includes(cssWithKeys[prop].toString()) ? `transform` 
                     : cssFilterKeys.includes(cssWithKeys[prop].toString()) ? `filter` 
-                        : _subTrans
+                        :  _subTrans in cssProps ? cssProps[_subTrans] : _subTrans //(cssWithKeys[prop] || _subTrans).toString() // _subTrans
             }
             else if ( cssTransformKeys.includes(prop) ){
                 _subTrans = `transform`

@@ -485,7 +485,11 @@ export const cssFilterKeys: string[] = [
 
 export const cssWithKeys : cssShortKeys = {
     w: `width`,
+    minW: `minWidth`,
+    maxW: `maxWidth`,
     h: `height`,
+    minH: `minHeight`,
+    maxH: `maxHeight`,
     x: `translateX`,
     y: `translateY`,
     z: `translateZ`,

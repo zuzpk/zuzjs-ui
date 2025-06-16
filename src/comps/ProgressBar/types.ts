@@ -3,9 +3,10 @@ import { BoxProps } from "../Box"
 
 export type ProgressBarProps = BoxProps & {
     progress?: number,
-    type?: PROGRESS
+    type?: PROGRESS,
+    animated?: boolean,
 }
 
 export interface ProgressHandler {
-    setWidth?: (w : number) => void
+    setProgress?: (p : number) => void
 }
