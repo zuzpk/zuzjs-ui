@@ -16,7 +16,6 @@ const ProgressBar = forwardRef<ProgressHandler, ProgressBarProps>((props, ref) =
     }), [])
 
     useEffect(() => {
-        console.log(`progressChanged`, progress)
         if ( progress && bar.current ) {
             if ( animated ){
                 setTimeout(() => bar.current!.style.width = `${progress * 100}%`, 500)

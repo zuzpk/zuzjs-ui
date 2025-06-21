@@ -129,8 +129,11 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
                 case FORMVALIDATION.Email:
                     return isEmail(el.value)
                 case FORMVALIDATION.Uri:
-                    console.log(`Add FORMVALIDATION.Uri`)
-                    return false
+                    try{
+                        new URL(el.value)
+                        return true
+                    }
+                    catch(e){ return false }
                 case FORMVALIDATION.Password:
                     console.log(`Add FORMVALIDATION.Password`)
                     return false

@@ -1,6 +1,15 @@
 import { dynamicObject } from ".";
 import { SKELETON, TRANSITION_CURVES, TRANSITIONS } from "./enums";
 
+export interface scrollEffectProps {
+    lerpFactor?: number,
+    x?: number,
+    y?: number
+    multiplier?: number,
+    xMultiplier?: number,
+    yMultiplier?: number
+}
+
 /**
  * `animationProps` defines the properties to control animation effects
  * applied to elements. Supports transitions with timing configurations.
@@ -35,6 +44,8 @@ export interface animationProps {
 
     /** Easing curve applied to the animation, as a string or {@link TRANSITION_CURVES} */
     curve?: string | TRANSITION_CURVES;
+
+    scroll?: scrollEffectProps
 }
 
 /**

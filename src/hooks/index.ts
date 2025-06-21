@@ -37,6 +37,7 @@ export { default as useImageCropper } from './useImageCropper';
 export { default as useIntersectionObserver } from './useIntersectionObserver';
 
 export { default as useScrollbar } from './useScrollbar';
+export { default as useScrollPhysics } from './useScrollPhysics';
 
 export { default as useSheet } from './useSheet';
 

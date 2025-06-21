@@ -60,6 +60,16 @@ export interface ZuzProps {
     /** Animation configuration using {@link animationProps} */
     fx?: animationProps;
 
+    timeline?: animationProps[],
+
+    // scrollFx?: {
+    //     x?: number,
+    //     y?: number
+    //     multiplier?: number,
+    //     xMultiplier?: number,
+    //     yMultiplier?: number,
+    // },
+
     transition?: TRANSITIONS,
 
     /** Skeleton placeholder configuration using {@link Skeleton} */

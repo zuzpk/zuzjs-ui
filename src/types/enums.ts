@@ -22,7 +22,8 @@ export enum FORMVALIDATION {
     Uri = "URI",
     Password = "PASSWORD",
     MatchField = "MATCHFIELD",
-    Pattern = "*"
+    Pattern = "*",
+    GreaterThan = "GREATER_THAN"
 }
 
 export enum SHEET {

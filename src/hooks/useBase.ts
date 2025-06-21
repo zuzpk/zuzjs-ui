@@ -1,4 +1,5 @@
-import { ComponentPropsWithRef, CSSProperties, JSX } from "react";
+import { animateCSSVar } from "@zuzjs/core";
+import { ComponentPropsWithRef, CSSProperties, JSX, RefObject, useEffect, useRef } from "react";
 import { cleanProps, css } from "../funs";
 import { buildWithStyles, getAnimationCurve, getAnimationTransition } from "../funs/css";
 import { cssFilterKeys, cssProps, cssTransformKeys, cssWithKeys } from "../funs/stylesheet";
@@ -41,7 +42,7 @@ const buildSkeletonStyle = (s: Skeleton) : dynamicObject => {
     return style
 }
 
-const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>) : {
+const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>, ref?: RefObject<HTMLElement>) : {
     style : CSSProperties;
     className : string;
     rest: ComponentPropsWithRef<T>
@@ -51,6 +52,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>) : {
         as,
         fx,
         animate,
+        timeline,
         transition: autoTransition,
         skeleton,
         className,
@@ -61,12 +63,15 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>) : {
         ...rest
     } = props || {};
 
+    const currentScroll = useRef({ x: 0, y: 0 })
+    const lastTime = useRef(performance.now())
+
     let cx : string[] = []
     if ( as ){
         cx = css().Build(`string` == typeof as ? as : as.join(` `)).cx;
     }
 
-    const { transition, from, to, exit, when, duration, delay, curve } = autoTransition ? {
+    const { transition, from, to, exit, when, duration, delay, curve, scroll } = autoTransition ? {
         transition: autoTransition,
         duration: 0.3
     } : fx || animate || {}
@@ -81,26 +86,6 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>) : {
     else {
         _style = transition ? getAnimationTransition(transition, false, true) : from || {};
     }
-
-     // Track previous value of 'when'
-    // const prevWhenRef = useRef<boolean | undefined>(when);
-
-    // if (undefined === when) {
-    //     _style = transition ? getAnimationTransition(transition, true) : { ...from, ...to };
-    // } else if (true === when) {
-    //     _style = transition ? getAnimationTransition(transition, false) : { ...(to || {}) };
-    // } else {
-    //     // Check if exit style should be applied
-    //     const wasTrue = prevWhenRef.current === true;
-    //     if (wasTrue && exit) {
-    //         _style = { ...(exit || {}) };
-    //     } else {
-    //         _style = transition ? getAnimationTransition(transition, false, true) : from || {};
-    //     }
-    // }
-
-    // // Update previous value for next render
-    // prevWhenRef.current = when;
 
     const _transition : dynamicObject = {}
 
@@ -150,6 +135,44 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>) : {
             }
         }
     }
+
+    const handleScroll = () => {
+        
+        if ( fx && fx.scroll && typeof window !== 'undefined' ){
+
+            const now = performance.now()
+            const dt = (now - lastTime.current) / 1000
+            lastTime.current = now
+
+            const { lerpFactor, x, y, multiplier, xMultiplier, yMultiplier } = fx.scroll
+            const delta = window.scrollY - currentScroll.current.y
+            const velocity = delta / dt
+            currentScroll.current.y += delta * (lerpFactor || .1)
+            
+            if(ref?.current){
+                const translateX = x ? currentScroll.current.x * x * (multiplier || xMultiplier || .25) : 0
+                const translateY = y ? currentScroll.current.y * y * (multiplier || yMultiplier || .25) : 0
+                // ref.current.style.setProperty(`--scroll-y`, `${translateY}px`)
+                // transform = `translate3d(${translateX}px, ${translateY}px, 0)`.trim()
+                animateCSSVar(ref, "--scroll-y", translateY)
+            }
+
+        }
+    
+    }
+
+    useEffect(() => {
+        if ( fx && fx.scroll && typeof window !== 'undefined' ){
+            if (ref) {
+                ref.current.style.transform = `translate3d(0px, var(--scroll-y), 0)`
+                ref.current.style.transition = `transform 0.1s ${fx.curve ? getAnimationCurve(fx.curve) : `var(--spring)`}`
+            }
+            window.addEventListener('scroll', handleScroll, { passive: true })
+                return () => {
+                window.removeEventListener('scroll', handleScroll)
+            }
+        }
+    }, [ref])
 
     return {
         style: {
