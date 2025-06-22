@@ -8,12 +8,16 @@ export type InputProps = Props<`input`> & {
     numeric?: boolean,
     size?: Size,
     variant?: Variant,
-    with?: FORMVALIDATION | `${FORMVALIDATION}${string}`
+    with?: FORMVALIDATION | `${FORMVALIDATION}${string}`,
+    /**
+     * Triggers when Enter / Return is Pressed
+     */
+    onConfirm?: (value: string) => void,
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
-    const { size, variant, numeric, ...pops } = props
+    const { size, variant, numeric, onConfirm, ...pops } = props
 
     const {
         style,
@@ -31,6 +35,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         className={`--input ${size || variant ? `--${size || variant}` : ``} flex ${className}`.trim()}
         style={style}
         onInput={handleInput}
+        onKeyDown={(e) => {
+            if ( e.key == `Enter` ){
+                onConfirm?.(e.currentTarget.value);
+            }
+        }}
         ref={ref}
         {...rest} />
         

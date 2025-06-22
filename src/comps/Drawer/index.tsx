@@ -8,7 +8,7 @@ import { DrawerHandler, DrawerProps } from "./types";
 
 const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
     
-    const { from, speed, children, prerender, onClose, ...pops } = props;
+    const { from, speed, children, margin, animation, prerender, onClose, ...pops } = props;
 
     const [ render, setRender ] = useState(undefined == prerender ? true : prerender)   
     const [ visible, setVisible ] = useState(false)
@@ -73,13 +73,17 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
         
         <Box
             ref={divRef}
-            style={style}
+            style={{
+                ...style,
+                ...{"--m" : `${margin || 0}px`}
+            }}
+            aria-hidden={!visible}
             className={`--drawer flex cols ${className}  --${from ? from.toLowerCase() : `left`} fixed`}
             fx={{
                 from: { ..._style.from, opacity: 0 },
                 to: { ..._style.to, opacity: 1 },
                 when: visible,
-                curve: TRANSITION_CURVES.EaseInOut,
+                curve: animation || TRANSITION_CURVES.EaseInOut,
                 duration: speed || .5,
             }}
             {...rest as BoxProps}>

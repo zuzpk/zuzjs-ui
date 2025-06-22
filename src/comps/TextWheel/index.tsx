@@ -41,7 +41,7 @@ const TextWheel = forwardRef<TextWheelHandler, TextWheelProps>((props, ref) => {
     }, [value])
 
     return <Box
-      className={`--text-wheel flex aic jcc rel`} 
+      className={`--text-wheel flex aic rel`} 
       aria-hidden={true}
       as={as} 
       ref={divRef}

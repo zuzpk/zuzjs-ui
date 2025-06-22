@@ -37,6 +37,7 @@ export { default as useImageCropper } from './useImageCropper';
 export { default as useIntersectionObserver } from './useIntersectionObserver';
 
 export { default as useScrollbar } from './useScrollbar';
+export { default as useScrollPhysics } from './useScrollPhysics';
 
 export { default as useSheet } from './useSheet';
 
@@ -48,9 +49,11 @@ export { default as useResizeObserver } from './useResizeObserver';
 
 export { default as useSlider } from './useSlider';
 
+export { default as useToast } from './useToast';
+
 export { default as useTruncateText } from './useTruncateText';
 
-export { default as useUploader } from './useUploader';
+export { QueItem as UploadQueItem, Status as UploadStatus, default as useUploader, type Uploadify } from './useUploader';
 
 export { default as useViewTransition } from './useViewTransition';
 

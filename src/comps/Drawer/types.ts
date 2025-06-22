@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { DRAWER_SIDE } from "../../types/enums";
+import { DRAWER_SIDE, TRANSITION_CURVES } from "../../types/enums";
 import { BoxProps } from "../Box";
 
 export type DrawerProps = BoxProps & {
@@ -8,6 +8,8 @@ export type DrawerProps = BoxProps & {
     from?: DRAWER_SIDE,
     children?: string | ReactNode | ReactNode[],
     prerender?: boolean,
+    margin?: number,
+    animation?: TRANSITION_CURVES,
     onClose?: () => void,
 }
 

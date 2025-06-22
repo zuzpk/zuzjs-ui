@@ -25,6 +25,7 @@
 @use "../comps/PinInput/PinInput.scss";
 @use "../comps/ScrollView/Scrollview.scss";
 @use "../comps/Search/Search.scss";
+@use "../comps/ProgressBar/ProgressBar.scss";
 @use "../comps/Radio/Radio.scss";
 @use "../comps/Segmented/Segmented.scss";
 @use "../comps/Select/Select.scss";
@@ -34,6 +35,7 @@
 @use "../comps/Table/Table.scss";
 @use "../comps/TabView/TabView.scss";
 @use "../comps/TextWheel/Textwheel.scss";
+@use "../comps/Toast/toast.scss";
 @use "../comps/Tooltip/Tooltip.scss";
 @use "../comps/Treeview/Treeview.scss";
 
@@ -71,11 +73,7 @@ input{
     --max-z-index: 2147483647;
     --zuz-shadow: 0px 0px 0px 1px #d4d4d4, 0px 0px 6px #ccc;
     
-    --progress-width: 100%;
-    --progress-height: 6px;
-    --progress-radius: 6px;
-    --progress-track: #eee;
-    --progress-bar: #111;
+    
 
     --skeleton: #eee;
     --skeleton-radius: 7px;
@@ -272,27 +270,6 @@ button{
     &.--sm{ font-size: 14px; }
     &.--md{  font-size: 16px;  }
     &.--lg{  font-size: 18px; }
-}
-
-
-
-.--progress{
-
-    background: var(--progress-track);
-    width: var(--progress-width);
-    height: var(--progress-height);
-    border-radius: var(--progress-radius);
-    overflow: hidden;
-
-    .--bar{
-        
-        width: 0%;
-        background: var(--progress-bar);
-        height: var(--progress-height);
-        border-radius: var(--progress-radius);
-
-    }
-
 }
 
 .comp-editor{

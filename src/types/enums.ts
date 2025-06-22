@@ -22,7 +22,8 @@ export enum FORMVALIDATION {
     Uri = "URI",
     Password = "PASSWORD",
     MatchField = "MATCHFIELD",
-    Pattern = "*"
+    Pattern = "*",
+    GreaterThan = "GREATER_THAN"
 }
 
 export enum SHEET {
@@ -44,6 +45,7 @@ export enum TRANSITION_CURVES {
     // Ease = "EASE",
     // EaseIn = "EASEIN",
     // EaseOut = "EASEOUT",
+    Liquid = "LIQUID",
     EaseInOut = "EASEINOUT",
     Bounce = "BOUNCE",
     // Linear = "LINEAR",

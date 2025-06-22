@@ -4,6 +4,7 @@ import { InputProps } from "../Input"
 export type SearchProps = InputProps & {
     onSubmit?: (value: string) => void,
     onChange?: (value: string) => void,
+    onClear?: () => void,
     withStyle?: string,
     shortcut?: KeyCombination,
     reverse?: boolean

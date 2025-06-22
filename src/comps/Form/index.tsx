@@ -2,9 +2,9 @@
 import { withPost } from "@zuzjs/core";
 import { forwardRef, ReactNode, startTransition, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { addPropsToChildren, isEmail, isEmpty } from "../../funs";
-import { useBase } from "../../hooks";
+import { useBase, useToast } from "../../hooks";
 import { dynamicObject, FormInputs } from "../../types";
-import { FORMVALIDATION, SHEET } from "../../types/enums";
+import { FORMVALIDATION } from "../../types/enums";
 import Box from "../Box";
 import { ButtonHandler } from "../Button/types";
 import Cover from "../Cover";
@@ -49,6 +49,7 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
     const innerRef = useRef<HTMLDivElement>(null);
     const sheet = useRef<SheetHandler>(null)
     const submit = useRef<ButtonHandler>(null)
+    const toast = useToast()
 
     /**
      * Utility function to select multiple DOM elements within the form based on a CSS query.
@@ -128,8 +129,11 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
                 case FORMVALIDATION.Email:
                     return isEmail(el.value)
                 case FORMVALIDATION.Uri:
-                    console.log(`Add FORMVALIDATION.Uri`)
-                    return false
+                    try{
+                        new URL(el.value)
+                        return true
+                    }
+                    catch(e){ return false }
                 case FORMVALIDATION.Password:
                     console.log(`Add FORMVALIDATION.Password`)
                     return false
@@ -248,7 +252,8 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
         const { error, errorMsg, payload } = _buildFormData()
 
         if ( error ){
-            sheet.current!.error(errorMsg)
+            toast.error(errorMsg)
+            // sheet.current!.error(errorMsg)
         }
         else if ( action ){
             
@@ -261,7 +266,8 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
                     (cover as SheetHandler).setLoading(true)
                 }
                 else setLoading(true)
-                sheet.current!.hide()
+                // sheet.current!.hide()
+                toast.clearAll()
                 
                 // submit.current?.setState(ButtonState.Loading)
                 
@@ -285,8 +291,10 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
                     if ( onSuccess ) 
                         onSuccess(resp)
                     else{
-                        sheet.current!.hide()
-                        sheet.current!.success(resp.message || `Redirecting..`)
+                        toast.clearAll()
+                        // sheet.current!.hide()
+                        // sheet.current!.success(resp.message || `Redirecting..`)
+                        toast.success(resp.message || `Redirecting...`)
                     }
                     
                 })
@@ -303,7 +311,8 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
                     if( onError ) 
                         onError(err)
                     else
-                        sheet.current!.show(err.message || `We cannot process your request at this time.`, 4, SHEET.Error)
+                        toast.error(err.message || `We cannot process your request at this time.`)
+                        // sheet.current!.show(err.message || `We cannot process your request at this time.`, 4, SHEET.Error)
 
                 })
 
@@ -342,14 +351,19 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
         setLoading(mod : boolean){
             if ( mod ){
                 sheet.current!.hide()
+                try{ toast.clearAll() }catch(e){}
             }
             setLoading(mod)
         },
         showError(errorMsg : string | ReactNode ){
-            sheet.current!.error(errorMsg, 4)
+            if (typeof errorMsg == `string`){
+                toast.error(errorMsg)
+            }
+            else { sheet.current!.error(errorMsg, 4) } 
         },
         hideError(){
             sheet.current!.hide()
+            try{ toast.clearAll() }catch(e){}
         },
         init(){
             _init()

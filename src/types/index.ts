@@ -60,6 +60,16 @@ export interface ZuzProps {
     /** Animation configuration using {@link animationProps} */
     fx?: animationProps;
 
+    timeline?: animationProps[],
+
+    // scrollFx?: {
+    //     x?: number,
+    //     y?: number
+    //     multiplier?: number,
+    //     xMultiplier?: number,
+    //     yMultiplier?: number,
+    // },
+
     transition?: TRANSITIONS,
 
     /** Skeleton placeholder configuration using {@link Skeleton} */
@@ -89,7 +99,11 @@ export type FormInputs = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElem
 export type cssShortKey = keyof cssShortKeys
 export type cssShortKeys = {
     w: string | number,
+    minW: string | number,
+    maxW: string | number,
     h: string | number,
+    minH: string | number,
+    maxH: string | number,
     x: string | number,
     y: string | number,
     z: string | number,

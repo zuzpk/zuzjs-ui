@@ -1,5 +1,5 @@
 "use client"
-import { forwardRef, MouseEvent, useImperativeHandle, useRef, useState } from "react";
+import { createElement, forwardRef, MouseEvent, useImperativeHandle, useRef, useState } from "react";
 import { useAnchorPosition, useBase } from "../../hooks";
 import { TRANSITION_CURVES } from "../../types/enums";
 import Box, { BoxProps } from "../Box";
@@ -8,7 +8,7 @@ import { ContextItem, ContextMenuHandler, ContextMenuProps, MenuItemProps } from
 
 const ContextMenu = forwardRef<ContextMenuHandler, ContextMenuProps>((props, ref ) => {
     
-    const { as, offsetX, offsetY, parent, items: _items, ...pops } = props;
+    const { as, offsetX, offsetY, parent, items: _items, header, footer, ...pops } = props;
 
     const {
         className,
@@ -52,9 +52,11 @@ const ContextMenu = forwardRef<ContextMenuHandler, ContextMenuProps>((props, ref
         }}
         ref={targetRef}
         {...rest as BoxProps}>
+        {typeof header == `function` ? createElement(header) : header}
         {items.map((item, index) => <MenuItem
             key={`context-${item.label.toLowerCase()}-${index}`}
             {...{ ...item, index} as MenuItemProps } />)}
+        {typeof footer == `function` ? createElement(footer) : footer}
     </Box>
 
 });

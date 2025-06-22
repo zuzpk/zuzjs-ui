@@ -1,4 +1,6 @@
+"use client"
 import { CancelTokenSource, getCancelToken, UploadProgressEvent, withPost } from "@zuzjs/core";
+import { useRef } from "react";
 import { dynamic, uuid } from "..";
 
 export enum Status {
@@ -7,6 +9,7 @@ export enum Status {
     FetchingServer = 1,
     Uploading = 2,
     Saving = 3,
+    Saved = 4,
 }
 
 export interface QueItem {
@@ -42,6 +45,8 @@ export type Uploadify = {
 export interface Uploader {
     apiUrl: string,
     onChange?: (file: QueItem | null) => void,
+    onComplete?: (index: number, que: QueItem[], currentFile: QueItem | null) => void,
+    onError?: (index: number, que: QueItem[], currentFile: QueItem | null) => void,
     onQueFinished?: () => void,
 }
 
@@ -51,21 +56,21 @@ const useUploader = (conf: Uploader) => {
         apiUrl,
         onChange, onQueFinished } = conf;
 
-    const self : Uploadify = {
+    const self = useRef<Uploadify>({
         que: [],
         index: -1,
         speed: 0,
         stamp: null,
         token: null,
         status: Status.Idle
-    }
+    })
 
     const sync = () => onChange?.(currentFile())
 
     const importFile = () => {}
 
     const uploadFile = () => {
-        self.stamp = Date.now()
+        self.current.stamp = Date.now()
         const file = currentFile()
         const formData = new FormData()
         formData.append("ID", file.ID);
@@ -74,23 +79,31 @@ const useUploader = (conf: Uploader) => {
 		formData.append("token", file.server!.token);
 		formData.append('file', file.file);
 		formData.append('fs', file.file.size.toString());
-		self.cancelToken = getCancelToken()
+		self.current.cancelToken = getCancelToken()
 
         withPost(
-            `${self.que[self.index].server!.uri}/receive`,
+            `${self.current.que[self.current.index].server!.uri}/receive`,
             formData,
             86400,
             true,
+            undefined,
             (ev: UploadProgressEvent) => {
-                console.log(ev)
+                self.current.que[self.current.index].status = Status.Uploading
+                onChange?.({ ...currentFile(), progress: (ev.progress || 0) })
             }
         )
-        .catch(resp => {
-            console.log(`Uploaded`, resp)
+        .then(resp => {
+            // console.log(`Uploaded`, resp)
+            self.current.que[self.current.index].progress = 1
+            self.current.que[self.current.index].status = Status.Saved
+            self.current.status = Status.Idle
+            sync()
+            Que()
         })
         .catch(err => {
-            self.que[self.index].status = Status.Error
-            self.status = Status.Idle
+            // console.error(`UploadFailed`, err)
+            self.current.que[self.current.index].status = Status.Error
+            self.current.status = Status.Idle
             sync()
             Que()
         })
@@ -98,7 +111,7 @@ const useUploader = (conf: Uploader) => {
 
     const getServer = (force: boolean) => {
         
-        self.que[self.index].status = Status.FetchingServer
+        self.current.que[self.current.index].status = Status.FetchingServer
         sync()
 
         withPost<{
@@ -109,34 +122,34 @@ const useUploader = (conf: Uploader) => {
             { size: currentFile().file.size }
         )
         .then((resp) => {
-            self.que[self.index].server = resp.server;
-            self.que[self.index].status = Status.Uploading;
+            self.current.que[self.current.index].server = resp.server;
+            self.current.que[self.current.index].status = Status.Uploading;
             sync()
             uploadFile();
         })
         .catch((err) => {
-            self.que[self.index].status = Status.Error
-            self.status = Status.Idle
+            self.current.que[self.current.index].status = Status.Error
+            self.current.status = Status.Idle
             sync()
             Que()
         })
     }
 
-    const currentFile = () : QueItem => self.que[self.index]
+    const currentFile = () : QueItem => self.current.que[self.current.index]
 
-    const getQue = () : QueItem[] => self.que;
+    const getQue = () : QueItem[] => self.current.que;
 
     const Que = () => {
         if( 
-            self.status == Status.Idle && 
-            (self.que.length - 1) > self.index 
+            self.current.status == Status.Idle && 
+            (self.current.que.length - 1) > self.current.index 
         ){
 
-            self.status = Status.Uploading
-            self.index++
-            self.que[self.index].status = Status.Uploading
+            self.current.status = Status.Uploading
+            self.current.index++
+            self.current.que[self.current.index].status = Status.Uploading
             sync()
-            if ( self.que[self.index].remote ) importFile()
+            if ( self.current.que[self.current.index].remote ) importFile()
             else getServer(true);
             
         }
@@ -144,7 +157,7 @@ const useUploader = (conf: Uploader) => {
     }
 
     const addToQue = (f: dynamic) => {
-        self.que.push({
+        self.current.que.push({
             ID: uuid(),
             file: f.file as File,
             dir: f.dir,
@@ -160,6 +173,7 @@ const useUploader = (conf: Uploader) => {
     }
 
     return {
+        get: () => self,
         getQue,
         addToQue,
     };

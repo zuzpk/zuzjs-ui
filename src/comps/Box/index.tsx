@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo, useRef } from "react";
 import { useBase } from "../../hooks";
 import { Props } from "../../types";
 
@@ -7,12 +7,16 @@ export interface BoxProps extends Partial<Props<`div`>> {
 }
 
 const Box = forwardRef<HTMLDivElement, BoxProps>((props, ref) => {
+    
     const { style, withEditor, ...pops } = props
+    const innerRef = useRef<HTMLDivElement>(null)
+    const targetRef = useMemo(() => ref && typeof ref !== "function" && ref.current ? ref : innerRef, [ref])
+
     const { 
         style : _style, 
         className, 
         rest 
-    } = useBase<`div`>(pops)
+    } = useBase<`div`>(pops, targetRef as any)
 
     // const handleInternalClick = (e: React.MouseEvent<HTMLDivElement>) => {
     //     // if ( withEditor && isBrowser ) {
@@ -27,7 +31,7 @@ const Box = forwardRef<HTMLDivElement, BoxProps>((props, ref) => {
     // }
 
     return <div
-        ref={ref}
+        ref={ref || innerRef}
         // onClick={handleInternalClick}
         className={`${className} ${withEditor ? `--with-zuz-editor` : ``}`.trim()}
         style={{

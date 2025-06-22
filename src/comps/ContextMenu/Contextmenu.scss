@@ -42,8 +42,12 @@
         background: var(--context-item);
         border: 0px;
         color: var(--context-item-color);
-        .--ico{
-            font-size: var(--context-item-icon-size);
+        .--icon{
+            width: var(--context-item-icon-size);
+            height: var(--context-item-icon-size);
+            .--ico{
+                font-size: var(--context-item-icon-size);
+            }
         }
         .--label{
             color: var(--context-item-color);

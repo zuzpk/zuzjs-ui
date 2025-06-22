@@ -11,7 +11,7 @@ import { SearchHandler, SearchProps } from './types';
 
 const Search = forwardRef<SearchHandler, SearchProps>((props, ref) => {
 
-    const { fx, animate, withStyle, as, reverse, onChange, ...pops } = props
+    const { fx, animate, withStyle, as, reverse, onChange, onClear, ...pops } = props
     const { style, className } = useBase({ as: props.as })
     // const { className : searchStyle } = useBase({ as: withStyle || `` } as Props<`div`>)
     const [ query, setQuery ] = useState<string>(``)
@@ -34,13 +34,15 @@ const Search = forwardRef<SearchHandler, SearchProps>((props, ref) => {
             onChange?.(``);
             if ( innerRef.current ){
                 innerRef.current.value = ``
+                props.onConfirm?.(``)
             }
         }
         // onSubmit?.(query)
     }
 
     useImperativeHandle(ref, () => ({
-        focus: () => innerRef.current?.focus()
+        focus: () => innerRef.current?.focus(),
+        value: () => innerRef.current?.value
     }))
 
     useEffect(() => {}, [])

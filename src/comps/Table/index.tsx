@@ -1,13 +1,13 @@
 "use client"
-import { forwardRef, JSX, Ref, useEffect, useMemo, useRef, useState } from "react";
-import { PubSub, SPINNER, Spinner, Text, uuid } from "../..";
+import { FC, forwardRef, JSX, Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { animationProps, PubSub, SPINNER, Spinner, Text, TRANSITION_CURVES, TRANSITIONS, uuid } from "../..";
 import { useBase } from "../../hooks";
 import { dynamicObject } from "../../types";
 import Box from "../Box";
 import Pagination from "../Pagination";
 import { PaginationStyle } from "../Pagination/types";
 import TRow from "./row";
-import type { Column, TableProps, TableSortCallback } from "./types";
+import type { Column, TableController, TableProps, TableSortCallback } from "./types";
 
 /**
  * `Table` is a highly flexible and customizable generic component for rendering data in a tabular format.
@@ -64,7 +64,7 @@ import type { Column, TableProps, TableSortCallback } from "./types";
  * />
  * ```
  */
-const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
+const Table = <T, >(props: TableProps<T>, ref: Ref<TableController>) => {
 
     const { 
         schema, 
@@ -81,10 +81,11 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
         selectableRows,
         hoverable,
         sortBy,
-        loading,
+        loading: _loading,
         loadingRowCount,
         loadingMessage,
         spinner,
+        emptyMessage,
         onSort,
         onRowSelectToggle,
         onPageChange,
@@ -116,20 +117,38 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
     const pubsub = useMemo(() => new PubSub(), [])
     const rowKeys = useRef(rows.map(() => uuid()));
     const [_sortBy, setSortBy] = useState<string | null>(sortBy || null)
-    // const placeholderRows = useMemo(() => {
+    // const [ _loading, _setLoading ] = useState(loading || false)
+    // const _loading = useRef<boolean>(loading || false)
+    const [ _loadingMessage, _setLoadingMessage ] = useState(loadingMessage || `loading`)
+    const isEmpty = useMemo(() => !_loading && rows && rows.length == 0, [_loading, rows])
 
-    // }, [loading, loadingRowCount])
+    const renderEmpty = useCallback(() => {
+        if ( emptyMessage ){
+            if ( typeof emptyMessage == `function` ){
+                const Empty = emptyMessage as FC
+                return <Empty />
+            }
+            return emptyMessage
+        }
+        return <Text as={`tac s:18 mt:75`}>No Record Found</Text>
+    }, [_loading, rows])
 
     useEffect(() => {
         rowKeys.current = rows.map(() => uuid()); // Update only when rows change
     }, [rows]);
+
+    // useEffect(() => {
+    //     if ( loading != undefined && loading != _loading ) _setLoading(loading)
+    // }, [loading])
 
     const handleSort : TableSortCallback = (col, dir) => {
         setSortBy(col)
         onSort?.(col, dir)
     }
 
-    const _paginated = useMemo(() => <Pagination
+    const possiblePage = (rowCount || (rows ? rows.length : 0)) / (rowsPerPage || 10)
+
+    const _paginated = useMemo(() => (showPaginationOnZeroPageCount || (possiblePage > 1)) ? <Pagination
         hash={paginationHash}
         ref={_pagination}
         renderOnZeroPageCount={showPaginationOnZeroPageCount}
@@ -138,8 +157,16 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
         startPage={currentPage}
         itemCount={rowCount || (rows ? rows.length : 0)}
         itemsPerPage={rowsPerPage || 10}
-    />, [])
+    /> : null, [currentPage, rowCount])
 
+    useImperativeHandle(ref, () => ({
+        setLoading( mod: boolean ){
+            // _setLoading(mod)
+            // _loading.current = mod
+        }
+    }))
+
+    
     return <Box as={`--table ${(hoverable ?? true) ? `--hoverable` : ``} flex cols rel ${className}`} ref={_tableRef}>
         {_header == true && <TRow 
             sortBy={_sortBy}
@@ -152,12 +179,12 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
             loading={true}
             styles={_schemaParsed}  /> }
 
-        {loading && <Box as={`abs center-x flex aic --table-spinner`}>
+        {_loading && <Box as={`abs center-x flex aic --table-spinner`}>
             <Spinner type={spinner || SPINNER.Simple} />
-            {loadingMessage && <Text as={`--table-loading-message`}>{loadingMessage}</Text>}
+            {_loadingMessage && <Text as={`--table-loading-message`}>{_loadingMessage}</Text>}
         </Box>}
 
-        {loading && Array(loadingRowCount || 5).fill({}).map((row, index) => <TRow 
+        {_loading && Array(loadingRowCount || 5).fill({}).map((row, index) => <TRow 
             key={`--trow-loading-${index}-${schema[0].id}`} 
             tableRef={_tableRef}
             index={index}
@@ -167,7 +194,7 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
             loading={true}
             animate={animateRows} 
             />)}    
-        {!loading && rows && rows.map((row, index: number) => <TRow 
+        {!_loading && rows && rows.map((row, index: number) => <TRow 
             key={`--trow-${rowKeys.current[index] || index}-${schema[0].id}`} 
             tableRef={_tableRef}
             pubsub={pubsub}
@@ -182,13 +209,22 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<HTMLDivElement>) => {
             selectable={selectableRows}
             onSelect={onRowSelectToggle}
             onContextMenu={onRowContextMenu} />)}
-        { pagination && _pagination.current != null && <Box as={`--row flex aic --row-footer`}>{_paginated}</Box> }
+        {isEmpty && renderEmpty()}
+        <Box 
+            aria-hidden={!pagination || !_paginated}
+            {...( animateRows ? { fx: {
+                transition: TRANSITIONS.SlideInBottom,
+                curve: TRANSITION_CURVES.EaseInOut,
+                delay: .02 * (rows.length + 1),
+                when: !_loading && rows && pagination && _paginated != null
+            } as animationProps} : {} )}
+            as={`--row flex aic --row-footer`}>{pagination && _paginated ? _paginated : null}</Box>
     </Box>
 
 }
 
 Table.displayName = `Zuz.Table`
 
-const ForwardedTable = forwardRef(Table) as <T>(props: TableProps<T> & { ref?: Ref<HTMLDivElement> }) => JSX.Element
+const ForwardedTable = forwardRef(Table) as <T>(props: TableProps<T> & { ref?: Ref<TableController> }) => JSX.Element
 
 export default ForwardedTable

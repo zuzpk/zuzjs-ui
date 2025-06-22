@@ -1,8 +1,12 @@
-import { ReactNode, RefObject } from "react"
+import { FC, ReactNode, RefObject } from "react"
 import { PubSub, SPINNER } from "../.."
 import { dynamicObject } from "../../types"
 import { BoxProps } from "../Box"
 import { PaginationCallback } from "../Pagination/types"
+
+export interface TableController {
+    setLoading: (mod: boolean) => void
+}
 
 /**
  * Callback function for row selection.
@@ -145,6 +149,7 @@ export type TableProps<T> = BoxProps & {
     loadingRowCount?: number, // if loading > 0 than shows loading number of empty rows with spinner
     loadingMessage?: string,
     spinner?: SPINNER,
+    emptyMessage?: ReactNode | FC,
     onRowSelectToggle?: RowSelectCallback<T>,
     onRowContextMenu?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, row: T) => void,
     onPageChange?: PaginationCallback,
