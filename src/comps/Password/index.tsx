@@ -55,7 +55,7 @@ const Password = forwardRef<HTMLInputElement, PasswordProps>((props, ref) => {
                 {visible ? SVGIcons.eye : SVGIcons.eyeSlash}
             </Button>
         </Box>
-        {strenthMeter && <Box as={`flex aic --password-meter --pb-score-${strenth.score}`}>
+        {strenthMeter && <Box as={`flex aic --password-meter --pb-score-${strenth.score}`} style={style}>
             <Box as={`--password-bars flex aic`}>
                 <Box as={`--pbar ${strenth.score >= 1 ? `--pb-on` : ``}`.trim()} />                                            
                 <Box as={`--pbar ${strenth.score >= 2 ? `--pb-on` : ``}`.trim()} />                                            
