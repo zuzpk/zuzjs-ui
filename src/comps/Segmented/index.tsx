@@ -1,10 +1,10 @@
 'use client'
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useBase } from "../../hooks";
 import { Variant } from "../../types/enums";
 import Box, { BoxProps } from "../Box";
 import SegmentItem from "./item";
-import { Segment, SegmentProps } from "./types";
+import { Segment, SegmentController, SegmentProps } from "./types";
 
 
 /**
@@ -25,10 +25,13 @@ import { Segment, SegmentProps } from "./types";
  * 
  * <SelectTabs selected={1} items={segments} />
  */
-const Segmented = forwardRef<HTMLDivElement, SegmentProps>((props, ref) => {
+const Segmented = forwardRef<SegmentController, SegmentProps>((props, ref) => {
 
+    
     const { animate, fx, items, selected, size, variant, onSwitch, ...pops } = props
     const [ _selected, setSelected ] = useState(selected || 0)
+    const hasMounted = useRef(false);
+    const prevSelectedRef = useRef(_selected);
     const { className, style, rest } = useBase(pops)
     const _tab = useRef<HTMLDivElement | null>(null)
     const _segmented = useRef<HTMLDivElement | null>(null)
@@ -44,7 +47,9 @@ const Segmented = forwardRef<HTMLDivElement, SegmentProps>((props, ref) => {
         // console.log(selected, _selected, index, mounted)
         if ( force || ( _selected != index && _selected != -2 ) ){
             setSelected(index)
-            if ( onSwitch ) onSwitch(meta)
+            prevSelectedRef.current = _selected;
+            
+            if ( hasMounted.current ) onSwitch?.(meta)
         }
         if ( _tab.current ) {
             const _sp = _segmented.current?.getBoundingClientRect()
@@ -53,12 +58,25 @@ const Segmented = forwardRef<HTMLDivElement, SegmentProps>((props, ref) => {
         }
     }
 
-    useEffect(() => {
-        if (selected !== undefined && selected != _selected) {
-            setSelected(selected);
+    useImperativeHandle(ref, () => ({
+        setSelected: (index: number) => {
+            if ( typeof index === `number` && index != _selected ) {
+                setSelected(index)
+            }
         }
-    }, [selected, _selected]);
+    }), [_selected]);
 
+    // useEffect(() => {
+    //     if (typeof selected === `number` && selected != _selected) {
+    //         prevSelectedRef.current = _selected;
+    //         setSelected(selected);
+    //     }
+    // }, [selected, _selected]);
+
+    useEffect(() => {
+        hasMounted.current = true;
+    }, []);
+ 
     return <Box
         ref={_segmented}
         data-selected={_selected}

@@ -39,3 +39,7 @@ export type SegmentItemProps = {
     selected: boolean,
     onSelect: (index: number, width: number, x: number, segment: Segment, force: boolean) => void
 }
+
+export interface SegmentController {
+    setSelected: (index: number) => void,
+}
