@@ -154,7 +154,7 @@ input{
     &.jce{justify-content: flex-end;}
     &.jcs{justify-content: flex-start;}
 }
-.abs{ 
+.--abs, .abs{ 
     position: absolute; 
     &.abc{top: 50%;left: 50%;transform: translate(-50%, -50%);}
 }

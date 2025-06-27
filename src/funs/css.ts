@@ -428,6 +428,10 @@ class CSS {
             return v.trim()
     }
 
+    makeVariable(val: string){ 
+        return val.charAt(0) == `$` && !val.includes(`,`) ? `var(--${val.replace(`$`, ``)})` : val
+    }
+
     makeValue(k: string, v: any){
 
         const self = this
@@ -877,7 +881,8 @@ class CSS {
                         const hasImportant = _val.endsWith(`!`)
                         const important = hasImportant ? ` !important` : ``
 
-                        let val = hasImportant ? _val.slice(0, -1) : _val
+                        let val = this.makeVariable(hasImportant ? _val.slice(0, -1) : _val)
+                        // val = val.charAt(0) == `$` && !val.includes(`,`) ? `var(--${val.replace(`$`, ``)})` : val
                         var _out : string = ``
 
                         // if ( key == `ratio` ){
@@ -942,7 +947,6 @@ class CSS {
                         }
 
                         else{
-                            // const __value = `${val}${key == `extend` ? `` : self.makeUnit(key, val)}`
                             const __value = `${val}${self.IGNORE.includes(key) ? `` : self.makeUnit(key, val)}`
                             _out = self.DIRECT[key].includes(`__VALUE__`) ? 
                             self.DIRECT[key].replace(/__VALUE__/g, __value).replace(`;`, `${important};`) : self.DIRECT[key]
@@ -973,9 +977,10 @@ class CSS {
 
                 }
                 else if( _k in self.DIRECT ){
+                    
                     const _out = self.DIRECT[_k]
                     const _id = self.makeID(_k, _k + pseudo, _out)
-                    // console.log(_k, _id)
+                    
                     if ( pseudo == `` )
                         self.cx.push(_id)
 

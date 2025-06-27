@@ -179,7 +179,7 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<TableController>) => {
             loading={true}
             styles={_schemaParsed}  /> }
 
-        {_loading && <Box as={`abs center-x flex aic --table-spinner`}>
+        {_loading && <Box as={`center-x flex aic --table-spinner`}>
             <Spinner type={spinner || SPINNER.Simple} />
             {_loadingMessage && <Text as={`--table-loading-message`}>{_loadingMessage}</Text>}
         </Box>}

@@ -31,11 +31,11 @@
     --table-loading-message-size: 15px;
 }
 
-[color-scheme="dark"]{
-    --table-row: #333;
-    --table-row-even: #333;
-    --table-row-odd: #444;
-}
+// [color-scheme="dark"]{
+//     --table-row: #333;
+//     --table-row-even: #333;
+//     --table-row-odd: #444;
+// }
 
 .--table{
     background: var(--table);
@@ -103,7 +103,9 @@
     }
 
     .--table-spinner{
+        position: absolute;
         top: var(--table-spinner-top);
+        left: 50%;transform: translateX(-50%);
         background: var(--table-spinner-bg);
         border-radius: var(--table-spinner-radius);
         padding: var(--table-spinner-padding);

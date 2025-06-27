@@ -24,11 +24,11 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
             {rest.children}
         </Box>
 
-        <Box as={`--scroll-track --track-y abs`}>
-            <Box as={`--scroll-thumb abs`} ref={thumbY} onMouseDown={onScrollY} />
+        <Box as={`--scroll-track --track-y --abs`}>
+            <Box as={`--scroll-thumb --abs`} ref={thumbY} onMouseDown={onScrollY} />
         </Box>
-        <Box as={`--scroll-track --track-x abs`}>
-            <Box as={`--scroll-thumb abs`} ref={thumbX} onMouseDown={onScrollX} />
+        <Box as={`--scroll-track --track-x --abs`}>
+            <Box as={`--scroll-thumb --abs`} ref={thumbX} onMouseDown={onScrollX} />
         </Box>
 
     </Box>

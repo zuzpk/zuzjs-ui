@@ -10,7 +10,7 @@ import { BoxProps } from "../Box"
  * @property {string} [label] - The optional label to display for the segment.
  */
 export interface Segment {
-    tag?: string,
+    tag?: string | number,
     index: number,
     icon?: ReactNode,
     label?: ReactNode
