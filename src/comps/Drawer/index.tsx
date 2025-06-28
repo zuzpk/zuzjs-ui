@@ -52,10 +52,12 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
     useImperativeHandle(ref, () => ({
         open(child?: string | ReactNode | ReactNode[]){
             if ( child ) setContent(child)
+            if ( !window.document.body.classList.contains(`--no-scroll`) ) window.document.body.classList.add(`--no-scroll`)
             setVisible(true)            
         },
         close(){
             onClose?.()
+            if ( window.document.body.classList.contains(`--no-scroll`) ) window.document.body.classList.remove(`--no-scroll`)
             setVisible(false)
         }
     }))

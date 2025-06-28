@@ -6,14 +6,12 @@ import { ScrollViewProps } from "./types";
 const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
 
     const { speed, style: _style, ...pops } = props
-    const { rootRef, containerRef, thumbY, thumbX, onScrollY, onScrollX } = useScrollbar()
+    const { rootRef, containerRef, thumbY, thumbX, onScrollY, onScrollX } = useScrollbar(speed || 1)
     const { 
         style, 
         className, 
         rest 
     } = useBase<`div`>(pops)
-
-    // useEffect(() => { }, [])
 
     return <Box 
         ref={rootRef}

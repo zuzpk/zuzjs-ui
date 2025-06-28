@@ -56,6 +56,8 @@ input{
         box-shadow: 0 0 0px 1000px transparent inset;
     }
 }
+
+.--no-scroll{overflow: hidden;}
 [aria-hidden="true"] {
 	user-select: none;
 	pointer-events: none;
@@ -164,6 +166,7 @@ input{
     left: 0px;
     bottom: 0px;
     right: 0px;
+    inset: 0;
 }
 .fillx{
     top: -10px;

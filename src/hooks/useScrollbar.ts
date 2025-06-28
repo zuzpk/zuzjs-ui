@@ -1,18 +1,18 @@
 "use client"
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useMutationObserver } from "..";
 
 export interface ScrollBreakpoint {
     [key: number]: () => void; // Example: { 15: () => console.log("Scrolled 15%") }
 }
 
-const useScrollbar = (breakpoints: ScrollBreakpoint = {}, ) => {
+const useScrollbar = (speed: number, breakpoints: ScrollBreakpoint = {}, ) => {
     
     const rootRef = useRef<HTMLDivElement | null>(null);
     const containerRef = useRef<HTMLDivElement | null>(null);
     const thumbY = useRef<HTMLDivElement | null>(null);
     const thumbX = useRef<HTMLDivElement | null>(null);
-
+    const SCROLL_SPEED = useMemo(() => speed ?? 1, [speed]); // default to 1x multiplier
     const isDraggingY = useRef(false);
     const isDraggingX = useRef(false);
     const dragStartX = useRef(0);
@@ -73,7 +73,15 @@ const useScrollbar = (breakpoints: ScrollBreakpoint = {}, ) => {
     }
 
     const handleScroll = useCallback(() => {
-        if (!containerRef.current) return;
+
+        if (
+            !containerRef.current 
+            // || 
+            // (
+            //     typeof window !== `undefined` &&
+            //     window.document.body.classList.contains(`--no-scroll`)
+            // )
+        ) return;
 
         const { scrollTop, scrollHeight, clientHeight, scrollLeft, scrollWidth, clientWidth } = containerRef.current;
         const scrollPercentY = (scrollTop / (scrollHeight - clientHeight)) * 100;
@@ -160,13 +168,13 @@ const useScrollbar = (breakpoints: ScrollBreakpoint = {}, ) => {
                 const maxScrollY = scrollHeight - clientHeight;
                 let newScrollTop = scrollTop + e.deltaY;
                 newScrollTop = Math.max(0, Math.min(newScrollTop, maxScrollY));
-                containerRef.current.scrollTop = newScrollTop;
+                containerRef.current.scrollTop = newScrollTop * SCROLL_SPEED;
             }
             if ( Math.abs(e.deltaX) > Math.abs(e.deltaY) ){
                 const maxScrollX = scrollWidth - clientWidth;
                 let newScrollLeft = scrollLeft + e.deltaX;
                 newScrollLeft = Math.max(0, Math.min(newScrollLeft, maxScrollX));
-                containerRef.current.scrollLeft = newScrollLeft;
+                containerRef.current.scrollLeft = newScrollLeft * SCROLL_SPEED;
             }
 
             const scrollPercentY = (containerRef.current.scrollTop / (containerRef.current.scrollHeight - clientHeight)) * 100;

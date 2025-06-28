@@ -19,6 +19,10 @@
         overflow: hidden;
         padding: var(--scrollbar-content-padding);
         -webkit-overflow-scrolling: touch; 
+        // scroll-behavior: smooth;         /* smooth scrolling on scrollTo() */
+        scroll-snap-type: none;          /* optional, unless you want snapping */
+        overscroll-behavior: contain;    /* already added — great! */
+        // -webkit-overflow-scrolling: touch; /* enables momentum flick on iOS Safari */
 
     }
     

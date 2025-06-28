@@ -43,4 +43,6 @@ export interface FormHandler {
     hideError: () => void;
     /** Resets the form to its initial state */
     init: () => void;
+
+    submit: () => void;
 }

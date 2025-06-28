@@ -367,6 +367,9 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
         },
         init(){
             _init()
+        },
+        submit(){
+            _onSubmit()
         }
     }))
     
