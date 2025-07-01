@@ -93,6 +93,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>, ref?: R
         // { transition: `all ${duration || `0.2`}s ${getAnimationCurve(curve)} ${delay || 0}s` }
         const _curve = getAnimationCurve(curve)
         const _transitionList : string[] = []
+        const _willChangeList : string[] = []
         Object.keys(_style).forEach(ck => {
             let prop = ck as cssShortKey
             let _subTrans = ck
@@ -104,10 +105,13 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>, ref?: R
             else if ( cssTransformKeys.includes(prop) ){
                 _subTrans = `transform`
             }
+            // will-change: ${_subTrans}; 
             const _newTransition = `${_subTrans} ${duration || `0.2`}s ${_curve} ${delay || 0}s`
+            if ( !_willChangeList.includes(_subTrans) ) _willChangeList.push(_subTrans)
             if ( !_transitionList.includes(_newTransition) ) _transitionList.push(_newTransition)
         })
         _transition.transition = _transitionList.join(`, `)
+        _transition.willChange = _willChangeList.join(`, `)
     }
 
     // // console.log(_style, _transition)
@@ -136,7 +140,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>, ref?: R
         }
     }
 
-    const handleScroll = () => {
+    const handleScrollParallax = () => {
         
         if ( fx && fx.scroll && typeof window !== 'undefined' ){
 
@@ -152,24 +156,67 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(props: Props<T>, ref?: R
             if(ref?.current){
                 const translateX = x ? currentScroll.current.x * x * (multiplier || xMultiplier || .25) : 0
                 const translateY = y ? currentScroll.current.y * y * (multiplier || yMultiplier || .25) : 0
-                // ref.current.style.setProperty(`--scroll-y`, `${translateY}px`)
-                // transform = `translate3d(${translateX}px, ${translateY}px, 0)`.trim()
                 animateCSSVar(ref, "--scroll-y", translateY)
+                animateCSSVar(ref, "--scroll-x", translateX)
             }
 
         }
     
     }
 
+    const handleMouseParallax = (e: MouseEvent) => {
+        if (!fx || !fx.mouse || typeof window === 'undefined') return
+
+        const now = performance.now()
+        const dt = (now - lastTime.current) / 1000
+        lastTime.current = now
+
+        const { lerpFactor, x, y, multiplier, xMultiplier, yMultiplier } = fx.mouse
+
+        // Normalize mouse position to center (0) range (-1 to 1)
+        const vw = window.innerWidth
+        const vh = window.innerHeight
+        const nx = (e.clientX - vw / 2) / (vw / 2) // -1 to 1
+        const ny = (e.clientY - vh / 2) / (vh / 2) // -1 to 1
+
+        const dx = nx - currentScroll.current.x
+        const dy = ny - currentScroll.current.y
+
+        currentScroll.current.x += dx * (lerpFactor || 0.1)
+        currentScroll.current.y += dy * (lerpFactor || 0.1)
+
+        if (ref?.current) {
+            const translateX = x ? currentScroll.current.x * (multiplier || xMultiplier || 20) : 0
+            const translateY = y ? currentScroll.current.y * (multiplier || yMultiplier || 20) : 0
+
+            animateCSSVar(ref, '--mouse-x', translateX)
+            animateCSSVar(ref, '--mouse-y', translateY)
+        }
+    }
+
     useEffect(() => {
-        if ( fx && fx.scroll && typeof window !== 'undefined' ){
-            if (ref) {
-                ref.current.style.transform = `translate3d(0px, var(--scroll-y), 0)`
-                ref.current.style.transition = `transform 0.1s ${fx.curve ? getAnimationCurve(fx.curve) : `var(--spring)`}`
+        if ( typeof window !== 'undefined' ){
+            if ( fx && fx.scroll ){
+                if (ref) {
+                    ref.current.style.willChange = `transform`
+                    ref.current.style.transform = `translate3d(0px, var(--scroll-y), 0)`
+                    ref.current.style.transition = `transform 0.1s ${fx.curve ? getAnimationCurve(fx.curve) : `var(--spring)`}`
+                }
+                window.addEventListener('scroll', handleScrollParallax, { passive: true })
+                    return () => {
+                    window.removeEventListener('scroll', handleScrollParallax)
+                }
             }
-            window.addEventListener('scroll', handleScroll, { passive: true })
-                return () => {
-                window.removeEventListener('scroll', handleScroll)
+            if ( fx && fx.mouse ){
+                if (ref) {
+                    ref.current.style.willChange = `transform`
+                    ref.current.style.transform = `translate3d(0px, var(--mouse-y), 0)`
+                    ref.current.style.transition = `transform 0.1s ${fx.curve ? getAnimationCurve(fx.curve) : `var(--spring)`}`
+                }
+                window.document.addEventListener('mousemove', handleMouseParallax, { passive: true })
+                    return () => {
+                    window.removeEventListener('mousemove', handleMouseParallax)
+                }
             }
         }
     }, [ref])

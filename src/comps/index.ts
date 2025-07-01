@@ -54,6 +54,10 @@ export { default as Filters, type FilterProps } from './Filters';
 
 export { default as Form } from './Form';
 export * from './Form/types';
+
+export { default as Group } from './Group';
+// export * from './Form/types';
+
 export { default as Icon, type IconProps } from './Icon';
 export { default as Image, type ImageProps } from './Image';
 export { default as Input, type InputProps } from './Input';

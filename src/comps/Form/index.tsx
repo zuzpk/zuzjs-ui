@@ -344,7 +344,7 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
     const buildChildren = useMemo(() => addPropsToChildren(
         children, 
         child => child.props.type == `submit`,
-        { ref: submit }
+        index => ({ ref: submit })
     ), [children])
 
     useImperativeHandle(ref, () => ({

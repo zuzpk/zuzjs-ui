@@ -19,8 +19,6 @@ const Text = forwardRef<HTMLHeadingElement, TextProps>((props, ref) => {
         rest
     } = useBase(pops)
 
-    // const textRef = useTruncateText(lines || 2)
-    // const mergedRef = useMergedRefs(ref, textRef)
     const Tag = `h${props.h || 1}` as `h1` | `h2` | `h3` | `h4` | `h5` | `h6`
 
     return <Tag

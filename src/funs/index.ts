@@ -513,16 +513,24 @@ export const camelCaseToDash = (str: string) => str.replace(/([a-z])([A-Z])/g, '
 
 export const pluralize = (word: string, count : number) => `${word}${count !== 1 ? 's' : ''}`
 
-export const addPropsToChildren = (children: ReactNode, conditions: (child: ReactElement<any>) => boolean, newProps: object) : ReactNode => {
+export const addPropsToChildren = (
+    children: ReactNode, 
+    conditions: (child: ReactElement<any>) => boolean, 
+    getProps: (index: number, element: ReactElement<any>) => object
+) : ReactNode => {
+
+    let i = 0
+
     return Children.map(children, (child) => {
         if ( isValidElement(child) ){
+
             const element = child as ReactElement<any>
             const newChild = conditions(element) 
-                ? cloneElement(element, { ...newProps })
+                ? cloneElement(element, getProps(i++, element))
                 : element
             if ( element.props.children ){
                 return cloneElement(newChild, {
-                    children: addPropsToChildren(element.props.children, conditions, newProps)
+                    children: addPropsToChildren(element.props.children, conditions, getProps)
                 })
             }
             return newChild
