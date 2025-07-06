@@ -16,8 +16,12 @@ export { default as Avatar } from './Avatar';
 export * from './Avatar/types';
 
 export { default as Box, type BoxProps } from './Box';
+
 export { default as Button } from './Button';
 export * from './Button/types';
+
+export { default as Chart } from './Chart';
+export * from './Chart/types';
 
 export { default as CheckBox } from './CheckBox';
 export * from './CheckBox/types';

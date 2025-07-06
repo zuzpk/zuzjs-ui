@@ -67,5 +67,11 @@ export type SelectProps = Omit<BoxProps, "onChange" > & {
     /**
      * Placeholder text for the search input field.
      */
-    searchPlaceholder?: string
+    searchPlaceholder?: string,
+
+    /**
+     * Max Height
+     */
+    maxHeight?: number
+    
 }

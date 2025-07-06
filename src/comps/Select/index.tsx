@@ -1,6 +1,7 @@
 "use client"
 import { ChangeEvent, forwardRef, useEffect, useId, useMemo, useRef, useState } from "react";
-import { useBase } from "../../hooks";
+import { useBase, usePosition } from "../../hooks";
+import { Position } from "../../types/enums";
 import Box from "../Box";
 import Button from "../Button";
 import { ButtonProps } from "../Button/types";
@@ -20,6 +21,7 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
         variant,
         search: withSearch,
         searchPlaceholder,
+        maxHeight,
         onChange,
         ...pops } = props
     const [ value, setValue ] = useState<Option>(
@@ -31,8 +33,10 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
     const [ query, setQuery ] = useState<string | null>(null)
     const _ref = useRef<HTMLButtonElement>(null);
     const _search = useRef<HTMLInputElement>(null);
+    const _pop = useRef<HTMLDivElement>(null);
     const _did = useId()
     const _id = useMemo(() => name || _did, [])
+    const { reposition } = usePosition(_pop as any, { direction: Position.Bottom, offset: 2 })
 
     const {
         className,
@@ -49,6 +53,7 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
         document.body.addEventListener(`click`, (e: MouseEvent) => {
             setChoosing(false)
         })
+        window.dispatchEvent(new Event('resize'));
     }, [])
 
     useEffect(() => {
@@ -61,6 +66,7 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
             }
             setQuery(null)
         }
+        reposition()
     }, [choosing])
 
     return <Box className={`--select ${variant ? `--${variant}` : ``} ${name ? `--${name}` : ``} rel`.trim()} name={_id}>
@@ -79,10 +85,12 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
         <Box
             id={_id}           
             className={`--options-list flex cols abs`}
+            aria-hidden={!choosing}
             style={{
-                pointerEvents: choosing ? `auto` : `none`,
+                maxHeight: maxHeight || `auto`
             }}
-            animate={{
+            ref={_pop}
+            fx={{
                 from: { y: 5, opacity: 0 },
                 to: { y: 0, opacity: 1 },
                 when: choosing,

@@ -18,6 +18,8 @@ export enum FORMVALIDATION_STYLE {
 }
 
 export enum FORMVALIDATION {
+    IPV4 = "IPV4",
+    IPV6 = "IPV6",
     Email = "EMAIL",
     Uri = "URI",
     Password = "PASSWORD",

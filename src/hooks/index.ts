@@ -17,6 +17,12 @@ export { default as useDelayed, default as useMounted } from './useDelayed';
 export { default as useDevice } from './useDevice';
 export { default as useDimensions } from './useDimensions';
 
+export {
+    default as useLineChart,
+    type DataPoint, type LineChartProps, type UseLineChartDimensions,
+    type UseLineChartReturn
+} from './useLineChart';
+
 export { default as useMediaPlayer, type MediaPlayerProps, type MediaType } from './useMediaPlayer';
 export { default as useMergedRefs } from './useMergedRefs';
 
@@ -44,6 +50,9 @@ export { default as useSheet } from './useSheet';
 export { default as useShortcuts } from './useShortcuts';
 
 export { default as useNetworkStatus } from './useNetworkStatus';
+
+export { default as usePosition } from './usePosition';
+
 export { default as useResizeObserver } from './useResizeObserver';
 
 

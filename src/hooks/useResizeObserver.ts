@@ -8,12 +8,14 @@ interface Size {
     left: number;
 }
 
-const useResizeObserver = (ref: RefObject<HTMLElement | null>): Size => {
+const useResizeObserver = (ref: RefObject<HTMLElement | null> | HTMLElement): Size => {
     
     const [size, setSize] = useState<Size>({ width: 0, height: 0, top: 0, left: 0 });
 
     useEffect(() => {
         
+        const _ref = ref instanceof HTMLElement ? ref : ref.current
+
         const handleResize = (entries: ResizeObserverEntry[]) => {
             for (let entry of entries) {
                 const { width, height, top, left } = entry.contentRect;
@@ -22,13 +24,13 @@ const useResizeObserver = (ref: RefObject<HTMLElement | null>): Size => {
         };
 
         const resizeObserver = new ResizeObserver(handleResize);
-        if (ref.current) {
-            resizeObserver.observe(ref.current);
+        if (_ref) {
+            resizeObserver.observe(_ref);
         }
 
         return () => {
-            if (ref.current) {
-                resizeObserver.unobserve(ref.current);
+            if (_ref) {
+                resizeObserver.unobserve(_ref);
             }
         };
     }, [ref]);
