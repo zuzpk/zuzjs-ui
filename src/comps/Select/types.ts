@@ -1,4 +1,4 @@
-import { FormEventHandler } from "react"
+import { FormEventHandler, ReactNode } from "react"
 import { FORMVALIDATION, Variant } from "../../types/enums"
 import { BoxProps } from "../Box"
 
@@ -72,6 +72,10 @@ export type SelectProps = Omit<BoxProps, "onChange" > & {
     /**
      * Max Height
      */
-    maxHeight?: number
+    maxHeight?: number,
+
+    arrowDownIcon?: string | ReactNode,
+
+    arrowUpIcon?: string | ReactNode,
     
 }

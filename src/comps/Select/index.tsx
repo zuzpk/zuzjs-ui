@@ -5,6 +5,7 @@ import { Position } from "../../types/enums";
 import Box from "../Box";
 import Button from "../Button";
 import { ButtonProps } from "../Button/types";
+import Icon from "../Icon";
 import Input from "../Input";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
@@ -22,6 +23,8 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
         search: withSearch,
         searchPlaceholder,
         maxHeight,
+        arrowDownIcon = SVGIcons.arrowDown,
+        arrowUpIcon = SVGIcons.arrowUp,
         onChange,
         ...pops } = props
     const [ value, setValue ] = useState<Option>(
@@ -79,7 +82,9 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
             onClick={(e) => setChoosing(prev => !prev)}
             {...rest as ButtonProps}>
             <Text className={`--label`}>{value ? `string` == typeof value ? value : value.label : label || `Choose`}</Text>
-            <Box className={`--svg-arrow rel flex aic jcc`}>{choosing ? SVGIcons.arrowUp : SVGIcons.arrowDown}</Box>
+            <Box className={`--svg-arrow rel flex aic jcc`}>{choosing ? 
+                `string` === typeof arrowUpIcon ? <Icon name={arrowUpIcon} as={`--search-action`} /> : arrowUpIcon : 
+                `string` === typeof arrowDownIcon ? <Icon name={arrowDownIcon} as={`--search-action`} /> : arrowDownIcon}</Box>
         </Button>
 
         <Box

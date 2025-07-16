@@ -1,9 +1,10 @@
 "use client"
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useBase } from '../../hooks';
 import { Variant } from '../../types/enums';
 import Box from '../Box';
 import Button from '../Button';
+import Icon from '../Icon';
 import Input from '../Input';
 import KeyBoardKeys from '../KeyboardKeys';
 import SVGIcons from '../svgicons';
@@ -11,12 +12,32 @@ import { SearchHandler, SearchProps } from './types';
 
 const Search = forwardRef<SearchHandler, SearchProps>((props, ref) => {
 
-    const { fx, animate, withStyle, as, reverse, onChange, onClear, ...pops } = props
+    const { 
+        fx, animate, 
+        withStyle, 
+        as, 
+        reverse = false, 
+        searchIcon = SVGIcons.search, 
+        hideSearchIcon = false,
+        clearIcon = SVGIcons.close, 
+        hideClearIcon = false,
+        onChange, onClear, ...pops 
+    } = props
     const { style, className } = useBase({ as: props.as })
     // const { className : searchStyle } = useBase({ as: withStyle || `` } as Props<`div`>)
     const [ query, setQuery ] = useState<string>(``)
 
     const innerRef = useRef<HTMLInputElement>(null)
+
+    const actionBtn = useMemo(() => <Button
+        tabIndex={-1}
+        onClick={e => handleSubmit()}
+        className={`--send flex aic jcc`}
+        variant={props.variant || Variant.Small}>
+        {query !== `` ? 
+            !hideClearIcon && (`string` === typeof clearIcon ? <Icon name={clearIcon} as={`--search-action`} /> : clearIcon) : 
+            !hideSearchIcon && (`string` === typeof searchIcon ? <Icon name={searchIcon} as={`--search-action`} /> : searchIcon )}</Button>, 
+            [reverse, searchIcon, hideClearIcon, clearIcon, hideSearchIcon])
 
     if ( `type` in props ){
         delete props[`type`]
@@ -50,26 +71,14 @@ const Search = forwardRef<SearchHandler, SearchProps>((props, ref) => {
     return <Box 
         style={style}
         className={`--search ${reverse ? `--search-rev` : ``} --${props.variant || Variant.Small} flex aic ${props.as?.includes(`abs`) ? `` : `rel`} ${className}`.trim()}>
-        { reverse && <Button 
-            tabIndex={-1}
-            onClick={e => handleSubmit()}
-            className={`--send flex aic jcc`}
-            variant={props.variant || Variant.Small}>
-            {query !== `` ? SVGIcons.close : SVGIcons.search}
-        </Button> }
+        { reverse && actionBtn }
         <Input 
             ref={innerRef}
             onChange={handleChange}
             className={`--${props.variant || Variant.Small}`}
             {...pops} />
         {props.shortcut && <KeyBoardKeys keys={props.shortcut} as={`abs`} />}
-        { !reverse && <Button 
-            tabIndex={-1}
-            onClick={e => handleSubmit()}
-            className={`--send flex aic jcc`}
-            variant={props.variant || Variant.Small}>
-            {query !== `` ? SVGIcons.close : SVGIcons.search}
-        </Button> }
+        { !reverse && actionBtn }
     </Box>
         
 })

@@ -7,6 +7,7 @@
     --select-font-size: 16px;
     --select-z-index: 1;
     --select-gap: 5px;
+    --select-arrow-width: 16px;
     --select-arrow-size: 16px;
     --select-arrow-color: #111;
     --select-hover: #e6e6e6;
@@ -51,6 +52,13 @@
         font-size: var(--select-font-size);
         box-shadow: var(--select-shadow);
         line-height: 1;
+        
+        .--svg-arrow{ 
+            color: var(--select-arrow-color); 
+            .--icon{
+                font-size: var(--select-arrow-size);
+            }
+        }
 
         &.--sm{
             padding: var(--select-padding-sm);
@@ -72,7 +80,7 @@
             color: var(--select-option-color);
         }
         .--svg-arrow{
-            width: var(--select-arrow-size);
+            width: var(--select-arrow-width);
             svg{
                 fill: var(--select-arrow-color);
             }
