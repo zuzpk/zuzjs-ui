@@ -54,6 +54,9 @@
     .--row{
         background: var(--table-row);
         border-radius: var(--table-row-radius);
+
+        &.--row-clickable{cursor: pointer !important;}
+
         &:not(.--row-head):not(.--row-footer){
             padding: var(--table-row-padding);
             cursor: var(--table-row-cursor);

@@ -6,6 +6,8 @@ import { BoxProps } from "../Box"
  * Represents an option which can be either a string or an OptionObject.
  */
 export type Option = {
+    icon?: string | ReactNode,
+    iconColor?: string,
     label: string,
     value: string
 }

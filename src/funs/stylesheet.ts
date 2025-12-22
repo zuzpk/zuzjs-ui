@@ -281,6 +281,8 @@ export const cssProps : dynamicObject = {
     "placeItems": "place-items",
     "placeContent": "place-content",
 
+    "corner": "corner-shape",
+
 }
 
 export const cssDirect : dynamicObject = {

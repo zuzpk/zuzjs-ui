@@ -1,0 +1,49 @@
+:root{
+    --command-box: #eee;
+    --command-box-width: fit-content;
+    --command-box-radius: 5px;
+    --command-box-padding: 10px;
+    --command-box-column-count: 2;
+    --command-box-column-width: 1fr;
+    --command-box-gap: 10px;
+    --command-box-shadow: 0px 1px 2px #dcdcdc;
+    --command-box-border: 1px #c9c9c9 solid;
+    --command-item: transparent;
+    --command-item-text-color: #111;
+    --command-item-text-size: 15px;
+    --command-item-padding: 6px;
+    --command-item-radius: 6px;
+    --command-item-gap: 6px;
+    --command-item-icon-size: 16px;
+    --command-item-hover: #fff;
+}
+.--command-box{
+    background: var(--command-box);
+    border-radius: var(--command-box-radius);
+    padding: var(--command-box-padding);
+    grid-template-columns: repeat(var(--command-box-column-count), var(--command-box-column-width));
+    gap: var(--command-box-gap);
+    width: var(--command-box-width);
+    border: var(--command-box-border);
+    box-shadow: var(--command-box-shadow);
+    z-index: 9;
+    corner-shape: squircle;
+    .--command-item{
+        background: var(--command-item) !important;
+        text-align: left !important;
+        color: var(--command-item-text-color) !important;
+        white-space: pre;
+        justify-content: flex-start !important;
+        font-size: var(--command-item-text-size) !important;
+        padding: var(--command-item-padding) !important;
+        border-radius: var(--command-item-radius) !important;
+        gap: var(--command-item-gap) !important;
+        .--command-icon{
+            font-size: var(--command-item-icon-size) !important;
+        }
+        &:hover{
+            background: var(--command-item-hover) !important;
+        }
+    }
+
+}

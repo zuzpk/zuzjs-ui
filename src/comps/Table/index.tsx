@@ -87,6 +87,7 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<TableController>) => {
         spinner,
         emptyMessage,
         onSort,
+        onRowClick,
         onRowSelectToggle,
         onPageChange,
         onRowContextMenu,
@@ -193,6 +194,7 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<TableController>) => {
             styles={_schemaParsed}
             loading={true}
             animate={animateRows} 
+            onRowClick={onRowClick}
             />)}    
         {!_loading && rows && rows.map((row, index: number) => <TRow 
             key={`--trow-${rowKeys.current[index] || index}-${schema[0].id}`} 
@@ -205,6 +207,7 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<TableController>) => {
             styles={_schemaParsed}
             animate={animateRows} 
             data={row} 
+            onRowClick={onRowClick}
             rowClassName={rowClassName}
             selectable={selectableRows}
             onSelect={onRowSelectToggle}

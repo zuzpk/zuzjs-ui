@@ -7,6 +7,7 @@
 @use "../comps/AutoComplete/AutoComplete.scss";
 @use "../comps/Avatar/Avatar.scss";
 @use "../comps/Button/Button.scss";
+@use "../comps/Calendar/Calendar.scss";
 @use "../comps/Checkbox/Checkbox.scss";
 @use "../comps/ColorScheme/ColorScheme.scss";
 @use "../comps/ContextMenu/Contextmenu.scss";
@@ -16,6 +17,7 @@
 @use "../comps/Drawer/Drawer.scss";
 @use "../comps/Fab/Fab.scss";
 @use "../comps/Input/Input.scss";
+@use "../comps/DatePicker/DatePicker.scss";
 @use "../comps/KeyboardKeys/KeyboardKeys.scss";
 @use "../comps/List/List.scss";
 @use "../comps/Network/Network.scss";
@@ -35,6 +37,7 @@
 @use "../comps/Table/Table.scss";
 @use "../comps/TabView/TabView.scss";
 @use "../comps/TextWheel/Textwheel.scss";
+@use "../comps/TextArea/textarea.scss";
 @use "../comps/Toast/toast.scss";
 @use "../comps/Tooltip/Tooltip.scss";
 @use "../comps/Treeview/Treeview.scss";

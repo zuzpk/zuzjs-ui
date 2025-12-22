@@ -1,6 +1,6 @@
 {
   "name": "@zuzjs/ui",
-  "version": "0.9.7",
+  "version": "0.9.9",
   "keywords": [
     "react",
     "zuz",
@@ -44,9 +44,10 @@
     "@types/md5": "^2.3.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@zuzjs/core": "^0.2.4",
+    "@zuzjs/core": "workspace:*",
     "chokidar": "^3.6.0",
     "commander": "^13.1.0",
+    "date-fns": "^4.1.0",
     "hashids": "^2.3.0",
     "js-cookie": "^3.0.5",
     "md5": "^2.3.0",

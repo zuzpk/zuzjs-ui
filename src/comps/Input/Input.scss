@@ -17,9 +17,13 @@
 
 }
 
+input[type="date"]::-webkit-calendar-picker-indicator {
+    color: var(--text);
+}
+
 .--input{
 
-    
+    corner-shape: squircle;
 
     &.--lg{
         padding: var(--input-padding-lg);

@@ -20,6 +20,9 @@ export { default as Box, type BoxProps } from './Box';
 export { default as Button } from './Button';
 export * from './Button/types';
 
+export { default as Calendar } from './Calendar';
+export * from './Calendar/types';
+
 export { default as Chart } from './Chart';
 export * from './Chart/types';
 
@@ -41,6 +44,8 @@ export * from './Cropper/types';
 
 export { default as Crumb } from './Crumb';
 export * from './Crumb/types';
+
+export { default as DatePicker } from './DatePicker';
 
 export { default as Drawer } from './Drawer';
 export * from './Drawer/types';
@@ -119,7 +124,8 @@ export { default as TabView } from './TabView';
 export * from './TabView/types';
 
 export { default as Text, type TextProps } from './Text';
-export { default as Textarea, type TextAreaProps } from './TextArea';
+export { default as Textarea } from './TextArea';
+export { type TextAreaProps } from './TextArea/types';
 
 export { default as TextWheel } from './TextWheel';
 export * from './TextWheel/types';

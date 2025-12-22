@@ -81,6 +81,7 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
             style={style}
             onClick={(e) => setChoosing(prev => !prev)}
             {...rest as ButtonProps}>
+            {/* <Text className={`--label`}>{value ? `string` == typeof value ? value : value.label : label || `Choose`}</Text> */}
             <Text className={`--label`}>{value ? `string` == typeof value ? value : value.label : label || `Choose`}</Text>
             <Box className={`--svg-arrow rel flex aic jcc`}>{choosing ? 
                 `string` === typeof arrowUpIcon ? <Icon name={arrowUpIcon} as={`--search-action`} /> : arrowUpIcon : 
