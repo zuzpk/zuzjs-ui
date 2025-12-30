@@ -369,6 +369,9 @@ export const cssDirect : dynamicObject = {
     "text-wrap": "width: 98%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;",
     "text-clip": "color: transparent;background-clip: text;-webkit-background-clip: text;",
     "word-break": "wordc-break: break-word;",
+    "uppercase": "text-transform: uppercase;",
+    "lowercase": "text-transform: lowercase;",
+    "capitalize": "text-transform: capitalize;",
 }
 
 export const cssPropsWithColor = [
