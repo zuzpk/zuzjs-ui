@@ -29,6 +29,9 @@ export * from './Chart/types';
 export { default as CheckBox } from './CheckBox';
 export * from './CheckBox/types';
 
+export { default as Bubble } from './ChatBubble';
+export * from './ChatBubble/types';
+
 export { default as ColorScheme } from './ColorScheme';
 
 export { default as ContextMenu } from './ContextMenu';

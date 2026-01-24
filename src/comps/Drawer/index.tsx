@@ -1,8 +1,9 @@
 "use client"
-import { forwardRef, ReactNode, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { forwardRef, ReactNode, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useBase, useShortcuts } from "../../hooks";
 import { DRAWER_SIDE, KeyCode, TRANSITION_CURVES } from "../../types/enums";
 import Box, { BoxProps } from "../Box";
+import { layerManager } from "../layer_manager";
 import Overlay from "../Overlay";
 import { DrawerHandler, DrawerProps } from "./types";
 
@@ -21,18 +22,34 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
         rest
     } = useBase(pops)
 
-    useShortcuts([
-        { keys: [KeyCode.Escape], callback: () => {
-            if(visible){
-                onClose?.();
-                setVisible(false);
+    const shortcutsConfig = useMemo(() => [
+        { 
+            keys: [KeyCode.Escape], 
+            callback: () => {
+                if (layerManager.isTop(closeDrawer)) closeDrawer();
             }
-        }}
-    ])
+        }
+    ], [visible]);
+
+    useShortcuts(shortcutsConfig)
+
+    const closeDrawer = useCallback(() => {
+        setVisible(false)
+        onClose?.()
+    }, []);
 
     useEffect(() => {
         setContent(children);
     }, [children]);
+
+    useEffect(() => {
+        if ( visible ){
+            layerManager.push(closeDrawer)
+        }else{
+            layerManager.pop(closeDrawer)
+        }
+        return () => layerManager.pop(closeDrawer)
+    }, [visible])
 
     const _style = useMemo(() => {
         switch (from){
@@ -52,13 +69,10 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
     useImperativeHandle(ref, () => ({
         open(child?: string | ReactNode | ReactNode[]){
             if ( child ) setContent(child)
-            if ( !window.document.body.classList.contains(`--no-scroll`) ) window.document.body.classList.add(`--no-scroll`)
             setVisible(true)            
         },
         close(){
-            onClose?.()
-            if ( window.document.body.classList.contains(`--no-scroll`) ) window.document.body.classList.remove(`--no-scroll`)
-            setVisible(false)
+            closeDrawer()
         }
     }))
 
@@ -67,8 +81,7 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
         <Overlay
             onClick={(e) => {
                 if ( visible ){ 
-                    onClose?.()
-                    setVisible(false) 
+                    closeDrawer()
                 }
             }}
             when={visible} />

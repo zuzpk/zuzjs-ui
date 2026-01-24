@@ -9,6 +9,7 @@
 @use "../comps/Button/Button.scss";
 @use "../comps/Calendar/Calendar.scss";
 @use "../comps/Checkbox/Checkbox.scss";
+@use "../comps/ChatBubble/Bubble.scss";
 @use "../comps/ColorScheme/ColorScheme.scss";
 @use "../comps/ContextMenu/Contextmenu.scss";
 @use "../comps/Cover/Cover.scss";
@@ -177,6 +178,10 @@ input{
     bottom: -10px;
     right: -10px;
 }
+.tar{text-align:right;}
+.tac{text-align:center;}
+.tal{text-align:left;}
+.taj{text-align:justify;}
 .grid{display: grid;}
 .nope{pointer-events: none;}
 .nous{user-select: none;}
