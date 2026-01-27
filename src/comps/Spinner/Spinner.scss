@@ -11,7 +11,7 @@
     &.--simple{
         aspect-ratio: 1;
         animation: spin infinite;
-        corner-shape: round;
+        corner-shape: round !important;
     }
 
     &.--wave{

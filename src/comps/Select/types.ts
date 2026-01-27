@@ -2,6 +2,11 @@ import { FormEventHandler, ReactNode } from "react"
 import { FORMVALIDATION, Variant } from "../../types/enums"
 import { BoxProps } from "../Box"
 
+export interface SelectHandler {
+    setSelected: ( option: Option | string ) => void,
+    getValue: () => Option | null,
+}
+
 /**
  * Represents an option which can be either a string or an OptionObject.
  */

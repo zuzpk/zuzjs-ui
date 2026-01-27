@@ -1,5 +1,5 @@
 "use client"
-import { ChangeEvent, forwardRef, useEffect, useId, useMemo, useRef, useState } from "react";
+import { ChangeEvent, forwardRef, useEffect, useId, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useBase, usePosition } from "../../hooks";
 import { Position } from "../../types/enums";
 import Box from "../Box";
@@ -10,9 +10,9 @@ import Input from "../Input";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
 import OptionItem from "./optionItem";
-import { Option, SelectProps } from "./types";
+import { Option, SelectHandler, SelectProps } from "./types";
 
-const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
+const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
 
     const { 
         selected, 
@@ -51,6 +51,21 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
         setValue(o)
         onChange && onChange(o)
     }
+
+    useImperativeHandle(ref, () => ({
+        setSelected: ( option: Option | string ) => {
+            if ( typeof option === `string` ){
+                const foundOption = options.find( o => o.value === option )
+                if ( foundOption ){
+                    setValue( foundOption )
+                }
+            }
+            else{
+                setValue( option )
+            }
+        },
+        getValue: () => value || null
+    }))
 
     useEffect(() => {
         document.body.addEventListener(`click`, (e: MouseEvent) => {
