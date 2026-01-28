@@ -1,7 +1,7 @@
 "use client"
 import { forwardRef } from "react";
 import { useBase } from "../../hooks";
-import { SPINNER } from "../../types/enums";
+import { SPINNER, Variant } from "../../types/enums";
 import Box, { BoxProps } from "../Box";
 import Spinner from "../Spinner";
 import Text from "../Text";
@@ -9,6 +9,7 @@ import Text from "../Text";
 export type CoverProps = BoxProps & {
     message?: string,
     spinner?: SPINNER,
+    spinnerSize?: Variant,
     color?: string,
     when?: boolean,
     hideMessage?: boolean
@@ -16,7 +17,7 @@ export type CoverProps = BoxProps & {
 
 const Cover = forwardRef<HTMLDivElement, CoverProps >((props, ref) => {
 
-    const { message, spinner, color, when, hideMessage, ...pops } = props;
+    const { message, spinner, spinnerSize, color, when, hideMessage, ...pops } = props;
     
     const {
         className,
@@ -35,7 +36,7 @@ const Cover = forwardRef<HTMLDivElement, CoverProps >((props, ref) => {
             backgroundColor: `var(--cover-bg)`
         }}
         {...rest as BoxProps}>
-        {<Spinner type={spinner || SPINNER.Simple} />}
+        {<Spinner variant={spinnerSize || Variant.Small} type={spinner || SPINNER.Simple} />}
         {!hideMessage && <Text 
             className={`--label`}
             style={{ color: `var(--cover-label)`  }}>{message || `loading`}</Text>}

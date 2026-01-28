@@ -1,6 +1,6 @@
 import { ComponentPropsWithoutRef, ElementType } from "react";
 import { DragOptions } from "../hooks";
-import { SHIMMER, SORT, TRANSITIONS } from "./enums";
+import { Position, SHIMMER, SORT, TRANSITIONS } from "./enums";
 import { animationProps, Skeleton } from "./interfaces";
 
 export type Deprecated<T, M extends string> = T & { __deprecatedMessage?: M };
@@ -117,3 +117,4 @@ export type cssShortKeys = {
     sz: string | number,
 };
 
+export type Direction = Position

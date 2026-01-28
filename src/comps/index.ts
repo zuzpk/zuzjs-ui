@@ -16,11 +16,21 @@ export { default as Avatar } from './Avatar';
 export * from './Avatar/types';
 
 export { default as Box, type BoxProps } from './Box';
+
 export { default as Button } from './Button';
 export * from './Button/types';
 
+export { default as Calendar } from './Calendar';
+export * from './Calendar/types';
+
+export { default as Chart } from './Chart';
+export * from './Chart/types';
+
 export { default as CheckBox } from './CheckBox';
 export * from './CheckBox/types';
+
+export { default as Bubble } from './ChatBubble';
+export * from './ChatBubble/types';
 
 export { default as ColorScheme } from './ColorScheme';
 
@@ -38,6 +48,8 @@ export * from './Cropper/types';
 export { default as Crumb } from './Crumb';
 export * from './Crumb/types';
 
+export { default as DatePicker } from './DatePicker';
+
 export { default as Drawer } from './Drawer';
 export * from './Drawer/types';
 
@@ -54,6 +66,10 @@ export { default as Filters, type FilterProps } from './Filters';
 
 export { default as Form } from './Form';
 export * from './Form/types';
+
+export { default as Group } from './Group';
+// export * from './Form/types';
+
 export { default as Icon, type IconProps } from './Icon';
 export { default as Image, type ImageProps } from './Image';
 export { default as Input, type InputProps } from './Input';
@@ -111,7 +127,8 @@ export { default as TabView } from './TabView';
 export * from './TabView/types';
 
 export { default as Text, type TextProps } from './Text';
-export { default as Textarea, type TextAreaProps } from './TextArea';
+export { default as Textarea } from './TextArea';
+export { type TextAreaProps } from './TextArea/types';
 
 export { default as TextWheel } from './TextWheel';
 export * from './TextWheel/types';

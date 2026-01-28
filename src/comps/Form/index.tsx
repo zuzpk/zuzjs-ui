@@ -1,7 +1,7 @@
 "use client"
-import { withPost } from "@zuzjs/core";
+import { _, withPost } from "@zuzjs/core";
 import { forwardRef, ReactNode, startTransition, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { addPropsToChildren, isEmail, isEmpty } from "../../funs";
+import { addPropsToChildren, isEmpty } from "../../funs";
 import { useBase, useToast } from "../../hooks";
 import { dynamicObject, FormInputs } from "../../types";
 import { FORMVALIDATION } from "../../types/enums";
@@ -126,8 +126,12 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
             }
 
             switch ( _with.toUpperCase() ){
+                case FORMVALIDATION.IPV4:
+                    return _(el.value).isIPv4();
+                case FORMVALIDATION.IPV6:
+                    return _(el.value).isIPv6();
                 case FORMVALIDATION.Email:
-                    return isEmail(el.value)
+                    return _(el.value).isEmail()
                 case FORMVALIDATION.Uri:
                     try{
                         new URL(el.value)
@@ -344,7 +348,7 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
     const buildChildren = useMemo(() => addPropsToChildren(
         children, 
         child => child.props.type == `submit`,
-        { ref: submit }
+        index => ({ ref: submit })
     ), [children])
 
     useImperativeHandle(ref, () => ({
@@ -367,6 +371,9 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
         },
         init(){
             _init()
+        },
+        submit(){
+            _onSubmit()
         }
     }))
     

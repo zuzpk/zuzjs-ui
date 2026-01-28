@@ -1,0 +1,77 @@
+:root{
+    --datepicker: var(--gray-200);
+    --datepicker-border: 0px;
+    --datepicker-color: var(--black-900);
+
+    --datepicker-padding-lg: 16px;
+    --datepicker-font-size-lg: 18px;
+    --datepicker-radius-lg: 6px;
+    --datepicker-iconsize-lg: 30px;
+
+    --datepicker-padding-md: 12px;
+    --datepicker-font-size-md: 16px;
+    --datepicker-radius-md: 4px;
+    --datepicker-iconsize-md: 24px;
+
+    --datepicker-padding-sm: 8px;
+    --datepicker-font-size-sm: 15px;
+    --datepicker-radius-sm: 2px;
+    --datepicker-iconsize-sm: 20px;
+
+}
+
+.--date-picker{
+    background: var(--datepicker);
+    corner-shape: squircle;
+    &.--lg{
+        padding: 0px var(--datepicker-padding-lg);
+        font-size: var(--datepicker-font-size-lg);
+        border-radius: var(--datepicker-radius-lg);
+        .--date-picker-icon{
+            width: var(--datepicker-iconsize-lg);
+            height: var(--datepicker-iconsize-lg);
+        }
+    }
+    &.--md{
+        padding: 0px var(--datepicker-padding-md);
+        font-size: var(--datepicker-font-size-md);
+        border-radius: var(--datepicker-radius-md);
+        .--date-picker-icon{
+            width: var(--datepicker-iconsize-md);
+            height: var(--datepicker-iconsize-md);
+        }
+    }
+    &.--sm{
+        padding: 0px var(--datepicker-padding-sm);
+        font-size: var(--datepicker-font-size-sm);
+        border-radius: var(--datepicker-radius-sm);
+        .--date-picker-icon{
+            width: var(--datepicker-iconsize-sm);
+            height: var(--datepicker-iconsize-sm);
+        }
+    }
+    .--date-picker-icon{
+        svg{
+            width: 100%;
+        }
+    }
+    .--input{
+        background: transparent !important;
+        border: none !important;
+        corner-shape: squircle;
+    }
+}
+.--date-picker-chooser{
+    position: absolute;
+    z-index: 1;
+    background: var(--datepicker);
+
+    &.--sm{
+        border-radius: var(--datepicker-radius-sm);
+        .--button{
+            font-size: var(--datepicker-font-size-sm) !important;
+        }
+    }
+
+    
+}

@@ -513,16 +513,24 @@ export const camelCaseToDash = (str: string) => str.replace(/([a-z])([A-Z])/g, '
 
 export const pluralize = (word: string, count : number) => `${word}${count !== 1 ? 's' : ''}`
 
-export const addPropsToChildren = (children: ReactNode, conditions: (child: ReactElement<any>) => boolean, newProps: object) : ReactNode => {
+export const addPropsToChildren = (
+    children: ReactNode, 
+    conditions: (child: ReactElement<any>) => boolean, 
+    getProps: (index: number, element: ReactElement<any>) => object
+) : ReactNode => {
+
+    let i = 0
+
     return Children.map(children, (child) => {
         if ( isValidElement(child) ){
+
             const element = child as ReactElement<any>
             const newChild = conditions(element) 
-                ? cloneElement(element, { ...newProps })
+                ? cloneElement(element, getProps(i++, element))
                 : element
             if ( element.props.children ){
                 return cloneElement(newChild, {
-                    children: addPropsToChildren(element.props.children, conditions, newProps)
+                    children: addPropsToChildren(element.props.children, conditions, getProps)
                 })
             }
             return newChild
@@ -633,4 +641,52 @@ export const checkPasswordStrength = (password: string): {
         score, 
         result: score <= 2 ? "Weak" : score == 3 ? "Moderate" : score == 4 ? "Strong" : "Excellent",
         suggestion: suggestions };
+}
+
+export const getCaretCoordinates = (element: HTMLTextAreaElement, position: number) => {
+    const div = document.createElement('div');
+    const style = window.getComputedStyle(element);
+    const properties = [
+        'fontFamily', 'fontSize', 'fontWeight', 'letterSpacing',
+        'lineHeight', 'paddingLeft', 'paddingTop', 'borderLeftWidth',
+        'borderTopWidth', 'boxSizing', 'width', 'height', 'overflow'
+    ];
+
+    // Copy styles to temporary div
+    properties.forEach(prop => {
+        div.style.setProperty(prop, style.getPropertyValue(prop));
+    });
+    div.style.position = 'absolute';
+    div.style.visibility = 'hidden';
+    div.style.whiteSpace = 'pre-wrap';
+    div.style.wordWrap = 'break-word';
+    div.textContent = element.value.substring(0, position);
+
+    // Append a span to measure caret position
+    const span = document.createElement('span');
+    span.textContent = element.value.substring(position) || ' ';
+    div.appendChild(span);
+    document.body.appendChild(div);
+
+    // Get coordinates
+    const rect = span.getBoundingClientRect();
+    const textareaRect = element.getBoundingClientRect();
+    const coordinates = {
+        top: rect.top - textareaRect.top + element.scrollTop,
+        left: rect.left - textareaRect.left + element.scrollLeft,
+    };
+
+    document.body.removeChild(div);
+    return coordinates;
+};
+
+export const urlBase64ToUint8Array = (base64String: string): Uint8Array => {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
 }

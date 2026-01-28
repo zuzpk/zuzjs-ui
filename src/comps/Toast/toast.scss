@@ -4,7 +4,7 @@
 
     .--snack{
         position: fixed;
-
+        corner-shape: squircle;
         // min-width: 300px;
         background: #222;
         color: #fff;
@@ -28,6 +28,7 @@
             height: 30px;
             background: rgba(0,0,0,0.1);
             border-radius: 10px;
+            corner-shape: squircle;
             .--icon{
                 font-size: 16px;
             }

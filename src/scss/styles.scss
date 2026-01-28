@@ -7,7 +7,9 @@
 @use "../comps/AutoComplete/AutoComplete.scss";
 @use "../comps/Avatar/Avatar.scss";
 @use "../comps/Button/Button.scss";
+@use "../comps/Calendar/Calendar.scss";
 @use "../comps/Checkbox/Checkbox.scss";
+@use "../comps/ChatBubble/Bubble.scss";
 @use "../comps/ColorScheme/ColorScheme.scss";
 @use "../comps/ContextMenu/Contextmenu.scss";
 @use "../comps/Cover/Cover.scss";
@@ -16,6 +18,7 @@
 @use "../comps/Drawer/Drawer.scss";
 @use "../comps/Fab/Fab.scss";
 @use "../comps/Input/Input.scss";
+@use "../comps/DatePicker/DatePicker.scss";
 @use "../comps/KeyboardKeys/KeyboardKeys.scss";
 @use "../comps/List/List.scss";
 @use "../comps/Network/Network.scss";
@@ -35,6 +38,7 @@
 @use "../comps/Table/Table.scss";
 @use "../comps/TabView/TabView.scss";
 @use "../comps/TextWheel/Textwheel.scss";
+@use "../comps/TextArea/textarea.scss";
 @use "../comps/Toast/toast.scss";
 @use "../comps/Tooltip/Tooltip.scss";
 @use "../comps/Treeview/Treeview.scss";
@@ -56,6 +60,8 @@ input{
         box-shadow: 0 0 0px 1000px transparent inset;
     }
 }
+
+.--no-scroll{overflow: hidden;}
 [aria-hidden="true"] {
 	user-select: none;
 	pointer-events: none;
@@ -154,7 +160,7 @@ input{
     &.jce{justify-content: flex-end;}
     &.jcs{justify-content: flex-start;}
 }
-.abs{ 
+.--abs, .abs{ 
     position: absolute; 
     &.abc{top: 50%;left: 50%;transform: translate(-50%, -50%);}
 }
@@ -164,6 +170,7 @@ input{
     left: 0px;
     bottom: 0px;
     right: 0px;
+    inset: 0;
 }
 .fillx{
     top: -10px;
@@ -171,6 +178,10 @@ input{
     bottom: -10px;
     right: -10px;
 }
+.tar{text-align:right;}
+.tac{text-align:center;}
+.tal{text-align:left;}
+.taj{text-align:justify;}
 .grid{display: grid;}
 .nope{pointer-events: none;}
 .nous{user-select: none;}

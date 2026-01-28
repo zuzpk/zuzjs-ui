@@ -1,7 +1,7 @@
 import { dynamicObject } from ".";
 import { SKELETON, TRANSITION_CURVES, TRANSITIONS } from "./enums";
 
-export interface scrollEffectProps {
+export interface parallaxEffectProps {
     lerpFactor?: number,
     x?: number,
     y?: number
@@ -45,7 +45,9 @@ export interface animationProps {
     /** Easing curve applied to the animation, as a string or {@link TRANSITION_CURVES} */
     curve?: string | TRANSITION_CURVES;
 
-    scroll?: scrollEffectProps
+    scroll?: parallaxEffectProps,
+
+    mouse?: parallaxEffectProps,
 }
 
 /**

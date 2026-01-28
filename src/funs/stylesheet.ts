@@ -281,6 +281,8 @@ export const cssProps : dynamicObject = {
     "placeItems": "place-items",
     "placeContent": "place-content",
 
+    "corner": "corner-shape",
+
 }
 
 export const cssDirect : dynamicObject = {
@@ -333,11 +335,13 @@ export const cssDirect : dynamicObject = {
     "translate": "transform: translate(__VALUE__);",
     "translateX": "transform: translateX(__VALUE__);",
     "translateY": "transform: translateY(__VALUE__);",
+    "translateZ": "transform: translateZ(__VALUE__);",
     "x": "transform: translateX(__VALUE__);",
     "y": "transform: translateY(__VALUE__);",
+    "z": "transform: translateZ(__VALUE__);",
     "rotate": "transform: rotate(__VALUE__);",
     "rotateX": "transform: rotateX(__VALUE__);",
-    "rotateY": "transform: rotatY(__VALUE__);",
+    "rotateY": "transform: rotateY(__VALUE__);",
     "rotateZ": "transform: rotateZ(__VALUE__);",
     "rotate3d": "transform: rotate3d(__X__, __Y__, __Z__, __A__);",
     "scale": "transform: scale(__VALUE__);",
@@ -365,6 +369,9 @@ export const cssDirect : dynamicObject = {
     "text-wrap": "width: 98%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;",
     "text-clip": "color: transparent;background-clip: text;-webkit-background-clip: text;",
     "word-break": "wordc-break: break-word;",
+    "uppercase": "text-transform: uppercase;",
+    "lowercase": "text-transform: lowercase;",
+    "capitalize": "text-transform: capitalize;",
 }
 
 export const cssPropsWithColor = [

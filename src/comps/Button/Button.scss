@@ -29,6 +29,8 @@
 }
 .--button{
 
+    corner-shape: squircle;
+
     &.--def {
         padding: var(--button-padding);
         font-size: var(--button-font-size);

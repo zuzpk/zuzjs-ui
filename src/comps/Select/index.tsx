@@ -1,16 +1,18 @@
 "use client"
-import { ChangeEvent, forwardRef, useEffect, useId, useMemo, useRef, useState } from "react";
-import { useBase } from "../../hooks";
+import { ChangeEvent, forwardRef, useEffect, useId, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { useBase, usePosition } from "../../hooks";
+import { Position } from "../../types/enums";
 import Box from "../Box";
 import Button from "../Button";
 import { ButtonProps } from "../Button/types";
+import Icon from "../Icon";
 import Input from "../Input";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
 import OptionItem from "./optionItem";
-import { Option, SelectProps } from "./types";
+import { Option, SelectHandler, SelectProps } from "./types";
 
-const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
+const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
 
     const { 
         selected, 
@@ -20,6 +22,9 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
         variant,
         search: withSearch,
         searchPlaceholder,
+        maxHeight,
+        arrowDownIcon = SVGIcons.arrowDown,
+        arrowUpIcon = SVGIcons.arrowUp,
         onChange,
         ...pops } = props
     const [ value, setValue ] = useState<Option>(
@@ -31,8 +36,10 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
     const [ query, setQuery ] = useState<string | null>(null)
     const _ref = useRef<HTMLButtonElement>(null);
     const _search = useRef<HTMLInputElement>(null);
+    const _pop = useRef<HTMLDivElement>(null);
     const _did = useId()
     const _id = useMemo(() => name || _did, [])
+    const { reposition } = usePosition(_pop as any, { direction: Position.Bottom, offset: 2 })
 
     const {
         className,
@@ -45,10 +52,26 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
         onChange && onChange(o)
     }
 
+    useImperativeHandle(ref, () => ({
+        setSelected: ( option: Option | string ) => {
+            if ( typeof option === `string` ){
+                const foundOption = options.find( o => o.value === option )
+                if ( foundOption ){
+                    setValue( foundOption )
+                }
+            }
+            else{
+                setValue( option )
+            }
+        },
+        getValue: () => value || null
+    }))
+
     useEffect(() => {
         document.body.addEventListener(`click`, (e: MouseEvent) => {
             setChoosing(false)
         })
+        window.dispatchEvent(new Event('resize'));
     }, [])
 
     useEffect(() => {
@@ -61,6 +84,7 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
             }
             setQuery(null)
         }
+        reposition()
     }, [choosing])
 
     return <Box className={`--select ${variant ? `--${variant}` : ``} ${name ? `--${name}` : ``} rel`.trim()} name={_id}>
@@ -72,17 +96,22 @@ const Select = forwardRef<HTMLDivElement, SelectProps>((props, ref) => {
             style={style}
             onClick={(e) => setChoosing(prev => !prev)}
             {...rest as ButtonProps}>
+            {/* <Text className={`--label`}>{value ? `string` == typeof value ? value : value.label : label || `Choose`}</Text> */}
             <Text className={`--label`}>{value ? `string` == typeof value ? value : value.label : label || `Choose`}</Text>
-            <Box className={`--svg-arrow rel flex aic jcc`}>{choosing ? SVGIcons.arrowUp : SVGIcons.arrowDown}</Box>
+            <Box className={`--svg-arrow rel flex aic jcc`}>{choosing ? 
+                `string` === typeof arrowUpIcon ? <Icon name={arrowUpIcon} as={`--search-action`} /> : arrowUpIcon : 
+                `string` === typeof arrowDownIcon ? <Icon name={arrowDownIcon} as={`--search-action`} /> : arrowDownIcon}</Box>
         </Button>
 
         <Box
             id={_id}           
             className={`--options-list flex cols abs`}
+            aria-hidden={!choosing}
             style={{
-                pointerEvents: choosing ? `auto` : `none`,
+                maxHeight: maxHeight || `auto`
             }}
-            animate={{
+            ref={_pop}
+            fx={{
                 from: { y: 5, opacity: 0 },
                 to: { y: 0, opacity: 1 },
                 when: choosing,

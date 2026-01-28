@@ -6,14 +6,12 @@ import { ScrollViewProps } from "./types";
 const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
 
     const { speed, style: _style, ...pops } = props
-    const { rootRef, containerRef, thumbY, thumbX, onScrollY, onScrollX } = useScrollbar()
+    const { rootRef, containerRef, thumbY, thumbX, onScrollY, onScrollX } = useScrollbar(speed || 1)
     const { 
         style, 
         className, 
         rest 
     } = useBase<`div`>(pops)
-
-    // useEffect(() => { }, [])
 
     return <Box 
         ref={rootRef}
@@ -24,11 +22,11 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
             {rest.children}
         </Box>
 
-        <Box as={`--scroll-track --track-y abs`}>
-            <Box as={`--scroll-thumb abs`} ref={thumbY} onMouseDown={onScrollY} />
+        <Box as={`--scroll-track --track-y --abs`}>
+            <Box as={`--scroll-thumb --abs`} ref={thumbY} onMouseDown={onScrollY} />
         </Box>
-        <Box as={`--scroll-track --track-x abs`}>
-            <Box as={`--scroll-thumb abs`} ref={thumbX} onMouseDown={onScrollX} />
+        <Box as={`--scroll-track --track-x --abs`}>
+            <Box as={`--scroll-thumb --abs`} ref={thumbX} onMouseDown={onScrollX} />
         </Box>
 
     </Box>

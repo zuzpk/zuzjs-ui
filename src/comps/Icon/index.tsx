@@ -7,12 +7,13 @@ import Span from "../Span"
 export type IconProps = Omit<BoxProps, `name`> & {
     name: string | ReactNode,
     pathCount?: number,
-    size?: Size
+    size?: Size,
+    color?: string
 }
 
 const Icon = forwardRef<HTMLDivElement, IconProps>((props, ref) => {
 
-    const { name, pathCount, size, ...pops } = props;
+    const { name, pathCount, size, color, ...pops } = props;
 
     const {
         className,
@@ -21,7 +22,10 @@ const Icon = forwardRef<HTMLDivElement, IconProps>((props, ref) => {
     } = useBase<"div">(pops);
 
     return <div
-        style={style}
+        style={{
+            color,
+            ...style,
+        }}
         className={`icon-${name} --icon --${size || Size.Default} ${className}`.trim()}
         ref={ref} 
         {...rest}>

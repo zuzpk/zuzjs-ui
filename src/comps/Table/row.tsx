@@ -14,7 +14,7 @@ const TRow = <T, >(props: Row<T>) => {
 
     const { 
         index, pubsub, schema, data, ids, styles, animate, sortBy, selectable, tableRef, loading, rowClassName, 
-        onSort, onSelect, onContextMenu } = props
+        onSort, onRowClick, onSelect, onContextMenu } = props
     const mounted = useDelayed()
     const _animation = useMemo(() => ({
         transition: TRANSITIONS.SlideInBottom,
@@ -96,8 +96,9 @@ const TRow = <T, >(props: Row<T>) => {
 
     return <Box 
         onContextMenu={e => onContextMenu ? onContextMenu(e, data!) : null}
+        onClick={e => onRowClick ? onRowClick(e, props.data as T) : () => {}}
         {...( animate ? { fx: { ..._animation, when: mounted } } : {} )}
-        as={`--row flex aic ${index == -1 ? `--row-head` : ``} ${rowClassName || ``}`}>
+        as={`--row flex aic ${onRowClick ? `--row-clickable` : ``} ${index == -1 ? `--row-head` : ``} ${rowClassName || ``}`}>
         
         {/* Header */}
         {index == -1 && schema.map((c: Column<T>, i: number) => {
