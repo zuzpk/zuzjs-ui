@@ -1,0 +1,68 @@
+{
+  "name": "@zuzjs/ui",
+  "version": "1.1.1",
+  "description": "ZuzJS UI Library",
+  "keywords": [
+    "react",
+    "zuz",
+    "zuz.js",
+    "zuz ui",
+    "zuzui"
+  ],
+  "homepage": "https://ui.zuz.com.pk",
+  "bugs": {
+    "url": "https://github.com/zuzpk/zuzjs-ui/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zuzpk/zuzjs-ui.git"
+  },
+  "license": "MIT",
+  "author": "Zuz.js Team <support@zuz.com.pk>",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/esm/index.d.ts",
+  "bin": {
+    "zjs": "dist/cjs/bin.js"
+  },
+  "directories": {
+    "dist": "dist"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev:css": "sass --watch --no-source-map --silence-deprecation=legacy-js-api src/scss:dist/css --style compressed",
+    "dev:cjs": "tsc -d -w -p tsconfig.json",
+    "dev:esm": "tsc -d -w -p tsconfig.esm.json",
+    "dev": "npm-run-all -p dev:*",
+    "prepare": "husky",
+    "publish": "node publish-pre.js && npm publish && node publish-post.js"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "dependencies": {
+    "@types/md5": "^2.3.6",
+    "@types/react": "^19.2.10",
+    "@types/react-dom": "^19.2.3",
+    "chokidar": "^5.0.0",
+    "commander": "^14.0.2",
+    "date-fns": "^4.1.0",
+    "hashids": "^2.3.0",
+    "js-cookie": "^3.0.5",
+    "md5": "^2.3.0",
+    "moment": "^2.30.1",
+    "nanoid": "^5.1.6",
+    "picocolors": "^1.1.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "sass": "^1.97.3",
+    "ts-morph": "^27.0.2"
+  },
+  "devDependencies": {
+    "node-loader": "^2.1.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  }
+}
