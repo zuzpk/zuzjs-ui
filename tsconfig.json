@@ -14,9 +14,11 @@
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
     "moduleResolution": "bundler",
-    "composite": true,
+    "composite": false,
     "stripInternal": true,
     "removeComments": false,
+    "allowImportingTsExtensions": false,
+    "noEmit": false
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "src/**/_*.*"]

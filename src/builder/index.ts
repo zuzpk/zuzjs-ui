@@ -2,7 +2,7 @@ import {
     Project, 
     SyntaxKind, 
 } from "ts-morph";
-import styleGenerator from "./style-generator.js";
+import styleGenerator from "./style-generator";
 import pc from "picocolors"
 import path from "path";
 import fs from "fs";
@@ -71,6 +71,42 @@ class Builder {
 
     };
 
+    private splitAtoms(input: string): string[] {
+        const atoms: string[] = [];
+        let current = "";
+        let depth = 0;
+
+        for (let i = 0; i < input.length; i++) {
+            const char = input[i];
+
+            // Increment depth for any opening bracket/paren
+            if (char === '[' || char === '(') {
+                depth++;
+            }
+            // Decrement depth for any closing bracket/paren
+            if (char === ']' || char === ')') {
+                depth--;
+            }
+
+            // Only split on whitespace if we are at the top level (depth 0)
+            if (/\s/.test(char) && depth === 0) {
+                if (current.trim()) {
+                    atoms.push(current.trim());
+                }
+                current = "";
+            } else {
+                current += char;
+            }
+        }
+
+        // Push the final remaining atom
+        if (current.trim()) {
+            atoms.push(current.trim());
+        }
+
+        return atoms;
+    }
+
     public processFile(filePath: string){
 
         // // 1. Clear previous local file state so we only process what's in THIS file
@@ -113,8 +149,9 @@ class Builder {
         this.stylesToGenerate.forEach(rawStyle => {
 
             // Split strings like "w:99 h:102" into ["w:99", "h:102"]
-            const individualTokens = rawStyle.split(/\s+/).filter(Boolean);
-
+            // const individualTokens = rawStyle.split(/\s+/).filter(Boolean);
+            const individualTokens = this.splitAtoms(rawStyle).filter(Boolean)
+            // console.log(`indT`, individualTokens)
             individualTokens.forEach(token => {
                 const hashes = styleGenerator.parseAndGenerate(token, filePath);
                 if (hashes.length > 0) {
@@ -138,6 +175,29 @@ class Builder {
     public getStyleCount(): number {
         return this.stylesToGenerate.size;
     }
+
+    public getManifestPath = () => {
+        
+        const root = process.cwd();
+        
+        // Check for common Next.js structures
+        const paths = [
+            path.join(root, "src/app/css"),
+            path.join(root, "app/css"),
+            path.join(root, "src/css"),
+            path.join(root, "css")
+        ];
+
+        const targetDir = paths.find(p => fs.existsSync(p)) || paths[0];
+
+        // Ensure the directory exists
+        if (!fs.existsSync(targetDir)) {
+            fs.mkdirSync(targetDir, { recursive: true });
+        }
+
+        return path.join(targetDir, "zuzmap.ts");
+        
+    };
 
     /**
      * Generates the physical manifest file that useBase will import.

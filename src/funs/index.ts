@@ -1,7 +1,8 @@
 import { cssProps } from "../builder/stylesheet";
 import { dynamic, Skeleton, type ZuzStyleString } from "../types";
+import pkgJson from "../../package.json"
 
-
+export const PACKAGE_NAME = pkgJson.name
 
 export const cleanProps = <T extends dynamic>( 
     props: T, 

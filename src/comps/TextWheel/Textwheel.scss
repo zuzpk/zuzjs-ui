@@ -1,0 +1,35 @@
+:root{
+    --text-wheel-speed: 2;
+    --text-wheel-transition: translate calc(var(--text-wheel-speed) * 1s) var(--ease);
+}
+
+.--text-wheel{
+    transform-style: flat;
+    // .tmp{
+    //     background: linear-gradient(hsl(0 0% 98%) 50%, hsl(0 0% 45%));
+    //     background-attachment: fixed;
+    //     background-clip: text;
+    //     color: transparent;
+    //     transform-style: flat;
+    // }
+    .--wheel-char{
+        font-variant: tabular-nums;
+        overflow: hidden;
+        height: 1lh;
+        // mask: linear-gradient(transparent, white calc(1lh * var(--mask-size)) calc(100% - (1lh * var(--mask-size))), transparent);
+        // @extend .tmp;
+        .--wheel-char-track{
+            transition: var(--text-wheel-transition);
+            &.--wheel-track-down{
+                translate: 0 calc((10 - var(--v)) * -1lh);
+            }
+            &.--wheel-track-up{
+                translate: 0 calc((var(--v) + 1) * (1lh * -1));
+            }
+            span{
+                height: 1lh;
+                transition: opacity 0.5s;
+            }
+        }
+    }
+}

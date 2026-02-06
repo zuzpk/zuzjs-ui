@@ -20,32 +20,34 @@
   "license": "MIT",
   "author": "Zuz.js Team <support@zuz.com.pk>",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/esm/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "bin": {
-    "zjs": "dist/cjs/bin.js"
+    "zujs": "./dist/bin.cjs"
   },
-  "directories": {
-    "dist": "dist"
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./styles": "./dist/css/styles.css"
   },
   "files": [
     "dist"
   ],
   "scripts": {
+    "dev:js": "tsup --watch",
     "dev:css": "sass --watch --no-source-map --silence-deprecation=legacy-js-api src/scss:dist/css --style compressed",
-    "dev:cjs": "tsc -d -w -p tsconfig.json",
-    "dev:esm": "tsc -d -w -p tsconfig.esm.json",
     "dev": "npm-run-all -p dev:*",
+    "build": "tsup && npm run build:css",
+    "build:css": "sass src/scss:dist/css --style compressed --no-source-map",
     "prepare": "husky",
-    "publish": "node publish-pre.js && npm publish && node publish-post.js"
-  },
-  "engines": {
-    "node": ">=18.17.0"
+    "publish": "node publish-pre.js && npm run build && npm publish && node publish-post.js"
   },
   "dependencies": {
-    "@types/md5": "^2.3.6",
-    "@types/react": "^19.2.10",
-    "@types/react-dom": "^19.2.3",
+    "@zuzjs/core": "workspace:*",
     "chokidar": "^5.0.0",
     "commander": "^14.0.2",
     "date-fns": "^4.1.0",
@@ -55,14 +57,17 @@
     "moment": "^2.30.1",
     "nanoid": "^5.1.6",
     "picocolors": "^1.1.1",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "sass": "^1.97.3",
     "ts-morph": "^27.0.2"
   },
-  "devDependencies": {
-    "node-loader": "^2.1.0",
+  "peerDependencies": {
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@types/md5": "^2.3.6",
+    "@types/react": "^19.2.13",
+    "@types/react-dom": "^19.2.3",
+    "tsup": "^8.5.1",
+    "npm-run-all": "^4.1.5"
   }
 }

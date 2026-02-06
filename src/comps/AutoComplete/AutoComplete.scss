@@ -1,0 +1,88 @@
+@use "../../scss/mixins.scss" as *;
+
+:root{
+    --autocomplete-arrow: #111;
+    --autocomplete-arrow-size-sm: 40px;
+    --autocomplete-arrow-size-md: 24px;
+    --autocomplete-arrow-size-lg: 30px;
+
+    --autocomplete-item-hover: #d4d4d4;
+}
+
+.--autocomplete{
+
+    width: 100%;
+    background: var(--input);
+    z-index: 2;
+
+    .--arrow{
+        svg{
+            fill: var(--autocomplete-arrow);
+        }
+    }
+
+    &.--sm{
+        border-radius: var(--input-radius-sm);
+        .--suggestion-list{
+            border-radius: var(--input-radius-sm);
+        }
+        .--arrow{
+            width: var(--autocomplete-arrow-size-sm);
+            svg{
+                width: calc( var(--autocomplete-arrow-size-sm) / 2.5 );
+            }
+        }
+        .--input{
+            width: calc( 100% - var(--autocomplete-arrow-size-sm) );
+        }
+    }
+    &.--md{
+        border-radius: var(--input-radius-md);
+        .--suggestion-list{
+            border-radius: var(--input-radius-md);
+        }
+        .--arrow{
+            width: var(--autocomplete-arrow-size-md);
+            svg{
+                width: calc( var(--autocomplete-arrow-size-md) / 2.5 );
+            }
+        }
+        .--input{
+            width: calc( 100% - var(--autocomplete-arrow-size-md) );
+        }
+    } 
+    &.--lg{
+        border-radius: var(--input-radius-lg);
+        .--suggestion-list{
+            border-radius: var(--input-radius-lg);
+        }
+        .--arrow{
+            width: var(--autocomplete-arrow-size-lg);
+            svg{
+                width: calc( var(--autocomplete-arrow-size-lg) / 2.5 );
+            }
+        }
+        .--input{
+            width: calc( 100% - var(--autocomplete-arrow-size-lg) );
+        }
+    }
+
+    .--suggestion-list{
+        left: 0px;
+        right: 0px;
+        background: var(--input);
+        z-index: 2;
+        padding: 8px 0px;
+        overflow-x: hidden;
+        li{
+            cursor: pointer;
+            &:hover{
+                background: var(--autocomplete-item-hover);
+            }
+            &.--current{
+                background: var(--autocomplete-item-hover);
+            }
+        }
+    }
+
+}

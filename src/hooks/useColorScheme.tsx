@@ -1,46 +1,79 @@
 "use client"
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
-import type { ColorTheme } from "../types/shared";
+import { ValueOf } from "../types/shared";
+import { COLORTHEME, Variant } from "../types/enums";
+import { SPINNER } from "../comps/Spinner/types";
+import { animationProps } from "../types";
+import { GroupProps } from "../comps/Group";
+import { setZuzMap } from "../funs/css";
 
 const MATCH_MEDIA = `(prefers-color-scheme: dark)`
 const SSR = typeof window === 'undefined'
-export type ColorScheme = `light` | `dark` | `system`
+
+type ColorScheme = ValueOf<typeof COLORTHEME>
+// type _Variant = ValueOf<typeof Variant>
+export interface ThemeConfig {
+    /**
+     * Auto generated zuzMap.ts
+     */
+    zuzMap?: Record<string, string>,
+    variant?: ValueOf<typeof Variant>,
+    group?: GroupProps & {
+        fx?: animationProps
+    },
+    spinner?: {
+        type?: ValueOf<typeof SPINNER>;
+    };
+    // Add more as needed
+}
+
 export type ThemeContextProps = {
     colorScheme: ColorScheme,
     resolvedScheme: `light` | `dark`,
     setColorScheme: (theme: ColorScheme) => void
-}
-export interface ThemeProviderProps {
+} & ThemeConfig
+
+export type ThemeProviderProps = {
     children: ReactNode,
-    forceTheme?: ColorTheme,
+    forceTheme?: ColorScheme,
     storageKey?: string
-}
+} & ThemeConfig
 
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
-export const useColorScheme = () => {
+export const useColorScheme = (ignoreContext?: boolean) : ThemeContextProps | undefined => {
 
     const context = useContext(ThemeContext)
 
     if (!context) {
-        throw new Error('useTheme must be used within a ThemeProvider');
+        if ( ignoreContext === true ) return undefined
+        throw new Error('useColorScheme must be used within a ThemeProvider');
     }
 
     return context;
 
 }
 
+export const useTheme = useColorScheme
+
 export const ThemeProvider = ({ 
     children, 
     storageKey = `--ucs`,
-    forceTheme
+    forceTheme,
+    zuzMap,
+    ...conf
 } : ThemeProviderProps) => {
 
-    return <Theme storageKey={storageKey} forceTheme={forceTheme}>{children}</Theme>
+    if ( zuzMap ) setZuzMap(zuzMap)
+        
+    return <Theme 
+        storageKey={storageKey} 
+        forceTheme={forceTheme}
+        {...conf}>{children}</Theme>
     
 }
 
-const Theme = ({ children, storageKey, forceTheme } : ThemeProviderProps) => {
+const Theme = ({ children, storageKey, forceTheme, ...config } : ThemeProviderProps) => {
 
     const [colorScheme, setThemeState] = useState(() => forceTheme || getTheme(storageKey!, `system`))
     const [resolvedTheme, setResolvedTheme] = useState(() => forceTheme || getTheme(storageKey!));
@@ -120,7 +153,12 @@ const Theme = ({ children, storageKey, forceTheme } : ThemeProviderProps) => {
     }, [colorScheme])
 
     return (
-        <ThemeContext value={{ colorScheme: colorScheme as ColorScheme, resolvedScheme: resolvedTheme! as "dark" | "light", setColorScheme: switchColorScheme }}>
+        <ThemeContext value={{ 
+            colorScheme: colorScheme as ColorScheme, 
+            resolvedScheme: resolvedTheme! as "dark" | "light", 
+            setColorScheme: switchColorScheme,
+            ...config
+        }}>
             { forceTheme ? null : <script 
                 suppressHydrationWarning
                 dangerouslySetInnerHTML={{ 

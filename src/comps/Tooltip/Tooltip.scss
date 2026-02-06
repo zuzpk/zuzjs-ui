@@ -1,0 +1,63 @@
+/** ToolTip */
+.--with-tooltip{
+    --tooltip: #222;
+    --tooltip-color: #fafafa;
+    --tooltip-font-size: 12px;
+    --tooltip-font-weight: normal;
+    --tooltip-radius: 5px;
+    --tooltip-padding: 2px 4px;
+    --tooltip-arrow-size: 10px;
+    .--tooltip{
+        background: var(--tooltip);
+        color: var(--tooltip-color);
+        font-size: var(--tooltip-font-size);
+        font-weight: var(--tooltip-font-weight);
+        border-radius: var(--tooltip-radius);
+        padding: var(--tooltip-padding);
+        z-index: var(--max-z-index);
+        overflow: visible;
+        pointer-events: none;
+        user-select: none;
+        &:before{
+            content: "";
+            position: absolute;
+            width: var(--tooltip-arrow-size);
+            height: var(--tooltip-arrow-size);
+            border-radius: calc(var(--tooltip-radius) / 2);
+            background: var(--tooltip);
+            z-index: 0;
+        }
+        .--text{
+            z-index: 1;
+            white-space: pre;
+        }
+        &.--top{
+            &:before{
+                bottom: -0.2lh;
+                left: 50%;
+                transform: translateX(-50%) rotate(45deg);
+            }
+        }
+        &.--bottom{
+            &:before{
+                top: -0.2lh;
+                left: 50%;
+                transform: translateX(-50%) rotate(45deg);
+            }
+        }
+        &.--left{
+            &:before{
+                right: -0.2lh;
+                top: 50%;
+                transform: translateY(-50%) rotate(45deg);
+            }
+        }
+        &.--right{
+            &:before{
+                left: -0.2lh;
+                top: 50%;
+                transform: translateY(-50%) rotate(45deg);
+            }
+        }
+    }
+}

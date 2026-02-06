@@ -1,0 +1,31 @@
+import { FC, MouseEvent, ReactNode } from "react";
+import { BoxProps } from "../../types";
+
+export interface ContextItem {
+    label: string;
+    labelColor?: string;
+    icon?: string;
+    iconColor?: string;
+    className?: string;
+    enabled?: boolean;
+    onSelect: () => void;
+}
+
+export type ContextMenuProps = BoxProps & {
+    parent?: HTMLElement,
+    items?: ContextItem[],
+    offsetX?: number,
+    offsetY?: number,
+    header?: ReactNode | FC,
+    footer?: ReactNode | FC,
+}
+
+export type MenuItemProps = ContextItem & {
+    index: number;
+    className: string;
+}
+
+export interface ContextMenuHandler {
+    show: (e: MouseEvent<Element, MouseEvent> | TouchEvent, items?: ContextItem[]) => void;
+    hide: (e: MouseEvent | TouchEvent) => void;
+}

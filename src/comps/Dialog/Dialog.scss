@@ -1,0 +1,120 @@
+body{
+    --dialog-bg: #fff;
+    --dialog-shadow: var(--zuz-shadow);
+    --dialog-radius: 10px;
+    --dialog-min-width: 300px;
+    --dialog-head-padding: var(--padding-lg-x);
+    --dialog-title-position: center;
+    --dialog-title-opacity: 0.75;
+    --dialog-title-font-size: 16px;
+
+    --dialog-closer-size: 24px;
+    --dialog-closer-bg: var(--background);
+    --dialog-closer-color: var(--text-primary);
+    --dialog-closer-hover: rgba(255,255,255,0.2);
+    --dialog-closer-opacity: 0.75;
+    --dialog-closer-hover-opacity: 1;
+    --dialog-closer-radius: 50%;
+
+    --dialog-body: var(--dialog-bg);
+    --dialog-body-padding: var(--padding-xl-x);
+
+    --dialog-footer: var(--background);
+    --dialog-footer-padding: 10px;
+    --dialog-action: #222;
+    --dialog-action-color: #fff;
+    --dialog-action-hover: #333;
+    --dialog-action-radius: 7px;
+    --dialog-action-padding: 7px 20px;
+    --dialog-action-font-size: 16px;
+    --dialog-action-font-weight: bold;
+
+}
+
+[color-scheme="dark"] {
+    body {
+        --dialog-bg: var(--surface);
+        --dialog-closer-hover: rgba(255,255,255,0.2);
+        --dialog-shadow: 0px 0px 0px 1px #1a1a1a, 0px 0px 6px #000000;
+    }
+}
+
+.--dialog{
+
+    z-index: var(--max-z-index);
+    min-width: var(--dialog-min-width);
+    
+    &.--dialog{
+        background: var(--dialog-bg);
+        border-radius: var(--dialog-radius);
+        box-shadow: var(--dialog-shadow);
+        transform-origin: top left !important;
+    }
+
+    .--cover{
+        border-radius: var(--dialog-radius);
+        &.fillx{
+            top: -40px !important;
+            bottom: -70px !important;
+        }
+    }
+
+    .--head{
+        padding: var(--dialog-head-padding);
+        .--title{
+            flex: 1;
+            font-size: var(--dialog-title-font-size);
+            opacity: var(--dialog-title-opacity);
+            text-align: var(--dialog-title-position);
+            padding: 0px 45px;
+        }
+        .--closer{
+            width: var(--dialog-closer-size);
+            height: var(--dialog-closer-size);
+            cursor: pointer;
+            opacity: var(--dialog-closer-opacity);
+            background: var(--dialog-closer-bg);
+            border: 0px;
+            line-height: 0;
+            padding: 3px;
+            font-weight: normal;
+            border-radius: var(--dialog-closer-radius);
+            right: var(--padding-lg-x);
+            svg{
+                fill: var(--dialog-closer-color);
+            }
+            &:hover{
+                background: var(--dialog-closer-hover);
+                opacity: var(--dialog-closer-hover-opacity);
+            }
+        }
+    }
+
+    .--body{
+        background: var(--dialog-body);
+        padding: var(--dialog-body-padding);
+
+        &.--no-action{
+            border-radius: 0px 0px var(--dialog-radius) var(--dialog-radius);
+        }
+    }
+
+    .--footer{
+        padding: var(--dialog-footer-padding);
+        background: var(--dialog-footer);
+        border-radius: 0px 0px var(--dialog-radius) var(--dialog-radius);
+        .--action{
+            background: var(--dialog-action);
+            color: var(--dialog-action-color);
+            border-radius: var(--dialog-action-radius);
+            padding: var(--dialog-action-padding);
+            font-size: var(--dialog-action-font-size);
+            font-weight: var(--dialog-action-font-weight);
+            border: 0px;
+            &:hover{
+                background: var(--dialog-action-hover);
+            }
+        }
+    }
+
+}

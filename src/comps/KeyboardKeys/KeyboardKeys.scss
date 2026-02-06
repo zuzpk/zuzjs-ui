@@ -1,0 +1,50 @@
+:root{
+    
+    --kbd-bg: var(--slate-400);
+    --kbd-color: #fff;
+    --kbd-gap: 2px;
+
+    --kbd-radius-sm: 4px;
+    --kbd-padding-sm: 2px 4px;
+    --kbd-fontsize-sm: 12px;
+    
+    --kbd-radius-md: 5px;
+    --kbd-padding-md: 5px;
+    --kbd-fontsize-md: 15px;
+    
+    --kbd-radius-lg: 6px;
+    --kbd-padding-lg: 6px;
+    --kbd-fontsize-lg: 16px;
+    
+    --kbd-radius-xl: 8px;
+    --kbd-padding-xl: 8px;
+    --kbd-fontsize-xl: 18px;
+
+}
+.--keyboard-keys{
+
+    background: var(--kbd-bg);
+    color: var(--kbd-color);
+    gap: var(--kbd-gap);
+
+    &.--sm{
+        border-radius: var(--kbd-radius-sm);
+        padding: var(--kbd-padding-sm);
+        font-size: var(--kbd-fontsize-sm);
+    }
+    &.--md{
+        border-radius: var(--kbd-radius-md);
+        padding: var(--kbd-padding-md);
+        font-size: var(--kbd-fontsize-md);
+    }
+    &.--lg{
+        border-radius: var(--kbd-radius-lg);
+        padding: var(--kbd-padding-lg);
+        font-size: var(--kbd-fontsize-lg);
+    }
+    &.--xl{
+        border-radius: var(--kbd-radius-xl);
+        padding: var(--kbd-padding-xl);
+        font-size: var(--kbd-fontsize-xl);
+    }
+}

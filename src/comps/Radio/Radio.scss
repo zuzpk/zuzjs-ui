@@ -1,0 +1,45 @@
+:root{
+    --radio-size: 16px;
+    --radio: var(--black-900);
+    --radio-fill: #fff;
+    --radio-border: 1px var(--radio) solid;
+    --radio-gap: 5px;
+    --radio-padding: 6px;
+}
+
+.--radio{
+
+    gap: var(--radio-gap);
+    line-height: 1;
+
+    input[type=radio]{
+        z-index: 0;
+        left: 0px;
+        top: 0px;
+        opacity: 0;
+    }
+
+    .--dot{
+        width: var(--radio-size);
+        height: var(--radio-size);
+        background: var(--radio-fill);
+        border: var(--radio-border);
+        border-radius: 50%;
+        .--rod{
+            width: calc( var(--radio-size) - ( var(--radio-padding) * 1.5) );
+            height: calc(var(--radio-size) - ( var(--radio-padding) * 1.5) );
+            border-radius: 50%;
+        }
+    }
+    .--value{
+        flex: 1;
+    }
+
+    input[type=radio]:checked ~ .--dot{
+        background: var(--radio);
+        .--rod{
+            background: var(--radio-fill);
+        }
+    }
+
+}

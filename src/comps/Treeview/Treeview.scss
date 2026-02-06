@@ -1,0 +1,140 @@
+@use "../../scss/mixins.scss" as *;
+
+:root{
+    --treenode-root-label-icon-size: var(--treenode-label-icon-size);
+    --treenode-root-label-font-weight: normal;
+    --treenode-root-margin: 10px;
+    --treeview-gap: 6px;
+    --treenode-gap: 2px;
+    --treenode-arrow-btn-size: 20px;
+    --treenode-arrow-btn-opacity: 1;
+    --treenode-arrow-icon-size: 12px;
+    --treenode-arrow-icon-color: #111;
+    --treenode-label-padding: 3px 6px;
+    --treenode-label-radius: 3px 6px;
+    --treenode-label-hover: #f1f1f1;
+    --treenode-label-bg: transparent;
+    --treenode-label-selected-bg: #eee;
+    --treenode-label-selected-color: #111;
+    --treenode-label-icon-color: #111;
+    --treenode-label-icon-size: 15px;
+    --treenode-label-color: #111;
+    --treenode-label-size: 15px;
+    --treenode-label-gap: 6px;
+    --treenode-sub-margin: 20px;
+}
+
+.--treeview{
+
+    gap: var(--treeview-gap);
+    width: 100%;
+
+    .--treenode{
+
+        &.--is-root{
+
+            &:not(:first-child){
+                margin-top: var(--treenode-root-margin);
+            }
+
+            .--node{
+
+                .--node-meta{
+                    .--node-icon.--icon-root{
+                        font-size: var(--treenode-root-label-icon-size);
+                    }
+                }
+                .--node-label-root{
+                    font-weight: var(--treenode-root-label-font-weight);
+                }
+
+            }
+        }
+
+        .--node{
+
+            gap: var(--treenode-gap);
+            
+            .--node-aro-btn{
+                width: var(--treenode-arrow-btn-size);
+                height: var(--treenode-arrow-btn-size);
+                border: 0px;
+                background: transparent;
+                opacity: var(--treenode-arrow-btn-opacity);
+                @include anim($duration: 0.4s);
+                &:hover{
+                    opacity: 1;
+                }
+                &:disabled{
+                    filter: grayscale(1);
+                    opacity: 0;
+                }
+                .--node-aro-icon{
+                    font-size: var(--treenode-arrow-icon-size);
+                    &:not(.--skeleton){
+                        color: var(--treenode-arrow-icon-color);
+                        svg{
+                            fill: var(--treenode-arrow-icon-color);
+                        }
+                    }
+                }
+                svg{
+                    fill: var(--treenode-arrow-icon-color);
+                }
+            }
+
+            .--node-meta{
+                background: transparent;
+                gap: var(--treenode-label-gap);
+                border: 0px;
+                
+                .--node-icon{
+                    font-size: var(--treenode-label-icon-size);
+                    min-width: var(--treenode-label-icon-size) !important;
+                    &:not(.--skeleton){
+                        color: var(--treenode-label-icon-color);
+                    }
+                }
+
+                .--node-label{
+                    font-size: var(--treenode-label-size);
+                    padding: var(--treenode-label-padding);
+                    border-radius: var(--treenode-label-radius);
+                    cursor: pointer;
+                    &:not(.--skeleton){
+                        background: var(--treenode-label-bg);
+                        color: var(--treenode-label-color);
+                    }
+                }
+
+                &:hover{
+                    .--node-label{
+                        background: var(--treenode-label-hover);
+                    }
+                }
+
+            }
+
+            &.--selected{
+                .--node-meta{
+                    .--node-label{
+                        &:not(.--skeleton){
+                            background: var(--treenode-label-selected-bg);
+                            color: var(--treenode-label-selected-color);
+                        }
+                    }
+                }
+            }
+
+            
+
+        }
+
+        .--sub-node{
+            margin-top: var(--treeview-gap);
+            gap: var(--treeview-gap);
+            padding-left: var(--treenode-sub-margin);
+        }
+
+    }
+}

@@ -1,11 +1,11 @@
 "use client"
-import { forwardRef } from 'react';
 import { useBase } from '../../hooks';
-import { Props } from '../../types';
+import { SpanProps } from './types';
 
-export type SpanProps = Props<`span`> & {}
-
-const Span = forwardRef<HTMLSpanElement, SpanProps>((props, ref) => {
+const Span = ({ 
+    ref, 
+    ...props 
+} : SpanProps) => {
 
     const { style, ...pops } = props
 
@@ -21,7 +21,7 @@ const Span = forwardRef<HTMLSpanElement, SpanProps>((props, ref) => {
         className={className}
         { ...rest } />
 
-})
+}
 
 Span.displayName = `Zuz.Span`
 

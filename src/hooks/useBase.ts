@@ -1,7 +1,9 @@
 import { ComponentPropsWithRef, CSSProperties, JSX, RefObject } from "react"
-import { dynamic, Props, ZuzProps } from "../types"
+import { cssShortKey, dynamic, Props, ZuzProps } from "../types"
 import { cleanProps } from "../funs"
-import { buildClassString } from "../funs/css"
+import { buildClassString, buildWithStyles, getAnimationCurve, getAnimationTransition } from "../funs/css"
+import { cssFilterKeys, cssProps, cssTransformKeys, cssWithKeys } from "../builder/stylesheet"
+import useFx from "./useFx"
 
 const useBase = <T extends keyof JSX.IntrinsicElements>(
     props: Props<T>, 
@@ -14,19 +16,33 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
 
     const {
         as,
+        fx,
+        transition: autoTransition,
+        skeleton,
         className,
         propsToRemove,
         ...rest
     } = props || {}
 
-    const _style : dynamic = {}
+    const animationConfig = autoTransition ? {
+        transition: autoTransition,
+        duration: 0.3
+    } : fx || {}
+    const { style: transitionStyle } = useFx(animationConfig, ref);
+
     const manifestClasses = buildClassString(as ?? ``)
 
     return {
         style: {
-            ..._style
+            ...transitionStyle
+            // ...buildWithStyles(_style),
+            // ..._transition
         },
-        className: `${className || ``} ${manifestClasses || ``}`.trim(),
+        className: [
+            className || ``, 
+            manifestClasses || ``,
+            skeleton?.enabled ? `--skeleton` : ``,
+        ].join(` `).trim(),
         rest: {
             ...cleanProps(
                 rest as Omit<ZuzProps, keyof ZuzProps>,

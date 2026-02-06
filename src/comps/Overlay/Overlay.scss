@@ -1,0 +1,15 @@
+body {
+    --overlay: rgba(255,255,255, 0.7);
+    --overlay-blur: 5px;
+}
+
+[color-scheme="dark"] {
+    body {
+        --overlay: rgba(0, 0, 0, 0.7);
+    }
+}
+.--overlay{
+    background: var(--overlay);
+    z-index: var(--max-z-index);
+    backdrop-filter: blur(var(--overlay-blur));
+}

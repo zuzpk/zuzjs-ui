@@ -1,0 +1,30 @@
+:root{
+    --progress-width: 100%;
+    --progress-height: 6px;
+    --progress-radius: 6px;
+    --progress-track: #eee;
+    --progress-bar: #111;
+    --progress-animation: 0.3s var(--ease) 0s;
+}
+.--progress{
+
+    background: var(--progress-track);
+    width: var(--progress-width);
+    height: var(--progress-height);
+    border-radius: var(--progress-radius);
+    overflow: hidden;
+
+    .--bar{
+        width: 0%;
+        background: var(--progress-bar);
+        height: var(--progress-height);
+        border-radius: var(--progress-radius);
+    }
+    
+    &.--animated{
+        .--bar{
+            transition: width var(--progress-animation);
+        }
+    }
+
+}

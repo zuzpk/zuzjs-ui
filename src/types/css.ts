@@ -10,7 +10,7 @@ type PropKeys = `${Extract<keyof typeof cssProps, string>}:`;
 // 3. Combine them into the Auto-Generated Union
 export type ZuzCommonValues = DirectKeys | PropKeys;
 
-export type ZuzStyleString = ZuzCommonValues | (string & {}); // The & {} trick keeps intellisense working for literals while allowing any string
+export type ZuzStyleString = ZuzCommonValues | (string & {});
 
 export type cssShortKey = keyof cssShortKeys
 export type cssShortKeys = {

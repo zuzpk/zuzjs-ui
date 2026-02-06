@@ -1,0 +1,11 @@
+:root{
+    --list-item-padding-sm: 6px 10px;
+}
+.--list{
+    &.--sm{
+        li {
+           padding: var(--list-item-padding-sm); 
+        }
+    }
+
+}

@@ -5,10 +5,10 @@ import chokidar from 'chokidar';
 import path, { basename } from "path";
 import pc from "picocolors";
 import fs, { readdirSync, statSync } from "fs"
-import builder from "./builder/index.js"
-import styleGenerator from "./builder/style-generator.js";
-import { cssDirect, cssProps } from "./builder/stylesheet.js";
-import { dynamic } from "./types/shared.js";
+import builder from "./builder"
+import styleGenerator from "./builder/style-generator";
+import { cssDirect, cssProps } from "./builder/stylesheet";
+import { dynamic } from "./types/shared";
 
 const options = program.opts();
 const cwd = process.cwd();
@@ -94,7 +94,6 @@ program
     });
 
 // --- Default Action (The Watcher) ---
-// This handles when you run "zjs"
 program
     .command('watch')
     .alias('w')

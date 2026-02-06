@@ -5,9 +5,10 @@ import {
     cssDirect,
     cssPropsWithColor,
     cssAnimationCurves
-} from "./stylesheet.js";
+} from "./stylesheet";
 import fs from "fs"
 import { dirname } from "path";
+import { isColor } from "@zuzjs/core";
 
 
 interface UtilityToken {
@@ -42,6 +43,7 @@ class StyleGenerator {
     // Stores the hashes we've already created (Key: RuleKey, Value: Hash)
     // RuleKey is "prop-value-pseudo-media"
     private ruleTracker: Map<string, string> = new Map();
+    private dollorToVarRegexp = /\$([a-zA-Z0-9_-]+)/g
 
     constructor() {
         this.hashids = new Hashids(this.__SALT, 5);
@@ -78,7 +80,7 @@ class StyleGenerator {
     private tokenize(input: string): UtilityToken[] {
         const tokens: UtilityToken[] = [];
         let i = 0;
-
+        // console.log(`tokenizing`, input)
         const walk = (ctx: { pseudo?: string; media?: string; selector?: string }) => {
             let buffer = "";
             let bracketDepth = 0; // Track if we are inside [ ]
@@ -174,12 +176,19 @@ class StyleGenerator {
         // 2. If it has NO value AND is in directMap, it's a Shortcut (e.g., flex)
         
         // 1. Resolve the CSS body first
-        if (!value && this.directMap[prop]) {
+        // if (!value && this.directMap[prop]) {
+        //     const template = this.directMap[prop];
+        //     cssRuleBody = template.includes("__") 
+        //         ? this.resolveComplexTemplate(prop, value || "", template) 
+        //         : template;
+        // } 
+        if (this.directMap[prop]) {
             const template = this.directMap[prop];
             cssRuleBody = template.includes("__") 
                 ? this.resolveComplexTemplate(prop, value || "", template) 
                 : template;
-        } else {
+        } 
+        else {
             // It's a standard property (w:100, flex:1)
             const cssProp = this.propMap[prop] || prop;
             const processedVal = this.processValue(prop, value || "");
@@ -196,7 +205,8 @@ class StyleGenerator {
         }
 
         // 4. Generate Hash based on the CSS behavior
-        const hash = `z${universalKey.charAt(0)}${this.hashids.encode(this.stringToPositionalSum(universalKey))}`;
+        // const hash = `z${universalKey.charAt(0)}${this.hashids.encode(this.stringToPositionalSum(universalKey))}`;
+        const hash = `z${universalKey.charAt(0)}${this.generateHash(universalKey)}`;
         let base = `.${hash}${pseudo ? `:${pseudo}` : ''}${selector ? ` ${selector}` : ''}`;
         let finalRule = `${base} { ${cssRuleBody} }`;
 
@@ -239,11 +249,47 @@ class StyleGenerator {
         }
 
         // Fallback for generic __VALUE__ if not handled above
-        return result.replace("__VALUE__", this.processValue(prop, parts[0] || ""));
+        return result.replace(/__VALUE__/g, this.processValue(prop, parts[0] || ""));
+    }
+
+    private transformBrackets(input: string): string {
+        return input
+            .replace(/\[/g, '(')
+            .replace(/\]/g, ')')
+            .replace(this.dollorToVarRegexp, 'var(--$1)');
+    }
+
+    private addUnitsSafely(prop: string, val: string): string {
+
+        const unitlessProps = ["opacity", "zIndex", "flex", "b", "font-weight", "fontWeight", "lineHeight"];
+        if (unitlessProps.includes(prop)) return val;
+
+        // console.log(`addUnitsSafely`, prop, val)
+
+        // 1. If it's a pure number, just append px
+        if (/^-?\d*\.?\d+$/.test(val)) return `${val}${prop == `rotate` ? `deg` : `px`}`;
+
+        /**
+         * 2. Advanced Regex for complex strings (calc, repeat, etc.)
+         * We want to match numbers but EXCLUDE:
+         * - Numbers followed by a unit (100vh)
+         * - The first argument in repeat(n, ...) 
+         */
+        return val.replace(/(?<=^|[\s\+\-\*\/\(\,])(-?\d*\.?\d+)(?=$|[\s\+\-\*\/\)\,])/g, (match, number, offset, fullString) => {
+            
+            // Look backwards to see if we are inside a repeat() function as the first argument
+            const beforeMatch = fullString.substring(0, offset);
+            // console.log(`beforeMatch`, beforeMatch.trim())
+            if (beforeMatch.trim().endsWith('repeat(')) {
+                return match; // Return "5" without "px"
+            }
+
+            // Otherwise, add px
+            return `${match}px`;
+        });
     }
 
     private processValue(prop: string, val: string): string {
-        
         let isImportant = false;
         if (val.endsWith('!')) {
             isImportant = true;
@@ -252,56 +298,135 @@ class StyleGenerator {
 
         let result = "";
 
-        // 1. Comma Logic
-        if (val.includes(',') && !val.includes('[')) {
-            const joined = val.split(',').map(part => this.processValue(prop, part.trim())).join(' ');
-            return isImportant ? `${joined} !important` : joined;
-        }
-
-        // 2. Variable Replacement ($var)
-        if (val.includes('$')) {
-            result = val.replace(/\$([a-zA-Z0-9_-]+)/g, 'var(--$1)');
+        // 1. If it's a bracketed value (calc, etc.)
+        if (val.includes('[') || val.includes(']')) {
+            // Swap symbols and handle variables
+            let transformed = this.transformBrackets(val);
+            
+            // Use a "Smart Unit Fixer" that only touches numbers 
+            // that are not already attached to a unit.
+            result = this.addUnitsSafely(prop, transformed);
         } 
-        // 3. UNIT CHECK FIRST (Avoids matching '300' as a color)
+        // Comma Logic
+        else if (val.includes(',')) {
+            result = val.split(',').map(part => this.processValue(prop, part.trim())).join(' ');
+        }
+        // Standard Logic (Pure Numbers, Variables, Colors)
         else if (/^-?\d*\.?\d+$/.test(val)) {
-            result = this.addUnitsToComplexValue(prop, val);
+            result = this.addUnitsSafely(prop, val);
         }
-        // 4. COLOR CHECK (Only if it's 3/6 chars and NOT a pure number)
-        else if (/^[0-9a-fA-F]{3}$|^[0-9a-fA-F]{6}$/.test(val)) {
-            result = `#${val}`;
+        // COLOR CHECK (Only if it's 3/6 chars and NOT a pure number)
+        else if (isColor(val)) {
+            result = this.makeColor(val)
         }
-        // 5. Bracket/Function Logic
-        else if (val.includes('[') && val.includes(']')) {
-            let processed = val.replace(/\$([a-zA-Z0-9_-]+)/g, 'var(--$1)');
-            processed = processed.replace(/\[/g, '(').replace(/\]/g, ')');
-            result = this.addUnitsToComplexValue(prop, processed);
-        } 
+        else if (
+            val.startsWith(`gradient`) || 
+            val.startsWith(`linear-gradient`) || 
+            val.startsWith(`radial-gradient`)
+        ){
+            result = this.parseGradient(val);
+        }
         else {
-            result = val;
+            result = val.replace(this.dollorToVarRegexp, 'var(--$1)');
         }
 
         return isImportant ? `${result} !important` : result;
     }
 
-    private addUnitsToComplexValue(prop: string, val: string): string {
+    public addUnitsToComplexValue(prop: string, val: string): string {
         // Avoid adding px to things like rgba alphas or z-index
-        const unitlessProps = ["opacity", "zIndex", "flex", "fontWeight", "lineHeight"];
+        const unitlessProps = [
+            "opacity", "zIndex", "flex", "b", "fontWeight", "lineHeight"
+        ];
         if (unitlessProps.includes(prop)) return val;
 
         // Regex looks for numbers that aren't already followed by a unit (%, px, vh, etc.)
         // and aren't part of a variable name
-        return val.replace(/(\d+)(?![%a-zA-Z!])/g, '$1px');
+        try{
+            return String(val).replace(/(\d+)(?![%a-zA-Z!])/g, '$1px');
+        }
+        catch(e) {
+            // console.log(`addUnitsToComplexValueError`, prop, val, typeof val, e)
+            return val
+        }
+        // return val;
+    }
+
+    private makeColor(v: string){
+
+        if ( v.charAt(0) == `#` ){
+            v = v.substring(1)
+        }
+
+        if ( v.charAt(0) == `$` ){
+            return `var(--${v.replace(`$`, ``)})`
+        }
+
+        if ( 
+            /^#[0-9A-F]{6}[0-9a-f]{0,2}$/i.test(`#${v}`) ||
+            /^#([0-9A-F]{3}){1,2}$/i.test(`#${v}`)
+        ){
+            return `#${v}`
+        }
+        
+        else if ( v.includes(`rgb`) || v.includes(`rgba`) ){
+            return v.replace(/\[/g, `(`).replace(/\]/g, `)`)
+        }
+        else
+            return v.trim()
     }
 
     private parseGradient(val: string): string {
-        // Ported from your existing logic
-        const parts = val.split("-");
-        // Simplified: logic to build linear-gradient(...)
-        return `linear-gradient(${parts.slice(1).join(", ")})`;
+
+        if ( val.startsWith(`gradient`) ){
+            val = `linear-${val}`
+        }
+
+        //linear-gradient-to-bottom-blue-green
+        const [ 
+            _gtype, 
+            _xyz,
+            _gto, 
+            _gdeg,
+            ..._colors
+        ] = val.split(`-`)
+
+        let value = val
+        const _gdegree = /^[+-]?\d+(\.\d+)?$/.test(_gdeg) ? `${_gdeg}deg` : `to ${_gdeg}`
+        const _gcolors = _colors.reduce((arr: string[], val: string) => {
+            arr.push(this.makeColor(val))
+            return arr
+        }, [] as string[]).join(`, `)
+
+        switch(_gtype){
+            case `linear`:
+                value = `linear-gradient(${_gdegree}, ${_gcolors})`
+                break;
+            case `radial`:
+                // value = `radial-gradient(${_gparts[1]})`
+                break;
+            default:
+                value = val
+                break;
+        }
+
+        return value
     }
 
-    private stringToPositionalSum(str: string): number {
-        return str.split("").reduce((acc, char, i) => acc + char.charCodeAt(0) + i, 0);
+    private generateHash(str: string, length: number = 6): string {
+        let hash = 5381;
+        for (let i = 0; i < str.length; i++) {
+            // (hash * 33) + charCode
+            hash = ((hash << 5) + hash) + str.charCodeAt(i);
+        }
+        /**
+         * Bitmasking to shorten:
+         * 0xFFFFF (20 bits) gives ~1 million unique combinations (usually 4 chars in base36)
+         * 0xFFFFFF (24 bits) gives ~16 million unique combinations (usually 5 chars in base36)
+         */
+        const maskedHash = (hash >>> 0) & 0xFFFFF; 
+        
+        return maskedHash.toString(36).padStart(length, '0');
     }
 
     public getStyleSheet(): string {

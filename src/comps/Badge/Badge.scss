@@ -1,0 +1,31 @@
+body{
+    --badge-success: var(--green-500);
+    --badge-error: var(--red-500);
+    --badge-idle: var(--orange-500);
+    --badge-dead: var(--text-primary);
+    --badge-opacity: 0.5;
+    --badge-corner: round;
+    --badge-radius: 50%;
+}
+
+.--badge{
+    .--dot{
+
+        corner-shape: var(--badge-corner) !important; 
+        border-radius: var(--badge-radius);
+
+        &.--success{
+            background: var(--badge-success);
+        }
+        &.--error{
+            background: var(--badge-error);
+        }
+        &.--idle{
+            background: var(--badge-idle);
+        }
+        &.--dead{
+            background: var(--badge-dead);
+            opacity: var(--badge-opacity);
+        }
+    }
+}

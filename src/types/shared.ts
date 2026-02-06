@@ -4,7 +4,12 @@ import {
     Ref 
 } from 'react';
 import { ZuzProps } from './interfaces';
-import { COLORTHEME, SKELETON } from './enums';
+
+/**
+ * Converts a "const object" into a union of its values.
+ * Equivalent to: typeof Obj[keyof typeof Obj]
+ */
+export type ValueOf<T> = T[keyof T];
 
 export type dynamic = { 
     [x: string] : any 
@@ -12,6 +17,5 @@ export type dynamic = {
 
 export type Props<T extends ElementType> = ZuzProps & Omit<ComponentPropsWithoutRef<T>, keyof ZuzProps>;
 
-export type SkeletonType = typeof SKELETON[keyof typeof SKELETON];
 
-export type ColorTheme = typeof COLORTHEME[keyof typeof COLORTHEME];
+export type FormInputs = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
