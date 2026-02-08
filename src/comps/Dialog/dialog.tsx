@@ -12,6 +12,7 @@ import { useFx } from "../../hooks"
 import { BoxProps, ValueOf } from "../../types"
 import Cover from "../Cover"
 import { useTheme } from "../../hooks/useColorScheme"
+import { SPINNER } from "../Spinner/types"
 
 const Dialog = ({
     ref,
@@ -50,8 +51,12 @@ const Dialog = ({
     const [ render, setRender ] = useState(true)
     const [ action, setAction ] = useState<DialogActionHandler[] | null>(_action || null)
     const [ loading, setLoading ] = useState(false)
-    const { variant: themeVariant } = useTheme()!
-    const _variant = variant || themeVariant || Variant.Small
+    const { 
+        variant: themeVariant,
+        spinner: themeSpinner,
+        dialog: themeDialog,
+    } = useTheme()!
+    const _variant = variant || themeDialog?.variant || themeVariant || Variant.Small
         
     const {
         style,
@@ -63,10 +68,10 @@ const Dialog = ({
 
     const sheetAnimation = useFx({
         when: visible,
-        duration: speed || 0.3,
-        delay: 0.1,
-        transition: transition || TRANSITIONS.SlideInBottom,
-        curve: curve || TRANSITION_CURVES.EaseInOut
+        duration: speed || themeDialog?.speed || 0.3,
+        delay: themeDialog?.delay || 0.1,
+        transition: transition || themeDialog?.transition || TRANSITIONS.SlideInBottom,
+        curve: curve || themeDialog?.curve || TRANSITION_CURVES.EaseInOut
     })
 
     useEffect(() => {
@@ -93,7 +98,7 @@ const Dialog = ({
             {...rest as BoxProps}
             ref={innerRef}>
                 
-            <Cover when={loading} spinner={spinner} message={loadingMessage} />
+            <Cover when={loading} spinner={spinner || themeDialog?.spinner || themeSpinner?.type || SPINNER.Simple} message={loadingMessage || themeDialog?.loadingMessage} />
 
             <DialogHead
                 title={title} 

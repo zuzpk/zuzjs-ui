@@ -1,6 +1,6 @@
 {
   "name": "@zuzjs/ui",
-  "version": "1.1.1",
+  "version": "1.0.3",
   "description": "ZuzJS UI Library",
   "keywords": [
     "react",
@@ -24,7 +24,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "zujs": "./dist/bin.cjs"
+    "zuzjs": "./dist/bin.cjs"
   },
   "exports": {
     ".": {
@@ -44,10 +44,11 @@
     "build": "tsup && npm run build:css",
     "build:css": "sass src/scss:dist/css --style compressed --no-source-map",
     "prepare": "husky",
-    "publish": "node publish-pre.js && npm run build && npm publish && node publish-post.js"
+    "publish": "rm -rf dist && npm run build && node publish-pre.js && npm publish && node publish-post.js"
   },
   "dependencies": {
     "@zuzjs/core": "workspace:*",
+    "@zuzjs/hooks": "workspace:*",
     "chokidar": "^5.0.0",
     "commander": "^14.0.2",
     "date-fns": "^4.1.0",

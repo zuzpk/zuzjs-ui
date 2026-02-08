@@ -1,6 +1,6 @@
-:root{
-    --drawer-color: #fff;
-    --drawer-handle-color: #ccc;
+body{
+    --drawer-color: var(--surface);
+    --drawer-handle-color: var(--muted);
     --drawer-radius-v: 0px;
     --drawer-radius-h: 0px;
     --drawer-shadow: var(--zuz-shadow);
@@ -27,8 +27,9 @@
     z-index: var(--max-z-index);
     overflow-x: hidden;
     overflow-y: auto;   
+    will-change: transform, opacity;
     &.--left{
-        left: calc(0px + var(--m));        
+        left: calc(0px + var(--m));    
         @extend .drawer-h;
     }
     &.--right{

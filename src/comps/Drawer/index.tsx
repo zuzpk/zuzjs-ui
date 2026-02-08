@@ -8,12 +8,15 @@ import Overlay from "../Overlay";
 import { DrawerHandler, DrawerProps } from "./types";
 import { KeyCode, useShortcuts } from "@zuzjs/hooks";
 import { BoxProps } from "../../types";
+import { useFx } from "../../hooks";
+import { useTheme } from "../../hooks/useColorScheme";
 
 const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
     
     const { from, speed, children, margin, animation, prerender, onClose, ...pops } = props;
 
-    const [ render, setRender ] = useState(undefined == prerender ? true : prerender)   
+    const { drawer: themeDrawer } = useTheme()!
+    const [ render, setRender ] = useState(undefined == prerender ? themeDrawer?.prerender || true : prerender)   
     const [ visible, setVisible ] = useState(false)
     const divRef = useRef<HTMLDivElement>(null);
     const [ content, setContent ] = useState(children)
@@ -53,20 +56,25 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
         return () => layerManager.pop(closeDrawer)
     }, [visible])
 
+    const side = from || themeDrawer?.from || DRAWER_SIDE.Left;
+
     const _style = useMemo(() => {
-        switch (from){
+        // Determine the actual 'from' side
+
+        switch (side) {
             case DRAWER_SIDE.Left:
-                return { from: { x: `-100vh` }, to: { x: 0 } }
+                // Use vw for horizontal, vh for vertical
+                return { from: { x: `-100vw` }, to: { x: 0 } }
             case DRAWER_SIDE.Right:
-                return { from: { x: `100vh` }, to: { x: 0 } }
+                return { from: { x: `100vw` }, to: { x: 0 } }
             case DRAWER_SIDE.Top:
                 return { from: { y: `-100vh` }, to: { y: 0 } }
             case DRAWER_SIDE.Bottom:
                 return { from: { y: `100vh` }, to: { y: 0 } }
             default:
-                return { from: { x: `-100vh` }, to: { x: 0 } }
+                return { from: { x: `-100vw` }, to: { x: 0 } }
         }
-    }, [])
+    }, [from, themeDrawer?.from]);
 
     useImperativeHandle(ref, () => ({
         open(child?: string | ReactNode | ReactNode[]){
@@ -77,6 +85,14 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
             closeDrawer()
         }
     }))
+
+    const drawerAnimation = useFx({
+        from: { ..._style.from, opacity: 0 },
+        to: { ..._style.to, opacity: 1 },
+        when: visible,
+        curve: animation || themeDrawer?.animation || TRANSITION_CURVES.EaseInOut,
+        duration: speed || themeDrawer?.speed ||.5,
+    })
 
     return <>
 
@@ -92,17 +108,18 @@ const Drawer = forwardRef<DrawerHandler, DrawerProps>((props, ref) => {
             ref={divRef}
             style={{
                 ...style,
-                ...{"--m" : `${margin || 0}px`}
+                ...drawerAnimation.style,
+                ...{"--m" : `${margin || themeDrawer?.margin || 0}px`}
             }}
             aria-hidden={!visible}
-            className={`--drawer flex cols ${className}  --${from ? from.toLowerCase() : `left`} fixed`}
-            fx={{
-                from: { ..._style.from, opacity: 0 },
-                to: { ..._style.to, opacity: 1 },
-                when: visible,
-                curve: animation || TRANSITION_CURVES.EaseInOut,
-                duration: speed || .5,
-            }}
+            className={`--drawer flex cols ${className}  --${side.toLowerCase()} fixed`}
+            // fx={{
+            //     from: { ..._style.from, opacity: 0 },
+            //     to: { ..._style.to, opacity: 1 },
+            //     when: visible,
+            //     curve: animation || TRANSITION_CURVES.EaseInOut,
+            //     duration: speed || .5,
+            // }}
             {...rest as BoxProps}>
             {from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? <Box className={`--handle`} /> : null}
             {render ? content : visible ? content : null}

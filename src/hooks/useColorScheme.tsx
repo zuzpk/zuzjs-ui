@@ -6,6 +6,8 @@ import { SPINNER } from "../comps/Spinner/types";
 import { animationProps } from "../types";
 import { GroupProps } from "../comps/Group";
 import { setZuzMap } from "../funs/css";
+import { DialogProps } from "../comps/Dialog/types";
+import { DrawerProps } from "../comps/Drawer/types";
 
 const MATCH_MEDIA = `(prefers-color-scheme: dark)`
 const SSR = typeof window === 'undefined'
@@ -21,6 +23,17 @@ export interface ThemeConfig {
     group?: GroupProps & {
         fx?: animationProps
     },
+    /**
+     * Dialog Default Settings
+     */
+    dialog?: Omit<DialogProps, `id` | `title` | `message` | `action` | `onShow` | `onHide`>,
+    /**
+     * Dialog Default Settings
+     */
+    drawer?: Omit<DrawerProps, `as` | `children` | `onClose`>,
+    /**
+     * App Level Spinner Conf
+     */
     spinner?: {
         type?: ValueOf<typeof SPINNER>;
     };

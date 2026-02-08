@@ -1,0 +1,52 @@
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+/** 
+ * 1. Backup Package.json 
+*/
+const packageJsonPath = path.resolve(__dirname, "..", "ui", "package.json");
+const backupPath = path.resolve(__dirname, "..", "ui", "package.json.bak");
+
+/** @zuzjs/core package.json */
+const corePackageJsonPath = path.resolve(__dirname, "..", "core", "package.json");
+const corePack = JSON.parse(fs.readFileSync(corePackageJsonPath, "utf8"));
+
+/** @zuzjs/hooks package.json */
+const hooksPackageJsonPath = path.resolve(__dirname, "..", "hooks", "package.json");
+const hooksPack = JSON.parse(fs.readFileSync(hooksPackageJsonPath, "utf8"));
+
+/**Backup Package.json to backupPath */
+const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"))
+fs.writeFileSync(backupPath, JSON.stringify(packageJson, null, 2))
+
+packageJson.dependencies["@zuzjs/core"] = `^${corePack.version}`
+packageJson.dependencies["@zuzjs/hooks"] = `^${hooksPack.version}`
+
+delete packageJson.scripts
+delete packageJson.devDependencies
+
+const [ _major, _minor, _patch ] = packageJson.version.split(`.`)
+
+let major = +_major
+let minor = +_minor
+let patch = +_patch
+
+if ( patch < 9 ) {
+    patch += 1
+} else {
+    patch = 0
+    if ( minor < 9 ) {
+        minor += 1
+    } else {
+        minor = 0
+        major += 1
+    }
+}   
+
+packageJson.version = `${major}.${minor}.${patch}`
+
+fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))

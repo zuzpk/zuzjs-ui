@@ -115,14 +115,14 @@ program
         });
 
         watcher.on('add', filePath => {
-            if (filePath.endsWith('.tsx') || filePath.endsWith('.jsx')) {
+            if ( builder.isSupportedFile(filePath) ) {
                 builder.processFile(path.resolve(cwd, filePath));
             }
             if ( isReady ) console.log(pc.gray(`○ File added: ${filePath}`));
         });
 
         watcher.on('change', filePath => {
-            if (filePath.endsWith('.tsx') || filePath.endsWith('.jsx')) {
+            if ( builder.isSupportedFile(filePath) ) {
                 console.log(pc.gray(`○ File changed: ${filePath}`));
 
                 const fullPath = path.resolve(cwd, filePath);

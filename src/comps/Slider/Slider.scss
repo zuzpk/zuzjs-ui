@@ -1,0 +1,90 @@
+body{
+    --slider-radius: 5px;
+    --slider-knob-size: 20px;
+    --slider-knob-width: var(--slider-knob-size);
+    --slider-knob-height: var(--slider-knob-size);
+    --slider-knob-color: #fff;
+    --slider-knob-radius: 50%;
+    --slider-knob-border: 1px #ccc solid;
+    --slider-knob-shadow: 0px 0px 2px #ccc;
+    --slider-track: #fff;
+    --slider-track-border: 1px #ddd solid;
+    --slider-fill: #111;
+    --slider-text: rgb(0, 98, 255);
+    --slider-text-size: 15px;
+    --slider-text-weight: normal;
+}
+
+.--slider{
+    
+    &.--range{
+        min-height: 10px;
+        width: 100%;
+        min-width: 100px;
+    }
+    &.--number{
+        width: fit-content;
+        // min-width: 1ch;
+        // max-width: calc(min(var(--value), 1) * 1ch);
+        text-align: center;
+    }
+
+    input{
+        height: 100%;
+        width: 100%;
+        opacity: 0;
+        touch-action: none;
+        &[type=range]{
+            &:hover{
+                cursor: grab;
+            }
+            &:active{
+                cursor: grabbing;
+            }
+        }
+        &[type=number]{
+            cursor: ns-resize;
+        }
+    }
+
+    .--slider-track{
+        background: var(--slider-track);
+        height: 100%;    
+        border-radius: var(--slider-radius);
+        overflow: hidden;
+        border: var(--slider-track-border);
+        &:after{
+            content: "";
+            position: absolute;
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            width: calc( ( var(--value) * 1% ) - (var(--slider-knob-size) / 2) ); 
+            background: var(--slider-fill);
+            border-radius: var(--slider-radius);
+        }
+    }
+    .--slider-knob{
+        width: var(--slider-knob-width);
+        height: var(--slider-knob-height);
+        top: 50%;
+        transform: translateY(-50%);
+        left: clamp(0%, calc( (var(--value) * 1%) - var(--slider-knob-size) ), 100%);
+        background: var(--slider-knob-color);
+        border-radius: var(--slider-knob-radius);
+        border: var(--slider-knob-border);
+        box-shadow: var(--slider-knob-shadow);
+        pointer-events: none;
+        
+    }
+
+    .--slider-text{
+        text-decoration: none;
+        color: var(--slider-text);
+        cursor: ew-resize;
+        text-align: center;
+        user-select: none;
+        font-size: var(--slider-text-size);
+        font-weight: var(--slider-text-weight);
+    }
+}

@@ -7,7 +7,7 @@ const Item = (props : { meta: ListItem }) => {
 
     const { meta } = props
     const mounted = useDelayed()
-    const { label, ...pops } = isValidElement(meta) ? {} : meta as ListItemObject;
+    const { label, icon, ...pops } = isValidElement(meta) ? {} : meta as ListItemObject;
     
     const {
         className,
@@ -31,7 +31,10 @@ const Item = (props : { meta: ListItem }) => {
     return <li 
         style={style}
         className={className}
-        {...rest}>{typeof meta == `string` ? meta : label}</li>
+        {...rest}>
+            {/* {typeof meta == `string` ? meta : icon} */}
+            {typeof meta == `string` ? meta : label}
+        </li>
 
 }
 

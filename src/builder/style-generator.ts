@@ -57,8 +57,9 @@ class StyleGenerator {
         
         // // 1. SILENT EXIT: If we've already parsed this exact string (e.g., "w:100"), stop.
         // if (this.processedStrings.has(rawString)) return [];
-        
+        // console.log(`--rawString`, rawString)
         const tokens = this.tokenize(rawString);
+        // console.log(`--tokens`, tokens)
         const classes: string[] = [];
         
         if (!this.fileMap.has(filePath)) {
@@ -78,6 +79,8 @@ class StyleGenerator {
     }
 
     private tokenize(input: string): UtilityToken[] {
+        // if ( input.includes(`x:-`) ) 
+        // console.log(`0--`, input)
         const tokens: UtilityToken[] = [];
         let i = 0;
         // console.log(`tokenizing`, input)
@@ -136,7 +139,13 @@ class StyleGenerator {
 
         // 1. if it's a standard property (w:100)
         if (trimmedRaw.includes(':')){
-            const [prop, value] = trimmedRaw.split(':');
+            // const [prop, value] = trimmedRaw.split(':');
+            const colonIndex = trimmedRaw.indexOf(':');
+            const prop = trimmedRaw.slice(0, colonIndex).trim();
+            const value = trimmedRaw.slice(colonIndex + 1).trim();
+
+            // console.log(`[Lexer] Pushing: ${prop} with value: ${value}`);
+
             tokens.push({
                 prop: prop.trim(),
                 value: value.trim(),
@@ -166,34 +175,45 @@ class StyleGenerator {
 
         const { prop, value, pseudo, media, selector, isCustom } = token;
 
+        
         if ( isCustom ){
             return prop
         }
-
+        
         let cssRuleBody = "";
 
         // 1. If it has a value AND is in propMap, it's a Property (e.g., flex:1)
         // 2. If it has NO value AND is in directMap, it's a Shortcut (e.g., flex)
-        
-        // 1. Resolve the CSS body first
+
+        if (!value && this.directMap[prop]) {
+            cssRuleBody = this.directMap[prop]
+            // console.log(`--ppd`, prop, value)
+        } 
+        else {
+            // It's a standard property (w:100, flex:1)
+            const cssProp = this.propMap[prop] || prop;
+            cssRuleBody = cssProp.includes("__") 
+                ? this.resolveComplexTemplate(prop, value || "", cssProp) 
+                : `${cssProp}: ${this.processValue(prop, value || "")};`;
+
+            // if ( prop == `x`. )
+            // console.log(`--ppp`, prop, value)
+            
+        }
         // if (!value && this.directMap[prop]) {
         //     const template = this.directMap[prop];
         //     cssRuleBody = template.includes("__") 
         //         ? this.resolveComplexTemplate(prop, value || "", template) 
         //         : template;
+            
         // } 
-        if (this.directMap[prop]) {
-            const template = this.directMap[prop];
-            cssRuleBody = template.includes("__") 
-                ? this.resolveComplexTemplate(prop, value || "", template) 
-                : template;
-        } 
-        else {
-            // It's a standard property (w:100, flex:1)
-            const cssProp = this.propMap[prop] || prop;
-            const processedVal = this.processValue(prop, value || "");
-            cssRuleBody = `${cssProp}: ${processedVal};`;
-        }
+        // else {
+        //     console.log(`--ppp`, prop, value)
+        //     // It's a standard property (w:100, flex:1)
+        //     const cssProp = this.propMap[prop] || prop;
+        //     const processedVal = this.processValue(prop, value || "");
+        //     cssRuleBody = `${cssProp}: ${processedVal};`;
+        // }
 
         // 2. Create a "Universal Key" based on the actual CSS and modifiers
         // This is the "secret sauce" to deduplication
@@ -259,7 +279,7 @@ class StyleGenerator {
             .replace(this.dollorToVarRegexp, 'var(--$1)');
     }
 
-    private addUnitsSafely(prop: string, val: string): string {
+    public addUnitsSafely(prop: string, val: string): string {
 
         const unitlessProps = ["opacity", "zIndex", "flex", "b", "font-weight", "fontWeight", "lineHeight"];
         if (unitlessProps.includes(prop)) return val;
@@ -298,14 +318,22 @@ class StyleGenerator {
 
         let result = "";
 
-        // 1. If it's a bracketed value (calc, etc.)
-        if (val.includes('[') || val.includes(']')) {
+        if (val.trim() == `full`){
+            result = `100%`
+        }
+        // If it's a bracketed value (calc, etc.)
+        else if (val.includes('[') || val.includes(']')) {
             // Swap symbols and handle variables
             let transformed = this.transformBrackets(val);
             
-            // Use a "Smart Unit Fixer" that only touches numbers 
-            // that are not already attached to a unit.
-            result = this.addUnitsSafely(prop, transformed);
+            const [ _kw ] = val.split(`[`)
+            if ( [`rgba`,`rgb`].includes(_kw) ){
+                result = transformed
+            }
+            else
+                // Use a "Smart Unit Fixer" that only touches numbers 
+                // that are not already attached to a unit.
+                result = this.addUnitsSafely(prop, transformed);
         } 
         // Comma Logic
         else if (val.includes(',')) {

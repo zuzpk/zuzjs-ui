@@ -1,7 +1,7 @@
 import { cssFilterKeys, cssTransformKeys, cssWithKeys } from "../builder/stylesheet";
 import { cssShortKey, dynamic, TRANSITION_CURVES, TRANSITIONS, ValueOf, ZuzStyleString } from "../types";
 import styleGenerator from "../builder/style-generator";
-import { PACKAGE_NAME } from ".";
+import { PACKAGE_NAME, splitAtoms } from ".";
 
 const ZUZ_MAP_KEY = Symbol.for("zuz.global.map");
 
@@ -17,7 +17,7 @@ export const getZuzMap = (): Record<string, string> => {
  * Converts Zuz utility strings or arrays into hashed class names.
  */
 export const buildClassString = (input: ZuzStyleString | ZuzStyleString[]): string => {
-    // 1. Normalize input to a single string
+    // Normalize input to a single string
     const raw = Array.isArray(input) ? input.join(" ") : input;
     
     // Safety check for empty or non-string inputs
@@ -33,17 +33,30 @@ export const buildClassString = (input: ZuzStyleString | ZuzStyleString[]): stri
         );
     }
 
+    const tokens = splitAtoms(raw).filter(Boolean);
+
     // 2. Process and map tokens
-    return raw
-        .split(/\s+/)
-        .filter(Boolean) // Remove empty strings from accidental double spaces
-        .map(token => {
+    // console.log(`--splitAtoms`,  splitAtoms(raw))
+    return tokens.map(token => {
+
+            const groupMatch = token.match(/^([&@][\w-]+)\((.*)\)$/);
+            
+            if (groupMatch) {
+                const [_, prefix, innerContent] = groupMatch;
+                return splitAtoms(innerContent)
+                    .map(atom => {
+                        const key = `${prefix}(${atom})`; // Reconstruct the key
+                        return zuzMap[key] || atom;
+                    })
+                    .join(" ");
+            }
+
             /**
              * Check the manifest for the token.
              * If found, return the hash (e.g., "z123").
              * If not, return as-is (supports custom classes like "--sidebar").
              */
-            // if ( !zuzMap[token] ) console.log(`[${PACKAGE_NAME}]`, token, `not found`)
+            // if ( process.env.NODE_ENV === 'development' && !zuzMap[token] ) console.log(`[${PACKAGE_NAME}]`, token, `not found`)
             return zuzMap[token] || token;
         })
         .join(" ");
@@ -65,53 +78,39 @@ export const css = (input: ZuzStyleString | ZuzStyleString[]): string => {
 
 };
 
-// export const buildWithStyles = (source: dynamic) : dynamic => {
-    
-//     const _ : dynamic = {}
-    
-//     if ( Object.keys(source).length > 0 ){
-
-//         const _transform : string[] = [];
-//         const _filter : string[] = [];
-
-//         for ( const _prop in source ){
-//             let prop = _prop as cssShortKey
-//             if ( prop in cssWithKeys ){
-//                 if ( cssTransformKeys.includes(cssWithKeys[prop].toString()) ){
-//                     _transform.push(`${cssWithKeys[prop]}(${styleGenerator.addUnitsToComplexValue(prop, source[prop])})`)
-//                 }
-//                 if ( cssFilterKeys.includes(cssWithKeys[prop].toString()) ){
-//                     _filter.push(`${cssWithKeys[prop]}(${styleGenerator.addUnitsToComplexValue(prop, source[prop])})`)
-//                 }
-//                 else 
-//                     _[cssWithKeys[prop]] = source[prop]
-//             }
-//             else {
-//                 if ( cssTransformKeys.includes(prop) ){
-//                     _transform.push(`${prop}(${styleGenerator.addUnitsToComplexValue(prop, source[prop])})`)
-//                 }
-//                 else if ( cssFilterKeys.includes(prop) ){
-//                     _filter.push(`${prop}(${styleGenerator.addUnitsToComplexValue(prop, source[prop])})`)
-//                 }
-//                 else 
-//                     _[prop] = source[prop]
-//             }   
-//         }
-
-//         if ( _transform.length > 0 ){
-//             _.transform = _transform.join(` `)
-//         }
-//         if ( _filter.length > 0 ){
-//             _.filter = _filter.join(` `)
-//         }
-
-//     }  
-
-//     return _
-    
-// }
-
 export const buildWithStyles = (source: dynamic): dynamic => {
+    const _: dynamic = {};
+    
+    for (const key in source) {
+        const value = source[key];
+        if (key.startsWith('--')) {
+            _[key] = value;
+            continue; 
+        }
+
+        const targetProp = cssWithKeys[key as cssShortKey]?.toString() ?? key;
+
+        // Individual Transform Properties (Modern 2026)
+        if (targetProp === 'x' || targetProp === 'translateX') {
+            const current = _.translate?.split(' ') ?? ['0px', '0px'];
+            _.translate = `${styleGenerator.addUnitsSafely(key, value)} ${current[1] ?? '0px'}`;
+        } 
+        else if (targetProp === 'y' || targetProp === 'translateY') {
+            const current = _.translate?.split(' ') ?? ['0px', '0px'];
+            _.translate = `${current[0] ?? '0px'} ${styleGenerator.addUnitsSafely(key, value)}`;
+        }
+        else if (cssTransformKeys.includes(targetProp as any)) {
+            // scale, rotate, etc.
+            _[targetProp] = styleGenerator.addUnitsSafely(key, value);
+        }
+        else {
+            _[targetProp] = value;
+        }
+    }
+    return _;
+};
+
+export const _buildWithStyles = (source: dynamic): dynamic => {
     const _: dynamic = {};
     
     if (Object.keys(source).length > 0) {

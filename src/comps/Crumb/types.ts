@@ -9,6 +9,8 @@ export type CrumbItem = {
 }
 
 export type CrumbProps = BoxProps & {
-    items: CrumbItem[],
-    maxItems?: number
+    items: CrumbItem[] | string,
+    maxItems?: number,
+    /** Base Path to be included when items is string */
+    basePath?: string
 }

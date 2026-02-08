@@ -21,6 +21,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
         skeleton,
         className,
         propsToRemove,
+        style: incomingStyle,
         ...rest
     } = props || {}
 
@@ -34,9 +35,8 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
 
     return {
         style: {
+            ...incomingStyle,
             ...transitionStyle
-            // ...buildWithStyles(_style),
-            // ..._transition
         },
         className: [
             className || ``, 

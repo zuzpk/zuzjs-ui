@@ -1,0 +1,88 @@
+body{
+    --codeblock-font: monospace;
+}
+pre {
+//   border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 15px 0px;
+}
+
+code {
+  font-family: var(--codeblock-font, monospace) !important;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+.--code-block {
+    background-color: #1e1e1e;
+    padding: 0.5rem;
+    --line-num-width: 40px;
+    white-space: pre;
+    line-height: 1.6;
+    tab-size: 4;
+    color: #fff;
+
+    code.--code{
+        font-size: inherit;
+        letter-spacing: inherit;
+        border-radius: inherit;
+        border-width: inherit;
+        background: inherit;
+        color: inherit;
+        white-space: inherit;
+        padding: inherit;
+    }
+}
+
+.--code-line {
+    display: flex;
+    width: 100%;
+    padding: 0 4px;
+    border-left: 3px solid transparent;
+    font-family: var(--codeblock-font, monospace) !important;
+    &.--with-ln{
+        &:hover{
+            background-color: #2a2a2a;
+        }
+    }
+}
+
+.--code-line.--is-highlighted {
+    background: var(--shade-2); /* Slightly lighter/darker than bg */
+    border-left-color: var(--primary);
+    width: fit-content;
+    min-width: 100%;
+}
+
+.--line-number {
+    width: var(--line-num-width);
+    flex-shrink: 0;
+    opacity: 0.3;
+    user-select: none;
+    font-size: 0.85em;
+}
+
+.--line-content {
+    white-space: pre;
+    font-family: var(--codeblock-font, monospace) !important;
+}
+
+/* Syntax Highlighting Tokens */
+.--token-key  { color: var(--pink-300); font-weight: 600; }  /* Keywords */
+.--token-tag  { color: var(--green-300); font-weight: 500; }  /* <Component /> */
+.--token-var { color: #db9aff; }
+.--token-str  { color: var(--blue-200); }                 /* Strings */
+.--token-comm { color: var(--gray-500); font-style: italic; } /* Comments */
+.--token-fn   { color: var(--blue-500); }                  /* Functions */
+.--token-prop { color: var(--orange-500); }                /* Properties */
+.--token-num  { color: var(--purple-500); }                /* Numbers */
+.--token-fn   { color: var(--blue-600); font-style: italic; }
+
+/* Custom Scrollbar for the code */
+.--code-block::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+}
+.--code-block::-webkit-scrollbar-thumb {
+    background: var(--shade-3);
+    border-radius: 10px;
+}

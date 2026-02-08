@@ -14,6 +14,7 @@ const Avatar = forwardRef<AvatarHandler, AvatarProps>((props, ref) => {
     const { 
         src, variant, type, crossOrigin, referrerPolicy, 
         fx, as, alt, color,
+        style: inlineStyle,
         ...pops 
     } = props;
 
@@ -21,7 +22,7 @@ const Avatar = forwardRef<AvatarHandler, AvatarProps>((props, ref) => {
 
     const {
         className,
-        style,
+        style: baseStyle,
         rest
     } = useBase({ fx, as })
 
@@ -51,7 +52,8 @@ const Avatar = forwardRef<AvatarHandler, AvatarProps>((props, ref) => {
             className={`--avatar --${variant || Variant.Small} --${(type || AVATAR.Circle).toLowerCase()} rel flex aic jcc ${className}`.trim()}
             style={{
                 background: color || `var(--primary)`,
-                ...style,
+                ...inlineStyle,
+                ...baseStyle,
             }}
             {...rest as BoxProps}>
         { src ? <Image   

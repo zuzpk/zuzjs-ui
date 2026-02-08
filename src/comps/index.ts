@@ -32,6 +32,9 @@ export * from './ChatBubble/types';
 export { default as CheckBox } from './CheckBox';
 export * from './CheckBox/types';
 
+export { default as CodeBlock } from './CodeBlock';
+export * from './CodeBlock/types';
+
 export { default as ColorScheme } from './ColorScheme';
 
 export { default as ContextMenu } from './ContextMenu';
@@ -122,7 +125,7 @@ export { default as Span } from "./Span"
 export type * from "./Span/types"
 
 export { default as Spinner } from "./Spinner"
-export type * from "./Spinner/types"
+export { SPINNER, type SpinnerProps } from "./Spinner/types"
 
 export { default as Switch } from './Switch';
 

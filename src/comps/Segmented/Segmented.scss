@@ -2,6 +2,7 @@
 
 :root{
     --segmented: #eee;
+    --segmented-gap: 0px;
     --segmented-border: 1px #ddd solid;
     --segment-item: transparent;
     --segment-item-border: 0px;
@@ -59,6 +60,7 @@
     background: var(--segmented);
     border: var(--segmented-border);
     overflow: hidden;
+    gap: var(--segmented-gap, 0px);
 
     .--segment-tab{
         bottom: var(--segment-tab-bottom);

@@ -27,3 +27,39 @@ export const cleanProps = <T extends dynamic>(
     return _props
 
 }
+
+export const splitAtoms = (input: string): string[] => {
+    const atoms: string[] = [];
+    let current = "";
+    let depth = 0;
+
+    for (let i = 0; i < input.length; i++) {
+        const char = input[i];
+
+        // Increment depth for any opening bracket/paren
+        if (char === '[' || char === '(') {
+            depth++;
+        }
+        // Decrement depth for any closing bracket/paren
+        if (char === ']' || char === ')') {
+            depth--;
+        }
+
+        // Only split on whitespace if we are at the top level (depth 0)
+        if (/\s/.test(char) && depth === 0) {
+            if (current.trim()) {
+                atoms.push(current.trim());
+            }
+            current = "";
+        } else {
+            current += char;
+        }
+    }
+
+    // Push the final remaining atom
+    if (current.trim()) {
+        atoms.push(current.trim());
+    }
+
+    return atoms;
+}

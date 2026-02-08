@@ -1,6 +1,5 @@
 import { FormEventHandler, ReactNode, Ref } from "react"
-import { BoxProps, FORMVALIDATION, ValueOf } from "../../types"
-import { Variant } from "@zuzjs/types"
+import { BoxProps, FORMVALIDATION, ValueOf, Variant } from "../../types"
 
 /**
  * Interface for the Select component handle, accessible via React ref.
@@ -62,7 +61,7 @@ export type SelectProps = Omit<BoxProps, "onChange" > & {
      * Size of the select field.
      * @default "sm"
      */
-    variant?: Variant,
+    variant?: ValueOf<typeof Variant>,
 
     /**
      * Indicates if the select field is required and its validation type.

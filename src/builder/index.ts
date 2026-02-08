@@ -1,17 +1,20 @@
 import { 
     Project, 
+    ScriptKind, 
     SyntaxKind, 
 } from "ts-morph";
 import styleGenerator from "./style-generator";
 import pc from "picocolors"
 import path from "path";
 import fs from "fs";
+import { splitAtoms } from "../funs";
 
 class Builder {
 
     project: Project;
     stylesToGenerate: Set<string>;
     private manifest: Record<string, string> = {};
+    private readonly supportedExtensions = ['.tsx', '.jsx', '.mdx', '.md'];
 
     constructor(){
         
@@ -48,11 +51,9 @@ class Builder {
         // 3. Template Literals: `w:${...}`
         else if (node.asKind(SyntaxKind.TemplateExpression)) {
             const head = node.getHead().getLiteralText(); // e.g., "w:"
-            const spans = node.getTemplateSpans();
-            spans.forEach((span: any) => {
-                const expression = span.getExpression();
-                // Recurse into the expression inside ${}, passing the head as a prefix
-                this.extractStyles(expression, prefix + head);
+            node.getTemplateSpans()
+                .forEach((span: any) => {
+                this.extractStyles(span.getExpression(), prefix + head);
             });
         }
 
@@ -67,53 +68,34 @@ class Builder {
             node.getElements().forEach((el: any) => this.extractStyles(el, prefix));
         }
 
-        
+        // 6. Binary Expressions: 18 * i
+        else if (node.asKind(SyntaxKind.BinaryExpression)) {
+            // We look at both sides. 
+            // Usually, one side is our static value (18) and the other is the variable (i)
+            this.extractStyles(node.getLeft(), prefix);
+            this.extractStyles(node.getRight(), prefix);
+        }
 
     };
-
-    private splitAtoms(input: string): string[] {
-        const atoms: string[] = [];
-        let current = "";
-        let depth = 0;
-
-        for (let i = 0; i < input.length; i++) {
-            const char = input[i];
-
-            // Increment depth for any opening bracket/paren
-            if (char === '[' || char === '(') {
-                depth++;
-            }
-            // Decrement depth for any closing bracket/paren
-            if (char === ']' || char === ')') {
-                depth--;
-            }
-
-            // Only split on whitespace if we are at the top level (depth 0)
-            if (/\s/.test(char) && depth === 0) {
-                if (current.trim()) {
-                    atoms.push(current.trim());
-                }
-                current = "";
-            } else {
-                current += char;
-            }
-        }
-
-        // Push the final remaining atom
-        if (current.trim()) {
-            atoms.push(current.trim());
-        }
-
-        return atoms;
-    }
 
     public processFile(filePath: string){
 
         // // 1. Clear previous local file state so we only process what's in THIS file
         this.stylesToGenerate.clear();
 
-        const sourceFile = this.project.addSourceFileAtPath(filePath);
-        sourceFile.refreshFromFileSystemSync();
+        const isMdx = filePath.endsWith('.mdx') || filePath.endsWith('.md');
+        let sourceFile;
+
+        if ( isMdx ){
+            const fileContent = fs.readFileSync(filePath, "utf-8");
+            sourceFile = this.project.createSourceFile(filePath, fileContent, {
+                overwrite: true,
+                scriptKind: ScriptKind.TSX 
+            });
+        }else{
+            sourceFile = this.project.addSourceFileAtPath(filePath);
+            sourceFile.refreshFromFileSystemSync();
+        }
 
         // Use a broader filter to catch BOTH <Box>...</Box> and <Box />
         const elements = [
@@ -150,26 +132,50 @@ class Builder {
 
             // Split strings like "w:99 h:102" into ["w:99", "h:102"]
             // const individualTokens = rawStyle.split(/\s+/).filter(Boolean);
-            const individualTokens = this.splitAtoms(rawStyle).filter(Boolean)
+            const individualTokens = splitAtoms(rawStyle).filter(Boolean)
             // console.log(`indT`, individualTokens)
             individualTokens.forEach(token => {
-                const hashes = styleGenerator.parseAndGenerate(token, filePath);
-                if (hashes.length > 0) {
-                    // Map the individual token, NOT the whole combined string
-                    this.manifest[token] = hashes.join(' ');
+
+                const groupMatch = token.match(/^([&@][\w-]+)\((.*)\)$/);
+
+                if (groupMatch) {
+                    const [fullMatch, prefix, innerContent] = groupMatch;
+                    const innerAtoms = splitAtoms(innerContent).filter(Boolean);
+                    innerAtoms.forEach(innerAtom => {
+                        const fullToken = `${prefix}(${innerAtom})`;
+                        const hashes = styleGenerator.parseAndGenerate(fullToken, filePath);
+                        if (hashes.length > 0) {
+                            this.manifest[fullToken] = hashes.join(' ');
+                        }
+                    });
+                    // Also map the full original group token just in case
+                    const hashes = styleGenerator.parseAndGenerate(token, filePath);
+                    if (hashes.length > 0) {
+                        this.manifest[token] = hashes.join(' ');
+                    }
+                }
+                else{
+                    const hashes = styleGenerator.parseAndGenerate(token, filePath);
+                    if (hashes.length > 0) {
+                        // Map the individual token, NOT the whole combined string
+                        this.manifest[token] = hashes.join(' ');
+                    }
                 }
             });
 
-            // const hashes = styleGenerator.parseAndGenerate(rawStyle, filePath)
-            // if ( hashes.length > 0 ){
-            //     this.manifest[rawStyle] = hashes.join(` `)
-            // }
         })
 
+        if (isMdx) {
+            this.project.removeSourceFile(sourceFile);
+        }
         // console.log(`cache`, styleGenerator.getCache())
 
         // console.log(pc.green(`✔ Processed ${filePath}`));
 
+    }
+
+    public isSupportedFile(filePath: string): boolean {
+        return this.supportedExtensions.some(ext => filePath.endsWith(ext));
     }
 
     public getStyleCount(): number {

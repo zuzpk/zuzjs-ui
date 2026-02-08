@@ -6,12 +6,27 @@ import Icon from "../Icon";
 import List from "../List";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
-import { CrumbProps } from "./types";
+import { CrumbItem, CrumbProps } from "./types";
 
 const Crumb = forwardRef<HTMLUListElement | HTMLOListElement, CrumbProps>((props, ref) => {
 
-    const { items : crumbItems, maxItems } = props
+    const { items : _crumbItems, maxItems } = props
     
+    const crumbItems = useMemo(() => {
+        const isString = `string` == typeof _crumbItems
+        const _items : CrumbItem[] = isString ? [] : _crumbItems
+
+        if ( isString ){
+            _crumbItems.split(`,`).forEach((c) => {
+                _items.push({
+                    label: c
+                })
+            })
+        }
+
+        return _items
+    }, [_crumbItems])
+
     const canSlice = useMemo(() => maxItems && maxItems > 0 && crumbItems.length > maxItems - 1, [crumbItems, maxItems])
 
     const items = canSlice ?  [ 

@@ -1,11 +1,16 @@
-:root{
+body{
     --crumb-padding: 6px 2px;
     --crumb-item-gap: 5px;
-    --crumb-item-color: #111;
-    --crumb-item-hover: rgba(0, 0, 0, 0.7);
+    --crumb-item-color: var(--text-primary);
+    --crumb-item-hover: var(--text-primary-hover);
     --crumb-item-hover-color: #fff;
     --crumb-item-radius: 6px;
     --crumb-item-padding: 2px 5px;
+}
+[color-scheme="dark"] {
+    body{
+        
+    }
 }
 .--crumb{
     gap: var(--crumb-gap);
@@ -35,6 +40,9 @@
     .--crumb-chevron{
         width: 20px;
         line-height: 0;
+        svg{
+            fill: var(--text-primary);
+        }
     }
 
     .--list-seperator{

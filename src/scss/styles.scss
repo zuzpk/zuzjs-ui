@@ -4,6 +4,8 @@
 @use "./transitions.scss";
 
 @use "../comps/Accordion/Accordion.scss";
+@use "../comps/Actionbar/Actionbar.scss";
+@use "../comps/Alert/Alert.scss";
 @use "../comps/AutoComplete/AutoComplete.scss";
 @use "../comps/Avatar/Avatar.scss";
 @use "../comps/Badge/Badge.scss";
@@ -11,6 +13,7 @@
 @use "../comps/Calendar/Calendar.scss";
 @use "../comps/ChatBubble/Bubble.scss";
 @use "../comps/Checkbox/Checkbox.scss";
+@use "../comps/CodeBlock/CodeBlock.scss";
 @use "../comps/ColorScheme/ColorScheme.scss";
 @use "../comps/ContextMenu/Contextmenu.scss";
 @use "../comps/Cover/Cover.scss";
@@ -35,6 +38,7 @@
 @use "../comps/Segmented/Segmented.scss";
 @use "../comps/Select/Select.scss";
 @use "../comps/Sheet/Sheet.scss";
+@use "../comps/Slider/Slider.scss";
 @use "../comps/Spinner/Spinner.scss";
 @use "../comps/Switch/Switch.scss";
 @use "../comps/Table/Table.scss";
@@ -67,8 +71,12 @@ body {
     --background: #e6eaf2;
     --surface: #fff;
     --surface-hover: #f6f6f6;
+    --muted: #fff;
+    --muted-hover: #f6f6f6;
     --text-primary: #111;
+    --text-primary-hover: #222;
     --text-secondary: #444;
+    --text-secondary-hover: #666;
     --border-primary: #ddd;
 }
 [color-scheme="dark"] {
@@ -76,8 +84,12 @@ body {
         --background: #131313;
         --surface: #1e1f20;
         --surface-hover: #292a2c;
+        --muted: #272829;
+        --muted-hover: #2e2f31;
         --text-primary: #fff;
+        --text-primary-hover: #f6f6f6;
         --text-secondary: #e3e3e3;
+        --text-secondary-hover: #d8d8d8;
         --border-primary: #333;
         --zuz-shadow: 0px 0px 0px 1px #252525, 0px 0px 6px #232323;
     }
@@ -114,6 +126,12 @@ body {
     --zuz-shadow: 0px 0px 0px 1px #d4d4d4, 0px 0px 6px #ccc;
 }
 
+/* 1. Global listener for any Zuz animation variable */
+[style*="--fx-x"], [style*="--fx-y"] {
+    /* Only apply this if the property isn't already set by a class */
+    translate: var(--fx-x, 0px) var(--fx-y, 0px);
+}
+
 .abc, .center-h, .center-v, .abs {
     --fx-x: 0px;
     --fx-y: 0px;
@@ -122,20 +140,20 @@ body {
 .abc {
     top: 50%;
     left: 50%;
-  --abc-x: -50%;
-  --abc-y: -50%;
-  translate: calc(var(--abc-x) + var(--fx-x, 0px)) 
+    --abc-x: -50%;
+    --abc-y: -50%;
+    translate: calc(var(--abc-x) + var(--fx-x, 0px)) 
              calc(var(--abc-y) + var(--fx-y, 0px));
 }
 .center-h {
     left: 50%;
-  --abc-x: -50%;
-  translate: calc(var(--abc-x) + var(--fx-x, 0px)) var(--fx-y, 0px);
+    --abc-x: -50%;
+    translate: calc(var(--abc-x) + var(--fx-x, 0px)) var(--fx-y, 0px);
 }
 .center-v {
     top: 50%;
-  --abc-y: -50%;
-  translate: var(--fx-x, 0px) calc(var(--abc-y) + var(--fx-y, 0px));
+    --abc-y: -50%;
+    translate: var(--fx-x, 0px) calc(var(--abc-y) + var(--fx-y, 0px));
 }
 .flex{
     display: flex;
@@ -184,3 +202,6 @@ body {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.no-overflow{overflow:hidden;}
+.w-full{width: 100%;}
+.h-full{height: 100%;}

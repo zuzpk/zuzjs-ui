@@ -1,0 +1,61 @@
+body{
+    --alert-error: #ffd4d4;
+    --alert-error-color: #ae1313;
+    --alert-info: #bee3f8;
+    --alert-info-color: #2b6cb0;
+    --alert-warning: #feebc8;
+    --alert-warning-color: #c05621;
+    --alert-success: #c6f6d5;
+    --alert-success-color: #2f855a;
+    --alert-padding: 12px;;
+    --alert-radius: 10px;
+    --alert-gap: 10px;
+}
+.--alert{
+
+    padding: var(--alert-padding);
+    border-radius: var(--alert-radius);
+    gap: var(--alert-gap);
+
+    .--icon{
+        width: 20px;
+        height: 20px;
+    }
+    .--meta{
+        gap: 2px;
+        .--title{
+            &.--tm{
+                font-weight: bold;
+            }
+        }
+    }
+
+    &.--info{
+        background: var(--alert-info);
+        color: var(--alert-info-color); 
+        path{
+            fill: var(--alert-info-color);
+        }
+    }
+    &.--warning{
+        background: var(--alert-warning);
+        color: var(--alert-warning-color); 
+        path{
+            fill: var(--alert-warning-color);
+        }
+    }
+    &.--error{
+        background: var(--alert-error);
+        color: var(--alert-error-color); 
+        path{
+            fill: var(--alert-error-color);
+        }
+    }
+    &.--success{
+        background: var(--alert-success);
+        color: var(--alert-success-color); 
+        path{
+            fill: var(--alert-success-color);
+        }
+    }
+}

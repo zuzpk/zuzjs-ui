@@ -19,7 +19,7 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
         className={className.trim()}
         as={`--scrollview rel`}>
 
-        <Box as={`--scroll-content`} ref={containerRef} style={_style || {}}>
+        <Box as={`--scroll-content ${className}`.trim()} ref={containerRef} style={_style || {}}>
             {rest.children}
         </Box>
 

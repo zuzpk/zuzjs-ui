@@ -1,16 +1,16 @@
-:root{
+body{
 
-    --tab-head: #fff;
+    --tab-head: var(--surface);
     --tab-head-border: 0px;
     --tab-head-padding: 0px;
     // --tab-head-radius: 6px 6px 0px 0px;
     // --tab: #eee;
-    --tab-line: #111;
+    --tab-line: var(--text-primary);
     --tab-line-radius: 10px;
     // --tab-active-color: #111;
     // --tab-hover: #ddd;
-    --tab-color: #777;
-    --tab-color-hover: #444;
+    --tab-color: var(--text-secondary);
+    --tab-color-hover: var(--text-secondary-hover);
     // --tab-gap: 5px;
     --tab-label-weight: bold;
     // --tab-label-size: 15px;
@@ -20,14 +20,17 @@
     --tab-padding: 10px 20px;
     --tab-border-width: 1px;
     --tab-border-style: solid;
-    --tab-border-color: #ddd;
+    --tab-border-color: var(--surface);
 
     --tab-label-color: #999;
     --tab-label-active-color: #111;
     // --tab-body-radius: 0px 5px 5px 5px;
     // --tab-body-padding: 0px;
+    --tab-body: var(--surface);
 }
 .--tabview{
+
+    min-width: 0px;
 
     .--tabview-head{
 
@@ -37,6 +40,7 @@
         --segmented-padding-sm: var(--tab-head-padding);
         --segment-item-color: var(--tab-color);
         --segment-item-hover-color: var(--tab-color-hover);
+        --segmented-gap: 1px;
         // border-top: var(--tab-border-top);
         // border-right: var(--tab-border-top);
         // border-bottom: var(--tab-border-top);
@@ -46,15 +50,21 @@
 
         .--segment-item{
             padding: var(--tab-padding) !important;
-
             color: var(--tab-label-color);
-
+            background: var(--muted);
+            &:hover{
+                background: var(--muted-hover);
+            }
             .--segment-label{
                 font-weight: var(--tab-label-weight) !important;
             }
-
+            
             &.--segment-active{
                 color: var(--tab-label-active-color);
+                background: var(--surface);
+                &:hover{
+                    background: var(--surface);
+                }
             }
 
         }
@@ -62,6 +72,7 @@
         .--segment-tab{
             top: 90% !important;
             border-radius: var(--tab-line-radius) !important;
+            z-index: 2;
         }
 
     }
@@ -73,62 +84,39 @@
             }
         }
     }
-    // .--head{
-    //     gap: 1px;
-    //     background: var(--tab-head);
-    //     padding: var(--tab-head-padding);
-    //     border-radius: var(--tab-head-radius);
-    //     border: var(--tab-head-border);
-    //     .--tab{
-    //         flex: 1;
-    //         border: 0px;
-    //         background: var(--tab);
-    //         border-radius: var(--tab-radius);
-    //         padding: var(--tab-padding);
-    //         color: var(--tab-color);
-    //         gap: var(--tab-gap);
-
-    //         // .--label{
-    //         //     font-size: var(--tab-label-size);
-    //         // }
-    //         // .--icon{
-    //         //     font-size: var(--tab-icon-size);
-    //         // }
-
-    //         &.--active{
-    //             color: var(--tab-active-color);
-    //             background: var(--tab-active);
-    //             transform: translateY(1px);
-    //             &:hover{
-    //                 background: var(--tab-active);
-    //             }
-    //         }
-    //         &:hover{
-    //             background: var(--tab-hover);
-    //         }
-    //     }
-    // }
+    
     .--tabview-body{
+        // align-items: flex-start;
         border-width: var(--tab-border-width) var(--tab-border-width) var(--tab-border-width) var(--tab-border-width);
         border-style: var(--tab-border-style);
         border-color: var(--tab-border-color);
         overflow: hidden;
         border-radius: var(--tab-body-radius);
+        width: 100%;
+        max-width: 100%;
+        min-width: 0px;
+        display: block; 
+        position: relative;
+        background: var(--tab-body);
         .--track{
             transform-style: flat;
+            will-change: transform, opacity;
+            align-items: flex-start !important;
         }
         .--content{
             width: 100%;
-            background: var(--tab-body);            
+            background: var(--tab-body, #fff);            
             padding: var(--tab-body-padding);
-            align-self: baseline;
+            // align-self: baseline;
+            display: block;
+            height: auto !important;
         }
     }
 }
 
 [color-scheme="dark"]{
-    
-    --tab-label-color: #bcbcbc;
-    --tab-label-active-color: #fff;
-
+    body{
+        --tab-label-color: #bcbcbc;
+        --tab-label-active-color: #fff;
+    }
 }

@@ -56,9 +56,12 @@ const useFx = (fx?: animationProps, ref?: RefObject<HTMLElement>) => {
 
         activeStyles = when === undefined ? { ..._f, ..._t } : when ? { ..._t } : (exit || _f);
 
+        
         const _curve = getAnimationCurve(curve);
         const transitionList: string[] = [];
         const built = buildWithStyles(activeStyles);
+        
+        // console.log(`activeStyles`, activeStyles, built)
 
         // Track what we are touching for the cleanup logic
         appliedKeys.current = Object.keys(built);
@@ -67,9 +70,22 @@ const useFx = (fx?: animationProps, ref?: RefObject<HTMLElement>) => {
         // to prevent 'transform: translate(-50%, -50%)' from being overwritten
         const finalStyles: any = { ...built };
 
+        // If we are using variables but 'translate' isn't explicitly set,
+        // we must add it so the variables actually move the element.
+        // if (finalStyles['--fx-x'] !== undefined || finalStyles['--fx-y'] !== undefined) {
+        //     if (!finalStyles.translate) {
+        //         // Fallback: This ensures standard boxes move while 
+        //         // .abc boxes still use their complex calc() from the stylesheet
+        //         finalStyles.translate = `var(--fx-x, 0px) var(--fx-y, 0px)`;
+        //     }
+        // }
+
         Object.keys(built).forEach((key) => {
             const transKey = key.startsWith('--') ? 'all' : key;
-            transitionList.push(`${transKey} ${duration}s ${_curve} ${delay}s`);
+            if (!transitionList.includes(transKey)) {
+                transitionList.push(`${transKey} ${duration}s ${_curve} ${delay}s`);
+            }
+            // transitionList.push(`${transKey} ${duration}s ${_curve} ${delay}s`);
         });
 
         return {
