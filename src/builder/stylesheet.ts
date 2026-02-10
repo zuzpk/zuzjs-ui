@@ -67,6 +67,7 @@ export const cssProps : dynamic = {
     //Radius
     "borderRadius": "border-radius",
     "r": "border-radius",
+    "radius": "border-radius",
     "borderTopLeftRadius": "border-top-left-radius",
     "rtl": "border-top-left-radius",
     "borderTopRightRadius": "border-top-right-radius",

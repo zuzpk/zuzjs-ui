@@ -31,11 +31,11 @@ export const POSITION = {
 export const Position = POSITION
 
 export const Variant = {
-    Default : `def`,
+    XSmall : `xs`,
     Small : `sm`,
     Medium : `md`,
     Large : `lg`,
-    XLarge : `xl`
+    XLarge : `xl`,
 } as const
 
 export const SORT = {
@@ -57,7 +57,7 @@ export const DATATYPE = {
 
 export const FORMVALIDATION_STYLE = {
     Dots : "DOTS"
-}
+} as const
 
 export const FORMVALIDATION = {
     IPV4 : "IPV4",
@@ -68,14 +68,14 @@ export const FORMVALIDATION = {
     MatchField : "MATCHFIELD",
     Pattern : "*",
     GreaterThan : "GREATER_THAN"
-}
+} as const
 
 export const ALERT = {
     Success : "success",
     Error : "error",
     Warning : "warning",
     Info : "info"
-}
+} as const
 
 export const TRANSITION_CURVES = {
     Spring : "SPRING",

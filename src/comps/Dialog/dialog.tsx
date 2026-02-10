@@ -55,7 +55,7 @@ const Dialog = ({
         variant: themeVariant,
         spinner: themeSpinner,
         dialog: themeDialog,
-    } = useTheme()!
+    } = useTheme(true)!
     const _variant = variant || themeDialog?.variant || themeVariant || Variant.Small
         
     const {

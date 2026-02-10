@@ -10,8 +10,9 @@ import Text from "../Text";
 import OptionItem from "./optionItem";
 import { Option, SelectHandler, SelectProps } from "./types";
 import SVGIcons from "../svgicons";
-import { POSITION } from "../../types";
+import { POSITION, Variant } from "../../types";
 import { buildClassString, css } from "../../funs/css";
+import { useTheme } from "../../hooks/useColorScheme";
 
 const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
 
@@ -41,6 +42,7 @@ const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
     const _did = useId()
     const _id = useMemo(() => name || _did, [])
     const { reposition } = usePosition(_pop as any, { direction: POSITION.Bottom, offset: 2 })
+    const { variant: themeVariant } = useTheme(true)!
 
     const {
         className,
@@ -88,7 +90,7 @@ const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
         reposition()
     }, [choosing])
 
-    return <Box className={`--select ${variant ? `--${variant}` : ``} ${name ? `--${name}` : ``} rel`.trim()} name={_id}>
+    return <Box className={`--select --${variant || themeVariant} ${name ? `--${name}` : ``} rel`.trim()} name={_id}>
 
         <Button
             data-value={value ? `string` == typeof value ? value : value.value : value || `-1`}

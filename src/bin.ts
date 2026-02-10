@@ -18,10 +18,47 @@ let isReady = false
 const cssPath = path.join(cwd, `src`, `app`, `css`)
 const zuzcssPath = path.join(cssPath, `zuz.scss`)
 const zuzmapPath = path.join(cssPath, `zuzmap.ts`)
+import pkg from "../package.json"
 
 const writeFiles = () => {
     styleGenerator.writeToDisk(zuzcssPath);
     builder.saveManifest(zuzmapPath);
+}
+
+const checkUpdate = async () => {
+    try {
+        const response = await fetch(`https://registry.npmjs.org/@zuzjs/ui/latest`);
+        const data = await response.json();
+        const latest = data.version;
+
+        if (latest !== pkg.version) {
+
+            const line1 = `  Update available! ${pc.dim(pkg.version)} → ${pc.green(latest)}  `;
+            const line2 = `  Run: ${pc.cyan(`npm i ${pkg.name}@latest`)}  `;
+
+            const getVisibleLength = (str: string) => 
+                str.replace(/\u001b\[[0-9;]*m/g, '').length;
+
+            const len1 = getVisibleLength(line1);
+            const len2 = getVisibleLength(line2);
+            const contentLen = Math.max(len1, len2);
+
+            const top = pc.yellow(`┌${"─".repeat(contentLen + 2)}┐`);
+            const bottom = pc.yellow(`└${"─".repeat(contentLen + 2)}┘`);
+            
+            const padLine = (line: string, len: number) => {
+                const padding = " ".repeat(contentLen - len);
+                return `${pc.yellow("│")} ${line}${padding} ${pc.yellow("│")}`;
+            };
+
+            console.log(`\n${top}`);
+            console.log(padLine(line1, len1));
+            console.log(padLine(line2, len2));
+            console.log(`${bottom}\n`);
+
+        }
+    } catch (e) {}
+
 }
 
 // program
@@ -100,6 +137,8 @@ program
     .description('Start ZuzJS watcher')
     .action(() => {
         
+        checkUpdate()
+
         const watcher = chokidar.watch(`.`, {
             cwd,
             ignored: [

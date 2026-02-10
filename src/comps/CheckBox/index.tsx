@@ -6,13 +6,14 @@ import Label, { LabelProps } from "../Label";
 import SVGIcons from "../svgicons";
 import { CheckboxHandler, CheckBoxProps } from "./types";
 import { InputProps } from "../Input/types";
+import { useTheme } from "../../hooks/useColorScheme";
 
 const CheckBox = forwardRef<CheckboxHandler, CheckBoxProps>((props, ref) => {
     
     const { name, required, type, value, size, variant, checked: defaultCheck, onSwitch, ...pops } = props;
     const [ checked, _setChecked ] = useState(defaultCheck || false)
-
     const bRef = useRef<HTMLInputElement>(null)
+    const { variant: themeVariant } = useTheme(true)!
     
     useImperativeHandle(ref, () => ({
         setChecked(mod, triggerChange=true){
@@ -35,7 +36,7 @@ const CheckBox = forwardRef<CheckboxHandler, CheckBoxProps>((props, ref) => {
     }))
 
     return <Label 
-        className={`--${(type || CHECKBOX.Default).toLowerCase()} ${!type || type == CHECKBOX.Default ? `--checkbox` : `--switch`} --${(variant || size) || Variant.Default} flex aic jcc ${checked ? `is-checked` : ``} rel`.trim()}
+        className={`--${(type || CHECKBOX.Default).toLowerCase()} ${!type || type == CHECKBOX.Default ? `--checkbox` : `--switch`} --${(variant || themeVariant) || Variant.Small} flex aic jcc ${checked ? `is-checked` : ``} rel`.trim()}
         {...pops as LabelProps } >
         {(!type || type == CHECKBOX.Default) && SVGIcons.check}
         <Input

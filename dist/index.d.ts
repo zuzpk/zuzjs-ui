@@ -48,7 +48,7 @@ declare const Position: {
     readonly Right: "right";
 };
 declare const Variant: {
-    readonly Default: "def";
+    readonly XSmall: "xs";
     readonly Small: "sm";
     readonly Medium: "md";
     readonly Large: "lg";
@@ -70,23 +70,23 @@ declare const DATATYPE: {
     readonly File: "FILE";
 };
 declare const FORMVALIDATION_STYLE: {
-    Dots: string;
+    readonly Dots: "DOTS";
 };
 declare const FORMVALIDATION: {
-    IPV4: string;
-    IPV6: string;
-    Email: string;
-    Uri: string;
-    Password: string;
-    MatchField: string;
-    Pattern: string;
-    GreaterThan: string;
+    readonly IPV4: "IPV4";
+    readonly IPV6: "IPV6";
+    readonly Email: "EMAIL";
+    readonly Uri: "URI";
+    readonly Password: "PASSWORD";
+    readonly MatchField: "MATCHFIELD";
+    readonly Pattern: "*";
+    readonly GreaterThan: "GREATER_THAN";
 };
 declare const ALERT: {
-    Success: string;
-    Error: string;
-    Warning: string;
-    Info: string;
+    readonly Success: "success";
+    readonly Error: "error";
+    readonly Warning: "warning";
+    readonly Info: "info";
 };
 declare const TRANSITION_CURVES: {
     readonly Spring: "SPRING";
@@ -746,10 +746,6 @@ interface DrawerHandler {
 declare const Drawer: react.ForwardRefExoticComponent<Omit<DrawerProps, "ref"> & react.RefAttributes<DrawerHandler>>;
 
 declare const SVGIcons: {
-    [ALERT.Info]: react_jsx_runtime.JSX.Element;
-    [ALERT.Warning]: react_jsx_runtime.JSX.Element;
-    [ALERT.Error]: react_jsx_runtime.JSX.Element;
-    [ALERT.Success]: react_jsx_runtime.JSX.Element;
     colorSchemeLight: react_jsx_runtime.JSX.Element;
     colorSchemeSystem: react_jsx_runtime.JSX.Element;
     colorSchemeDark: react_jsx_runtime.JSX.Element;
@@ -760,6 +756,10 @@ declare const SVGIcons: {
     eye: react_jsx_runtime.JSX.Element;
     eyeSlash: react_jsx_runtime.JSX.Element;
     check: react_jsx_runtime.JSX.Element;
+    info: react_jsx_runtime.JSX.Element;
+    warning: react_jsx_runtime.JSX.Element;
+    error: react_jsx_runtime.JSX.Element;
+    success: react_jsx_runtime.JSX.Element;
     layers: react_jsx_runtime.JSX.Element;
     play: react_jsx_runtime.JSX.Element;
     pause: react_jsx_runtime.JSX.Element;
@@ -908,7 +908,7 @@ type IconProps = Omit<BoxProps, `name`> & {
     ref?: Ref<HTMLDivElement>;
     name: string | ReactNode;
     pathCount?: number;
-    size?: ValueOf<typeof Variant>;
+    variant?: ValueOf<typeof Variant>;
     color?: string;
 };
 
@@ -1029,7 +1029,7 @@ declare const ProgressBar: react.ForwardRefExoticComponent<Omit<ProgressBarProps
 
 type RadioProps = Props<"input"> & {
     type?: ValueOf<typeof RADIO>;
-    size?: ValueOf<typeof Variant>;
+    variant?: ValueOf<typeof Variant>;
     onSwitch?: (checked: boolean, value: string | number | readonly string[]) => void;
 };
 interface RadioHandler {
@@ -1039,7 +1039,7 @@ interface RadioHandler {
 
 declare const Radio: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react.DetailedHTMLProps<react.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "ref">, keyof ZuzProps> & {
     type?: ValueOf<typeof RADIO>;
-    size?: ValueOf<typeof Variant>;
+    variant?: ValueOf<typeof Variant>;
     onSwitch?: (checked: boolean, value: string | number | readonly string[]) => void;
 } & react.RefAttributes<RadioHandler>>;
 

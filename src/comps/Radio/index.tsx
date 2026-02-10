@@ -6,16 +6,17 @@ import Input from "../Input";
 import Label, { LabelProps } from "../Label";
 import { RadioHandler, RadioProps } from "./types";
 import { InputProps } from "../Input/types";
+import { useTheme } from "../../hooks/useColorScheme";
 
 const Radio = forwardRef<RadioHandler, RadioProps>((props, _ref) => {
 
-    const { children, className, name, required, type, value, size, checked: defaultCheck, onSwitch, ...pops } = props;
+    const { children, className, name, required, type, value, variant, checked: defaultCheck, onSwitch, ...pops } = props;
     const [ checked, _setChecked ] = useState(defaultCheck || false)
-
+    const { variant: themeVariant } = useTheme(true)!
     const bRef = useRef<HTMLInputElement>(null)
 
     return <Label
-        className={`${className} --${(type || RADIO.Default).toLowerCase()} --radio${!type || type == RADIO.Default ? `` : `card`} --${size || Variant.Default} flex aic rel`.trim()}
+        className={`${className} --${(type || RADIO.Default).toLowerCase()} --radio${!type || type == RADIO.Default ? `` : `card`} --${variant || themeVariant || Variant.Small} flex aic rel`.trim()}
         {...pops as LabelProps }>
         <Input
             {...{} as InputProps}

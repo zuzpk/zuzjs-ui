@@ -7,31 +7,33 @@ import Spinner from '../Spinner';
 import { ButtonProps, ButtonState } from './types';
 import { Variant } from '../../types/enums';
 import { SPINNER } from '../Spinner/types';
+import { useTheme } from '../../hooks/useColorScheme';
 
 const Button = ({ ref, ...props} : ButtonProps) => {
 
     const { 
         reset, 
-        variant = Variant.Small, 
+        variant, 
         icon, iconSize, children, withLabel, spinner, state, disabled, ...pops } = props
     const {
         style,
         className,
         rest
     } = useBase<"button">(pops)
+    const { variant: themeVariant } = useTheme(true)!
     
     return <button
-        className={`--button --${variant} flex aic ${!reset ? `jcc` : ``} ${icon ? `ico-btn` : ``} ${className}`.trim().replace(/\s+/g, ' ')}
+        className={`--button --${variant || themeVariant} flex aic ${!reset ? `jcc` : ``} ${icon ? `ico-btn` : ``} ${className}`.trim().replace(/\s+/g, ' ')}
         style={style}
         ref={ref}
         disabled={state == ButtonState.Loading || props.skeleton?.enabled || disabled}
         {...rest}>
         
-        { state == ButtonState.Loading && <Spinner variant={variant} type={spinner || SPINNER.Simple} />}
+        { state == ButtonState.Loading && <Spinner variant={variant || themeVariant} type={spinner || SPINNER.Simple} />}
 
         { ( !state || state == ButtonState.Normal ) && <>
             {icon && <Icon
-                size={iconSize}
+                variant={iconSize}
                 name={icon} />}
 
             {withLabel === true ? <Span>{children}</Span> : children}

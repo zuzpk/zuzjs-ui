@@ -1,50 +1,40 @@
 body{
-    --button: var(--red-700);
-    --button-hover: var(--red-800);
+    --button: var(--primary, var(--red-700));
+    --button-hover: var(--primary-hover, var(--red-800));
     --button-border: 0px;
     --button-color: white;
     --button-disabled: var(--gray-200);
     --button-disabled-color: var(--gray-400);
 
-    --button-padding-sm: var(--padding-sm-x) var(--padding-sm-y);
-    --button-radius-sm: var(--radius-sm);
-    --button-font-size-sm: var(--font-size-sm);
-
-    --button-padding-md: var(--padding-md-x) var(--padding-md-y);
-    --button-radius-md: var(--radius-md);
-    --button-font-size-md: var(--font-size-md);
-
-    --button-padding-lg: var(--padding-lg-x) var(--padding-lg-y);
-    --button-radius-lg: var(--radius-lg);
-    --button-font-size-lg: var(--font-size-lg);
-
-    --button-padding-xl: var(--padding-xl-x) var(--padding-xl-y);
-    --button-radius-xl: var(--radius-xl);
-    --button-font-size-xl: var(--font-size-xl);
 }
 .--button{
 
     width: fit-content;
 
-    &.--def {
-        padding: var(--padding);
-        font-size: var(--font-size);
-        border-radius: var(--radius);
+    &.--xs {
+        padding: var(--padding-xs);
+        font-size: var(--text-xs);
+        border-radius: var(--radius-xs);
     }
     &.--sm {
-        padding: var(--button-padding-sm);
-        font-size: var(--button-font-size-sm);
-        border-radius: var(--button-radius-sm);
+        padding: var(--padding-sm);
+        font-size: var(--text-sm);
+        border-radius: var(--radius-sm);
     }
     &.--md {
-        padding: var(--button-padding-md);
-        font-size: var(--button-font-size-md);
-        border-radius: var(--button-radius-md);
+        padding: var(--padding-md);
+        font-size: var(--text-md);
+        border-radius: var(--radius-md);
     }
     &.--lg {
-        padding: var(--button-padding-lg);
-        font-size: var(--button-font-size-lg);
-        border-radius: var(--button-radius-lg);
+        padding: var(--padding-lg);
+        font-size: var(--text-lg);
+        border-radius: var(--radius-lg);
+    }
+    &.--xl {
+        padding: var(--padding-xl);
+        font-size: var(--text-xl);
+        border-radius: var(--radius-xl);
     }
 
     border: var(--button-border);

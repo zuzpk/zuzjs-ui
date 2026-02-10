@@ -8,7 +8,7 @@ import {
 } from "./stylesheet";
 import fs from "fs"
 import { dirname } from "path";
-import { isColor } from "@zuzjs/core";
+import { dynamic, isColor } from "@zuzjs/core";
 
 
 interface UtilityToken {
@@ -281,7 +281,7 @@ class StyleGenerator {
 
     public addUnitsSafely(prop: string, val: string): string {
 
-        const unitlessProps = ["opacity", "zIndex", "flex", "b", "font-weight", "fontWeight", "lineHeight"];
+        const unitlessProps = ["opacity", "zIndex", "flex", "b", "font-weight", "fontWeight", "lineHeight", "scale"];
         if (unitlessProps.includes(prop)) return val;
 
         // console.log(`addUnitsSafely`, prop, val)
@@ -318,9 +318,27 @@ class StyleGenerator {
 
         let result = "";
 
+        /** w:full */
         if (val.trim() == `full`){
             result = `100%`
         }
+
+        else if (
+            this.propMap[prop] && 
+            [`xs`, `sm`, `md`, `lg`, `xl`, `xxl`].includes(val.trim())
+        ){
+            const pval = this.propMap[prop]
+            const sizeMap : dynamic = {
+                'border-radius' : 'radius',
+                'line-height' : 'lh',
+                'font-size': 'text'
+            }
+            result = `var(--${
+                pval in sizeMap ? sizeMap[pval]
+                    : pval}-${val.trim()})`
+            // console.log(result, pval, sizeMap)
+        }
+
         // If it's a bracketed value (calc, etc.)
         else if (val.includes('[') || val.includes(']')) {
             // Swap symbols and handle variables

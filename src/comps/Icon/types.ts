@@ -5,6 +5,6 @@ export type IconProps = Omit<BoxProps, `name`> & {
     ref?: Ref<HTMLDivElement>,
     name: string | ReactNode,
     pathCount?: number,
-    size?: ValueOf<typeof Variant>,
+    variant?: ValueOf<typeof Variant>,
     color?: string
 }

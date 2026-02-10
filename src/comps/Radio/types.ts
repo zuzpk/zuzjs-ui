@@ -3,7 +3,7 @@ import { RADIO, Variant } from "../../types/enums";
 
 export type RadioProps = Props<"input"> & { 
     type?: ValueOf<typeof RADIO>,
-    size?: ValueOf<typeof Variant>,
+    variant?: ValueOf<typeof Variant>,
     onSwitch?: (checked: boolean, value: string | number | readonly string[]) => void,
 }
 
