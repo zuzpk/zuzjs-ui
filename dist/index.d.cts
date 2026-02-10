@@ -1,5 +1,5 @@
 import * as react from 'react';
-import react__default, { ElementType, ComponentPropsWithoutRef, Ref, ReactNode, FC, MouseEvent as MouseEvent$1, CSSProperties, FormEventHandler, RefObject, JSX, HTMLAttributes, ComponentPropsWithRef } from 'react';
+import react__default, { ElementType, ComponentPropsWithoutRef, Ref, ReactNode, MouseEvent as MouseEvent$1, RefObject, FC, CSSProperties, FormEventHandler, JSX, HTMLAttributes, ComponentPropsWithRef } from 'react';
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import * as _zuzjs_hooks from '@zuzjs/hooks';
 import { LineChartProps, Command } from '@zuzjs/hooks';
@@ -47,6 +47,20 @@ declare const Position: {
     readonly Left: "left";
     readonly Right: "right";
 };
+declare const ORIGIN: {
+    readonly TopLeft: "top left";
+    readonly TopRight: "top right";
+    readonly TopCenter: "top center";
+    readonly BottomLeft: "bottom left";
+    readonly BottomRight: "bottom right";
+};
+declare const OriginType: {
+    readonly TopLeft: "top left";
+    readonly TopRight: "top right";
+    readonly TopCenter: "top center";
+    readonly BottomLeft: "bottom left";
+    readonly BottomRight: "bottom right";
+};
 declare const Variant: {
     readonly XSmall: "xs";
     readonly Small: "sm";
@@ -92,6 +106,7 @@ declare const TRANSITION_CURVES: {
     readonly Spring: "SPRING";
     readonly Liquid: "LIQUID";
     readonly EaseInOut: "EASEINOUT";
+    readonly EaseOutBack: "EASEOUTBACK";
     readonly Bounce: "BOUNCE";
 };
 declare const TRANSITIONS: {
@@ -591,23 +606,31 @@ interface ContextItem {
     onSelect: () => void;
 }
 type ContextMenuProps = BoxProps & {
-    parent?: HTMLElement;
+    id?: number;
+    event?: MouseEvent$1<Element, MouseEvent> | TouchEvent;
+    parent?: RefObject<HTMLElement | null>;
+    origin?: ValueOf<typeof ORIGIN>;
     items?: ContextItem[];
     offsetX?: number;
     offsetY?: number;
     header?: ReactNode | FC;
     footer?: ReactNode | FC;
+    when?: boolean;
+    onClose?: (id: number) => void;
 };
 type MenuItemProps = ContextItem & {
     index: number;
     className: string;
 };
 interface ContextMenuHandler {
-    show: (e: MouseEvent$1<Element, MouseEvent$1> | TouchEvent, items?: ContextItem[]) => void;
+    show: (e: MouseEvent$1<Element, MouseEvent> | TouchEvent, items?: ContextItem[]) => void;
     hide: (e: MouseEvent$1 | TouchEvent) => void;
 }
 
-declare const ContextMenu: react.ForwardRefExoticComponent<Omit<ContextMenuProps, "ref"> & react.RefAttributes<ContextMenuHandler>>;
+declare const ContextMenu: {
+    ({ ref, ...props }: ContextMenuProps & {}): react_jsx_runtime.JSX.Element;
+    displayName: string;
+};
 
 type CookieConsentProps = {
     title?: string;
@@ -1697,9 +1720,25 @@ declare const useFx: (fx?: animationProps, ref?: RefObject<HTMLElement>) => {
     style: any;
 };
 
-declare const useContextMenu: (menu: RefObject<ContextMenuHandler | null>) => {
-    show: (e: MouseEvent$1<Element, MouseEvent$1> | TouchEvent, items?: ContextItem[]) => void;
-    hide: (e: MouseEvent$1 | TouchEvent) => void;
+type MorphOptions = {
+    duration?: number;
+    curve?: ValueOf<typeof TRANSITION_CURVES>;
+    borderRadius?: {
+        from: number;
+        to: number;
+    };
+    targetWidth?: number;
+};
+declare const useMorph: (sourceRef: RefObject<HTMLElement | null>, active: boolean, options?: MorphOptions) => {
+    style: any;
+    isMeasured: boolean;
+    sourceRect: DOMRect | null;
+};
+
+declare const useContextMenu: () => {
+    showContextMenu: (e: MouseEvent$1<Element, MouseEvent> | TouchEvent, items: ContextItem[], origin?: ValueOf<typeof ORIGIN>) => void;
+    showMenu: (ref: RefObject<HTMLElement | null>, items: ContextItem[], origin?: ValueOf<typeof ORIGIN>) => void;
+    hide: () => void;
 };
 
 declare const PACKAGE_NAME: string;
@@ -1717,7 +1756,6 @@ declare const buildClassString: (input: ZuzStyleString | ZuzStyleString[]) => st
  */
 declare const css: (input: ZuzStyleString | ZuzStyleString[]) => string;
 declare const buildWithStyles: (source: dynamic) => dynamic;
-declare const _buildWithStyles: (source: dynamic) => dynamic;
 declare const getAnimationCurve: (curve?: string | ValueOf<typeof TRANSITION_CURVES>) => string;
 declare const animationTransition: (transition: ValueOf<typeof TRANSITIONS>, offset?: number) => {
     from: {};
@@ -1725,4 +1763,4 @@ declare const animationTransition: (transition: ValueOf<typeof TRANSITIONS>, off
 };
 declare const getAnimationTransition: (transition: ValueOf<typeof TRANSITIONS>, to?: boolean, from?: boolean) => dynamic;
 
-export { ALERT, AVATAR, Accordion, type AccordionHandler, type AccordionProps, ActionBar, type ActionBarHandler, type ActionBarItem, type ActionBarProps, Alert, type AlertHandler, type AlertProps, AutoComplete, type AutoCompleteProps, Avatar, type AvatarHandler, type AvatarProps, Badge, type BadgeProps, Box, type BoxProps, Bubble, BubbleMediaType, type BubbleProps, BubbleStatus, Button, type ButtonHandler, type ButtonProps, ButtonState, CHART, CHECKBOX, COLORTHEME, Calendar, type CalendarProps, Chart, type ChartProps, CheckBox, type CheckBoxProps, type CheckboxHandler, CodeBlock, type CodeBlockProps, ColorScheme$1 as ColorScheme, type Column, type ContextItem, ContextMenu, type ContextMenuHandler, type ContextMenuProps, type CookieConsentProps, CookiesConsent, Cover, type CoverProps, type CropHandler, CropShape, Cropper, type CropperProps, Crumb, type CrumbItem, type CrumbProps, DATATYPE, DIALOG, DIALOG_ACTION_POSITION, DRAWER_SIDE, DatePicker, Dialog, type DialogActionHandler, type DialogHandler, type DialogProps, Drawer, type DrawerHandler, type DrawerProps, FILTER, FORMVALIDATION, FORMVALIDATION_STYLE, Fab, type FabProps, type FilterProps, Filters, Form, type FormHandler, type FormInputs, type FormProps, Group, type GroupProps, Icon, type IconProps, Image, type ImageProps, Input, type InputProps, type KeyCombination, type KeyboardKey, type KeyboardKeyProps, KeyBoardKeys as KeyboardKeys, KeysLabelMap, KeysMap, Label, type LabelProps, List, type ListItem, type ListItemObject, type ListProps, type MenuItemProps, type NetworkManagerprops, NetworkManager as NetworkStatus, type Option, type OptionItemProps, Overlay, type OverlayProps, PACKAGE_NAME, POSITION, PROGRESS, Pagination, type PaginationCallback, type PaginationPage, type PaginationPageItem, type PaginationProps, PaginationStyle, Password, type PasswordProps, PinInput, type PinInputProps, Position, ProgressBar, type ProgressBarProps, type ProgressHandler, type Props, RADIO, Radio, type RadioHandler, type RadioProps, type Row, type RowSelectCallback, SHEET, SHEET_ACTION_POSITION, SKELETON, SLIDER, SORT, SPINNER, ScrollView, type ScrollViewProps, Search, type SearchHandler, type SearchProps, type Segment, type SegmentController, type SegmentItemProps, type SegmentProps, Select, type SelectHandler, type SelectProps, Segmented as SelectTabs, Sheet, type SheetHandler, type SheetProps, type Skeleton, Slider, type SliderProps, Span, type SpanProps, Spinner, type SpinnerProps, Status, Switch, TRANSITIONS, TRANSITION_CURVES, type Tab, type TabBodyProps, type TabProps, TabView, type TabViewHandler, type TabViewProps, ForwardedTable as Table, type TableController, type TableProps, type TableSortCallback, Text, type TextAreaProps, TextWheel, type TextWheelHandler, type TextWheelProps, TextArea as Textarea, ThemeProvider, ToastDefaultTitle, type ToastProps, Toast as ToastProvider, ToastType, ToolTip, type ToolTipProps, type TreeItemHandler, type TreeItemProps, type TreeNode, type TreeNodeIcons, TreeView, type TreeViewHandler, type TreeViewProps, type Value, type ValueOf, Variant, type ZuzCommonValues, type ZuzProps, type ZuzStyleString, _buildWithStyles, type animationProps, animationTransition, buildClassString, buildWithStyles, cleanProps, css, type cssShortKey, type cssShortKeys, type dynamic, getAnimationCurve, getAnimationTransition, getZuzMap, isKeyCombination, type parallaxEffectProps, setZuzMap, splitAtoms, useBase, useContextMenu, useDialog, useDrawer, useFx, usePosition, useToast };
+export { ALERT, AVATAR, Accordion, type AccordionHandler, type AccordionProps, ActionBar, type ActionBarHandler, type ActionBarItem, type ActionBarProps, Alert, type AlertHandler, type AlertProps, AutoComplete, type AutoCompleteProps, Avatar, type AvatarHandler, type AvatarProps, Badge, type BadgeProps, Box, type BoxProps, Bubble, BubbleMediaType, type BubbleProps, BubbleStatus, Button, type ButtonHandler, type ButtonProps, ButtonState, CHART, CHECKBOX, COLORTHEME, Calendar, type CalendarProps, Chart, type ChartProps, CheckBox, type CheckBoxProps, type CheckboxHandler, CodeBlock, type CodeBlockProps, ColorScheme$1 as ColorScheme, type Column, type ContextItem, ContextMenu, type ContextMenuHandler, type ContextMenuProps, type CookieConsentProps, CookiesConsent, Cover, type CoverProps, type CropHandler, CropShape, Cropper, type CropperProps, Crumb, type CrumbItem, type CrumbProps, DATATYPE, DIALOG, DIALOG_ACTION_POSITION, DRAWER_SIDE, DatePicker, Dialog, type DialogActionHandler, type DialogHandler, type DialogProps, Drawer, type DrawerHandler, type DrawerProps, FILTER, FORMVALIDATION, FORMVALIDATION_STYLE, Fab, type FabProps, type FilterProps, Filters, Form, type FormHandler, type FormInputs, type FormProps, Group, type GroupProps, Icon, type IconProps, Image, type ImageProps, Input, type InputProps, type KeyCombination, type KeyboardKey, type KeyboardKeyProps, KeyBoardKeys as KeyboardKeys, KeysLabelMap, KeysMap, Label, type LabelProps, List, type ListItem, type ListItemObject, type ListProps, type MenuItemProps, type MorphOptions, type NetworkManagerprops, NetworkManager as NetworkStatus, ORIGIN, type Option, type OptionItemProps, OriginType, Overlay, type OverlayProps, PACKAGE_NAME, POSITION, PROGRESS, Pagination, type PaginationCallback, type PaginationPage, type PaginationPageItem, type PaginationProps, PaginationStyle, Password, type PasswordProps, PinInput, type PinInputProps, Position, ProgressBar, type ProgressBarProps, type ProgressHandler, type Props, RADIO, Radio, type RadioHandler, type RadioProps, type Row, type RowSelectCallback, SHEET, SHEET_ACTION_POSITION, SKELETON, SLIDER, SORT, SPINNER, ScrollView, type ScrollViewProps, Search, type SearchHandler, type SearchProps, type Segment, type SegmentController, type SegmentItemProps, type SegmentProps, Select, type SelectHandler, type SelectProps, Segmented as SelectTabs, Sheet, type SheetHandler, type SheetProps, type Skeleton, Slider, type SliderProps, Span, type SpanProps, Spinner, type SpinnerProps, Status, Switch, TRANSITIONS, TRANSITION_CURVES, type Tab, type TabBodyProps, type TabProps, TabView, type TabViewHandler, type TabViewProps, ForwardedTable as Table, type TableController, type TableProps, type TableSortCallback, Text, type TextAreaProps, TextWheel, type TextWheelHandler, type TextWheelProps, TextArea as Textarea, ThemeProvider, ToastDefaultTitle, type ToastProps, Toast as ToastProvider, ToastType, ToolTip, type ToolTipProps, type TreeItemHandler, type TreeItemProps, type TreeNode, type TreeNodeIcons, TreeView, type TreeViewHandler, type TreeViewProps, type Value, type ValueOf, Variant, type ZuzCommonValues, type ZuzProps, type ZuzStyleString, type animationProps, animationTransition, buildClassString, buildWithStyles, cleanProps, css, type cssShortKey, type cssShortKeys, type dynamic, getAnimationCurve, getAnimationTransition, getZuzMap, isKeyCombination, type parallaxEffectProps, setZuzMap, splitAtoms, useBase, useContextMenu, useDialog, useDrawer, useFx, useMorph, usePosition, useToast };

@@ -4,4 +4,5 @@ export { default as useDialog } from './useDialog';
 export { default as useToast } from './useToast';
 export { default as useDrawer } from './useDrawer';
 export { default as useFx } from "./useFx"
+export { default as useMorph, type MorphOptions } from "./useMorph"
 export { default as useContextMenu } from "./useContextMenu"

@@ -1,58 +1,80 @@
-"use client"
-import { createElement, forwardRef, MouseEvent, useImperativeHandle, useRef, useState } from "react";
-import { useBase } from "../../hooks";
-import { TRANSITION_CURVES } from "../../types/enums";
+import { createElement, Ref, useImperativeHandle, useRef, useState, MouseEvent as ReactMouseEvent, useEffect } from "react"
+import { ContextItem, ContextMenuHandler, ContextMenuProps, MenuItemProps } from "./types"
+import useBase from "../../hooks/useBase";
 import Box from "../Box";
+import { BoxProps, ORIGIN, TRANSITION_CURVES } from "../../types";
+import { useFx, useMorph } from "../../hooks";
 import MenuItem from "./item";
-import { ContextItem, ContextMenuHandler, ContextMenuProps, MenuItemProps } from "./types";
-import { BoxProps } from "../../types";
-import { useAnchorPosition } from "@zuzjs/hooks";
+import { useAnchorPosition, useDelayed, useMounted } from "@zuzjs/hooks";
 
-const ContextMenu = forwardRef<ContextMenuHandler, ContextMenuProps>((props, ref ) => {
+const ContextMenu = ({
+    ref,
+    ...props
+} : ContextMenuProps & {
+    // ref?: Ref<ContextMenuHandler>
+}) => {
+
+    const { 
+        id, 
+        as, 
+        offsetX, 
+        offsetY, 
+        parent, 
+        event,
+        when: isVisible,
+        items: _items, header, footer, 
+        origin :  preferredAnchor = ORIGIN.TopRight, 
+        ...pops 
+    } = props;
     
-    const { as, offsetX, offsetY, parent, items: _items, header, footer, ...pops } = props;
+    const [visible, setVisible] = useState(false);
+    const [ items, setItems ] = useState<ContextItem[]>(_items || [])
+    const { position, targetRef, calculatedAnchor } = useAnchorPosition(
+        parent?.current!, 
+        event as any, 
+        { offsetX, offsetY, preferredAnchor }
+    )
+
+    // const { 
+    //     style: morphStyle,
+    //     isMeasured,
+    //     sourceRect, 
+    // } = useMorph(parent || { current: null }, isVisible ?? mounted);
+
+    useEffect(() => {
+        if (isVisible && position.top !== 0) {
+            setVisible(true);
+        } else if (!isVisible) {
+            setVisible(false);
+        }
+    }, [isVisible, position]);
 
     const {
         className,
         style,
         rest
     } = useBase(pops);
-    const event = useRef<MouseEvent>(undefined)
-    const [ visible, setVisible ] = useState(false);
-    // const [_position, setPosition] = useState<{ x: number, y: number } | null>(null);
-    // const [_parent, setParent] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
-    const [ items, setItems ] = useState<ContextItem[]>(_items || [])
-    const { position, targetRef } = useAnchorPosition(parent!, event.current as any, { offsetX, offsetY })
 
-    useImperativeHandle(ref, () => ({
-      show: (e: MouseEvent<Element, MouseEvent> | TouchEvent, menuItems?: ContextItem[]) => {
-
-        if ( !parent ) event.current = e as any;
-        
-        if (menuItems){
-            setItems(menuItems)
-        }
-        setVisible(true)
-      },  
-      hide: (e: MouseEvent | TouchEvent) => setVisible(false),  
-    }))
+    const contextAnimation = useFx({
+        from: { opacity: 0, scale: 0.8, y: -10 },
+        to: { opacity: 1, scale: 1, y: 0 },
+        curve: TRANSITION_CURVES.EaseInOut,
+        duration: 0.05,
+        when: visible
+    })
 
     return <Box
         className={`--contextmenu abs flex cols ${className}`.trim()}
         aria-hidden={!visible}
         style={{
             ...style,
+            ...contextAnimation.style,
             top: position.top,
-            left: position.left
+            left: position.left,
+            // visibility: isMeasured ? `visible` : `hidden`,
+            overflow: `hidden`,
+            transformOrigin: calculatedAnchor,
         }}
-        fx={{
-            from: { opacity: 0, y: 20 },
-            to: { opacity: 1, y: 0 },
-            curve: TRANSITION_CURVES.EaseInOut,
-            duration: 0.05,
-            when: visible
-        }}
-        ref={targetRef}
         {...rest as BoxProps}>
         {typeof header == `function` ? createElement(header) : header}
         {items.map((item, index) => <MenuItem
@@ -61,7 +83,8 @@ const ContextMenu = forwardRef<ContextMenuHandler, ContextMenuProps>((props, ref
         {typeof footer == `function` ? createElement(footer) : footer}
     </Box>
 
-});
+
+}
 
 ContextMenu.displayName = `Zuz.ContextMenu`
 

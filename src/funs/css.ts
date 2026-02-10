@@ -110,45 +110,6 @@ export const buildWithStyles = (source: dynamic): dynamic => {
     return _;
 };
 
-export const _buildWithStyles = (source: dynamic): dynamic => {
-    const _: dynamic = {};
-    
-    if (Object.keys(source).length > 0) {
-        for (const _prop in source) {
-            let prop = _prop as cssShortKey;
-            let value = source[prop];
-
-            // Check if it's a CSS Variable
-            if (prop.startsWith('--')) {
-                // Just pass it through directly to the style object
-                _[prop] = value;
-                continue; 
-            }
-
-            let targetProp = prop in cssWithKeys ? cssWithKeys[prop].toString() : prop;
-
-            // MAP TO INDIVIDUAL PROPERTIES INSTEAD OF TRANSFORM STRING
-            if (cssTransformKeys.includes(targetProp)) {
-                // If it's x/y, map to 'translate' property components
-                if (targetProp === 'translateX' || targetProp === 'x') {
-                    _.translate = `${styleGenerator.addUnitsToComplexValue(prop, value)} ${_.translate?.split(' ')[1] || '0px'}`;
-                } else if (targetProp === 'translateY' || targetProp === 'y') {
-                    _.translate = `${_.translate?.split(' ')[0] || '0px'} ${styleGenerator.addUnitsToComplexValue(prop, value)}`;
-                } else {
-                    // For scale, rotate, etc.
-                    _[targetProp.replace('translate', 'translate')] = styleGenerator.addUnitsToComplexValue(prop, value);
-                }
-            } else if (cssFilterKeys.includes(targetProp)) {
-                // Keep filters as is or handle similarly
-                _[targetProp] = styleGenerator.addUnitsToComplexValue(prop, value);
-            } else {
-                _[targetProp] = value;
-            }
-        }
-    }
-    return _;
-};
-
 export const getAnimationCurve = ( curve?: string | ValueOf<typeof TRANSITION_CURVES> ): string => {
 
     if ( !curve ) return `linear`
@@ -164,6 +125,9 @@ export const getAnimationCurve = ( curve?: string | ValueOf<typeof TRANSITION_CU
         case TRANSITION_CURVES.EaseInOut:
             // return `cubic-bezier(0.42, 0, 0.58, 1)`
             return `ease-in-out`
+        case TRANSITION_CURVES.EaseOutBack:
+            // return `cubic-bezier(0.42, 0, 0.58, 1)`
+            return `ease-out-back`
         default:
             return `linear`
     }

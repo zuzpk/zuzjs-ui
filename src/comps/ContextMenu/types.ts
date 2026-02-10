@@ -1,5 +1,5 @@
-import { FC, MouseEvent, ReactNode } from "react";
-import { BoxProps } from "../../types";
+import { FC, MouseEvent as ReactMouseEvent, ReactNode, RefObject } from "react";
+import { BoxProps, ORIGIN, ValueOf } from "../../types";
 
 export interface ContextItem {
     label: string;
@@ -12,12 +12,17 @@ export interface ContextItem {
 }
 
 export type ContextMenuProps = BoxProps & {
-    parent?: HTMLElement,
+    id?: number,
+    event?: ReactMouseEvent<Element, MouseEvent> | TouchEvent,
+    parent?: RefObject<HTMLElement | null>,
+    origin?: ValueOf<typeof ORIGIN>
     items?: ContextItem[],
     offsetX?: number,
     offsetY?: number,
     header?: ReactNode | FC,
     footer?: ReactNode | FC,
+    when?: boolean,
+    onClose?: (id: number) => void
 }
 
 export type MenuItemProps = ContextItem & {
@@ -26,6 +31,6 @@ export type MenuItemProps = ContextItem & {
 }
 
 export interface ContextMenuHandler {
-    show: (e: MouseEvent<Element, MouseEvent> | TouchEvent, items?: ContextItem[]) => void;
-    hide: (e: MouseEvent | TouchEvent) => void;
+    show: (e: ReactMouseEvent<Element, MouseEvent> | TouchEvent, items?: ContextItem[]) => void;
+    hide: (e: ReactMouseEvent | TouchEvent) => void;
 }

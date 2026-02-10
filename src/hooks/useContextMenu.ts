@@ -1,30 +1,40 @@
-"use client"
-import { MouseEvent, RefObject, useEffect } from "react";
-import { ContextItem, ContextMenuHandler } from "../comps";
+import { MouseEvent as ReactMouseEvent, RefObject, useContext } from "react";
+import { LayersContext } from "../comps/Layers";
+import { ContextItem } from "../comps";
+import { ORIGIN, ValueOf } from "../types";
 
-const useContextMenu = (menu: RefObject<ContextMenuHandler | null>) => {
+const useContextMenu = () => {
+    const ctx = useContext(LayersContext);
+    if (!ctx) throw new Error('useContextMenu must be used inside <ThemeProvider>');
 
-    const show = (e : MouseEvent<Element, MouseEvent> | TouchEvent, items?: ContextItem[]) => {
+    // For Right Click
+    const showContextMenu = (
+        e: ReactMouseEvent<Element, MouseEvent> | TouchEvent, 
+        items: ContextItem[],
+        origin?: ValueOf<typeof ORIGIN>
+    ) => {
         e.preventDefault();
-        e.stopPropagation();
-        setTimeout(() => {
-            menu.current?.show(e as any, items);
-        }, 0);
-    }
+        ctx.openMenu({ 
+            event: e, 
+            items,
+            origin
+        });
+    };
 
-    const hide = (e : MouseEvent | TouchEvent) => {
-        menu.current?.hide(e);
-    }
+    // For Dropdown Buttons
+    const showMenu = (
+        ref: RefObject<HTMLElement | null>, 
+        items: ContextItem[],
+        origin?: ValueOf<typeof ORIGIN>
+    ) => {
+        ctx.openMenu({ 
+            parent: ref, 
+            items,
+            origin: origin || ORIGIN.TopCenter
+        });
+    };
 
-    useEffect(() => {
-        document.addEventListener("click", hide as EventListener);
-        return () => {
-            document.removeEventListener("click", hide as EventListener);
-        }
-    }, [menu])
+    return { showContextMenu, showMenu, hide: ctx.clear };
+};
 
-    return { show, hide };
-
-}
-
-export default useContextMenu;
+export default useContextMenu

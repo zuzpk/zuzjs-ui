@@ -1,3 +1,4 @@
+import { AnchorType } from "@zuzjs/hooks";
 import { dynamic } from "./shared";
 
 export const AVATAR = {
@@ -29,6 +30,9 @@ export const POSITION = {
     Right : `right`
 } as const
 export const Position = POSITION
+
+export const ORIGIN = AnchorType
+export const OriginType = ORIGIN
 
 export const Variant = {
     XSmall : `xs`,
@@ -84,6 +88,7 @@ export const TRANSITION_CURVES = {
     // EaseOut = "EASEOUT",
     Liquid : "LIQUID",
     EaseInOut : "EASEINOUT",
+    EaseOutBack: "EASEOUTBACK",
     Bounce : "BOUNCE",
     // Linear = "LINEAR",
     // StepStart = "STEPSTART",

@@ -9,6 +9,7 @@ import builder from "./builder"
 import styleGenerator from "./builder/style-generator";
 import { cssDirect, cssProps } from "./builder/stylesheet";
 import { dynamic } from "./types/shared";
+import { fileURLToPath } from "url";
 
 const options = program.opts();
 const cwd = process.cwd();
@@ -18,7 +19,6 @@ let isReady = false
 const cssPath = path.join(cwd, `src`, `app`, `css`)
 const zuzcssPath = path.join(cssPath, `zuz.scss`)
 const zuzmapPath = path.join(cssPath, `zuzmap.ts`)
-import pkg from "../package.json"
 
 const writeFiles = () => {
     styleGenerator.writeToDisk(zuzcssPath);
@@ -27,11 +27,17 @@ const writeFiles = () => {
 
 const checkUpdate = async () => {
     try {
+
+        const __dirname = path.dirname(fileURLToPath(import.meta.url))
+        const pkgPath = path.resolve(__dirname, `../package.json`)
+
+        const pkg = JSON.parse(fs.readFileSync(pkgPath, `utf8`))
+
         const response = await fetch(`https://registry.npmjs.org/@zuzjs/ui/latest`);
         const data = await response.json();
-        const latest = data.version;
+        const latest = data.version.trim();
 
-        if (latest !== pkg.version) {
+        if (latest !== pkg.version.trim()) {
 
             const line1 = `  Update available! ${pc.dim(pkg.version)} → ${pc.green(latest)}  `;
             const line2 = `  Run: ${pc.cyan(`npm i ${pkg.name}@latest`)}  `;
