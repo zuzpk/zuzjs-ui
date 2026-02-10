@@ -18,25 +18,13 @@ export const ToastDefaultTitle : dynamic = {
   default : "Notice"
 }
 
-export interface ToastData {
-  id: number;
+export interface ToastProps {
+  id?: number;
   type: ToastType;
   icon?: string;
   title?: string | ReactNode;
   message?: string | ReactNode;
   duration?: number;
+  onClose?: (id: number) => void,
   onClick?: () => void;
-}
-
-export interface ToastController {
-  add: (toast: Omit<ToastData, 'id'>) => number;
-  remove: (id: number) => void;
-  clear: () => void;
-}
-
-export interface ToastContextType extends ToastController {
-  fx: {
-    curve: ValueOf<typeof TRANSITION_CURVES>,
-    duration: number
-  }
 }

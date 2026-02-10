@@ -3,6 +3,8 @@ import { DRAWER_SIDE, TRANSITION_CURVES } from "../../types/enums";
 import { BoxProps, ValueOf } from "../../types";
 
 export type DrawerProps = BoxProps & {
+    id?: number,
+    index?: number,
     as?: string,
     speed?: number,
     from?: ValueOf<typeof DRAWER_SIDE>,
@@ -10,7 +12,7 @@ export type DrawerProps = BoxProps & {
     prerender?: boolean,
     margin?: number,
     animation?: ValueOf<typeof TRANSITION_CURVES>,
-    onClose?: () => void,
+    onClose?: (id: number) => void,
 }
 
 export interface DrawerHandler {

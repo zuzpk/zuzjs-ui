@@ -21,13 +21,6 @@ export type DialogProps = ZuzProps & {
     onShow?: () => void,
     onHide?: () => void,
 }
-
-export interface DialogController {
-  add: (toast: Omit<DialogProps, 'id'>) => number;
-  remove: (id: number) => void;
-  clear: () => void;
-}
-
 export interface DialogActionHandler {
     key?: string,
     label: string, 
@@ -48,11 +41,4 @@ export interface DialogHandler {
     error: ( message : string | ReactNode, duration?: number ) => void,
     warn: ( message : string | ReactNode, duration?: number ) => void,
     hide: () => void,
-}
-
-export interface DialogContextType extends DialogController {
-  fx: {
-    curve: ValueOf<typeof TRANSITION_CURVES>,
-    duration: number
-  }
 }

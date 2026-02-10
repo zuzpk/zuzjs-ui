@@ -28,6 +28,7 @@ body{
     overflow-x: hidden;
     overflow-y: auto;   
     will-change: transform, opacity;
+    pointer-events: auto !important;
     &.--left{
         left: calc(0px + var(--m));    
         @extend .drawer-h;

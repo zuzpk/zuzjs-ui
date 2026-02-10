@@ -1,75 +1,95 @@
-"use client"
-import { createContext, FC, forwardRef, ReactNode, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { FC, useContext, useEffect } from "react";
 import Box from "../Box";
-import Toast from "./toast";
-import { ToastContextType, ToastController, ToastData, ToastType } from "./types";
-import { TRANSITION_CURVES, ValueOf } from "../../types";
+import Icon from "../Icon";
+import Text from "../Text";
+import { ToastProps, ToastDefaultTitle } from "./types";
+import { useDelayed } from "@zuzjs/hooks"
+import { TRANSITION_CURVES, TRANSITIONS } from "../../types";
+import { useTheme } from "../../hooks/useColorScheme";
+import { useFx } from "../../hooks";
 
-export const ToastContext = createContext<ToastContextType | null>(null);
+const Toast : FC<ToastProps & {
+    index: number,
+}> = ({ index, id, type, icon, title, message, duration, onClose }) => {
 
-const ToastRenderer = forwardRef<ToastController>((props, ref) => {
+    const mounted = useDelayed()
+    const expired = useDelayed(((duration || 4) - 1) * 1000)
+    const {
+        toast: themeToast
+    } = useTheme(true)!
 
-    const [toasts, setToasts] = useState<ToastData[]>([]);
-    
-    const id = useRef(0)
-    const nextId = () => ++id.current;
+    // const toastAnimation = useFx({
+    //     from: { left: `50%`, x: `-50%`, top: -100, scale: 1, opacity: 0.5 },
+    //     to: { left: `50%`, x: `-50%`, top: 25, scale: 1, opacity: 1 },
+    //     // exit: { left: `50%`, x: `-50%`, top: 25, scale: 0, opacity: 0 },
+    //     curve: themeToast?.curve || TRANSITION_CURVES.EaseInOut,
+    //     duration: themeToast?.duration || 0.5,
+    //     when: mounted && !expired
+    // })
 
-    useImperativeHandle(ref, () => ({
-        add(toast: Omit<ToastData, 'id'>) {
+    const toastAnimation = useFx({
+        when: mounted && !expired,
+        duration: themeToast?.duration || 0.2,
+        transition: TRANSITIONS.SlideInTop,
+        curve: themeToast?.curve || TRANSITION_CURVES.EaseInOut,
+    })
 
-            const toastId = nextId();
-            const fullToast: ToastData = { id: toastId, ...toast };
-            
-            setToasts(prev => [fullToast, ...prev.slice(0, 4)]); // max 5
-
-            if (toast.duration !== Infinity && toast.type != ToastType.Promise) {
-                setTimeout(() => this.remove(toastId), ((toast.duration ?? 4) + 1) * 1000);
-            }
-
-            return toastId
-
-        },
-        remove(id: number) {
-            setToasts(t => t.filter(toast => toast.id !== id));
-        },
-        clear(){
-            setToasts([])
+    useEffect(() => {
+        console.log(`--expired`, expired, id)
+        if ( expired && id ) {
+            onClose?.(id)
         }
-    }))
+    }, [expired, id])
 
-    return <Box as={`--toast-wrapper rel`}>
-        {toasts.map((toast, i) => <Toast key={`toast-${toast.id}`} index={i} {...toast} />)}
+    return <Box 
+        as={`--snack --${type} --snack-${id} ${index > 2 ? `--snacked` : ``} flex aic`}
+        style={toastAnimation.style}>
+        <Box 
+            as={`--ico flex aic jcc`}
+            fx={{
+                transition: TRANSITIONS.ScaleIn,
+                curve: TRANSITION_CURVES.Spring,
+                delay: 0.2,
+                when: mounted && !expired
+            }}>
+            { icon ? <Icon 
+                name={icon} 
+                fx={{
+                    transition: TRANSITIONS.ScaleIn,
+                    curve: TRANSITION_CURVES.Spring,
+                    delay: 0.4,
+                    duration: 0.5,
+                    when: mounted && !expired
+                }} /> : <Box 
+                    as={`--no-icon`} 
+                    fx={{
+                        transition: TRANSITIONS.ScaleIn,
+                        curve: TRANSITION_CURVES.Spring,
+                        delay: 0.4,
+                        duration: 0.5,
+                        when: mounted && !expired
+                    }} /> }
+        </Box>
+        <Box as={`--meta`}>
+            <Text 
+                as={`--tt`}
+                fx={{
+                    transition: TRANSITIONS.SlideInTop,
+                    curve: TRANSITION_CURVES.Spring,
+                    delay: 0.3,
+                    when: mounted
+                }}>{title || ToastDefaultTitle[type]}</Text>
+            <Text 
+                as={`--tm`} 
+                fx={{
+                    transition: TRANSITIONS.SlideInTop,
+                    curve: TRANSITION_CURVES.Spring,
+                    delay: 0.4,
+                    duration: 0.5,
+                    when: mounted
+                }}>{message}</Text>
+        </Box>
     </Box>
-})
+}
 
-const ToastProvider: FC<{ 
-    children: ReactNode,
-    fx?: {
-        curve: ValueOf<typeof TRANSITION_CURVES>,
-        duration: number
-    }
-}> = forwardRef(({ children, fx }, ref) => {
-
-    const toastController = useRef<ToastController>(null)
-
-
-
-    const contextValue = useMemo(() => ({ 
-        add:  (toast: Omit<ToastData, 'id'>) : number => toastController.current?.add(toast)!, 
-        remove: (id: number) => toastController.current?.remove(id)!, 
-        clear: () => toastController.current?.clear()!, 
-        fx: fx || {
-            curve: TRANSITION_CURVES.EaseInOut,
-            duration: 0.4
-        }
-    }), [toastController.current]);
-
-    return <ToastContext.Provider value={contextValue}>
-        { children }
-        <ToastRenderer ref={toastController} />
-    </ToastContext.Provider>
-
-})
-
-export default ToastProvider
-
+export default Toast;

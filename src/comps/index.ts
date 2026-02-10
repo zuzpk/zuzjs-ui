@@ -53,8 +53,7 @@ export * from './Crumb/types';
 
 export { default as DatePicker } from './DatePicker';
 
-export { default as DialogProvider } from "./Dialog"
-export { default as Dialog } from "./Dialog/dialog"
+export { default as Dialog } from "./Dialog"
 export type * from "./Dialog/types"
 
 export { default as Drawer } from './Drawer';

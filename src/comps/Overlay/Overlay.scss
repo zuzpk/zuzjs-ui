@@ -12,4 +12,5 @@ body {
     background: var(--overlay);
     z-index: var(--max-z-index);
     backdrop-filter: blur(var(--overlay-blur));
+    pointer-events: auto !important;
 }

@@ -1,15 +1,19 @@
 "use client"
 import { useContext } from "react";
-import { ToastContext } from "../comps/Toast";
-import { ToastData, ToastType } from "../comps/Toast/types";
+// import { ToastContext } from "../comps/Toast";
+import { ToastProps, ToastType } from "../comps/Toast/types";
+import { LayersContext } from "../comps/Layers";
 
 const useToast = () => {
 
-    const ctx = useContext(ToastContext);
+    const ctx = useContext(LayersContext);
 
     if (!ctx) throw new Error('useToast must be used inside <ToastProvider>');
 
-    const base = (type: ToastData['type'], data: Omit<ToastData, 'id' | 'type'>) => ctx.add({ ...data, type })
+    const base = (type: ToastProps['type'], data: Omit<ToastProps, 'id' | 'type'>) => ctx.add({ 
+        type: `toast`,
+        props: { ...data, type }
+    })
 
     const clearAll = () => ctx.clear()
 
