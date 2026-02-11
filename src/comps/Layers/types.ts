@@ -19,5 +19,6 @@ export interface LayersController {
 }
 
 export interface LayersContextType extends LayersController {
-
+  depth: number;
+  isSubLayer: boolean;
 }

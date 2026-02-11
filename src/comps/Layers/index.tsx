@@ -1,4 +1,4 @@
-import { createContext, FC, ReactNode, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { createContext, FC, ReactNode, Ref, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { LayerItem, LayersContextType, LayersController, LayerType } from "./types";
 import Box from "../Box";
 import Dialog from "../Dialog";
@@ -21,12 +21,22 @@ const LayersRenderer = ({
     ref: Ref<LayersController>
 }) => {
 
+    const parentContext = useContext(LayersContext);
+    const depth = useRef(0);
+
     const [activeMenu, setActiveMenu] = useState<LayerItem | null>(null);
     const [menuVisible, setMenuVisible] = useState(false);
     const [layers, setLayers] = useState<LayerItem[]>([]);
     const mounted = useDelayed()
     const id = useRef(0)
     const nextId = () => ++id.current;
+
+    useEffect(() => {
+        let current = parentContext;
+        while (current?.isSubLayer) {
+            depth.current++;
+        }
+    }, [parentContext]);
 
     const closeMenu = () => {
         setMenuVisible(false); // Trigger exit animation
@@ -76,53 +86,48 @@ const LayersRenderer = ({
 
     if ( !mounted ) return null
 
-
-    return createPortal(<Box as={`--zuz-layers-wrapper fixed fill nope`}>
+    const dialogs = layers.filter(l => l.type == `dialog`)
+    const drawers = layers.filter(l => l.type == `drawer`)
+    const toasts = layers.filter(l => l.type == `toast`)
+            
+    return createPortal(<Box as={`--zuz-layers-wrapper fixed fill nope`} style={{ zIndex: 9999 + depth.current }}>
 
         {/* Dialogs */}
-        <Box as={`--zuz-layer-dialogs fixed fill nope`}>
-            {layers
-            .filter(l => l.type == `dialog`)
-            .map((layer, i) => <Dialog 
+        {dialogs.length > 0 && <Box as={`--zuz-layer-dialogs fixed fill nope`}>
+            {dialogs.map((layer, i) => <Dialog 
                 onClose={onClose}
                 key={`layer-${layer.type}-${layer.id}`} 
                 index={i} 
                 {...{ id: layer.id, ...layer.props } as DialogProps} />)}
-        </Box>
+        </Box>}
 
         {/* Drawers */}
-        <Box as={`--zuz-layer-drawers fixed fill nope`}>
-            {layers
-            .filter(l => l.type == `drawer`)
-            .map((layer, i) => <Drawer
+        {drawers.length > 0 && <Box as={`--zuz-layer-drawers fixed fill nope`}>
+            {drawers.map((layer, i) => <Drawer
                 onClose={onClose}
                 key={`layer-${layer.type}-${layer.id}`} 
                 index={i} 
                 {...{ id: layer.id, ...layer.props } as DrawerProps} />)}
-        </Box>
+        </Box>}
         
         {/* Toasts */}
-        <Box as={`--zuz-layer-toasts fixed fill nope`}>
-            {layers
-            .filter(l => l.type == `toast`)
-            .map((layer, i) => <Toast
+        {toasts.length > 0 && <Box as={`--zuz-layer-toasts fixed fill nope`}>
+            {toasts.map((layer, i) => <Toast
                 onClose={onClose}
                 key={`layer-${layer.type}-${layer.id}`} 
                 index={i} 
                 {...{ id: layer.id, ...layer.props } as ToastProps} />)}
-        </Box>
+        </Box>}
 
         {/* Context Menu / Dropdown Zone */}
-        <Box as={`--zuz-layer-menus fixed fill nope`}>
-            {activeMenu && (
-                <ContextMenu
-                    key={`menu-${activeMenu.id}`}
-                    onClose={closeMenu}
-                    when={menuVisible}
-                    {...(activeMenu.props as ContextMenuProps)}
-                />
-            )}
-        </Box>
+        {activeMenu && <Box as={`--zuz-layer-menus fixed fill nope`}>
+            <ContextMenu
+                key={`menu-${activeMenu.id}`}
+                onClose={closeMenu}
+                when={menuVisible}
+                {...(activeMenu.props as ContextMenuProps)}
+            />
+        </Box>}
 
     </Box>,
     document.body)
@@ -135,6 +140,9 @@ const LayersProvider : FC<{
     children
 }) => {
 
+    const parentContext = useContext(LayersContext);
+    const currentDepth = (parentContext?.depth ?? 0) + (parentContext ? 1 : 0);
+
     const LayersController = useRef<LayersController>(null)
 
     const contextValue = useMemo(() => ({ 
@@ -144,7 +152,9 @@ const LayersProvider : FC<{
         openMenu: (props: ContextMenuProps) => LayersController.current?.openMenu(props)!,
         remove: (id: number) => LayersController.current?.remove(id)!, 
         clear: () => LayersController.current?.clear()!, 
-    }), [LayersController.current]);
+        depth: currentDepth,
+        isSubLayer: !!parentContext,
+    }), [LayersController.current, parentContext]);
 
     return <LayersContext.Provider value={contextValue}>
         {children}

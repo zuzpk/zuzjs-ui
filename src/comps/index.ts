@@ -81,6 +81,7 @@ export { default as KeyboardKeys } from './KeyboardKeys';
 export * from './KeyboardKeys/types';
 
 export { default as Label, type LabelProps } from './Label';
+export { default as LayersProvider } from './Layers';
 
 export { default as List } from './List';
 export * from './List/types';
