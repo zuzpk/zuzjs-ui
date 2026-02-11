@@ -1516,7 +1516,7 @@ declare const TabView: {
 };
 
 interface TerminalHandler {
-    push: (line: TerminalLine | string) => void;
+    write: (line: TerminalLine | string) => void;
     clear: () => void;
 }
 type TerminalLine = {

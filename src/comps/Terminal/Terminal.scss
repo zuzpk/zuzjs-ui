@@ -5,11 +5,12 @@ body{
     --terminal-padding: 5px;
     --terminal-radius: 5px;
     --terminal-color: #eeeeee;
+    --terminal-max-height: 100px;
 }
 .--zuz-terminal {
     background: var(--terminal-primary);
     border: var(--terminal-border);
-    
+    font-family: monospace !important;
     border-radius: var(--terminal-radius);
 
     &.--sm{
@@ -30,14 +31,16 @@ body{
     
     .--terminal-log{
         flex: 1;
+        overflow-x: hidden;
         overflow-y: auto;
         margin-bottom: 10px;
-        min-height: 100px;
+        max-height: var(--terminal-max-height);
         padding: var(--terminal-padding);
         white-space: pre-wrap;
         word-break: break-all;
-        font-family: 'monospace';
+        font-family: monospace;
         font-size: 14px;
+        gap: 4px;
         span {
             display: inline;
         }
@@ -52,7 +55,7 @@ body{
         border: 0px !important;
         outline: none;
         color: var(--terminal-color);
-        font-family: 'monospace';
+        font-family: monospace;
         font-size: 14px;
         flex: 1;
         caret-color: #00ff00;
@@ -66,6 +69,6 @@ body{
     width: 6px;
 }
 .--zuz-terminal ::-webkit-scrollbar-thumb {
-    background: #333;
+    background: rgba(255, 255, 255, 0.5);
     border-radius: 10px;
 }

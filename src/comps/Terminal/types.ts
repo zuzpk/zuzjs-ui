@@ -1,7 +1,7 @@
 import { ValueOf, Variant } from "../../types";
 
 export interface TerminalHandler {
-    push: (line: TerminalLine | string) => void;
+    write: (line: TerminalLine | string) => void;
     clear: () => void;
 }
 

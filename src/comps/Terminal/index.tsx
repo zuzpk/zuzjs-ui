@@ -33,7 +33,7 @@ const Terminal = ({
         }
     }, [history]);
 
-    const push = (line: TerminalLine | string) => {
+    const write = (line: TerminalLine | string) => {
         const newLine: TerminalLine = typeof line === 'string' 
             ? { type: 'output' as const, content: line } // Use 'as const' here
             : line;
@@ -47,7 +47,7 @@ const Terminal = ({
     const clear = () => setHistory([]);
     
     useImperativeHandle(ref, () => ({
-        push,
+        write,
         clear
     }));
 
@@ -69,7 +69,6 @@ const Terminal = ({
     };
 
     const parseAnsi = (text: string) => {
-        // Regex to match ANSI escape codes like \u001b[32m
         const pattern = /\u001b\[(\d+)m/g;
         const segments: { text: string; color?: string; bold?: boolean }[] = [];
         
@@ -79,29 +78,40 @@ const Terminal = ({
             "33": "#ffbd2e", // yellow
             "34": "#007aff", // blue
             "35": "#ff79c6", // magenta
-            "36": "#8be9fd", // cyan
-            "39": "#d4d4d4", // default (reset)
+            "36": "#8be9fd", // cyan (ZPanel color)
+            "39": "#d4d4d4", // reset to gray
         };
 
         let lastIndex = 0;
-        let currentColor = "";
+        let currentColor = "#d4d4d4"; // Start with default color immediately
         let isBold = false;
         let match;
 
         while ((match = pattern.exec(text)) !== null) {
+            // Capture text BEFORE the match
             const part = text.slice(lastIndex, match.index);
-            if (part) segments.push({ text: part, color: currentColor, bold: isBold });
+            if (part) {
+                segments.push({ text: part, color: currentColor, bold: isBold });
+            }
 
             const code = match[1];
-            if (code === "0") { currentColor = ""; isBold = false; }
-            else if (code === "1") { isBold = true; }
-            else if (colorMap[code]) { currentColor = colorMap[code]; }
+            if (code === "0") { 
+                currentColor = "#d4d4d4"; 
+                isBold = false; 
+            } else if (code === "1") { 
+                isBold = true; 
+            } else if (colorMap[code]) { 
+                currentColor = colorMap[code]; 
+            }
             
             lastIndex = pattern.lastIndex;
         }
 
+        // Capture remaining text AFTER the last match
         const remaining = text.slice(lastIndex);
-        if (remaining) segments.push({ text: remaining, color: currentColor, bold: isBold });
+        if (remaining) {
+            segments.push({ text: remaining, color: currentColor, bold: isBold });
+        }
 
         return segments;
     };
@@ -110,7 +120,11 @@ const Terminal = ({
         // If it contains ANSI codes (start with ESC), parse it
         if (content.includes('\u001b')) {
             return parseAnsi(content).map((seg, i) => (
-                <Span key={i} style={{ color: seg.color, fontWeight: seg.bold ? 'bold' : 'normal' }}>
+                <Span key={`--terminal-msg-${i}-${seg.text.replace(/\S+/g, `-`)}`} 
+                    style={{ 
+                        color: seg.color || `#d4d4d4`, 
+                        fontWeight: seg.bold ? 'bold' : 'normal' 
+                    }}>
                     {seg.text}
                 </Span>
             ));
@@ -146,14 +160,14 @@ const Terminal = ({
 
     return (
         <Box 
-            as={`--zuz-terminal --${variant || themeVariant || Variant.Medium} flex cols p:15 bg:#1e1e1e rad:8 shadow:xl h:400 o:hidden ${props.className}`}
+            as={`--zuz-terminal --${variant || themeVariant || Variant.Medium} flex cols ${props.className}`}
             onClick={() => inputRef.current?.focus()}
         >
             {/* Scrollable Area */}
             <Box ref={scrollRef} className={`--terminal-log`}>
                 {history.map((line, i) => (
-                    <Box key={i} as="mb:4">
-                        <Text as={`font:mono s:14`}>
+                    <Box key={i}>
+                        <Text>
                             {renderContent(line.content, line.type)}
                         </Text>
                     </Box>
@@ -161,8 +175,8 @@ const Terminal = ({
             </Box>
 
             {/* Input Line */}
-            <Box as="flex aic gap:8 --terminal-input">
-                <Text as="font:mono s:14 c:#00ff00 b">{prompt}</Text>
+            <Box as="flex aic --terminal-input">
+                <Text as="--terminal-prompt">{prompt}</Text>
                 <Input
                     ref={inputRef}
                     className="--zuz-term-input"
