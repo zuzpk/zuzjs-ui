@@ -1,11 +1,11 @@
-import { isValidElement } from "react";
+import { isValidElement, ReactNode } from "react";
 import { useBase } from "../../hooks";
 import { ListItemObject, type ListItem } from "./types";
 import { useDelayed } from "@zuzjs/hooks";
 
-const Item = (props : { meta: ListItem }) => {
+const Item = (props : { children?: ReactNode, meta: ListItem }) => {
 
-    const { meta } = props
+    const { meta, children } = props
     const mounted = useDelayed()
     const { label, icon, ...pops } = isValidElement(meta) ? {} : meta as ListItemObject;
     
@@ -32,7 +32,7 @@ const Item = (props : { meta: ListItem }) => {
         style={style}
         className={className}
         {...rest}>
-            {/* {typeof meta == `string` ? meta : icon} */}
+            {children}
             {typeof meta == `string` ? meta : label}
         </li>
 

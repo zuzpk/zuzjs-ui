@@ -1,0 +1,71 @@
+body{
+    --terminal-primary: #222;
+    --terminal-secondary: #333;
+    --terminal-border: 1px var(--terminal-primary) solid;
+    --terminal-padding: 5px;
+    --terminal-radius: 5px;
+    --terminal-color: #eeeeee;
+}
+.--zuz-terminal {
+    background: var(--terminal-primary);
+    border: var(--terminal-border);
+    
+    border-radius: var(--terminal-radius);
+
+    &.--sm{
+        font-size: var(--text-sm);
+    }
+    &.--md{
+        font-size: var(--text-md);
+    }
+    &.--lg{
+        font-size: var(--text-lg);
+    }
+    &.--xl{
+        font-size: var(--text-xl);
+    }
+    &.--xxl{
+        font-size: var(--text-xxl);
+    }
+    
+    .--terminal-log{
+        flex: 1;
+        overflow-y: auto;
+        margin-bottom: 10px;
+        min-height: 100px;
+        padding: var(--terminal-padding);
+        white-space: pre-wrap;
+        word-break: break-all;
+        font-family: 'monospace';
+        font-size: 14px;
+        span {
+            display: inline;
+        }
+    }
+    .--terminal-input{
+        background: var(--terminal-secondary);   
+        padding: 0px var(--terminal-padding);
+        color: var(--terminal-color);
+    }
+    .--zuz-term-input {
+        background-color: transparent !important;
+        border: 0px !important;
+        outline: none;
+        color: var(--terminal-color);
+        font-family: 'monospace';
+        font-size: 14px;
+        flex: 1;
+        caret-color: #00ff00;
+    }
+
+
+}
+
+/* Scrollbar styling for a cleaner look */
+.--zuz-terminal ::-webkit-scrollbar {
+    width: 6px;
+}
+.--zuz-terminal ::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+}

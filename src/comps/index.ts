@@ -131,8 +131,14 @@ export { default as Switch } from './Switch';
 export { default as Table } from './Table';
 export * from './Table/types';
 
+export { default as TableOfContents } from './TableOfContents';
+export * from './TableOfContents/types';
+
 export { default as TabView } from './TabView';
 export * from './TabView/types';
+
+export { default as Terminal } from './Terminal';
+export * from './Terminal/types';
 
 export { default as Text } from "./Text"
 
