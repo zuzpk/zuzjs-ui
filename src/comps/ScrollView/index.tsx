@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useEffect } from "react";
 import { useBase } from "../../hooks";
 import Box from "../Box";
 import { ScrollViewProps } from "./types";
@@ -13,6 +13,19 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
         className, 
         rest 
     } = useBase<`div`>(pops)
+
+    useEffect(() => {
+        const el = containerRef.current;
+        if (!el) return;
+
+        const sync = () => {
+            // Trigger a global reposition event for Selects/Tooltips
+            window.dispatchEvent(new Event('resize')); 
+        };
+
+        el.addEventListener('scroll', sync);
+        return () => el.removeEventListener('scroll', sync);
+    }, []);
 
     return <Box 
         ref={rootRef}

@@ -5,6 +5,11 @@ body{
     --button-color: white;
     --button-disabled: var(--gray-200);
     --button-disabled-color: var(--gray-400);
+    --button-gap-xs: 4px;
+    --button-gap-sm: 6px;
+    --button-gap-md: 8px;
+    --button-gap-lg: 10px;
+    --button-gap-xl: 10px;
 
 }
 .--button{
@@ -15,26 +20,31 @@ body{
         padding: var(--padding-xs);
         font-size: var(--text-xs);
         border-radius: var(--radius-xs);
+        gap: var(--button-gap-xs);
     }
     &.--sm {
         padding: var(--padding-sm);
         font-size: var(--text-sm);
         border-radius: var(--radius-sm);
+        gap: var(--button-gap-sm);
     }
     &.--md {
         padding: var(--padding-md);
         font-size: var(--text-md);
         border-radius: var(--radius-md);
+        gap: var(--button-gap-md);
     }
     &.--lg {
         padding: var(--padding-lg);
         font-size: var(--text-lg);
         border-radius: var(--radius-lg);
+        gap: var(--button-gap-lg);
     }
     &.--xl {
         padding: var(--padding-xl);
         font-size: var(--text-xl);
         border-radius: var(--radius-xl);
+        gap: var(--button-gap-xl);
     }
 
     border: var(--button-border);
@@ -42,7 +52,6 @@ body{
     color: var(--button-color);
     white-space: pre;
     cursor: pointer;
-    
 
     &:hover{
         background: var(--button-hover);

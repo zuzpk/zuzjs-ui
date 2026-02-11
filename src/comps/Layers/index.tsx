@@ -22,7 +22,7 @@ const LayersRenderer = ({
 }) => {
 
     const parentContext = useContext(LayersContext);
-    const depth = useRef(0);
+    const depth = parentContext?.depth ?? 0;
 
     const [activeMenu, setActiveMenu] = useState<LayerItem | null>(null);
     const [menuVisible, setMenuVisible] = useState(false);
@@ -30,13 +30,6 @@ const LayersRenderer = ({
     const mounted = useDelayed()
     const id = useRef(0)
     const nextId = () => ++id.current;
-
-    useEffect(() => {
-        let current = parentContext;
-        while (current?.isSubLayer) {
-            depth.current++;
-        }
-    }, [parentContext]);
 
     const closeMenu = () => {
         setMenuVisible(false); // Trigger exit animation
@@ -86,11 +79,11 @@ const LayersRenderer = ({
 
     if ( !mounted ) return null
 
-    const dialogs = layers.filter(l => l.type == `dialog`)
-    const drawers = layers.filter(l => l.type == `drawer`)
+    const dialogs = layers.filter(l => l.type == `dialog`).reverse()
+    const drawers = layers.filter(l => l.type == `drawer`).reverse()
     const toasts = layers.filter(l => l.type == `toast`)
             
-    return createPortal(<Box as={`--zuz-layers-wrapper fixed fill nope`} style={{ zIndex: 9999 + depth.current }}>
+    return createPortal(<Box as={`--zuz-layers-wrapper fixed fill nope`} style={{ zIndex: 9999 + depth }}>
 
         {/* Dialogs */}
         {dialogs.length > 0 && <Box as={`--zuz-layer-dialogs fixed fill nope`}>
@@ -103,7 +96,8 @@ const LayersRenderer = ({
 
         {/* Drawers */}
         {drawers.length > 0 && <Box as={`--zuz-layer-drawers fixed fill nope`}>
-            {drawers.map((layer, i) => <Drawer
+            {drawers
+                .map((layer, i) => <Drawer
                 onClose={onClose}
                 key={`layer-${layer.type}-${layer.id}`} 
                 index={i} 
@@ -141,7 +135,7 @@ const LayersProvider : FC<{
 }) => {
 
     const parentContext = useContext(LayersContext);
-    const currentDepth = (parentContext?.depth ?? 0) + (parentContext ? 1 : 0);
+    const currentDepth = parentContext ? parentContext.depth + 1 : 0
 
     const LayersController = useRef<LayersController>(null)
 
@@ -154,7 +148,7 @@ const LayersProvider : FC<{
         clear: () => LayersController.current?.clear()!, 
         depth: currentDepth,
         isSubLayer: !!parentContext,
-    }), [LayersController.current, parentContext]);
+    }), [parentContext]);
 
     return <LayersContext.Provider value={contextValue}>
         {children}

@@ -7,6 +7,7 @@ import { layerManager } from "../layer_manager";
 import Overlay from "../Overlay";
 import { BoxProps, DRAWER_SIDE, TRANSITION_CURVES, TRANSITIONS } from "../../types";
 import Box from "../Box";
+import ScrollView from "../ScrollView";
 
 const Drawer = ({
     ref,
@@ -106,7 +107,9 @@ const Drawer = ({
             }}
             {...rest as BoxProps}>
             {from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? <Box className={`--handle`} /> : null}
-            {render ? content : visible ? content : null}
+            <ScrollView>
+                {render ? content : visible ? content : null}
+            </ScrollView>
         </Box>
     </>
 

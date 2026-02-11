@@ -1,5 +1,5 @@
 "use client"
-import { ChangeEvent, forwardRef, useEffect, useId, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { ChangeEvent, forwardRef, Ref, useEffect, useId, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useBase, usePosition } from "../../hooks";
 import Box from "../Box";
 import Button from "../Button";
@@ -14,7 +14,13 @@ import { POSITION, Variant } from "../../types";
 import { buildClassString, css } from "../../funs/css";
 import { useTheme } from "../../hooks/useColorScheme";
 
-const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
+// const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
+const Select = ({
+    ref,
+    ...props
+} : SelectProps & {
+    ref?: Ref<SelectHandler>
+}) => {
 
     const { 
         selected, 
@@ -71,24 +77,52 @@ const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
     }))
 
     useEffect(() => {
-        document.body.addEventListener(`click`, (e: MouseEvent) => {
-            setChoosing(false)
-        })
-        window.dispatchEvent(new Event('resize'));
-    }, [])
+        if (!choosing) return;
+
+        const handleScroll = () => {
+            reposition(); // Re-calculate top/left while scrolling
+        };
+
+        // Attach to the window AND use capture to catch nested scrolls
+        window.addEventListener("scroll", handleScroll, true);
+        window.addEventListener("resize", reposition);
+        
+        return () => {
+            window.removeEventListener("scroll", reposition, true);
+            window.removeEventListener("resize", reposition);
+        };
+    }, [choosing, reposition]);
 
     useEffect(() => {
-        if ( choosing ){
-            _search.current && _search.current.focus()
+        if (!choosing) {
+            // Cleanup: Clear search when closed
+            if (_search.current) _search.current.value = "";
+            setQuery(null);
+            return;
         }
-        else{
-            if ( _search.current ){
-                _search.current.value = ``
+
+        // 1. Focus search & Position menu
+        _search.current?.focus();
+        reposition();
+
+        // 2. Handle clicking outside to close
+        const handleOutsideClick = (e: MouseEvent) => {
+            // If click is outside the select component, close it
+            if (_pop.current && !_pop.current.contains(e.target as Node)) {
+                setChoosing(false);
             }
-            setQuery(null)
-        }
-        reposition()
-    }, [choosing])
+        };
+
+        // Use a tiny delay so the "Open" click doesn't immediately trigger "Close"
+        const timeout = setTimeout(() => {
+            document.addEventListener("click", handleOutsideClick);
+        }, 0);
+
+        return () => {
+            clearTimeout(timeout);
+            document.removeEventListener("click", handleOutsideClick);
+        };
+    }, [choosing, reposition]);
 
     return <Box className={`--select --${variant || themeVariant} ${name ? `--${name}` : ``} rel`.trim()} name={_id}>
 
@@ -97,7 +131,10 @@ const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
             className={`--selected flex aic rel ${className}`.trim()}
             withLabel={false}
             style={style}
-            onClick={(e) => setChoosing(prev => !prev)}
+            onClick={(e) => {
+                e.stopPropagation()
+                setChoosing(prev => !prev)
+            }}
             {...rest as ButtonProps}>
             <Text className={`--label`}>{value ? `string` == typeof value ? value : value.label : label || `Choose`}</Text>
             <Box className={`--svg-arrow rel flex aic jcc`}>{choosing ? 
@@ -144,7 +181,7 @@ const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
         </Box>
 
     </Box>
-})
+}
 
 Select.displayName = `Zuz.Select`
 

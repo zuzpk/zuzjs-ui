@@ -1224,7 +1224,12 @@ type SelectProps = Omit<BoxProps, "onChange"> & {
     arrowUpIcon?: string | ReactNode;
 };
 
-declare const Select: react.ForwardRefExoticComponent<Omit<SelectProps, "ref"> & react.RefAttributes<SelectHandler>>;
+declare const Select: {
+    ({ ref, ...props }: SelectProps & {
+        ref?: Ref<SelectHandler>;
+    }): react_jsx_runtime.JSX.Element;
+    displayName: string;
+};
 
 type SliderProps = BoxProps & {
     type?: ValueOf<typeof SLIDER>;

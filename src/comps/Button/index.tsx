@@ -23,7 +23,7 @@ const Button = ({ ref, ...props} : ButtonProps) => {
     const { variant: themeVariant } = useTheme(true)!
     
     return <button
-        className={`--button --${variant || themeVariant} flex aic ${!reset ? `jcc` : ``} ${icon ? `ico-btn` : ``} ${className}`.trim().replace(/\s+/g, ' ')}
+        className={`--button --${variant || themeVariant} flex aic ${!reset ? `jcc` : ``} ${icon ? `--with-icon` : ``} ${className}`.trim().replace(/\s+/g, ' ')}
         style={style}
         ref={ref}
         disabled={state == ButtonState.Loading || props.skeleton?.enabled || disabled}
