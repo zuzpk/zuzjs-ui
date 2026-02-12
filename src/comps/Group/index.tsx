@@ -2,7 +2,7 @@ import { forwardRef, Fragment, useMemo } from "react";
 import Box from "../Box";
 import { BoxProps } from "../../types/interfaces";
 import { useDelayed } from "@zuzjs/hooks";
-import { addPropsToChildren } from "@zuzjs/core";
+import { addPropsToChildren } from "@zuzjs/core/react"
 import { useTheme } from "../../hooks/useColorScheme";
 
 export type GroupProps = BoxProps & {

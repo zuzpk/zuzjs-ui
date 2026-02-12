@@ -8,7 +8,7 @@ const useToast = () => {
 
     const ctx = useContext(LayersContext);
 
-    if (!ctx) throw new Error('useToast must be used inside <ToastProvider>');
+    if (!ctx) throw new Error('useToast must be used inside <LayersProvider>');
 
     const base = (type: ToastProps['type'], data: Omit<ToastProps, 'id' | 'type'>) => ctx.add({ 
         type: `toast`,

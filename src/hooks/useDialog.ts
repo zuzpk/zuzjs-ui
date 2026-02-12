@@ -7,7 +7,7 @@ const useDialog = () => {
 
     const ctx = useContext(LayersContext);
 
-    if (!ctx) throw new Error('useDialog must be used inside <ThemeProvider>');
+    if (!ctx) throw new Error('useDialog must be used inside <LayersProvider>');
 
     const clearAll = () => ctx.clear()
 

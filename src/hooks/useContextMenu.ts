@@ -5,7 +5,7 @@ import { ORIGIN, ValueOf } from "../types";
 
 const useContextMenu = () => {
     const ctx = useContext(LayersContext);
-    if (!ctx) throw new Error('useContextMenu must be used inside <ThemeProvider>');
+    if (!ctx) throw new Error('useContextMenu must be used inside <LayersProvider>');
 
     // For Right Click
     const showContextMenu = (

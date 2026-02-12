@@ -190,7 +190,9 @@ const Theme = ({ children, storageKey, forceTheme, ...config } : ThemeProviderPr
                     document.documentElement.style.colorScheme = theme;`
                 }}
             /> }
-            {children}
+            <LayersProvider>
+                {children}
+            </LayersProvider>
         </ThemeContext>
     );
     

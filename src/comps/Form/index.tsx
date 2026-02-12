@@ -1,5 +1,6 @@
 "use client"
-import { _, addPropsToChildren, withPost } from "@zuzjs/core";
+import { _, withPost } from "@zuzjs/core";
+import { addPropsToChildren } from "@zuzjs/core/react"
 import { forwardRef, ReactNode, startTransition, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import useBase from "../../hooks/useBase";
 import useToast from "../../hooks/useToast";

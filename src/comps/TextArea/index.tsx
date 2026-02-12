@@ -5,12 +5,13 @@ import CommandBox from "./commands";
 import { TextAreaProps } from "./types";
 import { useCommandActions } from '@zuzjs/hooks';
 import Box from '../Box';
+import { useTheme } from '../../hooks/useColorScheme';
 
 const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => {
   const {
     autoResize,
     maxHeight,
-    variant = Variant.Small,
+    variant,
     resize = 'none',
     command,
     commands,
@@ -24,7 +25,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => 
 
   const innerRef = useRef<HTMLTextAreaElement>(null);
   const frameRef = useRef<number | null>(null);
-
+  const { variant: themeVariant } = useTheme(true)!
   const { style, className, rest } = useBase<"textarea">(pops);
 
   const {
@@ -108,7 +109,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => 
   return (
     <Box as="rel">
       <textarea
-        className={`--input --textarea --${variant} flex ${className}`.trim()}
+        className={`--input --textarea --${variant || themeVariant || Variant.Medium} flex ${className}`.trim()}
         style={{
           ...style,
           resize,

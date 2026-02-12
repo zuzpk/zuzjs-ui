@@ -1,6 +1,6 @@
 {
   "name": "@zuzjs/ui",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "ZuzJS UI Library",
   "keywords": [
     "react",
@@ -41,10 +41,10 @@
     "dev:js": "tsup --watch",
     "dev:css": "sass --watch --no-source-map --silence-deprecation=legacy-js-api src/scss:dist/css --style compressed",
     "dev": "npm-run-all -p dev:*",
-    "build": "tsup && npm run build:css",
+    "build": "rm -rf dist && tsup && npm run build:css",
     "build:css": "sass src/scss:dist/css --style compressed --no-source-map",
     "prepare": "husky",
-    "publish": "rm -rf dist && npm run build && node publish-pre.js && npm publish && node publish-post.js"
+    "publish": "npm run build && node publish-pre.js && npm publish && node publish-post.js"
   },
   "dependencies": {
     "@zuzjs/core": "workspace:*",
