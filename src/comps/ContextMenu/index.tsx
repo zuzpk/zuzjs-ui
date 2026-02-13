@@ -1,11 +1,11 @@
-import { createElement, Ref, useImperativeHandle, useRef, useState, MouseEvent as ReactMouseEvent, useEffect } from "react"
-import { ContextItem, ContextMenuHandler, ContextMenuProps, MenuItemProps } from "./types"
+import { useAnchorPosition } from "@zuzjs/hooks";
+import { createElement, Ref, useEffect, useMemo, useState } from "react";
+import { useFx } from "../../hooks";
 import useBase from "../../hooks/useBase";
+import { BoxProps, ORIGIN, TRANSITION_CURVES, TRANSITIONS } from "../../types";
 import Box from "../Box";
-import { BoxProps, ORIGIN, TRANSITION_CURVES } from "../../types";
-import { useFx, useMorph } from "../../hooks";
 import MenuItem from "./item";
-import { useAnchorPosition, useDelayed, useMounted } from "@zuzjs/hooks";
+import { ContextItem, ContextMenuProps, MenuItemProps } from "./types";
 
 const ContextMenu = ({
     ref,
@@ -17,10 +17,12 @@ const ContextMenu = ({
     const { 
         id, 
         as, 
+        fx,
         offsetX, 
         offsetY, 
         parent, 
         event,
+        arrow,
         when: isVisible,
         items: _items, header, footer, 
         origin :  preferredAnchor = ORIGIN.TopRight, 
@@ -35,19 +37,24 @@ const ContextMenu = ({
         { offsetX, offsetY, preferredAnchor }
     )
 
-    // const { 
-    //     style: morphStyle,
-    //     isMeasured,
-    //     sourceRect, 
-    // } = useMorph(parent || { current: null }, isVisible ?? mounted);
+    const isBottom = parent && position.top > parent.current!.getBoundingClientRect().bottom;
+    const flipClass = isBottom ? '--arrow-top' : '--arrow-bottom';
+    const arrowClass = useMemo(() => {
+        const anchor = calculatedAnchor.toLowerCase();
+        if (anchor.includes('left')) return '--arrow-left';
+        if (anchor.includes('right')) return '--arrow-right';
+        return '--arrow-center';
+    }, [calculatedAnchor]);
+
+    const isMeasured = position.top !== 0 || position.left !== 0;
 
     useEffect(() => {
-        if (isVisible && position.top !== 0) {
+        if (isVisible && isMeasured) {
             setVisible(true);
         } else if (!isVisible) {
             setVisible(false);
         }
-    }, [isVisible, position]);
+    }, [isVisible, isMeasured]);
 
     const {
         className,
@@ -55,24 +62,31 @@ const ContextMenu = ({
         rest
     } = useBase(pops);
 
+
     const contextAnimation = useFx({
-        from: { opacity: 0, scale: 0.8, y: -10 },
-        to: { opacity: 1, scale: 1, y: 0 },
-        curve: TRANSITION_CURVES.EaseInOut,
-        duration: 0.05,
-        when: visible
+        ...(fx?.transition ? {
+            transition: fx.transition ?? TRANSITIONS.SlideInBottom
+        } : {
+            from: { opacity: 0, scale: 0.8, y: -10 },
+            to: { opacity: 1, scale: 1, y: 0 }
+        }),
+        curve: fx?.curve ?? TRANSITION_CURVES.EaseInOut,
+        duration: fx?.duration ?? 0.05,
+        when: visible && isMeasured
     })
 
+    
     return <Box
-        className={`--contextmenu abs flex cols ${className}`.trim()}
+        ref={targetRef as Ref<HTMLDivElement>}
+        className={`--contextmenu ${(arrow || parent != undefined || false) ? `--has-arrow ${flipClass} ${arrowClass}` : ``} abs flex cols ${className}`.trim()}
         aria-hidden={!visible}
         style={{
             ...style,
             ...contextAnimation.style,
             top: position.top,
             left: position.left,
-            // visibility: isMeasured ? `visible` : `hidden`,
-            overflow: `hidden`,
+            visibility: isMeasured ? `visible` : `hidden`,
+            // overflow: `hidden`,
             transformOrigin: calculatedAnchor,
         }}
         {...rest as BoxProps}>

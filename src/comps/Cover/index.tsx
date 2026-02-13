@@ -1,13 +1,14 @@
 "use client"
 import { forwardRef } from "react";
 import { useBase } from "../../hooks";
-import { Variant } from "../../types/enums";
-import Box from "../Box";
-import Spinner from "../Spinner";
-import Text from "../Text";
-import { BoxProps } from "../../types/interfaces";
+import { useTheme } from "../../hooks/useColorScheme";
 import { ValueOf } from "../../types";
+import { TRANSITION_CURVES, TRANSITIONS, Variant } from "../../types/enums";
+import { BoxProps } from "../../types/interfaces";
+import Group from "../Group";
+import Spinner from "../Spinner";
 import { SPINNER } from "../Spinner/types";
+import Text from "../Text";
 
 export type CoverProps = BoxProps & {
     message?: string,
@@ -27,23 +28,31 @@ const Cover = forwardRef<HTMLDivElement, CoverProps >((props, ref) => {
         style,
         rest
     } = useBase(pops)
+    const { spinner: themeSpinner } = useTheme(true)!
 
     if ( `when` in props && props.when == false ){
         return null
     }
 
-    return <Box
+    return <Group
+        fx={{
+            transition: TRANSITIONS.SlideInBottom,
+            curve: TRANSITION_CURVES.Liquid,
+            duration: 0.5
+        }}
+        fxDelay={0.1}
+        fxStep={0.05}
         className={`--cover flex aic jcc cols abs fillx nope nous ${className}`.trim()}
         style={{
             ...style,
             backgroundColor: `var(--cover-bg)`
         }}
         {...rest as BoxProps}>
-        {<Spinner variant={spinnerSize || Variant.Small} type={spinner || SPINNER.Simple} />}
+        {<Spinner variant={spinnerSize || themeSpinner?.variant || Variant.Small} type={spinner || themeSpinner?.type || SPINNER.Simple} />}
         {!hideMessage && <Text 
             className={`--label`}
             style={{ color: `var(--cover-label)`  }}>{message || `loading`}</Text>}
-    </Box>
+    </Group>
 
 })
 

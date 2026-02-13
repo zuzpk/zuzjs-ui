@@ -1,14 +1,14 @@
 "use client"
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
-import { ValueOf } from "../types/shared";
-import { COLORTHEME, TRANSITION_CURVES, TRANSITIONS, Variant } from "../types/enums";
-import { SPINNER } from "../comps/Spinner/types";
-import { animationProps } from "../types";
-import { GroupProps } from "../comps/Group";
-import { setZuzMap } from "../funs/css";
 import { DialogProps } from "../comps/Dialog/types";
 import { DrawerProps } from "../comps/Drawer/types";
+import { GroupProps } from "../comps/Group";
 import LayersProvider from "../comps/Layers";
+import { SpinnerProps } from "../comps/Spinner/types";
+import { setZuzMap } from "../funs/css";
+import { animationProps } from "../types";
+import { COLORTHEME, TRANSITION_CURVES, Variant } from "../types/enums";
+import { ValueOf } from "../types/shared";
 
 const MATCH_MEDIA = `(prefers-color-scheme: dark)`
 const SSR = typeof window === 'undefined'
@@ -35,9 +35,7 @@ export interface ThemeConfig {
     /**
      * App Level Spinner Conf
      */
-    spinner?: {
-        type?: ValueOf<typeof SPINNER>;
-    },
+    spinner?: SpinnerProps,
 
     toast?: {
         curve?: ValueOf<typeof TRANSITION_CURVES>,

@@ -11,7 +11,7 @@ const MenuItem = (props: MenuItemProps) => {
     return label == `-` ? <Box className={`--line`} /> 
         : <Button
             reset={true}
-            onClick={e => onSelect()}
+            onClick={e => onSelect?.(props)}
             className={`--item ${className || ``}`.trim()}>
             <Box as={`--icon`}>
                 <Icon 

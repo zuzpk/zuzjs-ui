@@ -3,7 +3,8 @@ body{
     --context-border: 0px;
     --context-radius: 10px;
     --context-padding: 10px;
-    --context-shadow: var(--zuz-shadow);
+    --context-shadow-a: 0px 0px 1px #bbbbbb;
+    --context-shadow-b: 0px 1px 2px #eee;
     --context-seperator: #eee;
     --context-seperator-height: 1px;
     --context-seperator-margin: 3px 6px;
@@ -12,10 +13,12 @@ body{
     --context-item-width: 220px;
     --context-item-padding: 6px 10px;
     --context-item-gap: 10px;
-    --context-item-font-size: 15px;
+    --context-item-font-size: 14px;
     --context-item-radius: 5px;
     --context-item-icon-size: 18px;
-    --context-item-hover: #eee;
+    --context-item-hover: #f1f1f1;
+    --context-arrow-size: 10px;
+    --context-arrow-x: 20px;
 }
 
 .--contextmenu{
@@ -24,9 +27,53 @@ body{
     background: var(--context);
     border-radius: var(--context-radius);
     padding: var(--context-padding);
-    box-shadow: var(--context-shadow);
+    filter: drop-shadow(var(--context-shadow-a)) drop-shadow(var(--context-shadow-b));
+    // box-shadow: var(--context-shadow);
     pointer-events: auto !important;
+    top: calc(var(--max-z-index) * -1px);
+    left: calc(var(--max-z-index) * -1px);
+    opacity: 0;
+
+    &:after {
+        content: "";
+        position: absolute;
+        width: var(--context-arrow-size);
+        height: var(--context-arrow-size);
+        background: inherit; /* Matches the menu background */
+        transform: rotate(45deg);
+        z-index: -1; /* Place behind content */
     
+        /* The "Blend" effect: Soften the corner of the rotated square */
+        // border-bottom-right-radius: 4px; 
+        border-radius: calc(var(--context-arrow-size) / 4);
+    }
+    
+    /* Shared Arrow Position (assuming arrow is at the TOP of the menu) */
+    &.--has-arrow::after {
+        top: calc((var(--context-arrow-size) / 2) * -1); /* Half the height to overlap correctly */
+    }
+    &.--arrow-bottom::after {
+        bottom: calc((var(--context-arrow-size) / 2) * -1);
+        top: auto;
+        // border-bottom-right-radius: 0;
+        // border-top-left-radius: 4px; /* Blend the opposite corner */
+    }
+    /* Left Alignment: Arrow sits 15px from the left */
+    &.--arrow-left::after {
+        left: var(--context-arrow-x);
+    }
+
+    /* Right Alignment: Arrow sits 15px from the right */
+    &.--arrow-right::after {
+        right: var(--context-arrow-x);
+    }
+
+    /* Center Alignment: Arrow sits perfectly in the middle */
+    &.--arrow-center::after {
+        left: 50%;
+        margin-left: -8px; /* Negative half-width */
+    }
+
     .--line{
         height: var(--context-seperator-height);
         background: var(--context-seperator);
@@ -34,7 +81,8 @@ body{
     }
 
     .--item{
-        width: var(--context-item-width);
+        min-width: var(--context-item-width);
+        width: 100%;
         padding: var(--context-item-padding);
         gap: var(--context-item-gap);
         cursor: pointer;

@@ -1,7 +1,7 @@
-import { MouseEvent as ReactMouseEvent, RefObject, useContext } from "react";
-import { LayersContext } from "../comps/Layers";
+import { FC, MouseEvent as ReactMouseEvent, ReactNode, RefObject, useContext } from "react";
 import { ContextItem } from "../comps";
-import { ORIGIN, ValueOf } from "../types";
+import { LayersContext } from "../comps/Layers";
+import { ORIGIN, TRANSITION_CURVES, TRANSITIONS, ValueOf } from "../types";
 
 const useContextMenu = () => {
     const ctx = useContext(LayersContext);
@@ -22,15 +22,41 @@ const useContextMenu = () => {
     };
 
     // For Dropdown Buttons
-    const showMenu = (
-        ref: RefObject<HTMLElement | null>, 
+    const showMenu = (ref: RefObject<HTMLElement | null>, {
+        items, 
+        origin, 
+        offsetX, 
+        offsetY, 
+        transition, 
+        curve, 
+        arrow,
+        duration,
+        header,
+        footer
+    } : {
+        transition?: ValueOf<typeof TRANSITIONS>,
+        curve?: ValueOf<typeof TRANSITION_CURVES>,
+        arrow?: boolean,
+        duration?: number,
+        offsetX?: number,
+        offsetY?: number,
         items: ContextItem[],
-        origin?: ValueOf<typeof ORIGIN>
-    ) => {
+        origin?: ValueOf<typeof ORIGIN>,
+        header?: ReactNode | FC,
+        footer?: ReactNode | FC,
+    }) => {
         ctx.openMenu({ 
+            fx: {
+                transition,
+                curve,
+                duration
+            },
             parent: ref, 
             items,
-            origin: origin || ORIGIN.TopCenter
+            origin: origin || ORIGIN.TopCenter,
+            offsetX, offsetY, arrow,
+            header,
+            footer
         });
     };
 

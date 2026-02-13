@@ -1,6 +1,6 @@
 import { RefObject, useEffect, useMemo, useRef } from "react";
-import { animationProps, dynamic } from "../types";
 import { animationTransition, buildWithStyles, getAnimationCurve } from "../funs/css";
+import { animationProps, dynamic } from "../types";
 
 const useFx = (fx?: animationProps, ref?: RefObject<HTMLElement>) => {
     // Track keys we've applied so we can clean them up
@@ -45,6 +45,7 @@ const useFx = (fx?: animationProps, ref?: RefObject<HTMLElement>) => {
     }, [fx, ref]);
 
     return useMemo(() => {
+
         if (!fx) return { style: {} };
 
         const { transition, from, to, exit, when, duration = 0.3, delay = 0, curve } = fx;
@@ -88,13 +89,18 @@ const useFx = (fx?: animationProps, ref?: RefObject<HTMLElement>) => {
             // transitionList.push(`${transKey} ${duration}s ${_curve} ${delay}s`);
         });
 
+        const isActive = when === true;
+        const isWaiting = when === false;
+
         return {
             style: {
                 ...finalStyles,
-                transition: transitionList.join(`, `),
+                transition: isWaiting ? `none` : transitionList.join(`, `),
+                opacity: isWaiting ? 0 : finalStyles.opacity,
+                pointerEvents: isWaiting ? `none` : finalStyles.pointerEvents,
             }
         };
-    }, [fx]);
+    }, [fx, fx?.when]);
 };
 
 export default useFx

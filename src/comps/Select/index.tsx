@@ -1,18 +1,17 @@
 "use client"
-import { ChangeEvent, forwardRef, Ref, useEffect, useId, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { ChangeEvent, Ref, useEffect, useId, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useBase, usePosition } from "../../hooks";
+import { useTheme } from "../../hooks/useColorScheme";
+import { POSITION } from "../../types";
 import Box from "../Box";
 import Button from "../Button";
 import { ButtonProps } from "../Button/types";
 import Icon from "../Icon";
 import Input from "../Input";
+import SVGIcons from "../svgicons";
 import Text from "../Text";
 import OptionItem from "./optionItem";
 import { Option, SelectHandler, SelectProps } from "./types";
-import SVGIcons from "../svgicons";
-import { POSITION, Variant } from "../../types";
-import { buildClassString, css } from "../../funs/css";
-import { useTheme } from "../../hooks/useColorScheme";
 
 // const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
 const Select = ({
@@ -58,6 +57,7 @@ const Select = ({
 
     const updateValue = (o: Option) => {
         setValue(o)
+        setChoosing(false)
         onChange && onChange(o)
     }
 

@@ -1,17 +1,108 @@
-:root{
-    --spinner-color: #111;
+body{
+    --spinner-primary: #111;
+    --spinner-secondary: #e0e0e0;
 }
 
 [color-scheme="dark"] {
-    --spinner-color: #f9f9f9;
+    --spinner-primary: #f6f6f6;
+    --spinner-secondary: #d5d5d5;
 }
 
 .--spinner {
 
+    corner-shape: round !important;
+
     &.--simple{
         aspect-ratio: 1;
         animation: spin infinite;
-        corner-shape: round !important;
+        width: var(--spinner-size);
+        height: var(--spinner-size);
+        border: var(--spinner-width) var(--spinner-secondary) solid; 
+        border-radius: 50%;
+        border-top-color: var(--spinner-primary);
+        animation-timing-function: linear;
+        animation-duration: var(--spinner-speed);
+        --spinner-width: 3px;
+        --spinner-speed: 0.4s;
+        &.--xs{
+            --spinner-size: 12px;
+        }
+        &.--sm{
+            --spinner-size: 24px;
+        }
+        &.--md{
+            --spinner-width: 4px;
+            --spinner-size: 36px;
+        }
+        &.--lg{
+            --spinner-width: 5px;
+            --spinner-size: 48px;
+        }
+        &.--xl{
+            --spinner-width: 6px;
+            --spinner-size: 60px;
+        }
+        &.--xxl{
+            --spinner-width: 8px;
+            --spinner-size: 72px;
+        }
+    }
+
+    &.--roller{
+        --g1: var(--spinner-primary) 96%, #0000;
+        --g2: var(--spinner-secondary) 96%, #0000;
+        width: calc(2*var(--R));
+        aspect-ratio: 1;
+        border-radius: 50%;
+        display: grid;
+        -webkit-mask: linear-gradient(#000 0 0);
+        animation: l30 var(--spinner-speed) infinite linear;
+        --spinner-speed: 1.2s;
+        &.--xs{
+            --R: 6px;
+        }
+        &.--sm{
+            --R: 10px;
+        }
+        &.--md{
+            --R: 12px;
+        }
+        &.--lg{
+            --R: 16px;
+        }
+        &.--xl{
+            --R: 22px;
+        }
+        &.--xxl{
+            --R: 30px;
+        }
+
+        &:before,
+        &:after{
+            content:"";
+            grid-area: 1/1;
+            width: 50%;
+            background:
+                radial-gradient(farthest-side,var(--g1)) calc(var(--R) + 0.866*var(--R) - var(--R)) calc(var(--R) - 0.5*var(--R)   - var(--R)),
+                radial-gradient(farthest-side,var(--g1)) calc(var(--R) + 0.866*var(--R) - var(--R)) calc(var(--R) - 0.5*var(--R)   - var(--R)),
+                radial-gradient(farthest-side,var(--g2)) calc(var(--R) + 0.5*var(--R)   - var(--R)) calc(var(--R) - 0.866*var(--R) - var(--R)),
+                radial-gradient(farthest-side,var(--g1)) 0 calc(-1*var(--R)),
+                radial-gradient(farthest-side,var(--g2)) calc(var(--R) - 0.5*var(--R)   - var(--R)) calc(var(--R) - 0.866*var(--R) - var(--R)),
+                radial-gradient(farthest-side,var(--g1)) calc(var(--R) - 0.866*var(--R) - var(--R)) calc(var(--R) - 0.5*var(--R)   - var(--R)),
+                radial-gradient(farthest-side,var(--g2)) calc(-1*var(--R))  0,
+                radial-gradient(farthest-side,var(--g1)) calc(var(--R) - 0.866*var(--R) - var(--R)) calc(var(--R) + 0.5*var(--R)   - var(--R));
+            background-size: calc(2*var(--R)) calc(2*var(--R));
+            background-repeat :no-repeat;
+        }
+        &:after {
+            transform: rotate(180deg);
+            transform-origin: right;
+        }
+
+        @keyframes l30 {
+            100% {transform: rotate(-1turn)}
+        }
+
     }
 
     &.--wave{
@@ -20,44 +111,57 @@
         gap: var(--spinner-gap);
 
         &.--def,
+        &.--xs{
+            --spinner-radius: 2px;
+            --spinner-gap: 2px;
+            --spinner-wave-width: 2px;
+            --spinner-wave-height: 6px;
+        }
         &.--sm{
             --spinner-radius: 2px;
             --spinner-gap: 3px;
             --spinner-wave-width: 4px;
-            --spinner-wave-height: 10px;
+            --spinner-wave-height: 12px;
         }
         &.--md{
-            --spinner-radius: 2px;
-            --spinner-gap: 4px;
-            --spinner-wave-width: 5px;
-            --spinner-wave-height: 14px;
-        }
-        &.--lg{
             --spinner-radius: 3px;
             --spinner-gap: 4px;
-            --spinner-wave-width: 6px;
+            --spinner-wave-width: 5px;
             --spinner-wave-height: 16px;
         }
+        &.--lg{
+            --spinner-radius: 4px;
+            --spinner-gap: 6px;
+            --spinner-wave-width: 7px;
+            --spinner-wave-height: 24px;
+        }
+        &.--xl{
+            --spinner-radius: 6px;
+            --spinner-gap: 6px;
+            --spinner-wave-width: 8px;
+            --spinner-wave-height: 30px;
+        }
 
-        .--dot{
+        .--bar{
             width: var(--spinner-wave-width);
-            background: var(--spinner-color);
-            border-radius: var(--spinner-radius);     
-            &.--dot-1{
+            background: var(--spinner-primary);
+            border-radius: var(--spinner-radius);  
+            corner-shape: round !important;   
+            &.--bar1{
                 animation: spinnerWave infinite;
                 animation-delay: 0.1s;
                 height: var(--spinner-wave-height);
                 animation-duration: 1.5s;
                 animation-timing-function: ease-in-out;       
             }
-            &.--dot-2{
+            &.--bar2{
                 animation: spinnerWave infinite;
                 animation-delay: 0.2s;
                 height: calc( var(--spinner-wave-height) * 1.1 );
                 animation-duration: 1.5s;
                 animation-timing-function: ease-in-out;       
             }
-            &.--dot-3{
+            &.--bar3{
                 animation: spinnerWave infinite;
                 animation-delay: 0.3s;
                 height: calc( var(--spinner-wave-height) * 1.25 );

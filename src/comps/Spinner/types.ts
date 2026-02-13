@@ -1,6 +1,6 @@
-import { ValueOf } from "../../types/shared";
-import { BoxProps } from "../../types/interfaces";
 import { Variant } from "../../types/enums";
+import { BoxProps } from "../../types/interfaces";
+import { ValueOf } from "../../types/shared";
 
 export const SPINNER = {
     Simple : "SIMPLE",
@@ -10,10 +10,5 @@ export const SPINNER = {
 
 export type SpinnerProps = BoxProps & {
     type?: ValueOf<typeof SPINNER>,
-    variant?: ValueOf<typeof Variant> | number,
-    width?: number,
-    color?: string,
-    background?: string,
-    foreground?: string,
-    speed?: number,
+    variant?: ValueOf<typeof Variant>
 }
