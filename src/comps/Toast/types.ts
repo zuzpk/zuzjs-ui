@@ -1,7 +1,5 @@
 import { ReactNode } from "react";
 import { dynamic } from "../../types/shared";
-import { TRANSITION_CURVES } from "../../types/enums";
-import { ValueOf } from "../../types/shared";
 
 export enum ToastType {
     Default = 'default', 
@@ -25,6 +23,7 @@ export interface ToastProps {
   title?: string | ReactNode;
   message?: string | ReactNode;
   duration?: number;
-  onClose?: (id: number) => void,
+  inBackground?: boolean;
+  onClose?: (id: number) => void;
   onClick?: () => void;
 }

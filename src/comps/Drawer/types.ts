@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { DRAWER_SIDE, TRANSITION_CURVES } from "../../types/enums";
 import { BoxProps, ValueOf } from "../../types";
+import { DRAWER_SIDE, TRANSITION_CURVES } from "../../types/enums";
 
 export type DrawerProps = BoxProps & {
     id?: number,
@@ -12,6 +12,7 @@ export type DrawerProps = BoxProps & {
     prerender?: boolean,
     margin?: number,
     animation?: ValueOf<typeof TRANSITION_CURVES>,
+    inBackground?: boolean,
     onClose?: (id: number) => void,
 }
 

@@ -746,6 +746,9 @@ type DialogProps = ZuzProps & {
     action?: DialogActionHandler[];
     actionPosition?: ValueOf<typeof DIALOG_ACTION_POSITION>;
     variant?: ValueOf<typeof Variant>;
+    inBackground?: boolean;
+    /** Delay after close */
+    closeDelay?: number;
     onShow?: () => void;
     onHide?: () => void;
 };
@@ -784,6 +787,7 @@ type DrawerProps = BoxProps & {
     prerender?: boolean;
     margin?: number;
     animation?: ValueOf<typeof TRANSITION_CURVES>;
+    inBackground?: boolean;
     onClose?: (id: number) => void;
 };
 interface DrawerHandler {
@@ -1032,6 +1036,7 @@ interface ToastProps {
     title?: string | ReactNode;
     message?: string | ReactNode;
     duration?: number;
+    inBackground?: boolean;
     onClose?: (id: number) => void;
     onClick?: () => void;
 }
@@ -1844,7 +1849,9 @@ declare const useDrawer: () => {
     close: (id: number) => void;
 };
 
-declare const useFx: (fx?: animationProps, ref?: RefObject<HTMLElement>) => {
+declare const useFx: (fx?: animationProps & {
+    watch?: string[];
+}, ref?: RefObject<HTMLElement>) => {
     style: any;
 };
 

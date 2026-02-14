@@ -2,7 +2,12 @@ import { RefObject, useEffect, useMemo, useRef } from "react";
 import { animationTransition, buildWithStyles, getAnimationCurve } from "../funs/css";
 import { animationProps, dynamic } from "../types";
 
-const useFx = (fx?: animationProps, ref?: RefObject<HTMLElement>) => {
+const useFx = (
+    fx?: animationProps & {
+        watch?: string[]
+    }, 
+    ref?: RefObject<HTMLElement>
+) => {
     // Track keys we've applied so we can clean them up
     const appliedKeys = useRef<string[]>([]);
     const hasMounted = useRef(false);
@@ -53,7 +58,7 @@ const useFx = (fx?: animationProps, ref?: RefObject<HTMLElement>) => {
 
         if (!fx) return { style: {} };
 
-        const { transition, from, to, exit, when, duration = 0.3, delay = 0, curve } = fx;
+        const { transition, from, to, exit, when, duration = 0.3, delay = 0, curve, watch = [] } = fx;
 
         const isWaitingForFirstPosition = when === false && !hasMounted.current;
         const isExiting = when === false && hasMounted.current;
@@ -72,24 +77,12 @@ const useFx = (fx?: animationProps, ref?: RefObject<HTMLElement>) => {
         const transitionList: string[] = [];
         const built = buildWithStyles(activeStyles);
         
-        // console.log(`activeStyles`, activeStyles, built)
-
         // Track what we are touching for the cleanup logic
         appliedKeys.current = Object.keys(built);
 
         // Modern Browser Tip: Use individual transform properties if they exist
         // to prevent 'transform: translate(-50%, -50%)' from being overwritten
         const finalStyles: any = { ...built };
-
-        // If we are using variables but 'translate' isn't explicitly set,
-        // we must add it so the variables actually move the element.
-        // if (finalStyles['--fx-x'] !== undefined || finalStyles['--fx-y'] !== undefined) {
-        //     if (!finalStyles.translate) {
-        //         // Fallback: This ensures standard boxes move while 
-        //         // .abc boxes still use their complex calc() from the stylesheet
-        //         finalStyles.translate = `var(--fx-x, 0px) var(--fx-y, 0px)`;
-        //     }
-        // }
 
         Object.keys(built).forEach((key) => {
             const transKey = key.startsWith('--') ? 'all' : key;
@@ -99,22 +92,25 @@ const useFx = (fx?: animationProps, ref?: RefObject<HTMLElement>) => {
             // transitionList.push(`${transKey} ${duration}s ${_curve} ${delay}s`);
         });
 
+        watch.forEach((key) => {
+            if (!transitionList.includes(key)) {
+                // We use a slightly different duration if you want, 
+                // or just stick to the animation speed
+                transitionList.push(`${key} ${duration}s ${_curve} ${delay}s`);
+            }
+        });
+
         const isActive = when === true || when === undefined;
 
         return {
             style: {
                 ...finalStyles,
-                // If waiting for first position: 'none' (kills start flicker)
-                // If exiting: use transitionList (allows exit animation)
                 transition: isWaitingForFirstPosition ? 'none' : transitionList.join(`, `),
                 opacity: isWaitingForFirstPosition ? 0 : finalStyles.opacity,
                 pointerEvents: isWaitingForFirstPosition ? 'none' : finalStyles.pointerEvents,
-                // transition: isWaiting ? `none` : transitionList.join(`, `),
-                // opacity: isWaiting ? 0 : finalStyles.opacity,
-                // pointerEvents: isWaiting ? `none` : finalStyles.pointerEvents,
             }
         };
-    }, [fx, fx?.when]);
+    }, [fx, fx?.when, fx?.watch]);
 };
 
 export default useFx

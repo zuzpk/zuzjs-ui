@@ -1,18 +1,18 @@
-import { ReactNode, Ref, useEffect, useMemo, useRef, useState } from "react"
-import { DialogActionHandler, DialogHandler, DialogProps } from "./types"
-import Overlay from "../Overlay"
 import { uuid } from "@zuzjs/core"
+import { ReactNode, Ref, useEffect, useMemo, useRef, useState } from "react"
+import { useFx } from "../../hooks"
 import useBase from "../../hooks/useBase"
-import DialogHead from "./head"
+import { useTheme } from "../../hooks/useColorScheme"
+import { BoxProps, ValueOf } from "../../types"
+import { DIALOG, TRANSITION_CURVES, TRANSITIONS, Variant } from "../../types/enums"
+import Box from "../Box"
+import Cover from "../Cover"
+import Overlay from "../Overlay"
+import { SPINNER } from "../Spinner/types"
 import DialogBody from "./body"
 import DialogFooter from "./footer"
-import Box from "../Box"
-import { DIALOG, TRANSITION_CURVES, TRANSITIONS, Variant } from "../../types/enums"
-import { useFx } from "../../hooks"
-import { BoxProps, ValueOf } from "../../types"
-import Cover from "../Cover"
-import { useTheme } from "../../hooks/useColorScheme"
-import { SPINNER } from "../Spinner/types"
+import DialogHead from "./head"
+import { DialogActionHandler, DialogHandler, DialogProps } from "./types"
 
 const Dialog = ({
     ref,
@@ -37,6 +37,8 @@ const Dialog = ({
         spinner,
         loadingMessage,
         variant,
+        inBackground,
+        closeDelay = 200,
         onClose,
         onShow,
         onHide,
@@ -71,7 +73,8 @@ const Dialog = ({
         duration: speed || themeDialog?.speed || 0.3,
         delay: themeDialog?.delay || 0.1,
         transition: transition || themeDialog?.transition || TRANSITIONS.SlideInBottom,
-        curve: curve || themeDialog?.curve || TRANSITION_CURVES.EaseInOut
+        curve: curve || themeDialog?.curve || TRANSITION_CURVES.EaseInOut,
+        watch: [`scale`, `filter`, `transform`]
     })
 
     useEffect(() => {
@@ -87,14 +90,26 @@ const Dialog = ({
         }, [] as DialogActionHandler[]));
         setVisible(true);
 
-        setTimeout(() => onShow ? onShow() : () => {}, 1000)
+        setTimeout(() => onShow ? onShow() : () => {}, 500)
     }, [])
 
+    const baseZIndex = useMemo(() => 10000 + (index * 10), [index]);
+
     return <>
-        <Overlay when={visible} />
+        <Overlay 
+            style={{ zIndex: baseZIndex }}
+            when={visible} />
         <Box
             as={`--dialog --${(type ?? DIALOG.Default).toLowerCase()} ${visible ? `--visible` : ``} ${className} fixed abc`.trim()}
-            style={dialogAnimation.style}
+            style={{
+                ...dialogAnimation.style,
+                zIndex: baseZIndex + 1,
+                pointerEvents: inBackground == true ? 'none' : 'auto',
+                ...(inBackground == true ? {
+                    scale: `0.92`,
+                    filter: `blur(2px)`
+                } : {})
+            }}
             {...rest as BoxProps}
             ref={innerRef}>
                 
@@ -103,8 +118,8 @@ const Dialog = ({
             <DialogHead
                 title={title} 
                 onClose={() => {
-                    onClose(id!)
                     setVisible(false)
+                    setTimeout(() => onClose(id!), closeDelay);
                 }} />
 
             <DialogBody

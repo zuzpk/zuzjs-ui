@@ -1,13 +1,13 @@
-import { FC, ReactNode, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react"
-import { DrawerHandler, DrawerProps } from "./types"
+import { KeyCode, useShortcuts } from "@zuzjs/hooks";
+import { Ref, useEffect, useMemo, useState } from "react";
 import { useBase, useFx } from "../../hooks";
 import { useTheme } from "../../hooks/useColorScheme";
-import { KeyCode, useDelayed, useShortcuts } from "@zuzjs/hooks";
+import { BoxProps, DRAWER_SIDE, TRANSITION_CURVES } from "../../types";
+import Box from "../Box";
 import { layerManager } from "../layer_manager";
 import Overlay from "../Overlay";
-import { BoxProps, DRAWER_SIDE, TRANSITION_CURVES, TRANSITIONS } from "../../types";
-import Box from "../Box";
 import ScrollView from "../ScrollView";
+import { DrawerProps } from "./types";
 
 const Drawer = ({
     ref,
@@ -16,7 +16,7 @@ const Drawer = ({
     ref?: Ref<HTMLDivElement>
 }) => {
 
-    const { id, index, from, speed, children, margin, animation, prerender, onClose, ...pops } = props;
+    const { id, index, from, speed, children, margin, animation, prerender, inBackground, onClose, ...pops } = props;
     const { drawer: themeDrawer } = useTheme(true)!
     const [ content, setContent ] = useState(children)
     const [ visible, setVisible ] = useState(false)
@@ -85,7 +85,10 @@ const Drawer = ({
         when: visible,
         curve: animation || themeDrawer?.animation || TRANSITION_CURVES.EaseInOut,
         duration: speed || themeDrawer?.speed ||.5,
+        watch: [`scale`, `filter`]
     })
+
+    const baseZIndex = useMemo(() => 10000 + ((index || 1) * 10), [index]);
 
     return <>
         <Overlay
@@ -94,7 +97,8 @@ const Drawer = ({
                     closeDrawer()
                 }
             }}
-            when={visible} />
+            when={visible} 
+            style={{ zIndex: baseZIndex }} />
 
         <Box
             ref={ref}
@@ -103,7 +107,13 @@ const Drawer = ({
             style={{
                 ...style,
                 ...drawerAnimation.style,
-                ...{"--m" : `${margin || themeDrawer?.margin || 0}px`}
+                ...{"--m" : `${margin || themeDrawer?.margin || 0}px`},
+                zIndex: baseZIndex + 1,
+                pointerEvents: inBackground == true ? 'none' : 'auto',
+                ...(inBackground == true ? {
+                    scale: `0.92`,
+                    filter: `blur(2px)`
+                } : {})
             }}
             {...rest as BoxProps}>
             {from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? <Box className={`--handle`} /> : null}

@@ -1,16 +1,16 @@
-import { createContext, FC, ReactNode, Ref, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { LayerItem, LayersContextType, LayersController, LayerType } from "./types";
-import Box from "../Box";
-import Dialog from "../Dialog";
-import { DialogProps } from "../Dialog/types";
-import Toast from "../Toast";
-import { ToastProps } from "../Toast/types";
-import { createPortal } from "react-dom";
 import { useDelayed } from "@zuzjs/hooks";
-import Drawer from "../Drawer";
-import { DrawerProps } from "../Drawer/types";
+import { createContext, FC, ReactNode, Ref, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import Box from "../Box";
 import ContextMenu from "../ContextMenu";
 import { ContextMenuProps } from "../ContextMenu/types";
+import Dialog from "../Dialog";
+import { DialogProps } from "../Dialog/types";
+import Drawer from "../Drawer";
+import { DrawerProps } from "../Drawer/types";
+import Toast from "../Toast";
+import { ToastProps } from "../Toast/types";
+import { LayerItem, LayersContextType, LayersController } from "./types";
 
 export const LayersContext = createContext<LayersContextType | null>(null);
 
@@ -40,10 +40,8 @@ const LayersRenderer = ({
         add(layer: Omit<LayerItem, 'id'>) {
             const layerId = nextId();
             const fullLayer: LayerItem = { id: layerId, ...layer };
-            setLayers(prev => [fullLayer, ...prev.slice(0, 20)]);
-
+            setLayers(prev => [ ...prev, fullLayer ]);
             return layerId
-
         },
         openMenu(props) {
             setMenuVisible(false);
@@ -77,44 +75,52 @@ const LayersRenderer = ({
         }, 1000)
     }
 
+    const sortedLayers = useMemo(() => [...layers], [layers]); // Newest is at the end
+    
     if ( !mounted ) return null
 
-    const dialogs = layers.filter(l => l.type == `dialog`).reverse()
-    const drawers = layers.filter(l => l.type == `drawer`).reverse()
-    const toasts = layers.filter(l => l.type == `toast`)
+    // const dialogs = layers.filter(l => l.type == `dialog`).reverse()
+    // const drawers = layers.filter(l => l.type == `drawer`).reverse()
+    // const toasts = layers.filter(l => l.type == `toast`)
+
             
     return createPortal(<Box as={`--zuz-layers-wrapper fixed fill nope`} style={{ zIndex: 9999 + depth }}>
 
-        {/* Dialogs */}
-        {dialogs.length > 0 && <Box as={`--zuz-layer-dialogs fixed fill nope`}>
-            {dialogs.map((layer, i) => <Dialog 
-                onClose={onClose}
-                key={`layer-${layer.type}-${layer.id}`} 
-                index={i} 
-                {...{ id: layer.id, ...layer.props } as DialogProps} />)}
-        </Box>}
+        {/* Unified Stack: Order depends on when they were opened */}
+        {sortedLayers.map((layer, i) => {
 
-        {/* Drawers */}
-        {drawers.length > 0 && <Box as={`--zuz-layer-drawers fixed fill nope`}>
-            {drawers
-                .map((layer, i) => <Drawer
-                onClose={onClose}
-                key={`layer-${layer.type}-${layer.id}`} 
-                index={i} 
-                {...{ id: layer.id, ...layer.props } as DrawerProps} />)}
-        </Box>}
-        
-        {/* Toasts */}
-        {toasts.length > 0 && <Box as={`--zuz-layer-toasts fixed fill nope`}>
-            {toasts.map((layer, i) => <Toast
-                onClose={onClose}
-                key={`layer-${layer.type}-${layer.id}`} 
-                index={i} 
-                {...{ id: layer.id, ...layer.props } as ToastProps} />)}
-        </Box>}
+            const inBackground = i < sortedLayers.length - 1;
+
+            if (layer.type === 'dialog') {
+                return <Dialog 
+                    onClose={onClose}
+                    key={`layer-${layer.type}-${layer.id}`} 
+                    index={i} 
+                    {...{ id: layer.id, ...layer.props, inBackground } as DialogProps} />
+            }
+            if (layer.type === 'drawer') {
+                return <Drawer
+                    onClose={onClose}
+                    key={`layer-${layer.type}-${layer.id}`} 
+                    index={i} 
+                    {...{ id: layer.id, ...layer.props, inBackground } as DrawerProps} />
+            }
+
+            if (layer.type === 'toast') {
+                return <Toast
+                    onClose={onClose}
+                    key={`layer-${layer.type}-${layer.id}`} 
+                    index={i} 
+                    {...{ id: layer.id, ...layer.props, inBackground } as ToastProps} />
+            }
+
+            return null
+
+        })}
+            
 
         {/* Context Menu / Dropdown Zone */}
-        {activeMenu && <Box as={`--zuz-layer-menus fixed fill nope`}>
+        {activeMenu && <Box as={`--zuz-layer-menus fixed fill nope`} style={{ zIndex: 1001 }}>
             <ContextMenu
                 key={`menu-${activeMenu.id}`}
                 onClose={closeMenu}

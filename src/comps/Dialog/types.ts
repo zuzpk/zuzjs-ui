@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
-import { ZuzProps } from "../../types/interfaces";
 import { ValueOf } from "../../types";
-import { SHEET, TRANSITION_CURVES, TRANSITIONS, DIALOG_ACTION_POSITION, DIALOG, Variant } from "../../types/enums";
+import { DIALOG, DIALOG_ACTION_POSITION, SHEET, TRANSITION_CURVES, TRANSITIONS, Variant } from "../../types/enums";
+import { ZuzProps } from "../../types/interfaces";
 import { SPINNER } from "../Spinner/types";
 
 export type DialogProps = ZuzProps & {
@@ -18,6 +18,9 @@ export type DialogProps = ZuzProps & {
     action?: DialogActionHandler[],
     actionPosition?: ValueOf<typeof DIALOG_ACTION_POSITION>,
     variant?: ValueOf<typeof Variant>,
+    inBackground?: boolean,
+    /** Delay after close */
+    closeDelay?: number,
     onShow?: () => void,
     onHide?: () => void,
 }
