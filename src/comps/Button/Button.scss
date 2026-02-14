@@ -63,4 +63,20 @@ body{
         cursor: auto !important;
     }
 
+    &.--plain{
+        background: transparent !important;
+        padding: 0px !important;
+        color: var(--text-primary) !important;
+        &:hover{
+            background: transparent !important;
+        }
+    }
+    &.--ghost{
+        background: transparent !important;
+        color: var(--text-primary) !important;
+        &:hover{
+            background: var(--surface);
+        }
+    }
+
 }

@@ -1,8 +1,7 @@
 import { ReactNode, useContext } from "react";
-import { TRANSITION_CURVES, TRANSITIONS, ValueOf } from "../types";
-import { DRAWER_SIDE } from "../types/enums"
-import { LayersContext } from "../comps/Layers";
 import { DrawerProps } from "../comps";
+import { LayersContext } from "../comps/Layers";
+import { DRAWER_SIDE } from "../types/enums";
 
 const useDrawer = () => {
 
@@ -14,11 +13,19 @@ const useDrawer = () => {
 
     const hide = (id: number) => ctx.remove(id)
 
-    const show = (pops : Omit<DrawerProps, `id` | `onShow` | `onHide`>) =>
-        ctx.add({ 
+    const show = (pops : Omit<DrawerProps, `id` | `onShow` | `onHide`>) : {
+        id: number;
+        hide: () => void
+    } => {
+        const id = ctx.add({ 
             type: `drawer`,
             props: pops
         })
+        return {
+            id,
+            hide: () => hide(id)
+        }
+    }
 
     return {
         clearAll,

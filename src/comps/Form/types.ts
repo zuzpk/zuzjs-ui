@@ -3,7 +3,7 @@ import { BoxProps } from "../../types/interfaces";
 import { SheetHandler } from "../Sheet";
 import { SPINNER } from "../Spinner/types";
 
-export type FormProps = BoxProps & {
+export type FormProps = Omit<BoxProps, `ref`> & {
     /** Name of form, will be appended to --form-{name} in className 
      * whitespace will be replaced with dash (-)
     */

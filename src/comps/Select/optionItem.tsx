@@ -1,8 +1,8 @@
 import React from "react";
 import Button from "../Button";
-import { OptionItemProps } from "./types";
-import Text from "../Text";
 import Icon from "../Icon";
+import Text from "../Text";
+import { OptionItemProps } from "./types";
 
 /**
  * OptionItem component renders an individual selectable item within the Select dropdown.
@@ -19,7 +19,7 @@ const OptionItem = ({ value, updateValue, o } : OptionItemProps): React.ReactEle
         as={`--select-option-item`}
         className={value && (`string` == typeof o ? o : o.value) == (`string` == typeof value ? value : value.value) ? `selected` : ``}>
             { o.icon && <Icon name={o.icon} as={`--select-option-icon --icon-${o.value}`} color={o.iconColor || undefined} /> }
-            <Text>{`string` == typeof o ? o : o.label}</Text>
+            <Text suppressHydrationWarning>{`string` == typeof o ? o : o.label}</Text>
         </Button>
 }
 

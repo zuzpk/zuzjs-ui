@@ -60,7 +60,7 @@ const Select = ({
         setChoosing(false)
         onChange && onChange(o)
     }
-
+    
     useImperativeHandle(ref, () => ({
         setSelected: ( option: Option | string ) => {
             if ( typeof option === `string` ){
@@ -127,6 +127,7 @@ const Select = ({
     return <Box className={`--select --${variant || themeVariant} ${name ? `--${name}` : ``} rel`.trim()} name={_id}>
 
         <Button
+            ref={_ref}
             data-value={value ? `string` == typeof value ? value : value.value : value || `-1`}
             className={`--selected flex aic rel ${className}`.trim()}
             withLabel={false}
@@ -155,15 +156,16 @@ const Select = ({
                 to: { y: 0, opacity: 1 },
                 when: choosing,
                 duration: .05
-            }}
-            >
-            {withSearch && <Input 
-                ref={_search}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    setQuery(e.target.value == `` ? null : e.target.value)
-                }}
-                className={`--select-search`}
-                placeholder={searchPlaceholder || `Search...`} />}
+            }}>
+            {withSearch && <Box as={`--select-search --sticky`}>
+                <Input 
+                    ref={_search}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                        setQuery(e.target.value == `` ? null : e.target.value)
+                    }}
+                    className={`--search-input`}
+                    placeholder={searchPlaceholder || `Search...`} />
+            </Box>}
             {   
                 (query == null ? options : options.filter((o: Option) => {
                 // return 

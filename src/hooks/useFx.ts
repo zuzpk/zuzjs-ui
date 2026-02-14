@@ -5,6 +5,11 @@ import { animationProps, dynamic } from "../types";
 const useFx = (fx?: animationProps, ref?: RefObject<HTMLElement>) => {
     // Track keys we've applied so we can clean them up
     const appliedKeys = useRef<string[]>([]);
+    const hasMounted = useRef(false);
+
+    useEffect(() => {
+        if (!fx?.when) hasMounted.current = false;
+    }, [fx?.transition]);
 
     useEffect(() => {
         const el = ref?.current;
@@ -50,6 +55,11 @@ const useFx = (fx?: animationProps, ref?: RefObject<HTMLElement>) => {
 
         const { transition, from, to, exit, when, duration = 0.3, delay = 0, curve } = fx;
 
+        const isWaitingForFirstPosition = when === false && !hasMounted.current;
+        const isExiting = when === false && hasMounted.current;
+        
+        if (when === true) hasMounted.current = true;
+
         let activeStyles: dynamic = {};
         const { from: _f, to: _t } = transition 
             ? animationTransition(transition) 
@@ -89,15 +99,19 @@ const useFx = (fx?: animationProps, ref?: RefObject<HTMLElement>) => {
             // transitionList.push(`${transKey} ${duration}s ${_curve} ${delay}s`);
         });
 
-        const isActive = when === true;
-        const isWaiting = when === false;
+        const isActive = when === true || when === undefined;
 
         return {
             style: {
                 ...finalStyles,
-                transition: isWaiting ? `none` : transitionList.join(`, `),
-                opacity: isWaiting ? 0 : finalStyles.opacity,
-                pointerEvents: isWaiting ? `none` : finalStyles.pointerEvents,
+                // If waiting for first position: 'none' (kills start flicker)
+                // If exiting: use transitionList (allows exit animation)
+                transition: isWaitingForFirstPosition ? 'none' : transitionList.join(`, `),
+                opacity: isWaitingForFirstPosition ? 0 : finalStyles.opacity,
+                pointerEvents: isWaitingForFirstPosition ? 'none' : finalStyles.pointerEvents,
+                // transition: isWaiting ? `none` : transitionList.join(`, `),
+                // opacity: isWaiting ? 0 : finalStyles.opacity,
+                // pointerEvents: isWaiting ? `none` : finalStyles.pointerEvents,
             }
         };
     }, [fx, fx?.when]);

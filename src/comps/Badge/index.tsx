@@ -1,10 +1,9 @@
 "use client"
 import React from 'react';
-import Box from '../Box';
-import { BoxProps, TRANSITION_CURVES, TRANSITIONS, ValueOf } from '../../types';
-import { Status } from '../../types';
-import Spinner from '../Spinner';
 import { useBase } from '../../hooks';
+import { BoxProps, Status, TRANSITION_CURVES, TRANSITIONS, ValueOf } from '../../types';
+import Box from '../Box';
+import Spinner from '../Spinner';
 
 export type BadgeProps = BoxProps & {
     size?: number,
@@ -14,8 +13,8 @@ export type BadgeProps = BoxProps & {
 }
 
 const Badge : React.FC<BadgeProps> = ({ 
-    size = 6, 
-    type = `idle`,
+    size = 5, 
+    type = `dead`,
     label = ``,
     loading = false,
     ...pops

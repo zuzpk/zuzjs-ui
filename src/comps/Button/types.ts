@@ -10,7 +10,8 @@ export type ButtonProps = Props<`button`> & {
     spinner?: typeof SPINNER[keyof typeof SPINNER],
     state?: ButtonState,
     variant?: ValueOf<typeof Variant>,
-    reset?: boolean
+    reset?: boolean,
+    kind?: `solid` | `subtle` | `surface` | `outline` | `ghost` | `plain`
 }
 
 export interface ButtonHandler extends HTMLButtonElement {

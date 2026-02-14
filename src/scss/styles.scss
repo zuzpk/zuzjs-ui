@@ -80,6 +80,7 @@ body {
     --text-secondary: #444;
     --text-secondary-hover: #666;
     --border-primary: #ddd;
+    --scrollbar-color: #777 transparent;
 }
 [color-scheme="dark"] {
     body{
@@ -94,6 +95,7 @@ body {
         --text-secondary-hover: #d8d8d8;
         --border-primary: #333;
         --zuz-shadow: 0px 0px 0px 1px #252525, 0px 0px 6px #232323;
+        --scrollbar-color: rgb(187, 187, 187) transparent;
     }
 }
 
@@ -179,6 +181,7 @@ body {
     --abc-y: -50%;
     translate: var(--fx-x, 0px) calc(var(--abc-y) + var(--fx-y, 0px));
 }
+.--sticky{position: sticky;}
 .flex{
     display: flex;
     &.cols{flex-direction: column;}

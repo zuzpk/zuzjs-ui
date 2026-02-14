@@ -13,12 +13,12 @@ export * from './AutoComplete/types';
 export { default as Avatar } from './Avatar';
 export * from './Avatar/types';
 
-export { default as Badge, type BadgeProps } from "./Badge"
+export { default as Badge, type BadgeProps } from "./Badge";
 
-export { default as Box } from "./Box"
+export { default as Box } from "./Box";
 
-export { default as Button } from "./Button"
-export type * from "./Button/types"
+export { default as Button } from "./Button";
+export type * from "./Button/types";
 
 export { default as Calendar } from './Calendar';
 export * from './Calendar/types';
@@ -53,8 +53,8 @@ export * from './Crumb/types';
 
 export { default as DatePicker } from './DatePicker';
 
-export { default as Dialog } from "./Dialog"
-export type * from "./Dialog/types"
+export { default as Dialog } from "./Dialog";
+export type * from "./Dialog/types";
 
 export { default as Drawer } from './Drawer';
 export * from './Drawer/types';
@@ -67,15 +67,18 @@ export { default as Filters, type FilterProps } from './Filters';
 export { default as Form } from './Form';
 export * from './Form/types';
 
+export { default as Grid } from './Grid';
+export * from './Grid/types';
+
 export { default as Group, type GroupProps } from './Group';
 
-export { default as Icon } from "./Icon"
-export type * from "./Icon/types"
+export { default as Icon } from "./Icon";
+export type * from "./Icon/types";
 
 export { default as Image, type ImageProps } from './Image';
 
-export { default as Input } from "./Input"
-export type * from "./Input/types"
+export { default as Input } from "./Input";
+export type * from "./Input/types";
 
 export { default as KeyboardKeys } from './KeyboardKeys';
 export * from './KeyboardKeys/types';
@@ -113,19 +116,19 @@ export * from './Search/types';
 export { default as SelectTabs } from './Segmented';
 export * from './Segmented/types';
 
-export { default as Select } from "./Select"
-export type * from "./Select/types"
+export { default as Select } from "./Select";
+export type * from "./Select/types";
 
 export { default as Sheet, type SheetHandler, type SheetProps } from './Sheet';
 
 
 export { default as Slider, type SliderProps } from './Slider';
 
-export { default as Span } from "./Span"
-export type * from "./Span/types"
+export { default as Span } from "./Span";
+export type * from "./Span/types";
 
-export { default as Spinner } from "./Spinner"
-export { SPINNER, type SpinnerProps } from "./Spinner/types"
+export { default as Spinner } from "./Spinner";
+export { SPINNER, type SpinnerProps } from "./Spinner/types";
 
 export { default as Switch } from './Switch';
 
@@ -141,7 +144,7 @@ export * from './TabView/types';
 export { default as Terminal } from './Terminal';
 export * from './Terminal/types';
 
-export { default as Text } from "./Text"
+export { default as Text } from "./Text";
 
 export { default as Textarea } from './TextArea';
 export type { TextAreaProps } from './TextArea/types';
@@ -159,4 +162,4 @@ export * from './Tooltip/types';
 export { default as TreeView } from './Treeview';
 export * from './Treeview/types';
 
-export { ThemeProvider } from "../hooks/useColorScheme"
+export { ThemeProvider } from "../hooks/useColorScheme";

@@ -26,24 +26,24 @@ body{
     --select-search-color: var(--text-primary);
     --select-search-margin-bottom: 4px;
 
-    --select-radius: var(--radius);
-    --select-text-size: var(--text);
+    // --select-radius: var(--radius);
+    // --select-text-size: var(--text);
 
-    --select-text-size-sm: var(--text-sm);
-    --select-padding-sm: var(--padding-sm-x);
-    --select-radius-sm: var(--radius-sm);
+    // --select-text-size-sm: var(--text-sm);
+    // --select-padding-sm: var(--padding-sm);
+    // --select-radius-sm: var(--radius-sm);
     
-    --select-text-size-md: var(--text-md);
-    --select-padding-md: var(--padding-md-x);
-    --select-radius-md: var(--radius-md);
+    // --select-text-size-md: var(--text-md);
+    // --select-padding-md: var(--padding-md);
+    // --select-radius-md: var(--radius-md);
     
-    --select-text-size-lg: var(--text-lg);
-    --select-padding-lg: var(--padding-lg-x);
-    --select-radius-lg: var(--radius-lg);
+    // --select-text-size-lg: var(--text-lg);
+    // --select-padding-lg: var(--padding-lg);
+    // --select-radius-lg: var(--radius-lg);
     
-    --select-text-size-xl: var(--text-xl);
-    --select-padding-xl: var(--padding-xl-x);
-    --select-radius-xl: var(--radius-xl);
+    // --select-text-size-xl: var(--text-xl);
+    // --select-padding-xl: var(--padding-xl);
+    // --select-radius-xl: var(--radius-xl);
 
     --select-option-gap: 8px;
 
@@ -53,32 +53,39 @@ body{
 
     width: fit-content;
     
+    &.--xs{
+        .--selected{
+            padding: var(--padding-xs);
+            border-radius: var(--radius-xs);
+            font-size: var(--text-xs);
+        }
+    }
     &.--sm{
         .--selected{
-            padding: var(--select-padding-sm);
-            border-radius: var(--select-radius-sm);
-            font-size: var(--select-text-size-sm);
+            padding: var(--padding-sm);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-sm);
         }
     }
     &.--md{
         .--selected{
-            padding: var(--select-padding-md);
-            border-radius: var(--select-radius-md);
-            font-size: var(--select-text-size-md);
+            padding: var(--padding-md);
+            border-radius: var(--radius-md);
+            font-size: var(--text-md);
         }
     }
     &.--lg{
         .--selected{
-            padding: var(--select-padding-lg);
-            border-radius: var(--select-radius-lg);
-            font-size: var(--select-text-size-lg);
+            padding: var(--padding-lg);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-lg);
         }
     }
     &.--def{
         .--selected{
-            padding: var(--select-padding);
-            border-radius: var(--select-radius);
-            font-size: var(--select-text-size);
+            padding: var(--padding);
+            border-radius: var(--radius);
+            font-size: var(--text-size);
         }
     }
 
@@ -128,15 +135,20 @@ body{
         padding: var(--select-options-padding);
         box-shadow: var(--select-options-shadow);
         z-index: var(--max-z-index);
+        scrollbar-color: var(--scrollbar-color);
 
         .--select-search{
-            border: var(--select-search-border);
-            padding: var(--select-search-padding);
-            background: var(--select-search);
-            border-radius: var(--select-search-radius);
-            font-size: var(--select-search-font-size);
-            color: var(--select-search-color);
             margin-bottom: var(--select-search-margin-bottom);
+            background: var(--select-search);
+            top: 0px;
+            .--search-input{
+                background: inherit;
+                border: var(--select-search-border);
+                padding: var(--select-search-padding);
+                border-radius: var(--select-search-radius);
+                font-size: var(--select-search-font-size);
+                color: var(--select-search-color);
+            }
         }
 
         button.--select-option-item{

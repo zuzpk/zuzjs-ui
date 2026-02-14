@@ -27,3 +27,7 @@ export interface CheckboxHandler {
     setChecked: (mode: boolean, triggerChange?: boolean) => void,
     toggle: (triggerChange?: boolean) => void,
 }
+
+export {
+    CheckboxHandler as SwitchHandler
+};

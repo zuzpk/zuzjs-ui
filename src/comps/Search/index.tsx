@@ -1,6 +1,7 @@
 "use client"
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useBase } from '../../hooks';
+import { useTheme } from '../../hooks/useColorScheme';
 import { Variant } from '../../types/enums';
 import Box from '../Box';
 import Button from '../Button';
@@ -26,7 +27,7 @@ const Search = forwardRef<SearchHandler, SearchProps>((props, ref) => {
     const { style, className } = useBase({ as: props.as })
     // const { className : searchStyle } = useBase({ as: withStyle || `` } as Props<`div`>)
     const [ query, setQuery ] = useState<string>(``)
-
+    const { variant: themeVariant } = useTheme(true)!
     const innerRef = useRef<HTMLInputElement>(null)
 
     const actionBtn = useMemo(() => <Button
@@ -70,12 +71,11 @@ const Search = forwardRef<SearchHandler, SearchProps>((props, ref) => {
  
     return <Box 
         style={style}
-        className={`--search ${reverse ? `--search-rev` : ``} --${props.variant || Variant.Small} flex aic ${typeof props.as === 'string' && props.as.includes(`abs`) ? `` : `rel`} ${className}`.trim()}>
+        className={`--search ${reverse ? `--search-rev` : ``} --${props.variant || themeVariant || Variant.Medium} flex aic ${typeof props.as === 'string' && props.as.includes(`abs`) ? `` : `rel`} ${className}`.trim()}>
         { reverse && actionBtn }
         <Input 
             ref={innerRef}
             onChange={handleChange}
-            className={`--${props.variant || Variant.Small}`}
             {...pops} />
         {props.shortcut && <KeyBoardKeys keys={props.shortcut} as={`abs`} />}
         { !reverse && actionBtn }

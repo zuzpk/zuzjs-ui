@@ -1,7 +1,7 @@
-import { ReactNode, useContext } from "react";
-import { DialogActionHandler, DialogProps } from "../comps/Dialog/types";
-import { DIALOG, TRANSITION_CURVES, TRANSITIONS, ValueOf } from "../types";
+import { useContext } from "react";
+import { DialogProps } from "../comps/Dialog/types";
 import { LayersContext } from "../comps/Layers";
+import { DIALOG } from "../types";
 
 const useDialog = () => {
 
@@ -13,11 +13,19 @@ const useDialog = () => {
 
     const hide = (id: number) => ctx.remove(id)
 
-    const show = (pops : Omit<DialogProps, `id` | `onShow` | `onHide`>) =>
-        ctx.add({ 
+    const show = (pops : Omit<DialogProps, `id` | `onShow` | `onHide`>) : {
+        id: number;
+        hide: () => void
+    } => {
+        const id = ctx.add({ 
             type: `dialog`,
             props: { ...pops, type: DIALOG.Dialog }
         })
+        return {
+            id,
+            hide: () => hide(id)
+        }
+    }
 
     return {
         clearAll,

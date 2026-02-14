@@ -1,18 +1,17 @@
 "use client"
-import { forwardRef } from 'react';
 import { useBase } from '../../hooks';
+import { useTheme } from '../../hooks/useColorScheme';
 import Icon from '../Icon';
 import Span from '../Span';
 import Spinner from '../Spinner';
-import { ButtonProps, ButtonState } from './types';
-import { Variant } from '../../types/enums';
 import { SPINNER } from '../Spinner/types';
-import { useTheme } from '../../hooks/useColorScheme';
+import { ButtonProps, ButtonState } from './types';
 
 const Button = ({ ref, ...props} : ButtonProps) => {
 
     const { 
         reset, 
+        kind = `solid`,
         variant, 
         icon, iconSize, children, withLabel, spinner, state, disabled, ...pops } = props
     const {
@@ -23,7 +22,7 @@ const Button = ({ ref, ...props} : ButtonProps) => {
     const { variant: themeVariant } = useTheme(true)!
     
     return <button
-        className={`--button --${variant || themeVariant} flex aic ${!reset ? `jcc` : ``} ${icon ? `--with-icon` : ``} ${className}`.trim().replace(/\s+/g, ' ')}
+        className={`--button --${kind} --${variant || themeVariant} flex aic ${!reset ? `jcc` : ``} ${icon ? `--with-icon` : ``} ${className}`.trim().replace(/\s+/g, ' ')}
         style={style}
         ref={ref}
         disabled={state == ButtonState.Loading || props.skeleton?.enabled || disabled}

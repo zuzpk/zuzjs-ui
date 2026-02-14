@@ -1,7 +1,7 @@
 "use client"
 import { _, withPost } from "@zuzjs/core";
-import { addPropsToChildren } from "@zuzjs/core/react"
-import { forwardRef, ReactNode, startTransition, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { addPropsToChildren } from "@zuzjs/core/react";
+import { ReactNode, Ref, startTransition, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import useBase from "../../hooks/useBase";
 import useToast from "../../hooks/useToast";
 import { dynamic, FormInputs } from "../../types";
@@ -10,8 +10,8 @@ import Box from "../Box";
 import { ButtonHandler } from "../Button/types";
 import Cover from "../Cover";
 // import { SheetHandler } from "../Sheet/types";
-import { FormHandler, FormProps } from "./types";
 import { isSheetHandler, SheetHandler } from "../Sheet";
+import { FormHandler, FormProps } from "./types";
 // import Sheet, { isSheetHandler } from "../Sheet/sheet";
 
 
@@ -25,7 +25,13 @@ import { isSheetHandler, SheetHandler } from "../Sheet";
  * @param ref - Reference to the {@link FormHandler} interface, exposing methods to control loading and error states from the parent.
  */
 
-const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
+// const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
+const Form = ({
+    ref,
+    ...props
+} : FormProps & {
+    ref?: Ref<FormHandler>
+}) => {
 
     const { 
         name,
@@ -357,7 +363,7 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
     useImperativeHandle(ref, () => ({
         setLoading(mod : boolean){
             if ( mod ){
-                sheet.current!.hide()
+                sheet.current?.hide()
                 try{ toast.clearAll() }catch(e){}
             }
             setLoading(mod)
@@ -401,7 +407,7 @@ const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
 
     </Box>
 
-})
+}
 
 Form.displayName = `Zuz.Form`
 

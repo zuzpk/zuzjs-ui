@@ -1,14 +1,13 @@
-import Hashids from "hashids";
-import pc from "picocolors";
-import { 
-    cssProps, 
-    cssDirect,
-    cssPropsWithColor,
-    cssAnimationCurves
-} from "./stylesheet";
-import fs from "fs"
-import { dirname } from "path";
 import { dynamic, isColor } from "@zuzjs/core";
+import fs from "fs";
+import Hashids from "hashids";
+import { dirname } from "path";
+import {
+    cssAnimationCurves,
+    cssDirect,
+    cssProps,
+    cssPropsWithColor
+} from "./stylesheet";
 
 
 interface UtilityToken {
@@ -281,7 +280,7 @@ class StyleGenerator {
 
     public addUnitsSafely(prop: string, val: string): string {
 
-        const unitlessProps = ["opacity", "zIndex", "flex", "b", "font-weight", "fontWeight", "lineHeight", "scale"];
+        const unitlessProps = ["opacity", "zIndex", "flex", "b", "font-weight", "fontWeight", "lineHeight", "scale", "ratio", "aspectRatio", "aspect-ratio"];
         if (unitlessProps.includes(prop)) return val;
 
         // console.log(`addUnitsSafely`, prop, val)

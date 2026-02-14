@@ -1,11 +1,12 @@
 'use client'
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useBase } from "../../hooks";
+import { useTheme } from "../../hooks/useColorScheme";
+import { BoxProps } from "../../types";
 import { Variant } from "../../types/enums";
 import Box from "../Box";
 import SegmentItem from "./item";
 import { Segment, SegmentController, SegmentProps } from "./types";
-import { BoxProps } from "../../types";
 
 
 /**
@@ -36,7 +37,7 @@ const Segmented = forwardRef<SegmentController, SegmentProps>((props, ref) => {
     const { className, style, rest } = useBase(pops)
     const _tab = useRef<HTMLDivElement | null>(null)
     const _segmented = useRef<HTMLDivElement | null>(null)
-    
+    const { variant : themeVariant } = useTheme(true)!
     /**
      * Handles selection of a segment.
      *
@@ -81,7 +82,7 @@ const Segmented = forwardRef<SegmentController, SegmentProps>((props, ref) => {
     return <Box
         ref={_segmented}
         data-selected={_selected}
-        className={`${className} --segmented --${variant || Variant.Small} flex aic rel`}
+        className={`${className} --segmented --${variant || themeVariant || Variant.Medium} flex aic rel`}
         style={style}
         {...rest as BoxProps}>
 
