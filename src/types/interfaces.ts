@@ -1,7 +1,7 @@
 import { Ref } from "react";
-import { dynamic, Props, ValueOf } from "./shared";
-import { SKELETON, TRANSITION_CURVES, TRANSITIONS } from "./enums";
 import { ZuzStyleString } from "./css";
+import { SKELETON, TRANSITION_CURVES, TRANSITIONS } from "./enums";
+import { dynamic, Props, ValueOf } from "./shared";
 
 export interface ZuzProps {
 
@@ -127,3 +127,13 @@ export interface Skeleton {
     /** Border radius for the skeleton, allowing rounded corners */
     radius?: number | string;
 }
+
+export interface LayerHandler {
+    id: number;
+    hide: () => void
+}
+
+export {
+    LayerHandler as DialogController,
+    LayerHandler as DrawerController
+};

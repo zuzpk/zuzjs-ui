@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { DialogProps } from "../comps/Dialog/types";
 import { LayersContext } from "../comps/Layers";
-import { DIALOG } from "../types";
+import { DIALOG, DialogController } from "../types";
 
 const useDialog = () => {
 
@@ -13,10 +13,7 @@ const useDialog = () => {
 
     const hide = (id: number) => ctx.remove(id)
 
-    const show = (pops : Omit<DialogProps, `id` | `onShow` | `onHide`>) : {
-        id: number;
-        hide: () => void
-    } => {
+    const show = (pops : Omit<DialogProps, `id` | `onShow` | `onHide`>) : DialogController => {
         const id = ctx.add({ 
             type: `dialog`,
             props: { ...pops, type: DIALOG.Dialog }
