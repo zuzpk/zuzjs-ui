@@ -128,12 +128,11 @@ export interface Skeleton {
     radius?: number | string;
 }
 
-export interface LayerHandler {
+export interface DialogController {
     id: number;
     hide: () => void
 }
-
-export {
-    LayerHandler as DialogController,
-    LayerHandler as DrawerController
-};
+export interface DrawerController {
+    id: number;
+    close: () => void
+}

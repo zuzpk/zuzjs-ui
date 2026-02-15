@@ -21,7 +21,7 @@ const useDrawer = () => {
         })
         return {
             id,
-            hide: () => hide(id)
+            close: () => hide(id)
         }
     }
 
