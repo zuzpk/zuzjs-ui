@@ -4,6 +4,7 @@ import { useBase, useFx } from "../../hooks";
 import { useTheme } from "../../hooks/useColorScheme";
 import { BoxProps, DRAWER_SIDE, TRANSITION_CURVES } from "../../types";
 import Box from "../Box";
+import Cover from "../Cover";
 import { layerManager } from "../layer_manager";
 import Overlay from "../Overlay";
 import ScrollView from "../ScrollView";
@@ -16,12 +17,19 @@ const Drawer = ({
     ref?: Ref<HTMLDivElement>
 }) => {
 
-    const { id, index, from, speed, children, margin, animation, prerender, inBackground, forceClose, onClose, ...pops } = props;
+    const { 
+        id, index, from, speed, children, margin, animation, prerender, 
+        inBackground, 
+        forceClose, 
+        forceLoading,
+        onClose, 
+        ...pops } = props;
     const { drawer: themeDrawer } = useTheme(true)!
     const [ content, setContent ] = useState(children)
     const [ visible, setVisible ] = useState(false)
     const [ render, setRender ] = useState(undefined == prerender ? themeDrawer?.prerender || true : prerender)   
-    
+    const [ loading, setLoading ] = useState(false)
+
     const closeDrawer = () => {
         setVisible(false)
         onClose?.(id ?? -1)
@@ -66,6 +74,10 @@ const Drawer = ({
             closeDrawer();
         }
     }, [forceClose]);
+
+    useEffect(() => {
+        if ( undefined != forceLoading ) setLoading(forceLoading)
+    }, [forceLoading]);
 
     const side = from || themeDrawer?.from || DRAWER_SIDE.Left;
 
@@ -123,8 +135,9 @@ const Drawer = ({
             }}
             {...rest as BoxProps}>
             {from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? <Box className={`--handle`} /> : null}
-            <ScrollView>
+            <ScrollView as={`rel`}>
                 {render ? content : visible ? content : null}
+                <Cover when={loading} />
             </ScrollView>
         </Box>
     </>

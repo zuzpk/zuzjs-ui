@@ -52,7 +52,7 @@ export interface OptionItemProps {
 /**
  * Props for the Select component.
  */
-export type SelectProps = Omit<BoxProps, "onChange" > & {
+export type SelectProps = Omit<BoxProps, "onChange" | "ref"> & {
 
 
     ref?: Ref<SelectHandler>,
@@ -109,6 +109,12 @@ export type SelectProps = Omit<BoxProps, "onChange" > & {
      * Placeholder text for the search input field.
      */
     searchPlaceholder?: string,
+
+    /**
+     * Expand width to parent 100%
+     * width:100%
+     */
+    expanded?: boolean,
 
     /**
      * Max Height

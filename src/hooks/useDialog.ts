@@ -9,9 +9,11 @@ const useDialog = () => {
 
     if (!ctx) throw new Error('useDialog must be used inside <LayersProvider>');
 
-    const clearAll = () => ctx.clear()
+    const clearAll = () => ctx.clear(`dialog`)
 
     const hide = (id: number) => ctx.remove(id)
+
+    const setLoading = (id: number, mode: boolean) => ctx.loading(id, mode)
 
     const show = (pops : Omit<DialogProps, `id` | `onShow` | `onHide`>) : DialogController => {
         const id = ctx.add({ 
@@ -20,6 +22,7 @@ const useDialog = () => {
         })
         return {
             id,
+            setLoading: (mod) => setLoading(id, mod),
             hide: () => hide(id)
         }
     }

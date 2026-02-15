@@ -1,13 +1,16 @@
 "use client"
+import { _ } from '@zuzjs/core';
 import React from 'react';
 import { useBase } from '../../hooks';
-import { BoxProps, Status, TRANSITION_CURVES, TRANSITIONS, ValueOf } from '../../types';
+import { BoxProps, Status, TRANSITION_CURVES, TRANSITIONS, ValueOf, Variant } from '../../types';
 import Box from '../Box';
 import Spinner from '../Spinner';
+import Text from '../Text';
 
 export type BadgeProps = BoxProps & {
     size?: number,
     type?: ValueOf<typeof Status>,
+    variant?: ValueOf<typeof Variant>,
     label?: string,
     loading?: boolean
 }
@@ -16,6 +19,7 @@ const Badge : React.FC<BadgeProps> = ({
     size = 5, 
     type = `dead`,
     label = ``,
+    variant = Variant.Small,
     loading = false,
     ...pops
 }) => {
@@ -28,11 +32,13 @@ const Badge : React.FC<BadgeProps> = ({
 
     return <Box 
         style={{
-            width: `${size+4}px`,
-            height: `${size+4}px`,
+            ...(_(label).isEmpty() ? { 
+                width: `${size+4}px`,
+                height: `${size+4}px`,
+            } : {}),
             ...style
         }} 
-        as={`--badge rel flex aic jcc ${className}`.trim()}>
+        as={`--badge --${variant} --${type} rel flex aic jcc ${className}`.trim()}>
         <Box 
             fx={{
                 transition: TRANSITIONS.FadeIn,
@@ -41,10 +47,11 @@ const Badge : React.FC<BadgeProps> = ({
                 when: loading
             }}
             as={`abs abc`}><Spinner /></Box>
-        <Box style={{
-            width: `${size}px`,
-            height: `${size}px`,
-        }} as={`--dot --${type}`} />
+        { _(label).isEmpty() ? <Box style={{
+                width: `${size}px`,
+                height: `${size}px`,
+            }} as={`--dot --${type}`} /> 
+            : <Text as={`--label`}>{label}</Text>}
     </Box>
 }
 

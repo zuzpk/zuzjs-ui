@@ -10,9 +10,11 @@ const useDrawer = () => {
 
     if (!ctx) throw new Error('useDialog must be used inside <LayersProvider>');
 
-    const clearAll = () => ctx.clear()
+    const clearAll = () => ctx.clear(`drawer`)
 
     const hide = (id: number) => ctx.remove(id)
+
+    const setLoading = (id: number, mode: boolean) => ctx.loading(id, mode)
 
     const show = (pops : Omit<DrawerProps, `id` | `onShow` | `onHide`>) : DrawerController => {
         const id = ctx.add({ 
@@ -21,6 +23,7 @@ const useDrawer = () => {
         })
         return {
             id,
+            setLoading: (mod) => setLoading(id, mod),
             close: () => hide(id)
         }
     }

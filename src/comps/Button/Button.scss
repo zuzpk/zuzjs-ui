@@ -10,6 +10,7 @@ body{
     --button-gap-md: 8px;
     --button-gap-lg: 10px;
     --button-gap-xl: 10px;
+    --button-ghost-hover: var(--surface);
 
 }
 .--button{
@@ -75,7 +76,7 @@ body{
         background: transparent !important;
         color: var(--text-primary) !important;
         &:hover{
-            background: var(--surface);
+            background: var(--button-ghost-hover) !important;
         }
     }
 

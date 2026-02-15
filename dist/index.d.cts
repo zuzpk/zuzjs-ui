@@ -298,13 +298,16 @@ interface Skeleton {
 interface LayerHandler {
     inBackground?: boolean;
     forceClose?: boolean;
+    forceLoading?: boolean;
 }
 interface DialogController {
     id: number;
+    setLoading: (mod: boolean) => void;
     hide: () => void;
 }
 interface DrawerController {
     id: number;
+    setLoading: (mod: boolean) => void;
     close: () => void;
 }
 
@@ -423,6 +426,7 @@ declare const Avatar: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react
 type BadgeProps = BoxProps & {
     size?: number;
     type?: ValueOf<typeof Status>;
+    variant?: ValueOf<typeof Variant>;
     label?: string;
     loading?: boolean;
 };
@@ -1049,6 +1053,8 @@ interface ToastProps {
     onClick?: () => void;
 }
 
+type LayerType = "dialog" | "drawer" | "toast" | "menu";
+
 declare const LayersProvider: FC<{
     children: ReactNode;
 }>;
@@ -1250,7 +1256,7 @@ interface OptionItemProps {
 /**
  * Props for the Select component.
  */
-type SelectProps = Omit<BoxProps, "onChange"> & {
+type SelectProps = Omit<BoxProps, "onChange" | "ref"> & {
     ref?: Ref<SelectHandler>;
     /**
      * Size of the select field.
@@ -1297,6 +1303,11 @@ type SelectProps = Omit<BoxProps, "onChange"> & {
      * Placeholder text for the search input field.
      */
     searchPlaceholder?: string;
+    /**
+     * Expand width to parent 100%
+     * width:100%
+     */
+    expanded?: boolean;
     /**
      * Max Height
      */
@@ -1874,7 +1885,7 @@ declare const useContextMenu: () => {
         header?: ReactNode | FC;
         footer?: ReactNode | FC;
     }) => void;
-    hide: () => void;
+    hide: (type: LayerType) => void;
 };
 
 declare const PACKAGE_NAME: string;

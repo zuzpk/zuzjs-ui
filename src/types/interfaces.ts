@@ -131,13 +131,16 @@ export interface Skeleton {
 export interface LayerHandler {
     inBackground?: boolean,
     forceClose?: boolean,
+    forceLoading?: boolean,
 }
 
 export interface DialogController {
     id: number;
+    setLoading: (mod: boolean) => void,
     hide: () => void
 }
 export interface DrawerController {
     id: number;
+    setLoading: (mod: boolean) => void,
     close: () => void
 }

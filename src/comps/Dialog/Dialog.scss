@@ -21,9 +21,9 @@ body{
 
     --dialog-footer: var(--background);
     --dialog-footer-padding: 10px;
-    --dialog-action: #222;
+    --dialog-action: var(--background);
     --dialog-action-color: #fff;
-    --dialog-action-hover: #333;
+    --dialog-action-hover: var(--background-hover);
     --dialog-action-radius: 7px;
     --dialog-action-padding: 7px 20px;
     --dialog-action-font-size: 16px;

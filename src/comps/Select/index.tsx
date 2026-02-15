@@ -32,6 +32,7 @@ const Select = ({
         maxHeight,
         arrowDownIcon = SVGIcons.arrowDown,
         arrowUpIcon = SVGIcons.arrowUp,
+        expanded,
         onChange,
         ...pops } = props
     const [ value, setValue ] = useState<Option>(
@@ -124,7 +125,7 @@ const Select = ({
         };
     }, [choosing, reposition]);
 
-    return <Box className={`--select --${variant || themeVariant} ${name ? `--${name}` : ``} rel`.trim()} name={_id}>
+    return <Box className={`--select --${expanded == true ? `expanded` : ``} --${variant || themeVariant} ${name ? `--${name}` : ``} rel`.trim()} name={_id}>
 
         <Button
             ref={_ref}

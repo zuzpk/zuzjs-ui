@@ -10,7 +10,7 @@ import Drawer from "../Drawer";
 import { DrawerProps } from "../Drawer/types";
 import Toast from "../Toast";
 import { ToastProps } from "../Toast/types";
-import { LayerItem, LayersContextType, LayersController } from "./types";
+import { LayerItem, LayersContextType, LayersController, LayerType } from "./types";
 
 export const LayersContext = createContext<LayersContextType | null>(null);
 
@@ -55,8 +55,13 @@ const LayersRenderer = ({
             setLayers(prev => prev.map(l => l.id === id ? { ...l, props: { ...l.props, forceClose: true } } : l));
             if (activeMenu?.id === id) closeMenu();
         },
-        clear(){
-            setLayers([])
+        loading(id: number, mode: boolean) {
+            // setLayers(t => t.filter(layer => layer.id !== id));
+            setLayers(prev => prev.map(l => l.id === id ? { ...l, props: { ...l.props, forceLoading: mode } } : l));
+            if (activeMenu?.id === id) closeMenu();
+        },
+        clear(type: LayerType){
+            setLayers(layers.filter(l => l.type != type))
         }
     }))
 
@@ -151,7 +156,8 @@ const LayersProvider : FC<{
         }, 
         openMenu: (props: ContextMenuProps) => LayersController.current?.openMenu(props)!,
         remove: (id: number) => LayersController.current?.remove(id)!, 
-        clear: () => LayersController.current?.clear()!, 
+        loading: (id: number, mode: boolean) => LayersController.current?.loading(id, mode)!, 
+        clear: (type: LayerType) => LayersController.current?.clear(type)!, 
         depth: currentDepth,
         isSubLayer: !!parentContext,
     }), [parentContext]);

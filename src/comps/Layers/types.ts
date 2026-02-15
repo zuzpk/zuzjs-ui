@@ -15,7 +15,8 @@ export interface LayersController {
   add: (layer: Omit<LayerItem, 'id'>) => number;
   openMenu: (props: ContextMenuProps) => void;
   remove: (id: number) => void;
-  clear: () => void;
+  loading: (id: number, mode: boolean) => void;
+  clear: (type: LayerType) => void;
 }
 
 export interface LayersContextType extends LayersController {

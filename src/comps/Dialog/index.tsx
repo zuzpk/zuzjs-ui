@@ -39,6 +39,7 @@ const Dialog = ({
         variant,
         inBackground,
         forceClose,
+        forceLoading,
         onClose,
         onShow,
         onHide,
@@ -104,6 +105,10 @@ const Dialog = ({
         }
     }, [forceClose]);
 
+    useEffect(() => {
+        if ( undefined != forceLoading ) setLoading(forceLoading)
+    }, [forceLoading]);
+
     const baseZIndex = useMemo(() => 10000 + (index * 10), [index]);
 
     return <>
@@ -124,7 +129,6 @@ const Dialog = ({
             {...rest as BoxProps}
             ref={innerRef}>
                 
-            <Cover when={loading} spinner={spinner || themeDialog?.spinner || themeSpinner?.type || SPINNER.Simple} message={loadingMessage || themeDialog?.loadingMessage} />
 
             <DialogHead
                 title={title} 
@@ -140,6 +144,8 @@ const Dialog = ({
                 action={action} 
                 dialogID={dialogID} 
                 actionPosition={actionPosition} />}
+
+            <Cover when={loading} spinner={spinner || themeDialog?.spinner || themeSpinner?.type || SPINNER.Simple} message={loadingMessage || themeDialog?.loadingMessage} />
 
         </Box>
     </>

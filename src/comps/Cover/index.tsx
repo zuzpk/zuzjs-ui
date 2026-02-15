@@ -42,7 +42,7 @@ const Cover = forwardRef<HTMLDivElement, CoverProps >((props, ref) => {
         }}
         fxDelay={0.1}
         fxStep={0.05}
-        className={`--cover flex aic jcc cols abs fillx nope nous ${className}`.trim()}
+        className={`--cover flex aic jcc cols abs fill nope nous ${className}`.trim()}
         style={{
             ...style,
             backgroundColor: `var(--cover-bg)`

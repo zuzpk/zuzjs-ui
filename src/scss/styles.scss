@@ -1,7 +1,7 @@
-@use "./mixins.scss" as *;
-@use "./colors.scss";
-@use "./keyframes.scss";
-@use "./transitions.scss";
+@use "./mixins" as *;
+@use "./colors";
+@use "./keyframes";
+@use "./transitions";
 
 @use "../comps/Accordion/Accordion.scss";
 @use "../comps/Actionbar/Actionbar.scss";
@@ -71,6 +71,7 @@ input{
 
 body {
     --background: #e6eaf2;
+    --background-hover: #dde2ec;
     --surface: #fff;
     --surface-hover: #f6f6f6;
     --muted: #fff;
@@ -85,6 +86,7 @@ body {
 [color-scheme="dark"] {
     body{
         --background: #131313;
+        --background-hover: #222;
         --surface: #1e1f20;
         --surface-hover: #292a2c;
         --muted: #272829;

@@ -1,3 +1,4 @@
+@use "../../scss/variables";
 body{
     --select: var(--surface);
     --select-border-color: var(--border-primary);
@@ -14,7 +15,6 @@ body{
     --select-options-padding: 4px;
     --select-option-color: var(--text-primary);    
     --select-option-hover: var((--background));
-    --select-option-padding: var(--select-padding-sm);
     --select-option-radius: var(--select-radius);
     --select-selected: var(--background);
     --select-shadow: inherit;    
@@ -51,41 +51,28 @@ body{
 
 .--select{
 
-    width: fit-content;
+    &:not(.--expanded){
+        width: fit-content;
+    }
     
-    &.--xs{
-        .--selected{
-            padding: var(--padding-xs);
-            border-radius: var(--radius-xs);
-            font-size: var(--text-xs);
-        }
-    }
-    &.--sm{
-        .--selected{
-            padding: var(--padding-sm);
-            border-radius: var(--radius-sm);
-            font-size: var(--text-sm);
-        }
-    }
-    &.--md{
-        .--selected{
-            padding: var(--padding-md);
-            border-radius: var(--radius-md);
-            font-size: var(--text-md);
-        }
-    }
-    &.--lg{
-        .--selected{
-            padding: var(--padding-lg);
-            border-radius: var(--radius-lg);
-            font-size: var(--text-lg);
-        }
-    }
-    &.--def{
-        .--selected{
-            padding: var(--padding);
-            border-radius: var(--radius);
-            font-size: var(--text-size);
+    @each $size in variables.$sizes {
+        &.--#{$size} {
+            --select-radius: var(--radius-#{$size});
+            
+            .--selected {
+                padding: var(--padding-#{$size});
+                border-radius: var(--radius-#{$size});
+                font-size: var(--text-#{$size});
+            }
+            
+            .--options-list{
+                padding: var(--padding-#{$size}-x);
+                border-radius: calc(var(--radius-#{$size})/2);
+                button.--select-option-item {
+                    padding: var(--padding-#{$size}) !important;
+                    border-radius: var(--radius-#{$size}) !important;
+                }
+            }
         }
     }
 
@@ -131,8 +118,8 @@ body{
         overflow-x: hidden;
         gap: 2px;
         background: var(--select-options);
-        border-radius: var(--select-radius);
-        padding: var(--select-options-padding);
+        // border-radius: var(--select-radius);
+        // padding: var(--select-options-padding);
         box-shadow: var(--select-options-shadow);
         z-index: var(--max-z-index);
         scrollbar-color: var(--scrollbar-color);
@@ -156,8 +143,6 @@ body{
             border: 0px;
             text-align: left;
             color: var(--select-option-color);
-            padding: var(--select-option-padding);
-            border-radius: var(--select-option-radius);
             font-size: var(--select-text-size);
             white-space: pre;
             text-align: left !important;

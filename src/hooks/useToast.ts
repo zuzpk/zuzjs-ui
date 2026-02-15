@@ -1,8 +1,8 @@
 "use client"
 import { useContext } from "react";
 // import { ToastContext } from "../comps/Toast";
-import { ToastProps, ToastType } from "../comps/Toast/types";
 import { LayersContext } from "../comps/Layers";
+import { ToastProps, ToastType } from "../comps/Toast/types";
 
 const useToast = () => {
 
@@ -15,7 +15,7 @@ const useToast = () => {
         props: { ...data, type }
     })
 
-    const clearAll = () => ctx.clear()
+    const clearAll = () => ctx.clear(`toast`)
 
     const hide = (id: number) => ctx.remove(id)
 
