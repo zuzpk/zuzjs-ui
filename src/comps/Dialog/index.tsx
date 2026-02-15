@@ -38,7 +38,7 @@ const Dialog = ({
         loadingMessage,
         variant,
         inBackground,
-        closeDelay = 200,
+        forceClose,
         onClose,
         onShow,
         onHide,
@@ -77,6 +77,11 @@ const Dialog = ({
         watch: [`scale`, `filter`, `transform`]
     })
 
+    const closeDialog = () => {
+        setVisible(false)
+        onClose(id!)
+    }
+
     useEffect(() => {
         setDialogType(DIALOG.Dialog)
         setMsg(message);
@@ -92,6 +97,12 @@ const Dialog = ({
 
         setTimeout(() => onShow ? onShow() : () => {}, 500)
     }, [])
+
+    useEffect(() => {
+        if (forceClose) {
+            closeDialog();
+        }
+    }, [forceClose]);
 
     const baseZIndex = useMemo(() => 10000 + (index * 10), [index]);
 
@@ -117,11 +128,7 @@ const Dialog = ({
 
             <DialogHead
                 title={title} 
-                onClose={() => {
-                    setVisible(false)
-                    // setTimeout(() => onClose(id!), closeDelay);
-                    onClose(id!)
-                }} />
+                onClose={closeDialog} />
 
             <DialogBody
                 message={msg}

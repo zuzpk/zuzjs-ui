@@ -16,7 +16,7 @@ const Drawer = ({
     ref?: Ref<HTMLDivElement>
 }) => {
 
-    const { id, index, from, speed, children, margin, animation, prerender, inBackground, onClose, ...pops } = props;
+    const { id, index, from, speed, children, margin, animation, prerender, inBackground, forceClose, onClose, ...pops } = props;
     const { drawer: themeDrawer } = useTheme(true)!
     const [ content, setContent ] = useState(children)
     const [ visible, setVisible ] = useState(false)
@@ -60,6 +60,12 @@ const Drawer = ({
     useEffect(() => {
         setVisible(true)
     }, [])
+
+    useEffect(() => {
+        if (forceClose) {
+            closeDrawer();
+        }
+    }, [forceClose]);
 
     const side = from || themeDrawer?.from || DRAWER_SIDE.Left;
 

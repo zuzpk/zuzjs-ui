@@ -51,7 +51,8 @@ const LayersRenderer = ({
             }, 16);
         },
         remove(id: number) {
-            setLayers(t => t.filter(layer => layer.id !== id));
+            // setLayers(t => t.filter(layer => layer.id !== id));
+            setLayers(prev => prev.map(l => l.id === id ? { ...l, props: { ...l.props, forceClose: true } } : l));
             if (activeMenu?.id === id) closeMenu();
         },
         clear(){

@@ -128,6 +128,11 @@ export interface Skeleton {
     radius?: number | string;
 }
 
+export interface LayerHandler {
+    inBackground?: boolean,
+    forceClose?: boolean,
+}
+
 export interface DialogController {
     id: number;
     hide: () => void

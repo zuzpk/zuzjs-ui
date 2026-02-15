@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect, KeyboardEvent, useImperativeHandle, Ref } from "react";
-import Box from "../Box";
-import Text from "../Text";
-import { TerminalHandler, TerminalLine, TerminalProps } from "./types";
-import Input from "../Input";
+import { KeyboardEvent, Ref, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useTheme } from "../../hooks/useColorScheme";
 import { Variant } from "../../types";
+import Box from "../Box";
+import Input from "../Input";
 import Span from "../Span";
+import Text from "../Text";
+import { TerminalHandler, TerminalLine, TerminalProps } from "./types";
 
 const Terminal = ({ 
     ref,
@@ -161,8 +161,8 @@ const Terminal = ({
     return (
         <Box 
             as={`--zuz-terminal --${variant || themeVariant || Variant.Medium} flex cols ${props.className}`}
-            onClick={() => inputRef.current?.focus()}
-        >
+            onClick={() => inputRef.current?.focus()}>
+                
             {/* Scrollable Area */}
             <Box ref={scrollRef} className={`--terminal-log`}>
                 {history.map((line, i) => (
