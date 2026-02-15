@@ -1,9 +1,9 @@
 "use client"
 import React from 'react';
 import { DIALOG_ACTION_POSITION, ValueOf, Variant } from '../../types';
-import { DialogActionHandler } from './types';
-import Button from '../Button';
 import Box from '../Box';
+import Button from '../Button';
+import { DialogActionHandler } from './types';
 
 const DialogFooter : React.FC<{
     action: DialogActionHandler[],

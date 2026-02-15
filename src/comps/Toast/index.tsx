@@ -1,12 +1,12 @@
-import { FC, useContext, useEffect } from "react";
+import { useDelayed } from "@zuzjs/hooks";
+import { FC, useEffect } from "react";
+import { useFx } from "../../hooks";
+import { useTheme } from "../../hooks/useColorScheme";
+import { TRANSITION_CURVES, TRANSITIONS } from "../../types";
 import Box from "../Box";
 import Icon from "../Icon";
 import Text from "../Text";
-import { ToastProps, ToastDefaultTitle } from "./types";
-import { useDelayed } from "@zuzjs/hooks"
-import { TRANSITION_CURVES, TRANSITIONS } from "../../types";
-import { useTheme } from "../../hooks/useColorScheme";
-import { useFx } from "../../hooks";
+import { ToastDefaultTitle, ToastProps } from "./types";
 
 const Toast : FC<ToastProps & {
     index: number,
@@ -35,7 +35,7 @@ const Toast : FC<ToastProps & {
     })
 
     useEffect(() => {
-        console.log(`--expired`, expired, id)
+        // console.log(`--expired`, expired, id)
         if ( expired && id ) {
             onClose?.(id)
         }

@@ -61,7 +61,7 @@ const useFx = (
         const { transition, from, to, exit, when, duration = 0.3, delay = 0, curve, watch = [] } = fx;
 
         const isWaitingForFirstPosition = when === false && !hasMounted.current;
-        const isExiting = when === false && hasMounted.current;
+        // const isExiting = when === false && hasMounted.current;
         
         if (when === true) hasMounted.current = true;
 
@@ -96,11 +96,11 @@ const useFx = (
             if (!transitionList.includes(key)) {
                 // We use a slightly different duration if you want, 
                 // or just stick to the animation speed
-                transitionList.push(`${key} ${duration}s ${_curve} ${delay}s`);
+                transitionList.push(`${key} 0.1s ${_curve} 0s`);
             }
         });
 
-        const isActive = when === true || when === undefined;
+        // const isActive = when === true || when === undefined;
 
         return {
             style: {

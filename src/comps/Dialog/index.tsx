@@ -119,7 +119,8 @@ const Dialog = ({
                 title={title} 
                 onClose={() => {
                     setVisible(false)
-                    setTimeout(() => onClose(id!), closeDelay);
+                    // setTimeout(() => onClose(id!), closeDelay);
+                    onClose(id!)
                 }} />
 
             <DialogBody
@@ -127,7 +128,7 @@ const Dialog = ({
                 render={render}
                 action={action} />
 
-            {action && <DialogFooter
+            {action && action.length > 0 && <DialogFooter
                 variant={_variant}
                 action={action} 
                 dialogID={dialogID} 

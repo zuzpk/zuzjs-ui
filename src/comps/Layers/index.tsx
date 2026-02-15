@@ -72,16 +72,16 @@ const LayersRenderer = ({
         setTimeout(() => {
             setLayers(t => t.filter(layer => layer.id !== di))
             if (activeMenu?.id === di) setActiveMenu(null);
-        }, 1000)
+        }, 250)
     }
 
-    const sortedLayers = useMemo(() => [...layers], [layers]); // Newest is at the end
+    const sortedLayers = useMemo(() => [...layers.filter(l => l.type != `toast`)], [layers]); // Newest is at the end
     
     if ( !mounted ) return null
 
     // const dialogs = layers.filter(l => l.type == `dialog`).reverse()
     // const drawers = layers.filter(l => l.type == `drawer`).reverse()
-    // const toasts = layers.filter(l => l.type == `toast`)
+    const toasts = layers.filter(l => l.type == `toast`).reverse()
 
             
     return createPortal(<Box as={`--zuz-layers-wrapper fixed fill nope`} style={{ zIndex: 9999 + depth }}>
@@ -106,21 +106,20 @@ const LayersRenderer = ({
                     {...{ id: layer.id, ...layer.props, inBackground } as DrawerProps} />
             }
 
-            if (layer.type === 'toast') {
-                return <Toast
-                    onClose={onClose}
-                    key={`layer-${layer.type}-${layer.id}`} 
-                    index={i} 
-                    {...{ id: layer.id, ...layer.props, inBackground } as ToastProps} />
-            }
-
             return null
 
         })}
             
 
         {/* Context Menu / Dropdown Zone */}
-        {activeMenu && <Box as={`--zuz-layer-menus fixed fill nope`} style={{ zIndex: 1001 }}>
+        {toasts.length > 0 && <Box as={`--zuz-layer-toasts fixed fill nope`} style={{ zIndex: `var(--max-z-index)` }}>
+            {toasts.map((layer, i) => <Toast
+                onClose={onClose}
+                key={`layer-${layer.type}-${layer.id}`} 
+                index={i} 
+                {...{ id: layer.id, ...layer.props } as ToastProps} />)}
+        </Box>}
+        {activeMenu && <Box as={`--zuz-layer-menus fixed fill nope`} style={{ zIndex: `var(--max-z-index)` }}>
             <ContextMenu
                 key={`menu-${activeMenu.id}`}
                 onClose={closeMenu}

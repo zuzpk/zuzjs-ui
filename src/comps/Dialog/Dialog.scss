@@ -48,7 +48,7 @@ body{
         background: var(--dialog-bg);
         border-radius: var(--dialog-radius);
         box-shadow: var(--dialog-shadow);
-        transform-origin: top left !important;
+        transform-origin: center !important;
     }
 
     .--cover{
