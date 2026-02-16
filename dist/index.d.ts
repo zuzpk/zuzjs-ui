@@ -423,20 +423,6 @@ declare const Avatar: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react
     referrerPolicy?: "no-referrer" | "no-referrer-when-downgrade" | "origin" | "origin-when-cross-origin" | "same-origin" | "strict-origin" | "strict-origin-when-cross-origin" | "unsafe-url";
 } & react.RefAttributes<AvatarHandler>>;
 
-type BadgeProps = BoxProps & {
-    size?: number;
-    type?: ValueOf<typeof Status>;
-    variant?: ValueOf<typeof Variant>;
-    label?: string;
-    loading?: boolean;
-};
-declare const Badge: react__default.FC<BadgeProps>;
-
-declare const Box: {
-    ({ ref, style, ...props }: BoxProps): react_jsx_runtime.JSX.Element;
-    displayName: string;
-};
-
 declare const SPINNER: {
     readonly Simple: "SIMPLE";
     readonly Roller: "ROLLER";
@@ -445,6 +431,21 @@ declare const SPINNER: {
 type SpinnerProps = BoxProps & {
     type?: ValueOf<typeof SPINNER>;
     variant?: ValueOf<typeof Variant>;
+};
+
+type BadgeProps = BoxProps & {
+    size?: number;
+    type?: ValueOf<typeof Status>;
+    variant?: ValueOf<typeof Variant>;
+    label?: string;
+    loading?: boolean;
+    spinner?: ValueOf<typeof SPINNER>;
+};
+declare const Badge: react__default.FC<BadgeProps>;
+
+declare const Box: {
+    ({ ref, style, ...props }: BoxProps): react_jsx_runtime.JSX.Element;
+    displayName: string;
 };
 
 type ButtonProps = Props<`button`> & {

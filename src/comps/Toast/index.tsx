@@ -18,15 +18,6 @@ const Toast : FC<ToastProps & {
         toast: themeToast
     } = useTheme(true)!
 
-    // const toastAnimation = useFx({
-    //     from: { left: `50%`, x: `-50%`, top: -100, scale: 1, opacity: 0.5 },
-    //     to: { left: `50%`, x: `-50%`, top: 25, scale: 1, opacity: 1 },
-    //     // exit: { left: `50%`, x: `-50%`, top: 25, scale: 0, opacity: 0 },
-    //     curve: themeToast?.curve || TRANSITION_CURVES.EaseInOut,
-    //     duration: themeToast?.duration || 0.5,
-    //     when: mounted && !expired
-    // })
-
     const toastAnimation = useFx({
         when: mounted && !expired,
         duration: themeToast?.duration || 0.2,

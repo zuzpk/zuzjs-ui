@@ -5,6 +5,7 @@ import { useBase } from '../../hooks';
 import { BoxProps, Status, TRANSITION_CURVES, TRANSITIONS, ValueOf, Variant } from '../../types';
 import Box from '../Box';
 import Spinner from '../Spinner';
+import { SPINNER } from '../Spinner/types';
 import Text from '../Text';
 
 export type BadgeProps = BoxProps & {
@@ -12,7 +13,8 @@ export type BadgeProps = BoxProps & {
     type?: ValueOf<typeof Status>,
     variant?: ValueOf<typeof Variant>,
     label?: string,
-    loading?: boolean
+    loading?: boolean,
+    spinner?: ValueOf<typeof SPINNER>,
 }
 
 const Badge : React.FC<BadgeProps> = ({ 
@@ -21,6 +23,7 @@ const Badge : React.FC<BadgeProps> = ({
     label = ``,
     variant = Variant.Small,
     loading = false,
+    spinner,
     ...pops
 }) => {
     
@@ -46,7 +49,7 @@ const Badge : React.FC<BadgeProps> = ({
                 duration: 0.5,
                 when: loading
             }}
-            as={`abs abc`}><Spinner /></Box>
+            as={`abs abc`}><Spinner type={spinner} /></Box>
         { _(label).isEmpty() ? <Box style={{
                 width: `${size}px`,
                 height: `${size}px`,

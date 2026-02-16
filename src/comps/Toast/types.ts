@@ -9,6 +9,21 @@ export enum ToastType {
     Promise = 'promise'
 }
 
+export enum ToastPosition {
+    TopLeft = 'TopLeft', TopCenter = 'TopCenter', TopRight = 'TopRight',
+    BottomLeft = 'BottomLeft', BottomCenter = 'BottomCenter', BottomRight = 'BottomRight'
+}
+
+export enum ToastStyle {
+    Stack = 'stack',
+    Individual = 'individual'
+}
+export interface ToastAction {
+    label: string;
+    onClick: () => void;
+    variant?: 'primary' | 'secondary';
+}
+
 export const ToastDefaultTitle : dynamic = {
   success : "Action Successful",
   error : "Something Went Wrong",
@@ -23,6 +38,10 @@ export interface ToastProps {
   title?: string | ReactNode;
   message?: string | ReactNode;
   duration?: number;
+  sticky?: boolean;
+  position?: ToastPosition;
+  style?: ToastStyle;
+  actions?: ToastAction[];
   inBackground?: boolean;
   onClose?: (id: number) => void;
   onClick?: () => void;
