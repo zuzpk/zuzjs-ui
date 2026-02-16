@@ -5,9 +5,10 @@ import { DrawerProps } from "../comps/Drawer/types";
 import { GroupProps } from "../comps/Group";
 import LayersProvider from "../comps/Layers";
 import { SpinnerProps } from "../comps/Spinner/types";
+import { ToastPosition, ToastStyle, ToastType } from "../comps/Toast/types";
 import { setZuzMap } from "../funs/css";
 import { animationProps } from "../types";
-import { COLORTHEME, TRANSITION_CURVES, Variant } from "../types/enums";
+import { COLORTHEME, TRANSITION_CURVES, TRANSITIONS, Variant } from "../types/enums";
 import { ValueOf } from "../types/shared";
 
 const MATCH_MEDIA = `(prefers-color-scheme: dark)`
@@ -38,8 +39,14 @@ export interface ThemeConfig {
     spinner?: SpinnerProps,
 
     toast?: {
+        variant?: ValueOf<typeof Variant>,
+        position?: ToastPosition,
+        style?: ToastStyle,
+        transition?: ValueOf<typeof TRANSITIONS>,
         curve?: ValueOf<typeof TRANSITION_CURVES>,
-        duration?: number
+        type?: ToastType,
+        duration?: number,
+        progress?: boolean
     }
 }
 

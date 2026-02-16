@@ -9,7 +9,7 @@ import { DialogProps } from "../Dialog/types";
 import Drawer from "../Drawer";
 import { DrawerProps } from "../Drawer/types";
 import Toast from "../Toast";
-import { ToastProps } from "../Toast/types";
+import { ToastPosition, ToastProps } from "../Toast/types";
 import { LayerItem, LayersContextType, LayersController, LayerType } from "./types";
 
 export const LayersContext = createContext<LayersContextType | null>(null);
@@ -24,6 +24,7 @@ const LayersRenderer = ({
     const parentContext = useContext(LayersContext);
     const depth = parentContext?.depth ?? 0;
 
+    const [hoveredPos, setHoveredPos] = useState<string | null>(null);
     const [activeMenu, setActiveMenu] = useState<LayerItem | null>(null);
     const [menuVisible, setMenuVisible] = useState(false);
     const [layers, setLayers] = useState<LayerItem[]>([]);
@@ -88,7 +89,7 @@ const LayersRenderer = ({
     // const dialogs = layers.filter(l => l.type == `dialog`).reverse()
     // const drawers = layers.filter(l => l.type == `drawer`).reverse()
     const toasts = layers.filter(l => l.type == `toast`).reverse()
-
+    const positions = Object.values(ToastPosition);
             
     return createPortal(<Box as={`--zuz-layers-wrapper fixed fill nope`} style={{ zIndex: 9999 + depth }}>
 
@@ -116,15 +117,40 @@ const LayersRenderer = ({
 
         })}
             
+        {positions.map(pos => {
+            const posToasts = toasts.filter(t => ((t.props as ToastProps).position || ToastPosition.TopCenter) === pos);
+            if (posToasts.length === 0) return null;
 
-        {/* Context Menu / Dropdown Zone */}
-        {toasts.length > 0 && <Box as={`--zuz-layer-toasts fixed fill nope`} style={{ zIndex: `var(--max-z-index)` }}>
+            return <Box 
+                key={pos}
+                onMouseEnter={() => setHoveredPos(pos)}
+                onMouseLeave={() => setHoveredPos(null)}
+                as={`--toast-container fixed --${pos.toLowerCase()} flex cols`}
+                style={{ pointerEvents: 'auto' }}>
+                    {posToasts.map((layer, i) => (
+                        <Toast
+                            key={layer.id}
+                            index={i}
+                            total={posToasts.length}
+                            isHovered={hoveredPos === pos}
+                            onClose={onClose}
+                            {...{ id: layer.id, ...layer.props } as ToastProps}
+                        />
+                    ))}
+                </Box>
+            
+
+        })}
+
+        {/* {toasts.length > 0 && <Box as={`--zuz-layer-toasts fixed fill nope`} style={{ zIndex: `var(--max-z-index)` }}>
             {toasts.map((layer, i) => <Toast
                 onClose={onClose}
                 key={`layer-${layer.type}-${layer.id}`} 
                 index={i} 
                 {...{ id: layer.id, ...layer.props } as ToastProps} />)}
-        </Box>}
+        </Box>} */}
+
+        {/* Context Menu / Dropdown Zone */}
         {activeMenu && <Box as={`--zuz-layer-menus fixed fill nope`} style={{ zIndex: `var(--max-z-index)` }}>
             <ContextMenu
                 key={`menu-${activeMenu.id}`}

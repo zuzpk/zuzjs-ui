@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
-import { dynamic } from "../../types/shared";
+import { Variant } from "../../types";
+import { dynamic, ValueOf } from "../../types/shared";
 
 export enum ToastType {
     Default = 'default', 
@@ -42,7 +43,16 @@ export interface ToastProps {
   position?: ToastPosition;
   style?: ToastStyle;
   actions?: ToastAction[];
+  variant?: ValueOf<typeof Variant>;
   inBackground?: boolean;
+  progress?: boolean;
   onClose?: (id: number) => void;
   onClick?: () => void;
 }
+
+export {
+    ToastAction as SnackAction, ToastPosition as SnackPosition,
+    ToastStyle as SnackStyle,
+    ToastType as SnackType
+};
+
