@@ -1,5 +1,6 @@
 'use client'
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { useDelayed } from "@zuzjs/hooks";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { useBase } from "../../hooks";
 import { useTheme } from "../../hooks/useColorScheme";
 import { BoxProps } from "../../types";
@@ -30,9 +31,15 @@ import { Segment, SegmentController, SegmentProps } from "./types";
 const Segmented = forwardRef<SegmentController, SegmentProps>((props, ref) => {
 
     
-    const { fx, items, selected, variant, onSwitch, ...pops } = props
+    const { 
+        fx, 
+        items, 
+        selected, 
+        variant, 
+        disabled = false, 
+        onSwitch, ...pops } = props
     const [ _selected, setSelected ] = useState(selected || 0)
-    const hasMounted = useRef(false);
+    const hasMounted = useDelayed(50)
     const prevSelectedRef = useRef(_selected);
     const { className, style, rest } = useBase(pops)
     const _tab = useRef<HTMLDivElement | null>(null)
@@ -48,10 +55,12 @@ const Segmented = forwardRef<SegmentController, SegmentProps>((props, ref) => {
     const handleSelect = (index: number, width: number, x: number, meta: Segment, force: boolean) => {
         // console.log(selected, _selected, index, mounted)
         if ( force || ( _selected != index && _selected != -2 ) ){
+            // console.log(`selecting to`, index)
             setSelected(index)
             prevSelectedRef.current = _selected;
-            
-            if ( hasMounted.current ) onSwitch?.(meta)
+            queueMicrotask(() => {
+                if ( hasMounted ) onSwitch?.(meta)
+            })
         }
         if ( _tab.current ) {
             const _sp = _segmented.current?.getBoundingClientRect()
@@ -75,9 +84,6 @@ const Segmented = forwardRef<SegmentController, SegmentProps>((props, ref) => {
     //     }
     // }, [selected, _selected]);
 
-    useEffect(() => {
-        hasMounted.current = true;
-    }, []);
  
     return <Box
         ref={_segmented}
@@ -86,9 +92,10 @@ const Segmented = forwardRef<SegmentController, SegmentProps>((props, ref) => {
         style={style}
         {...rest as BoxProps}>
 
-        <Box ref={_tab} className={`--segment-tab abs`} />
+        <Box ref={_tab} className={`--segment-tab --${disabled ? `disabled` : `abled`} abs`} />
 
         {items.map((item, i) => <SegmentItem
+            disabled={disabled}
             onSelect={handleSelect}
             selected={_selected == i} 
             key={`segment-${item.label}-${i}`} 

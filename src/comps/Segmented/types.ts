@@ -1,6 +1,6 @@
 import { ReactNode } from "react"
-import { Variant } from "../../types/enums"
 import { BoxProps, ValueOf } from "../../types"
+import { Variant } from "../../types/enums"
 
 /**
  * Individual segment in the `SelectTabs` component.
@@ -24,6 +24,7 @@ export interface Segment {
  * @property {Segment[]} items - Array of segments to display.
  */
 export type SegmentProps = BoxProps & {
+    disabled?: boolean,
     variant?: ValueOf<typeof Variant>,
     selected?: number,
     onSwitch?: (segment: Segment) => void,
@@ -33,7 +34,8 @@ export type SegmentProps = BoxProps & {
 export type SegmentItemProps = {
     meta: Segment,
     selected: boolean,
-    onSelect: (index: number, width: number, x: number, segment: Segment, force: boolean) => void
+    onSelect: (index: number, width: number, x: number, segment: Segment, force: boolean) => void,
+    disabled?: boolean,
 }
 
 export interface SegmentController {

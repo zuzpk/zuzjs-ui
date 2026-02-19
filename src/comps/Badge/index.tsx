@@ -36,8 +36,7 @@ const Badge : React.FC<BadgeProps> = ({
     return <Box 
         style={{
             ...(_(label).isEmpty() ? { 
-                width: `${size+4}px`,
-                height: `${size+4}px`,
+                "--badge-size": size
             } : {}),
             ...style
         }} 
@@ -50,10 +49,7 @@ const Badge : React.FC<BadgeProps> = ({
                 when: loading
             }}
             as={`abs abc`}><Spinner type={spinner} /></Box>
-        { _(label).isEmpty() ? <Box style={{
-                width: `${size}px`,
-                height: `${size}px`,
-            }} as={`--dot --${type}`} /> 
+        { _(label).isEmpty() ? <Box as={`--dot --${type}`} /> 
             : <Text as={`--label`}>{label}</Text>}
     </Box>
 }

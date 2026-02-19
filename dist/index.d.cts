@@ -589,6 +589,7 @@ interface Segment {
  * @property {Segment[]} items - Array of segments to display.
  */
 type SegmentProps = BoxProps & {
+    disabled?: boolean;
     variant?: ValueOf<typeof Variant>;
     selected?: number;
     onSwitch?: (segment: Segment) => void;
@@ -598,6 +599,7 @@ type SegmentItemProps = {
     meta: Segment;
     selected: boolean;
     onSelect: (index: number, width: number, x: number, segment: Segment, force: boolean) => void;
+    disabled?: boolean;
 };
 interface SegmentController {
     setSelected: (index: number) => void;

@@ -1,6 +1,6 @@
 @use "../../scss/mixins.scss" as *;
 
-:root{
+body{
     --segmented: #eee;
     --segmented-gap: 0px;
     --segmented-border: 1px #ddd solid;
@@ -134,8 +134,14 @@
         z-index: 1;
         flex: 1;
 
+        &:disabled{
+            background: transparent !important;
+        }
+
         &:hover{
-            color: var(--segment-item-hover-color);
+            &:not(:disabled){
+                color: var(--segment-item-hover-color);
+            }
         }
 
         .--segment-label{
@@ -154,8 +160,10 @@
         }
 
         &.--segment-active{
-            color: var(--segment-item-active-color);   
 
+            &:not(:disabled){
+                color: var(--segment-item-active-color);   
+            }
             svg{
                 react{
                     fill: var(--segment-item-active-color);
@@ -173,7 +181,9 @@
     }
 
     .--segment-tab{
-        background: var(--segment-tab);
+        &:not(.--disabled){
+            background: var(--segment-tab);
+        }
         width: var(--w);
         z-index: 0;
         @include anim($duration: var(--segmented-speed), $fun: var(--ease));

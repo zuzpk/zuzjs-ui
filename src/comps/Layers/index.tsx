@@ -126,7 +126,7 @@ const LayersRenderer = ({
                 onMouseEnter={() => setHoveredPos(pos)}
                 onMouseLeave={() => setHoveredPos(null)}
                 as={`--toast-container fixed --${pos.toLowerCase()} flex cols`}
-                style={{ pointerEvents: 'auto' }}>
+                style={{ pointerEvents: 'auto', zIndex: `var(--max-z-index)` }}>
                     {posToasts.map((layer, i) => (
                         <Toast
                             key={layer.id}

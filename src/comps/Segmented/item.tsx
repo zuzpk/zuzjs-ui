@@ -1,13 +1,13 @@
+import { useDelayed } from "@zuzjs/hooks"
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import Box from "../Box"
 import Button from "../Button"
 import { ButtonHandler } from "../Button/types"
 import Icon from "../Icon"
 import { Segment, SegmentItemProps } from "./types"
-import { useDelayed } from "@zuzjs/hooks"
 
 
-const SegmentItem = ({ onSelect, meta, selected } : SegmentItemProps) => {
+const SegmentItem = ({ onSelect, meta, selected, disabled = false } : SegmentItemProps) => {
 
     const ref = useRef<ButtonHandler | null>(null)
     const { index, icon, label } = meta as Segment
@@ -40,6 +40,7 @@ const SegmentItem = ({ onSelect, meta, selected } : SegmentItemProps) => {
     }, [selected])
 
     return <Button
+        disabled={disabled}
         onClick={() => onSelect(index!, pos.width, pos.x, meta, false)}
         ref={ref}
         className={`--segment-item flex aic rel ${selected ? `--segment-active` : ``}`.trim()}>
