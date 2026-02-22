@@ -1,0 +1,109 @@
+@keyframes carouselEntry {
+    from {
+        translate: 0 0 -500px; 
+        scale: 0;
+    }
+    to {
+        scale: 1;
+    }
+}
+
+.--carousel {
+
+    --carousel-spacing: 160px;
+    --carousel-rotation: 20deg;
+    --carousel-scale-step: 0.15;
+    --carousel-height: 500px;
+    --carousel-perspective: 1200px;
+    --carousel-transition: var(--power);
+    --carousel-speed: 0.5s;
+    --carousel-brightness: 0.2;
+    --carousel-blur: 2px;
+
+    width: 100%;
+    height: 100%;
+    min-height: var(--carousel-height);
+
+    // --- Responsive Breakpoints ---
+    @media (max-width: 1024px) { --carousel-spacing: 120px; }
+    @media (max-width: 768px) { 
+        --carousel-spacing: 80px; 
+        --carousel-rotation: 30deg; 
+        --carousel-perspective: 800px;
+    }
+
+    .--carousel-stage {
+        transform-style: preserve-3d;
+        height: var(--carousel-height);
+        width: 100%;
+        flex: 1;
+        perspective: var(--carousel-perspective);
+    }
+
+    .--carousel-item-wrapper {
+
+        opacity: 0;
+        animation: carouselEntry 1s var(--power) backwards;
+
+        // Stagger the items for a "fan-out" effect
+        @for $i from 1 through 20 {
+            &:nth-child(#{$i}) {
+                animation-delay: #{$i * 0.08}s;
+            }
+        }
+
+        transition-property: transform, opacity, filter;
+        transition-duration: var(--carousel-speed); /* Browser repeats this for all if only one value is given */
+        transition-timing-function: var(--carousel-transition), ease, ease;
+        transition-delay: 0s;
+        will-change: transform;
+
+        &:not(.--is-active) {
+            opacity: calc(1 - (var(--abs-offset) * 0.25));
+        }
+        
+        // Active Identifier
+        &.--is-active {
+            filter: brightness(1) blur(0px) !important;
+            opacity: 1 !important;
+        }
+
+        // Logic for "Straight" center and bent sides
+        --abs-offset: max(var(--offset), -1 * var(--offset));
+        --direction: clamp(-1, var(--offset), 1);
+        --current-rotation: calc(clamp(0, var(--abs-offset), 1) * var(--carousel-rotation) * var(--direction) * -1);
+        --z-depth: calc(200px - (var(--abs-offset) * 100px));
+        --extra-push: calc(clamp(0, var(--abs-offset), 1) * 40px);
+
+        transform: 
+            translateX(calc(
+                (var(--offset) * var(--carousel-spacing))
+                + (var(--direction) * var(--extra-push))
+            ))
+            scale(calc(1 - (var(--abs-offset) * var(--carousel-scale-step))))
+            rotateY(var(--current-rotation))
+            translateZ(var(--z-depth));
+
+        opacity: calc(1 - (var(--abs-offset) * 0.25));
+        pointer-events: none;
+        &.--is-active { pointer-events: auto; }
+    }
+
+    &.--loop-infinite {
+        .--carousel-item-wrapper {
+            // Hide items that are more than half the total count away
+            // to prevent them from sliding across the center during a loop jump
+            &[style*="--offset: 5"], &[style*="--offset: -5"] {
+                opacity: 0;
+                transition: none;
+            }
+        }
+    }
+
+    &.--effect-coverflow {
+        .--carousel-item-wrapper {
+            // Addition of brightness/blur for depth
+            filter: blur(calc(var(--abs-offset, 0) * var(--carousel-blur, 1px))) brightness(calc(1 - var(--abs-offset, 0) * var(--carousel-brightness, 0.2)));
+        }
+    }
+}

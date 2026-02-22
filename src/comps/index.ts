@@ -23,6 +23,9 @@ export type * from "./Button/types";
 export { default as Calendar } from './Calendar';
 export * from './Calendar/types';
 
+export { default as Carousel } from './Carousel';
+export * from './Carousel/types';
+
 export { default as Chart } from './Chart';
 export * from './Chart/types';
 

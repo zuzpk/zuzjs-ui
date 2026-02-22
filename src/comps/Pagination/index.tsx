@@ -1,13 +1,18 @@
 "use client"
-import { forwardRef, useCallback, useMemo, useState } from "react";
 import { numberInRange, toHash } from "@zuzjs/core";
+import { Ref, useCallback, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useBase } from "../../hooks";
 import Box from "../Box";
 import Button from "../Button";
 import SVGIcons from "../svgicons";
-import { PaginationPage, PaginationPageItem, PaginationProps, PaginationStyle } from "./types";
+import { PaginationController, PaginationPage, PaginationPageItem, PaginationProps, PaginationStyle } from "./types";
 
-const Pagination = forwardRef<HTMLDivElement, PaginationProps>((props, ref) => {
+const Pagination = ({
+    ref,
+    ...props
+} : PaginationProps & {
+    ref?: Ref<PaginationController>
+}) => {
 
     const { 
         itemCount, 
@@ -22,9 +27,11 @@ const Pagination = forwardRef<HTMLDivElement, PaginationProps>((props, ref) => {
         loading,
         seperator,
         renderOnZeroPageCount,
+        asDots,
         onPageChange,
         ...pops } = props
 
+    const innerRef = useRef<HTMLDivElement>(null)
     const _hashKey = useMemo(() => toHash(numberInRange(4, 8)), [])
     const _hash = useCallback((input: number) => `${toHash(input, hash || 6, _hashKey)}${seperator || ``}${_hashKey}`, [_hashKey])
     const _breakLabel = useMemo(() => breakLabel || `...`, [breakLabel])
@@ -37,6 +44,9 @@ const Pagination = forwardRef<HTMLDivElement, PaginationProps>((props, ref) => {
     })
     
     
+    useImperativeHandle(ref, () => ({
+        setPage: (index) => setCurrentPage(index)
+    }))
     
     
 
@@ -83,13 +93,13 @@ const Pagination = forwardRef<HTMLDivElement, PaginationProps>((props, ref) => {
 
     if ( pages.length <= 1 && ( ( renderOnZeroPageCount == undefined ? false : renderOnZeroPageCount ) === false ) ) return null
     
-    return <Box ref={ref} as={`--pagination --pgt-${paginationStyle || PaginationStyle.Table} flex aic w:100% jcc ${className}`}>
+    return <Box ref={innerRef} as={`--pagination ${asDots === true ? `--as-dots` : ``} --pgt-${paginationStyle || PaginationStyle.Table} flex aic w:100% jcc ${className}`}>
         <Box as={`flex flex:1 aic --pgt-btns`}>
             {(pages.length > 1 ? pages : [{ id: 1, label: 1 }, { id: -1, label: _breakLabel }] as PaginationPage[]).map((page, index, items) => <Button 
                 key={`--pg-${index}-${(page as PaginationPageItem).id}`}
                 disabled={(page as PaginationPageItem).id == -1 || getPageValue(_currentPage) == +(page as PaginationPageItem).label}
                 className={(`string` == typeof page ? page : (page as PaginationPageItem).label) == getPageValue(_currentPage) ? `--current-page` : ``}
-                onClick={(ev) => handlePage(page)}>{`string` == typeof page ? page : (page as PaginationPageItem).label}</Button>)}
+                onClick={(ev) => handlePage(page)}>{asDots === true ? `` : (`string` == typeof page ? page : (page as PaginationPageItem).label)}</Button>)}
         </Box>
         <Box as={`flex aic jcc flex:1 --pagination-label`}>
             {[
@@ -109,7 +119,7 @@ const Pagination = forwardRef<HTMLDivElement, PaginationProps>((props, ref) => {
     </Box>
 
 
-})
+}
 
 Pagination.displayName = `Zuz.Pagination`
 

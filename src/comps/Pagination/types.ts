@@ -5,11 +5,15 @@ export enum PaginationStyle {
     Gooey = "gooey",
 }
 
+export interface PaginationController {
+    setPage: (index: number) => void;
+}
+
 export type PaginationPageItem = { id: string | number, label: string | number }
 export type PaginationPage = number | PaginationPageItem
 export type PaginationCallback = (page: PaginationPageItem) => void
 
-export type PaginationProps = BoxProps & {
+export type PaginationProps = Omit<BoxProps, "ref"> & {
     itemCount: number, //Total Number of Items
     itemsPerPage: number, //Number of Items Per Page
     startPage?: number | string, //Current Page on Load
@@ -21,6 +25,7 @@ export type PaginationProps = BoxProps & {
     breakLabel?: string,
     nextLabel?: string,
     prevLabel?: string,
+    asDots?: boolean,
     renderOnZeroPageCount?: boolean,
     onPageChange?: PaginationCallback
 }

@@ -1,4 +1,4 @@
-:root {
+body {
     --pagination: transparent;
     --pagination-padding: 10px;
     --pagination-font-size: 15px;
@@ -36,6 +36,7 @@
 }
 
 .--pagination{
+
     padding: var(--pagination-padding);
     background: var(--pagination);
     font-size: var(--pagination-font-size);
@@ -99,6 +100,33 @@
             &:disabled{
                 svg {
                     opacity: 0.4;
+                }
+            }
+        }
+    }
+
+    &.--as-dots{
+        .--pagination-label, .--pgt-nav, .--pgt-info { 
+            display: none !important; 
+        }
+        .--pgt-btns {
+            justify-content: center;
+            gap: 8px;
+
+            button {
+                width: 8px;
+                height: 8px;
+                padding: 0;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                color: transparent; // Hide the numbers
+                border: none;
+                transition: all 0.3s ease;
+
+                &.--current-page {
+                    background: #fff;
+                    width: 20px; // Pill shape for active
+                    border-radius: 10px;
                 }
             }
         }

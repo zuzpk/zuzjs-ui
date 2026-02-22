@@ -29,6 +29,7 @@ body{
     width: 100%;
     overflow: hidden;
     background: var(--search-color);
+    border-radius: var(--search-radius);
 
     .--input{
         background: transparent !important;
@@ -39,13 +40,17 @@ body{
     .--send{
         color: var(--search-send-color) !important;
         // background: var(--search-send-bg) !important;
+        svg{
+            fill: var(--search-send-color) !important;
+        }
     }
 
     @each $size in variables.$sizes {
+
         &.--#{$size} {
-
-            border-radius: var(--radius-#{$size});
-
+            
+            --search-radius: var(--search-radius-custom, var(--radius-#{$size}));
+            
             .--input {
                 padding: var(--padding-#{$size}-x) calc(var(--padding-#{$size}-x) * 1.5) !important;
                 font-size: calc(var(--text-#{$size}) * 1.2) !important;

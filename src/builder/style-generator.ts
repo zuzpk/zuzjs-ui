@@ -280,7 +280,11 @@ class StyleGenerator {
 
     public addUnitsSafely(prop: string, val: string): string {
 
-        const unitlessProps = ["opacity", "zIndex", "flex", "b", "font-weight", "fontWeight", "lineHeight", "scale", "ratio", "aspectRatio", "aspect-ratio"];
+        const unitlessProps = [
+            "opacity", "zIndex", "flex", "b", "font-weight", "fontWeight", "lineHeight", "scale", "ratio", "aspectRatio", "aspect-ratio",
+            "shrink", "flex-shrink", "flexShrink",
+        ];
+        // console.log(`--ppop`, prop, val)
         if (unitlessProps.includes(prop)) return val;
 
         // console.log(`addUnitsSafely`, prop, val)
@@ -320,6 +324,10 @@ class StyleGenerator {
         /** w:full */
         if (val.trim() == `full`){
             result = `100%`
+        }
+        /** w:full */
+        else if (val.trim() == `half`){
+            result = `50%`
         }
 
         else if (
@@ -381,7 +389,8 @@ class StyleGenerator {
     public addUnitsToComplexValue(prop: string, val: string): string {
         // Avoid adding px to things like rgba alphas or z-index
         const unitlessProps = [
-            "opacity", "zIndex", "flex", "b", "fontWeight", "lineHeight"
+            "opacity", "zIndex", "flex", "b", "fontWeight", "lineHeight", 
+            "shrink", "flex-shrink", "flexShrink",
         ];
         if (unitlessProps.includes(prop)) return val;
 

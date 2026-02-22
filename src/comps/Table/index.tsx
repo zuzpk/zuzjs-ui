@@ -1,16 +1,16 @@
 "use client"
+import { PubSub, uuid } from "@zuzjs/core";
 import { FC, forwardRef, JSX, Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useBase } from "../../hooks";
 import { animationProps, dynamic, TRANSITION_CURVES, TRANSITIONS } from "../../types";
 import Box from "../Box";
 import Pagination from "../Pagination";
-import { PaginationStyle } from "../Pagination/types";
-import TRow from "./row";
-import type { Column, TableController, TableProps, TableSortCallback } from "./types";
-import { PubSub, uuid } from "@zuzjs/core";
-import Text from "../Text";
+import { PaginationController, PaginationStyle } from "../Pagination/types";
 import Spinner from "../Spinner";
 import { SPINNER } from "../Spinner/types";
+import Text from "../Text";
+import TRow from "./row";
+import type { Column, TableController, TableProps, TableSortCallback } from "./types";
 
 /**
  * `Table` is a highly flexible and customizable generic component for rendering data in a tabular format.
@@ -96,7 +96,7 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<TableController>) => {
         onRowContextMenu,
         ...pops 
     } = props
-    const _pagination = useRef<HTMLDivElement>(null)
+    const _pagination = useRef<PaginationController>(null)
     const _schemaParsed = useMemo(() => schema.reduce((prev, c: Column<T>) => {
         prev[c.id] = {
             flex: c.weight || 1,

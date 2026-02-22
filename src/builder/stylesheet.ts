@@ -118,6 +118,7 @@ export const cssProps : dynamic = {
     "flexFlow": "flex-flow",
     "flexGrow": "flex-grow",
     "flexShrink": "flex-shrink",
+    "shrink": "flex-shrink",
     "flexWrap": "flex-wrap",
     "float": "float",
     "font": "font",
