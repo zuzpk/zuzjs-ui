@@ -1,5 +1,5 @@
 "use client"
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useBase } from '../../hooks';
 import { useTheme } from '../../hooks/useColorScheme';
 import { Variant } from '../../types/enums';
@@ -30,15 +30,15 @@ const Search = forwardRef<SearchHandler, SearchProps>((props, ref) => {
     const { variant: themeVariant } = useTheme(true)!
     const innerRef = useRef<HTMLInputElement>(null)
 
-    const actionBtn = useMemo(() => <Button
-        tabIndex={-1}
-        onClick={e => handleSubmit()}
-        className={`--send flex aic jcc`}
-        variant={props.variant || Variant.Small}>
-        {query !== `` ? 
-            !hideClearIcon && (`string` === typeof clearIcon ? <Icon name={clearIcon} as={`--search-action`} /> : clearIcon) : 
-            !hideSearchIcon && (`string` === typeof searchIcon ? <Icon name={searchIcon} as={`--search-action`} /> : searchIcon )}</Button>, 
-            [reverse, searchIcon, hideClearIcon, clearIcon, hideSearchIcon])
+    // const actionBtn = useMemo(() => <Button
+    //     tabIndex={-1}
+    //     onClick={e => handleSubmit()}
+    //     className={`--send flex aic jcc`}
+    //     variant={props.variant || Variant.Medium}>
+    //     {query !== `` ? 
+    //         !hideClearIcon && (`string` === typeof clearIcon ? <Icon name={clearIcon} as={`--search-action`} /> : clearIcon) : 
+    //         !hideSearchIcon && (`string` === typeof searchIcon ? <Icon name={searchIcon} as={`--search-action`} /> : searchIcon )}</Button>, 
+    //         [reverse, searchIcon, hideClearIcon, clearIcon, hideSearchIcon])
 
     if ( `type` in props ){
         delete props[`type`]
@@ -72,13 +72,20 @@ const Search = forwardRef<SearchHandler, SearchProps>((props, ref) => {
     return <Box 
         style={style}
         className={`--search ${reverse ? `--search-rev` : ``} --${props.variant || themeVariant || Variant.Medium} flex aic ${typeof props.as === 'string' && props.as.includes(`abs`) ? `` : `rel`} ${className}`.trim()}>
-        { reverse && actionBtn }
+        {/* { reverse && actionBtn } */}
         <Input 
             ref={innerRef}
             onChange={handleChange}
             {...pops} />
         {props.shortcut && <KeyBoardKeys keys={props.shortcut} as={`abs`} />}
-        { !reverse && actionBtn }
+        <Button
+            tabIndex={-1}
+            onClick={e => handleSubmit()}
+            className={`--send flex aic jcc`}
+            variant={props.variant || Variant.Medium}>
+            {query !== `` ? 
+                !hideClearIcon && (`string` === typeof clearIcon ? <Icon name={clearIcon} as={`--search-action`} /> : clearIcon) : 
+                !hideSearchIcon && (`string` === typeof searchIcon ? <Icon name={searchIcon} as={`--search-action`} /> : searchIcon )}</Button>
     </Box>
         
 })

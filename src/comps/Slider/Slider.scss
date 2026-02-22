@@ -1,6 +1,6 @@
 body{
     --slider-radius: 5px;
-    --slider-knob-size: 20px;
+    --slider-knob-size: 12px;
     --slider-knob-width: var(--slider-knob-size);
     --slider-knob-height: var(--slider-knob-size);
     --slider-knob-color: #fff;
@@ -9,16 +9,38 @@ body{
     --slider-knob-shadow: 0px 0px 2px #ccc;
     --slider-track: #fff;
     --slider-track-border: 1px #ddd solid;
+    --slider-ghost: #f1f1f1;
     --slider-fill: #111;
     --slider-text: rgb(0, 98, 255);
     --slider-text-size: 15px;
     --slider-text-weight: normal;
+    --slider-height: 6px;
+}
+
+[color-scheme="dark"] {
+    body{
+        --slider-track: #3a3c3e;
+        --slider-track-border: 1px #414244 solid;
+        --slider-fill: #fff;
+        --slider-ghost: rgba(255, 255, 255, 0.3);
+        --slider-knob-border: 1px #fff solid;
+    }
 }
 
 .--slider{
     
+    // height: 12px;
+    --ghost-start: 0%;
+    --ghost-width: 0%;
+    --mouse-x: 50%;
+
+    // & + .--tooltip {
+    //     left: var(--mouse-x) !important;
+    //     transition: none; // Make it follow the mouse instantly without lag
+    // }
+
     &.--range{
-        min-height: 10px;
+        height: var(--slider-height);
         width: 100%;
         min-width: 100px;
     }
@@ -34,6 +56,7 @@ body{
         width: 100%;
         opacity: 0;
         touch-action: none;
+        z-index: 5;
         &[type=range]{
             &:hover{
                 cursor: grab;
@@ -53,29 +76,35 @@ body{
         border-radius: var(--slider-radius);
         overflow: hidden;
         border: var(--slider-track-border);
-        &:after{
-            content: "";
-            position: absolute;
-            top: 0px;
-            bottom: 0px;
-            left: 0px;
-            width: calc( ( var(--value) * 1% ) - (var(--slider-knob-size) / 2) ); 
-            background: var(--slider-fill);
-            border-radius: var(--slider-radius);
-        }
+        z-index: 1;
+    }
+    .--slider-track-filled{
+        background: var(--slider-fill);
+        height: 100%;    
+        border-radius: var(--slider-radius);
+        overflow: hidden;
+        border: var(--slider-track-border);
+        z-index: 3;
+        width: calc( var(--value) * 1% );
     }
     .--slider-knob{
         width: var(--slider-knob-width);
         height: var(--slider-knob-height);
         top: 50%;
-        transform: translateY(-50%);
-        left: clamp(0%, calc( (var(--value) * 1%) - var(--slider-knob-size) ), 100%);
+        left: calc(var(--value) * 1%);
+        transform-origin: calc(var(--value) * 1%) center;
+        transform: translate(calc(var(--value) * -1%), -50%) scale(var(--knob-scale, 1));
+        transition: transform 0.1s ease-in-out;
+        // transform: translateY(-50%);
+        // // left: clamp(0%, calc( (var(--value) * 1%) - var(--slider-knob-size) ), 100%);
+        // transform: translate(calc(var(--value) * -1%), -50%);
         background: var(--slider-knob-color);
         border-radius: var(--slider-knob-radius);
         border: var(--slider-knob-border);
         box-shadow: var(--slider-knob-shadow);
         pointer-events: none;
-        
+        z-index: 4;
+        corner-shape: round !important;
     }
 
     .--slider-text{
@@ -86,5 +115,41 @@ body{
         user-select: none;
         font-size: var(--slider-text-size);
         font-weight: var(--slider-text-weight);
+    }
+
+    &.--knob-hover {
+        --knob-scale: 0.5;
+        .--slider-knob {
+            transform: translate(calc(var(--value) * -1%), -50%) scale(0.5);
+            transition: transform 0.1s ease-in-out;
+        }
+        
+        &:hover .--slider-knob,
+        &:active .--slider-knob {
+            transform: translate(calc(var(--value) * -1%), -50%) scale(1);
+        }
+
+        &:hover, &:active {
+            --knob-scale: 1;
+        }
+    }
+
+    .--slider-ghost {
+        z-index: 2; // Between the track background and the fill
+        position: absolute;
+        top: 0; bottom: 0;
+        left: calc( var(--ghost-start) * 1%);
+        width: calc( var(--ghost-width) * 1%);
+        background: var(--slider-ghost);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.1s;
+        border-radius: var(--slider-radius);
+    }
+
+    &:hover{
+        .--slider-ghost {
+            opacity: 1;
+        }
     }
 }

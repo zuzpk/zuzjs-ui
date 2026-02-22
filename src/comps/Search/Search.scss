@@ -1,35 +1,27 @@
 @use "../../scss/mixins.scss" as *;
+@use "../../scss/variables";
 
-:root{
+body{
 
     --search-color: var(--gray-100);
     --search-send-color: #111;
-    --search-send: transparent;
+    --search-send-bg: transparent;
     --search-send-border: 0px;
     
-    --search-radius-sm: 5px;
-    --search-padding-sm: 5px;
-    --search-send-width-sm: 40px;
-    --search-send-padding-sm: 5px;
-    --search-send-size-sm: 22px;
-    
-    --search-radius-md: 5px;
-    --search-padding-md: 5px;
-    --search-send-width-md: 40px;
-    --search-send-padding-md: 5px;
-    --search-send-size-md: 25px;
-    
-    --search-radius-lg: 5px;
-    --search-padding-lg: 5px;
-    --search-send-width-lg: 40px;
-    --search-send-padding-lg: 5px;
-    --search-send-size-lg: 28px;
+    --search-send-size-xs: 18px;
+    --search-send-size-sm: 24px;
+    --search-send-size-md: 30px;
+    --search-send-size-lg: 36px;
+    --search-send-size-xl: 42px;
+    --search-send-size-xxl: 48px;
 
 }
 
 [color-scheme="dark"] {
-    --search-send-color: #fff;
-    --search-color: #444;
+    body{
+        --search-send-color: #fff;
+        --search-color: #444;
+    }
 }
 
 .--search{
@@ -37,7 +29,7 @@
     width: 100%;
     overflow: hidden;
     background: var(--search-color);
-    
+
     .--input{
         background: transparent !important;
         color: var(--search-send-color);
@@ -45,91 +37,49 @@
     }
 
     .--send{
-        color: var(--search-send-color);
+        color: var(--search-send-color) !important;
+        // background: var(--search-send-bg) !important;
     }
-    // &.--search-rev{ padding-left: 0px !important; }
-    
-    &.--sm{
-        border-radius: var(--search-radius-sm);
-        &.--search-rev{ 
-            .--keyboard-keys{
-                margin-right: var(--search-padding-sm);
-            }
-            .--input{
-                padding: var(--search-padding-sm) var(--search-padding-sm) var(--search-padding-sm) 0px !important;
-            }
-        }
-        .--input{
-            padding: var(--search-padding-sm) calc(var(--search-padding-sm) * 1.5) !important;
-        }
-        .--send{
-            padding: var(--search-send-padding-sm);
-            width: var(--search-send-width-sm);
-            svg{
-                width: var(--search-send-size-sm);
-                height: var(--search-send-size-sm);
-            }
-        }
-    }
-    &.--md{
-        border-radius: var(--search-radius-md);
-        &.--search-rev{ 
-            .--keyboard-keys{
-                margin-right: var(--search-padding-md);
-            }
-            .--input{
-                padding: var(--search-padding-md) var(--search-padding-md) var(--search-padding-md) 0px !important;
-            }
-        }
-        .--input{
-            padding: var(--search-padding-md) calc(var(--search-padding-md) * 1.5) !important;
-        }
-        .--send{
-            padding: var(--search-send-padding-md);
-            width: var(--search-send-width-md);
-            svg{
-                width: var(--search-send-size-md);
-                height: var(--search-send-size-md);
-            }
-        }
-    }
-    &.--lg{
-        border-radius: var(--search-radius-lg);
-        &.--search-rev{ 
-            .--keyboard-keys{
-                margin-right: var(--search-padding-lg);
-            }
-            .--input{
-                padding: var(--search-padding-lg) var(--search-padding-lg) var(--search-padding-lg) 0px !important;
-            }
-        }
-        .--input{
-            padding: var(--search-padding-lg) calc(var(--search-padding-lg) * 1.5) !important;
-        }
-        .--send{
-            padding: var(--search-send-padding-lg);
-            width: var(--search-send-width-lg);
-            svg{
-                width: var(--search-send-size-lg);
-                height: var(--search-send-size-lg);
-            }
-        }
-    }
-    
 
-    .--send{
-        background: var(--search-send);
-        border: var(--search-send-border);
-        right: 2px;
-        bottom: 2px;
-        top: 2px;
-        z-index: 1;
-        
-        svg{
-            @include anim($duration: 0.2s);
-            path {
-                fill: var(--search-send-color);
+    @each $size in variables.$sizes {
+        &.--#{$size} {
+
+            border-radius: var(--radius-#{$size});
+
+            .--input {
+                padding: var(--padding-#{$size}-x) calc(var(--padding-#{$size}-x) * 1.5) !important;
+                font-size: calc(var(--text-#{$size}) * 1.2) !important;
             }
+
+            .--send {
+                flex-shrink: 0;
+                width: calc(var(--search-send-size-#{$size}) * 1.65);
+                height: 100%; // Force it to fill the height of the search bar
+                aspect-ratio: 1 / 1; // Ensure it stays a consistent shape
+                background: transparent;
+                svg {
+                    width: var(--search-send-size-#{$size});
+                    height: var(--search-send-size-#{$size});
+                    display: block; // Removes whitespace issues
+                }
+            }
+
+            .--keyboard-keys{
+                right: calc(var(--search-send-size-#{$size}) * 2);
+            }
+
+            &.--search-rev{ 
+                flex-direction: row-reverse;
+                .--input {
+                    padding-left: 0 !important;
+                    padding-right: var(--padding-#{$size}-x) !important;
+                }
+                .--keyboard-keys{
+                    right: calc(var(--padding-#{$size}-x) * 1.2);
+                }
+            }
+
         }
     }
+
 }

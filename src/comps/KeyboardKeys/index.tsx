@@ -1,4 +1,5 @@
 import { forwardRef, useMemo } from "react";
+import { useTheme } from "../../hooks/useColorScheme";
 import { Variant } from "../../types/enums";
 import Box from "../Box";
 import Span from "../Span";
@@ -7,8 +8,12 @@ import { isKeyCombination, KeyboardKey, KeyboardKeyProps, KeysLabelMap, KeysMap 
 const KeyBoardKeys = forwardRef<HTMLDivElement, KeyboardKeyProps>(({
     children,
     keys,
+    as,
+    className,
     variant
 }, ref) => {
+
+    const { variant: themeVariant } = useTheme(true)!
 
     const _meta = useMemo(() => {
         if ( isKeyCombination(keys) ){
@@ -33,7 +38,7 @@ const KeyBoardKeys = forwardRef<HTMLDivElement, KeyboardKeyProps>(({
         }
     }, [keys])
 
-    return <Box as={`--keyboard-keys --${variant || Variant.Small} flex aic`}>
+    return <Box as={`--keyboard-keys --${variant || themeVariant || Variant.Small} flex aic ${as} ${className}`.trim()}>
         {( Array.isArray(_meta.keys) ? _meta.keys : [_meta.keys]).map((k) => <abbr
             key={k}
             title={KeysLabelMap[k]}>{KeysMap[k]}</abbr>)}

@@ -1,7 +1,17 @@
-/** ToolTip */
-.--with-tooltip{
+body{
     --tooltip: #222;
     --tooltip-color: #fafafa;
+}
+
+[color-scheme="dark"] {
+    body{
+        --tooltip: #777;
+        --tooltip-color: #fafafa;
+    }
+}
+
+.--with-tooltip{
+    
     --tooltip-font-size: 12px;
     --tooltip-font-weight: normal;
     --tooltip-radius: 5px;

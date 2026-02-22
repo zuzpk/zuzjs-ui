@@ -1,25 +1,31 @@
 "use client"
-import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import { useDimensions } from '@zuzjs/hooks';
+import { Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useBase } from '../../hooks';
 import { Position, TRANSITION_CURVES } from '../../types/enums';
 import Box from '../Box';
 import Text from '../Text';
-import { ToolTipProps } from './types';
-import { useDimensions } from '@zuzjs/hooks';
+import { ToolTipController, ToolTipProps } from './types';
 
-const ToolTip = forwardRef<HTMLDivElement, ToolTipProps>((props, ref) => {
+const ToolTip = ({
+    ref,
+    ...props
+} : ToolTipProps & {
+    ref?: Ref<ToolTipController>
+}) => {
 
-    const { title, position, margin, children, ...pops } = props
+    const { title, position, margin, children, show, ...pops } = props
     const {
         style,
         className,
         rest
     } = useBase(pops)
     const [ hovered, setHovered ] = useState(false)
+    const [ customPosition, setCustomPosition ] = useState<{ x: number, y: number } | null>(null)
     const dx = useMemo(() => position || Position.Top, [])
     const tooltipWrapper = useRef<HTMLDivElement>(null)
     const tooltip = useRef<HTMLDivElement>(null)
-
+    const isVisible = show !== undefined ? show : hovered;
     const handleObserve = (entries: ResizeObserverEntry[]) => {}
     const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(handleObserve) : { observe: () => {}, unobserve: () => {} }
     const resize = useDimensions()
@@ -49,12 +55,20 @@ const ToolTip = forwardRef<HTMLDivElement, ToolTipProps>((props, ref) => {
             }
 
         }
-    }, [tooltip.current, resize, observer])
+    }, [tooltip.current, resize, dx, isVisible, observer])
 
     useEffect(() => {
         
     }, [])
- 
+
+    useImperativeHandle(ref, () => ({
+        setPosition: (pos) => {
+            setCustomPosition(pos)
+        },
+        show: () => {},
+        hide: () => {}
+    }))
+
     return <Box 
         ref={tooltipWrapper}
         className={`--with-tooltip rel`}
@@ -64,11 +78,11 @@ const ToolTip = forwardRef<HTMLDivElement, ToolTipProps>((props, ref) => {
         <Box    
             ref={tooltip}
             style={{
-                left: pos?.left + "px",
-                top: pos?.top + "px"
+                left: (customPosition ? customPosition.x : pos?.left) + "px",
+                top: (customPosition ? customPosition.y : pos?.top) + "px"
             }}
-            className={`--tooltip --${position || Position.Top} fixed ${className}`.trim()}
-            fx={{
+            className={`--tooltip --${dx} abs ${className}`.trim()}
+            fx={show !== undefined ? undefined : {
                 from: dx == Position.Bottom || dx == Position.Top ? 
                     { opacity: 0, x: `-50%`, y: dx == Position.Top ? -5 : 5 } 
                     : { opacity: 0, y: `-50%`, x: dx == Position.Right ? 15 : -25 },
@@ -76,14 +90,14 @@ const ToolTip = forwardRef<HTMLDivElement, ToolTipProps>((props, ref) => {
                     { opacity: 1, x: `-50%`, y: 0 } 
                     : { opacity: 1, y: `-50%`, x: dx == Position.Right ? 10 : -20 },
                 curve: TRANSITION_CURVES.EaseInOut,
-                when: hovered
+                when: isVisible
             }}
             >
             <Text className={`--text rel`}>{title}</Text>
         </Box>
     </Box>
 
-})
+}
 
 ToolTip.displayName = `Zuz.ToolTip`
 

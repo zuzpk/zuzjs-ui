@@ -1,6 +1,15 @@
-import { BoxProps, POSITION, ValueOf } from "../../types"
+import { ReactNode } from "react";
+import { BoxProps, POSITION, ValueOf } from "../../types";
 
-export type ToolTipProps = BoxProps & {
-    position?: ValueOf<typeof POSITION>,
-    margin?: number
+export interface ToolTipController {
+    setPosition: (pos: { x: number, y: number }) => void;
+    show: () => void;
+    hide: () => void;
+}
+
+export type ToolTipProps = Omit<BoxProps, `title` | `ref`> & {
+    position?: ValueOf<typeof POSITION>;
+    margin?: number;
+    title?: string | ReactNode;
+    show?: boolean;
 }
