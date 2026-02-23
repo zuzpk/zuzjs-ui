@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { BoxProps } from "../../types";
+import { AnimationTransition, BoxProps } from "../../types";
 
 export type CarouselEffect = 'slide' | 'coverflow' | 'fade' | 'stack';
 
@@ -16,6 +16,8 @@ export type CarouselProps<T> = BoxProps & {
     useWheel?: boolean;
     spacing?: number;
     rotation?: number;
+    blur?: number;
+    animation?: AnimationTransition;
     scaleStep?: number;
     autoPlay?: boolean;
     autoPlaySpeed?: number;

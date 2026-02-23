@@ -1,9 +1,9 @@
 "use client"
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react"
 import { useBase } from "../../hooks"
+import { BoxProps } from "../../types"
 import Box from "../Box"
 import { ProgressBarProps, ProgressHandler } from "./types"
-import { BoxProps } from "../../types"
 
 const ProgressBar = forwardRef<ProgressHandler, ProgressBarProps>((props, ref) => {
 
@@ -13,6 +13,10 @@ const ProgressBar = forwardRef<ProgressHandler, ProgressBarProps>((props, ref) =
     useImperativeHandle(ref, () => ({
         setProgress: (p: number) => {
             bar.current!.style.width = `${p * 100}%`
+            bar.current!.setAttribute(`data-value`, p + "")
+        },
+        getProgress: () => {
+            return +(bar.current!.getAttribute(`data-value`) || 0)
         }
     }), [])
 
@@ -21,7 +25,8 @@ const ProgressBar = forwardRef<ProgressHandler, ProgressBarProps>((props, ref) =
             if ( animated ){
                 setTimeout(() => bar.current!.style.width = `${progress * 100}%`, 500)
             }
-            else bar.current!.style.width = `${progress * 100}%`
+            else bar.current!.style.width = `${progress * 100}%`;
+            bar.current!.setAttribute(`data-value`, progress + "")
         }
     }, [progress, bar.current])
 

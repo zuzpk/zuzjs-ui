@@ -1,5 +1,5 @@
-import { useCarousel } from "@zuzjs/hooks";
-import { forwardRef, useEffect, useRef } from "react";
+import { useCarousel, useTimer } from "@zuzjs/hooks";
+import { forwardRef, useRef } from "react";
 import { useBase } from "../../hooks";
 import Box from "../Box";
 import Pagination from "../Pagination";
@@ -11,6 +11,8 @@ function CarouselInner<T>(props: CarouselProps<T>, ref: React.ForwardedRef<HTMLD
         items, renderItem, effect = 'slide', loop = true, loopMode = 'infinite',
         startIndex = 0, useKeys = true, useWheel = true,
         spacing = 160, rotation = 20, scaleStep = 0.15,
+        blur = 4, 
+        animation = "power",
         showDots = false, 
         autoPlay = false,
         autoPlaySpeed = 3,
@@ -18,8 +20,8 @@ function CarouselInner<T>(props: CarouselProps<T>, ref: React.ForwardedRef<HTMLD
     } = props;
 
     const { className, style } = useBase(pops);
-    
     const paginationController = useRef<PaginationController>(null)
+    const speed = autoPlaySpeed / ( autoPlaySpeed >= 1000 ? 1000 : 1);
 
     const controller = useCarousel({
         total: items.length,
@@ -28,27 +30,36 @@ function CarouselInner<T>(props: CarouselProps<T>, ref: React.ForwardedRef<HTMLD
         useKeys,   
         useWheel,  
         onChange: (index) => {
-            paginationController.current?.setPage(index)
-            onChange?.(index)
+            // paginationController.current?.setPage(index);
+            paginationController.current?.setPage({ 
+                id: index + 1, 
+                label: index + 1 
+            });
+            paginationController.current?.setProgress(0);
+            onChange?.(index);
         }
     });
 
-    useEffect(() => {
-        if (!autoPlay) return;
-
-        const interval = setInterval(() => {
-            controller.next();
-        }, autoPlaySpeed * (autoPlaySpeed >= 1000 ? 1 : 1000));
-
-        return () => clearInterval(interval);
-    }, [autoPlay, autoPlaySpeed, controller]);
+    const { pause, resume, reset } = useTimer({
+        duration: speed,
+        autoStart: autoPlay === true,
+        onProgress: (p) => {
+            if ( autoPlay === true ) paginationController.current?.setProgress(1 - p); 
+        },
+        onExpired: () => {
+            if ( autoPlay === true ) controller.next();
+            reset();
+        }
+    });
 
     const dynamicStyle = {
         ...style,
         "--carousel-spacing": `${spacing}px`,
         "--carousel-rotation": `${rotation}deg`,
+        "--carousel-blur": `${blur}px`,
         "--carousel-scale-step": scaleStep,
         "--active-index": controller.index,
+        "--carousel-transition": `var(--${animation})`,
     } as React.CSSProperties;
 
     return (
@@ -59,15 +70,19 @@ function CarouselInner<T>(props: CarouselProps<T>, ref: React.ForwardedRef<HTMLD
 
                     // Handle Infinite Wrapping
                     if (loopMode === 'infinite') {
-                        const half = Math.floor(items.length / 2);
-                        if (offset > half) offset -= items.length;
-                        if (offset < -half) offset += items.length;
+                        const total = items.length
+                        offset = ((offset + total / 2) % total + total) % total - total / 2;
+                        // const half = Math.floor(items.length / 2);
+                        // if (offset > half) offset -= items.length;
+                        // if (offset < -half) offset += items.length;
                     }
 
                     const isActive = i === controller.index;
 
                     return (
                         <Box 
+                            onMouseEnter={() => isActive && pause()} 
+                            onMouseLeave={() => isActive && resume()}
                             key={i} 
                             className={`--carousel-item-wrapper abs ${isActive ? '--is-active' : ''}`}
                             style={{ 
@@ -88,10 +103,12 @@ function CarouselInner<T>(props: CarouselProps<T>, ref: React.ForwardedRef<HTMLD
                     ref={paginationController}
                     itemCount={items.length}
                     itemsPerPage={1}
-                    startPage={controller.index + 1}
+                    startPage={startIndex + 1}
+                    pageRange={items.length}
                     paginationStyle={PaginationStyle.Gooey}
                     onPageChange={(page) => controller.goTo(+page.label - 1)}
                     asDots={true}
+                    progressBar={true}
                 />
             )}
         </Box>

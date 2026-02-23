@@ -1,7 +1,6 @@
 import {
-    ElementType, 
     ComponentPropsWithoutRef,
-    Ref 
+    ElementType
 } from 'react';
 import { ZuzProps } from './interfaces';
 
@@ -17,5 +16,6 @@ export type dynamic = {
 
 export type Props<T extends ElementType> = ZuzProps & Omit<ComponentPropsWithoutRef<T>, keyof ZuzProps>;
 
-
 export type FormInputs = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+
+export type AnimationTransition = `back` | `expo` | `sine` | `power` | `circ` | `bounce` | `elastic` | `ease` | `spring` | `liquid`

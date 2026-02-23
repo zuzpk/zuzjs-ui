@@ -19,19 +19,31 @@ body {
     --pagination-table-radius: 5px;
     --pagination-table-icon-size: 26px;
 
+    --pagination-dot-color: #c6c6c6;
+    --pagination-dot-current-color: var(--pagination-dot-color);
+    --pagination-dot-progress-color: #111;
+    --pagination-dot-progress-track-color: var(--pagination-dot-color);
+
 }
 
 [color-scheme="dark"]{
 
-    --pagination-current-page-bg: var(--blue-500);
-    --pagination-current-page-color: #fff;
-    --pagination-disabled-page-color: var(--white-300);
+    body{
 
-    --pagination-table-button-border: 1px var(--pagination-table-button-bg) solid;
-    --pagination-table-button-color: #f9f9f9;
-    --pagination-table-button-hover-color: #fff;
-    --pagination-table-button-bg: #333;
-    --pagination-table-button-hover-bg: var(--blue-500);
+        --pagination-current-page-bg: var(--blue-500);
+        --pagination-current-page-color: #fff;
+        --pagination-disabled-page-color: var(--white-300);
+
+        --pagination-table-button-border: 1px var(--pagination-table-button-bg) solid;
+        --pagination-table-button-color: #f9f9f9;
+        --pagination-table-button-hover-color: #fff;
+        --pagination-table-button-bg: #333;
+        --pagination-table-button-hover-bg: var(--blue-500);
+
+        --pagination-dot-color: rgba(255, 255, 255, 0.4);
+        --pagination-dot-progress-color: #fff;
+
+    }
 
 }
 
@@ -106,6 +118,10 @@ body {
     }
 
     &.--as-dots{
+
+        --progress-track: var(--pagination-dot-progress-track-color);
+        --progress-bar: var(--pagination-dot-progress-color);
+
         .--pagination-label, .--pgt-nav, .--pgt-info { 
             display: none !important; 
         }
@@ -113,20 +129,24 @@ body {
             justify-content: center;
             gap: 8px;
 
-            button {
+            .--button {
                 width: 8px;
                 height: 8px;
                 padding: 0;
                 border-radius: 50%;
-                background: rgba(255, 255, 255, 0.2);
+                background: var(--pagination-dot-color);
                 color: transparent; // Hide the numbers
                 border: none;
                 transition: all 0.3s ease;
 
                 &.--current-page {
-                    background: #fff;
+                    background: transparent !important;
                     width: 20px; // Pill shape for active
                     border-radius: 10px;
+                }
+
+                &:disabled:not(.--current-page){
+                    background: var(--pagination-dot-current-color) !important;
                 }
             }
         }

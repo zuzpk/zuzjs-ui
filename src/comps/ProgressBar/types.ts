@@ -9,5 +9,6 @@ export type ProgressBarProps = BoxProps & {
 }
 
 export interface ProgressHandler {
-    setProgress?: (p : number) => void
+    setProgress?: (p : number) => void,
+    getProgress?: () => number,
 }

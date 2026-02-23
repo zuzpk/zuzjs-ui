@@ -6,7 +6,10 @@ export enum PaginationStyle {
 }
 
 export interface PaginationController {
-    setPage: (index: number) => void;
+    setPage: (index: PaginationPage) => void;
+    getPage: (index: number) => void;
+    setProgress: (index: number) => void;
+    getProgress: () => number;
 }
 
 export type PaginationPageItem = { id: string | number, label: string | number }
@@ -26,6 +29,7 @@ export type PaginationProps = Omit<BoxProps, "ref"> & {
     nextLabel?: string,
     prevLabel?: string,
     asDots?: boolean,
+    progressBar?: boolean,
     renderOnZeroPageCount?: boolean,
     onPageChange?: PaginationCallback
 }
