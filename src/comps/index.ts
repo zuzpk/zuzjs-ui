@@ -92,6 +92,9 @@ export { default as LayersProvider } from './Layers';
 export { default as List } from './List';
 export * from './List/types';
 
+export { default as MediaPlayer } from './MediaPlayer';
+export * from './MediaPlayer/types';
+
 export { default as NetworkStatus } from './Network';
 export * from './Network/types';
 
@@ -125,7 +128,8 @@ export type * from "./Select/types";
 export { default as Sheet, type SheetHandler, type SheetProps } from './Sheet';
 
 
-export { default as Slider, type SliderProps } from './Slider';
+export { default as Slider } from './Slider';
+export type * from "./Slider/types";
 
 export { default as Span } from "./Span";
 export type * from "./Span/types";

@@ -1,29 +1,20 @@
 "use client"
-import { forwardRef, InputEventHandler, useEffect, useRef, useState } from "react";
+import { InputEventHandler, useEffect, useRef, useState } from "react";
 import { useBase } from "../../hooks";
-import { BoxProps, ValueOf } from "../../types";
 import { POSITION, SLIDER } from "../../types/enums";
 import Box from "../Box";
 import Input from "../Input";
 import Span from "../Span";
 import ToolTip from "../Tooltip";
 import { ToolTipController } from "../Tooltip/types";
+import { SliderProps } from "./types";
 
-export type SliderProps = BoxProps & {
-    type?: ValueOf<typeof SLIDER>,
-    value?: number,
-    min?: number,
-    max?: number,
-    step?: number,
-    roundValue?: boolean,
-    showKnobOnHover?: boolean,
-    showGhostBar?: boolean,
-    showToolTip?: boolean,
-    formatValue?: (value: number) => string | number,
-    onChange?: (value: number) => void,
-}
 
-const Slider = forwardRef<HTMLInputElement, SliderProps >((props, ref) => {
+
+const Slider = ({
+    ref, 
+    ...props
+} : SliderProps) => {
 
     const { 
         type, 
@@ -275,7 +266,7 @@ const Slider = forwardRef<HTMLInputElement, SliderProps >((props, ref) => {
 
     // </Box>
 
-})
+}
 
 Slider.displayName = `Zuz.Slider`
 

@@ -1,8 +1,8 @@
 import * as react from 'react';
 import react__default, { ElementType, ComponentPropsWithoutRef, Ref, ReactNode, MouseEvent as MouseEvent$1, RefObject, FC, CSSProperties, FormEventHandler, JSX, HTMLAttributes, ComponentPropsWithRef } from 'react';
-import * as react_jsx_runtime from 'react/jsx-runtime';
 import * as _zuzjs_hooks from '@zuzjs/hooks';
-import { LineChartProps, Command } from '@zuzjs/hooks';
+import { DragOptions, LineChartProps, MediaItem, useMediaPlayer, Command } from '@zuzjs/hooks';
+import * as react_jsx_runtime from 'react/jsx-runtime';
 import { PubSub } from '@zuzjs/core';
 
 declare const AVATAR: {
@@ -212,6 +212,9 @@ interface ZuzProps {
     /** Animation configuration using {@link animationProps} */
     fx?: animationProps;
     transition?: ValueOf<typeof TRANSITIONS>;
+    /** Makes Component Draggable */
+    draggable?: boolean;
+    dragOptions?: DragOptions;
 }
 interface BoxProps extends Partial<Props<`div`>> {
     name?: string;
@@ -865,6 +868,8 @@ declare const SVGIcons: {
     pause: react_jsx_runtime.JSX.Element;
     next: react_jsx_runtime.JSX.Element;
     prev: react_jsx_runtime.JSX.Element;
+    volumeHigh: react_jsx_runtime.JSX.Element;
+    volumeMute: react_jsx_runtime.JSX.Element;
     plus: react_jsx_runtime.JSX.Element;
     add: react_jsx_runtime.JSX.Element;
     chevronUp: react_jsx_runtime.JSX.Element;
@@ -1138,6 +1143,45 @@ declare const List: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react.D
     ol?: boolean;
 } & react.RefAttributes<HTMLOListElement | HTMLUListElement>>;
 
+interface MediaPlayerController {
+}
+type MediaPlayerProps = Omit<BoxProps, `ref`> & {
+    ref?: Ref<MediaPlayerController>;
+    playlist?: MediaItem[];
+    mode?: 'audio' | 'video';
+    autoPlay?: boolean;
+    icons?: MediaPlayerIcons;
+    defaultTitle?: string;
+    defaultCover?: string;
+    defaultArtist?: string;
+    onTrackChange?: (item: MediaItem) => void;
+};
+type MediaPlayerIcon = string | ReactNode;
+interface MediaPlayerIcons {
+    play?: MediaPlayerIcon;
+    pause?: MediaPlayerIcon;
+    prev?: MediaPlayerIcon;
+    next?: MediaPlayerIcon;
+    volumeHigh?: MediaPlayerIcon;
+    volumeMute?: MediaPlayerIcon;
+    loading?: MediaPlayerIcon;
+}
+type MediaPlayerContextType = ReturnType<typeof useMediaPlayer> & {
+    icons?: MediaPlayerIcons;
+    mode?: "audio" | "video";
+    defaultTitle?: string;
+    defaultCover?: string;
+    defaultArtist?: string;
+};
+
+declare const MediaPlayer: (({ ref, ...props }: MediaPlayerProps) => react_jsx_runtime.JSX.Element) & {
+    Stage: () => react_jsx_runtime.JSX.Element;
+    TrackInfo: () => react_jsx_runtime.JSX.Element;
+    Controls: () => react_jsx_runtime.JSX.Element;
+    Progress: () => react_jsx_runtime.JSX.Element;
+    Volume: () => react_jsx_runtime.JSX.Element;
+};
+
 type NetworkManagerprops = BoxProps & {
     variant?: ValueOf<typeof Variant>;
     offlineMessage?: string;
@@ -1391,7 +1435,10 @@ declare const Select: {
     displayName: string;
 };
 
-type SliderProps = BoxProps & {
+interface SliderController {
+}
+type SliderProps = Omit<BoxProps, `ref`> & {
+    ref?: Ref<SliderController>;
     type?: ValueOf<typeof SLIDER>;
     value?: number;
     min?: number;
@@ -1404,7 +1451,11 @@ type SliderProps = BoxProps & {
     formatValue?: (value: number) => string | number;
     onChange?: (value: number) => void;
 };
-declare const Slider: react.ForwardRefExoticComponent<Omit<SliderProps, "ref"> & react.RefAttributes<HTMLInputElement>>;
+
+declare const Slider: {
+    ({ ref, ...props }: SliderProps): react_jsx_runtime.JSX.Element;
+    displayName: string;
+};
 
 type SpanProps = Props<`span`> & {
     ref?: Ref<HTMLSpanElement>;
@@ -2028,4 +2079,4 @@ declare const animationTransition: (transition: ValueOf<typeof TRANSITIONS>, off
 };
 declare const getAnimationTransition: (transition: ValueOf<typeof TRANSITIONS>, to?: boolean, from?: boolean) => dynamic;
 
-export { ALERT, AVATAR, Accordion, type AccordionHandler, type AccordionProps, ActionBar, type ActionBarHandler, type ActionBarItem, type ActionBarProps, Alert, type AlertHandler, type AlertProps, type AnimationTransition, AutoComplete, type AutoCompleteProps, Avatar, type AvatarHandler, type AvatarProps, Badge, type BadgeProps, Box, type BoxProps, Bubble, BubbleMediaType, type BubbleProps, BubbleStatus, Button, type ButtonHandler, type ButtonProps, ButtonState, CHART, CHECKBOX, COLORTHEME, Calendar, type CalendarProps, Carousel, type CarouselEffect, type CarouselProps, Chart, type ChartProps, CheckBox, type CheckBoxProps, type CheckboxHandler, CodeBlock, type CodeBlockProps, ColorScheme$1 as ColorScheme, type Column, type ContextItem, ContextMenu, type ContextMenuHandler, type ContextMenuProps, type CookieConsentProps, CookiesConsent, Cover, type CoverProps, type CropHandler, CropShape, Cropper, type CropperProps, Crumb, type CrumbItem, type CrumbProps, DATATYPE, DIALOG, DIALOG_ACTION_POSITION, DRAWER_SIDE, DatePicker, Dialog, type DialogActionHandler, type DialogController, type DialogHandler, type DialogProps, Drawer, type DrawerController, type DrawerHandler, type DrawerProps, FILTER, FORMVALIDATION, FORMVALIDATION_STYLE, Fab, type FabProps, type FilterProps, Filters, Form, type FormHandler, type FormInputs, type FormProps, Grid, type GridProps, Group, type GroupProps, Icon, type IconProps, Image, type ImageProps, Input, type InputProps, type KeyCombination, type KeyboardKey, type KeyboardKeyProps, KeyBoardKeys as KeyboardKeys, KeysLabelMap, KeysMap, Label, type LabelProps, type LayerHandler, LayersProvider, List, type ListItem, type ListItemObject, type ListProps, type LoopMode, type MenuItemProps, type MorphOptions, type NetworkManagerprops, NetworkManager as NetworkStatus, ORIGIN, type Option, type OptionItemProps, OriginType, Overlay, type OverlayProps, PACKAGE_NAME, POSITION, PROGRESS, Pagination, type PaginationCallback, type PaginationController, type PaginationPage, type PaginationPageItem, type PaginationProps, PaginationStyle, Password, type PasswordProps, PinInput, type PinInputProps, Position, ProgressBar, type ProgressBarProps, type ProgressHandler, type Props, RADIO, Radio, type RadioHandler, type RadioProps, type Row, type RowSelectCallback, SHEET, SHEET_ACTION_POSITION, SKELETON, SLIDER, SORT, SPINNER, ScrollView, type ScrollViewProps, Search, type SearchHandler, type SearchProps, type Segment, type SegmentController, type SegmentItemProps, type SegmentProps, Select, type SelectHandler, type SelectProps, Segmented as SelectTabs, Sheet, type SheetHandler, type SheetProps, type Skeleton, Slider, type SliderProps, type ToastAction as SnackAction, ToastPosition as SnackPosition, ToastStyle as SnackStyle, ToastType as SnackType, Span, type SpanProps, Spinner, type SpinnerProps, Status, Switch, type CheckboxHandler as SwitchHandler, TRANSITIONS, TRANSITION_CURVES, type Tab, type TabBodyProps, type TabProps, TabView, type TabViewHandler, type TabViewProps, ForwardedTable as Table, type TableController, type TableOfContentItem, TableOfContents, type TableOfContentsProps, type TableProps, type TableSortCallback, Terminal, type TerminalCommandFn, type TerminalCommands, type TerminalHandler, type TerminalLine, type TerminalProps, Text, type TextAreaProps, TextWheel, type TextWheelHandler, type TextWheelProps, TextArea as Textarea, ThemeProvider, type ToastAction, ToastDefaultTitle, ToastPosition, type ToastProps, Toast as ToastProvider, ToastStyle, ToastType, ToolTip, type ToolTipController, type ToolTipProps, type TreeItemHandler, type TreeItemProps, type TreeNode, type TreeNodeIcons, TreeView, type TreeViewHandler, type TreeViewProps, type Value, type ValueOf, Variant, type ZuzCommonValues, type ZuzProps, type ZuzStyleString, type animationProps, animationTransition, buildClassString, buildWithStyles, cleanProps, css, type cssShortKey, type cssShortKeys, type dynamic, getAnimationCurve, getAnimationTransition, getZuzMap, isKeyCombination, type parallaxEffectProps, setZuzMap, splitAtoms, useBase, useContextMenu, useDialog, useDrawer, useFx, useMorph, usePosition, useSnack, useToast };
+export { ALERT, AVATAR, Accordion, type AccordionHandler, type AccordionProps, ActionBar, type ActionBarHandler, type ActionBarItem, type ActionBarProps, Alert, type AlertHandler, type AlertProps, type AnimationTransition, AutoComplete, type AutoCompleteProps, Avatar, type AvatarHandler, type AvatarProps, Badge, type BadgeProps, Box, type BoxProps, Bubble, BubbleMediaType, type BubbleProps, BubbleStatus, Button, type ButtonHandler, type ButtonProps, ButtonState, CHART, CHECKBOX, COLORTHEME, Calendar, type CalendarProps, Carousel, type CarouselEffect, type CarouselProps, Chart, type ChartProps, CheckBox, type CheckBoxProps, type CheckboxHandler, CodeBlock, type CodeBlockProps, ColorScheme$1 as ColorScheme, type Column, type ContextItem, ContextMenu, type ContextMenuHandler, type ContextMenuProps, type CookieConsentProps, CookiesConsent, Cover, type CoverProps, type CropHandler, CropShape, Cropper, type CropperProps, Crumb, type CrumbItem, type CrumbProps, DATATYPE, DIALOG, DIALOG_ACTION_POSITION, DRAWER_SIDE, DatePicker, Dialog, type DialogActionHandler, type DialogController, type DialogHandler, type DialogProps, Drawer, type DrawerController, type DrawerHandler, type DrawerProps, FILTER, FORMVALIDATION, FORMVALIDATION_STYLE, Fab, type FabProps, type FilterProps, Filters, Form, type FormHandler, type FormInputs, type FormProps, Grid, type GridProps, Group, type GroupProps, Icon, type IconProps, Image, type ImageProps, Input, type InputProps, type KeyCombination, type KeyboardKey, type KeyboardKeyProps, KeyBoardKeys as KeyboardKeys, KeysLabelMap, KeysMap, Label, type LabelProps, type LayerHandler, LayersProvider, List, type ListItem, type ListItemObject, type ListProps, type LoopMode, MediaPlayer, type MediaPlayerContextType, type MediaPlayerController, type MediaPlayerIcons, type MediaPlayerProps, type MenuItemProps, type MorphOptions, type NetworkManagerprops, NetworkManager as NetworkStatus, ORIGIN, type Option, type OptionItemProps, OriginType, Overlay, type OverlayProps, PACKAGE_NAME, POSITION, PROGRESS, Pagination, type PaginationCallback, type PaginationController, type PaginationPage, type PaginationPageItem, type PaginationProps, PaginationStyle, Password, type PasswordProps, PinInput, type PinInputProps, Position, ProgressBar, type ProgressBarProps, type ProgressHandler, type Props, RADIO, Radio, type RadioHandler, type RadioProps, type Row, type RowSelectCallback, SHEET, SHEET_ACTION_POSITION, SKELETON, SLIDER, SORT, SPINNER, ScrollView, type ScrollViewProps, Search, type SearchHandler, type SearchProps, type Segment, type SegmentController, type SegmentItemProps, type SegmentProps, Select, type SelectHandler, type SelectProps, Segmented as SelectTabs, Sheet, type SheetHandler, type SheetProps, type Skeleton, Slider, type SliderController, type SliderProps, type ToastAction as SnackAction, ToastPosition as SnackPosition, ToastStyle as SnackStyle, ToastType as SnackType, Span, type SpanProps, Spinner, type SpinnerProps, Status, Switch, type CheckboxHandler as SwitchHandler, TRANSITIONS, TRANSITION_CURVES, type Tab, type TabBodyProps, type TabProps, TabView, type TabViewHandler, type TabViewProps, ForwardedTable as Table, type TableController, type TableOfContentItem, TableOfContents, type TableOfContentsProps, type TableProps, type TableSortCallback, Terminal, type TerminalCommandFn, type TerminalCommands, type TerminalHandler, type TerminalLine, type TerminalProps, Text, type TextAreaProps, TextWheel, type TextWheelHandler, type TextWheelProps, TextArea as Textarea, ThemeProvider, type ToastAction, ToastDefaultTitle, ToastPosition, type ToastProps, Toast as ToastProvider, ToastStyle, ToastType, ToolTip, type ToolTipController, type ToolTipProps, type TreeItemHandler, type TreeItemProps, type TreeNode, type TreeNodeIcons, TreeView, type TreeViewHandler, type TreeViewProps, type Value, type ValueOf, Variant, type ZuzCommonValues, type ZuzProps, type ZuzStyleString, type animationProps, animationTransition, buildClassString, buildWithStyles, cleanProps, css, type cssShortKey, type cssShortKeys, type dynamic, getAnimationCurve, getAnimationTransition, getZuzMap, isKeyCombination, type parallaxEffectProps, setZuzMap, splitAtoms, useBase, useContextMenu, useDialog, useDrawer, useFx, useMorph, usePosition, useSnack, useToast };

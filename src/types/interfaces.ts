@@ -1,3 +1,4 @@
+import { DragOptions } from "@zuzjs/hooks";
 import { Ref } from "react";
 import { ZuzStyleString } from "./css";
 import { SKELETON, TRANSITION_CURVES, TRANSITIONS } from "./enums";
@@ -21,6 +22,11 @@ export interface ZuzProps {
     fx?: animationProps;
 
     transition?: ValueOf<typeof TRANSITIONS>,
+
+    /** Makes Component Draggable */
+    draggable?: boolean;
+
+    dragOptions?: DragOptions;
 
 }
 

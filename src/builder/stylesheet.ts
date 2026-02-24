@@ -353,6 +353,8 @@ export const cssDirect : dynamic = {
     "tdu": "text-decoration:underline;",
     "nous": "user-select:none;",
     "nope": "pointer-events:none;",
+    "pe-none": "pointer-events:none;",
+    "pe-auto": "pointer-events:auto;",
     "3d": "transform-style: preserve-3d;",
     "hide" : "display: none;",
     "block" : "display: block;",
