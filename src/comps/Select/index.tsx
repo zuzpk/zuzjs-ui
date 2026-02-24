@@ -125,7 +125,7 @@ const Select = ({
         };
     }, [choosing, reposition]);
 
-    return <Box className={`--select --${expanded == true ? `expanded` : ``} --${variant || themeVariant} ${name ? `--${name}` : ``} rel`.trim()} name={_id}>
+    return <Box className={`--select ${expanded == true ? `--expanded` : ``} --${variant || themeVariant} ${name ? `--${name}` : ``} rel`.trim()} name={_id}>
 
         <Button
             ref={_ref}
@@ -146,7 +146,7 @@ const Select = ({
 
         <Box
             id={_id}           
-            className={`--options-list flex cols abs`}
+            className={`--options-list -fx flex cols abs zIndex:$max-z-index`}
             aria-hidden={!choosing}
             style={{
                 maxHeight: maxHeight || `auto`

@@ -29,7 +29,7 @@ const Group = forwardRef<HTMLDivElement, GroupProps>((props, ref) => {
     const _fx = fx || theme?.group?.fx
     const _fxDelay = fxDelay || theme?.group?.fxDelay
     const _fxStep = fxStep || theme?.group?.fxStep
-    const _classToIgnore = classToIgnore || theme?.group?.classToIgnore || `--ignore`
+    const _classToIgnore = classToIgnore || theme?.group?.classToIgnore || `-fx`
 
     const Children = useMemo(() => {
 
