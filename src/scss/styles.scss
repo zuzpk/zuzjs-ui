@@ -161,7 +161,7 @@ body {
     translate: var(--fx-x, 0px) var(--fx-y, 0px);
 }
 
-.abc, .center-h, .center-v, .abs {
+.abc, .center-h, .--center-x, .--center-y, .center-v, .abs {
     --fx-x: 0px;
     --fx-y: 0px;
 }
@@ -174,11 +174,13 @@ body {
     translate: calc(var(--abc-x) + var(--fx-x, 0px)) 
              calc(var(--abc-y) + var(--fx-y, 0px));
 }
+.--center-x,
 .center-h {
     left: 50%;
     --abc-x: -50%;
     translate: calc(var(--abc-x) + var(--fx-x, 0px)) var(--fx-y, 0px);
 }
+.--center-y,
 .center-v {
     top: 50%;
     --abc-y: -50%;
@@ -196,6 +198,9 @@ body {
     &.jcc{justify-content: center;}
     &.jce{justify-content: flex-end;}
     &.jcs{justify-content: flex-start;}
+}
+.flex-inline{
+    display: inline-flex;
 }
 .--abs, .abs{ 
     position: absolute; 

@@ -1,6 +1,14 @@
+@use "../../scss/variables";
+
 body{
     --tooltip: #222;
+    // --tooltip-border-color: #444;
     --tooltip-color: #fafafa;
+    --tooltip-font-size: 12px;
+    --tooltip-font-weight: normal;
+    --tooltip-radius: 20px;
+    --tooltip-padding: 2px 4px;
+    --tooltip-arrow-size: 10px;
 }
 
 [color-scheme="dark"] {
@@ -10,64 +18,80 @@ body{
     }
 }
 
-.--with-tooltip{
-    
-    --tooltip-font-size: 12px;
-    --tooltip-font-weight: normal;
-    --tooltip-radius: 5px;
-    --tooltip-padding: 2px 4px;
-    --tooltip-arrow-size: 10px;
-    .--tooltip{
+.--tooltip{
+
+    background: var(--tooltip);
+    color: var(--tooltip-color);
+    font-size: var(--tooltip-font-size);
+    font-weight: var(--tooltip-font-weight);
+    border-radius: var(--tooltip-radius);
+    padding: var(--tooltip-padding);
+    z-index: var(--max-z-index);
+    overflow: visible;
+    pointer-events: none;
+    user-select: none;
+    position-visibility: anchor-visible;
+
+    filter: drop-shadow(1px 0px 0px var(--tooltip-border-color))
+        drop-shadow(-1px 0px 0px var(--tooltip-border-color))
+        drop-shadow(0px 1px 0px var(--tooltip-border-color))
+        drop-shadow(0px -1px 0px var(--tooltip-border-color));
+
+    @each $size in variables.$sizes {
+        &.--#{$size} {
+            --tooltip-font-size: var(--text-#{$size});
+            --tooltip-padding: var(--padding-#{$size});
+            // --tooltip-radius: var(--radius-#{$size});
+        }
+    }
+
+    &:before{
+        content: "";
+        position: absolute;
+        width: var(--tooltip-arrow-size);
+        height: var(--tooltip-arrow-size);
+        border-radius: calc(var(--tooltip-arrow-size) / 2.5);
         background: var(--tooltip);
-        color: var(--tooltip-color);
-        font-size: var(--tooltip-font-size);
-        font-weight: var(--tooltip-font-weight);
-        border-radius: var(--tooltip-radius);
-        padding: var(--tooltip-padding);
-        z-index: var(--max-z-index);
-        overflow: visible;
-        pointer-events: none;
-        user-select: none;
+        z-index: 0;
+    }
+    .--text{
+        z-index: 1;
+        white-space: pre;
+    }
+    &.--top{
+        bottom: anchor(top);
+        left: anchor(center);
         &:before{
-            content: "";
-            position: absolute;
-            width: var(--tooltip-arrow-size);
-            height: var(--tooltip-arrow-size);
-            border-radius: calc(var(--tooltip-radius) / 2);
-            background: var(--tooltip);
-            z-index: 0;
+            bottom: -0.2lh;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
         }
-        .--text{
-            z-index: 1;
-            white-space: pre;
+    }
+    &.--bottom{
+        top: anchor(bottom);
+        left: anchor(center);
+        &:before{
+            top: -0.2lh;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
         }
-        &.--top{
-            &:before{
-                bottom: -0.2lh;
-                left: 50%;
-                transform: translateX(-50%) rotate(45deg);
-            }
+    }
+    &.--left{
+        right: anchor(left);
+        top: anchor(center);
+        &:before{
+            right: -0.15lh;
+            top: 50%;
+            transform: translateY(-50%) rotate(45deg);
         }
-        &.--bottom{
-            &:before{
-                top: -0.2lh;
-                left: 50%;
-                transform: translateX(-50%) rotate(45deg);
-            }
-        }
-        &.--left{
-            &:before{
-                right: -0.2lh;
-                top: 50%;
-                transform: translateY(-50%) rotate(45deg);
-            }
-        }
-        &.--right{
-            &:before{
-                left: -0.2lh;
-                top: 50%;
-                transform: translateY(-50%) rotate(45deg);
-            }
+    }
+    &.--right{
+        left: anchor(right);
+        top: anchor(center);
+        &:before{
+            left: -0.15lh;
+            top: 50%;
+            transform: translateY(-50%) rotate(45deg);
         }
     }
 }

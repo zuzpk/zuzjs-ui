@@ -1,11 +1,11 @@
-"use client"
-import { useDimensions } from '@zuzjs/hooks';
-import { Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { useBase } from '../../hooks';
-import { Position, TRANSITION_CURVES } from '../../types/enums';
-import Box from '../Box';
-import Text from '../Text';
-import { ToolTipController, ToolTipProps } from './types';
+import { addPropsToChildren } from "@zuzjs/core/react";
+import { Ref, useId, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { useBase, useFx } from "../../hooks";
+import { useTheme } from "../../hooks/useColorScheme";
+import { Position, TRANSITION_CURVES, TRANSITIONS, Variant } from "../../types";
+import Box from "../Box";
+import Text from "../Text";
+import { ToolTipController, ToolTipProps } from "./types";
 
 const ToolTip = ({
     ref,
@@ -14,91 +14,109 @@ const ToolTip = ({
     ref?: Ref<ToolTipController>
 }) => {
 
-    const { title, position, margin, children, show, ...pops } = props
-    const {
-        style,
-        className,
-        rest
-    } = useBase(pops)
+    const { title, position, 
+        margin = 4, 
+        anchorName = '--tooltip-anchor',
+        children, show, variant, ...pops } = props;
+    const { style, className, rest } = useBase(pops);
+    const dx = position || Position.Top;
+    const master = useRef<HTMLDivElement>(null);
     const [ hovered, setHovered ] = useState(false)
-    const [ customPosition, setCustomPosition ] = useState<{ x: number, y: number } | null>(null)
-    const dx = useMemo(() => position || Position.Top, [])
-    const tooltipWrapper = useRef<HTMLDivElement>(null)
-    const tooltip = useRef<HTMLDivElement>(null)
-    const isVisible = show !== undefined ? show : hovered;
-    const handleObserve = (entries: ResizeObserverEntry[]) => {}
-    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(handleObserve) : { observe: () => {}, unobserve: () => {} }
-    const resize = useDimensions()
-    const pos = useMemo<{ left: number, top: number } | undefined>(() => {
+    const pos = useRef(6)
+    const isVisible = show === true || hovered;
 
-        if ( !tooltip.current ) return { left: 0, top: 0 }
+    const anchorId = useId().replace(/:/g, ""); 
+    const _anchorName = `--anchor-${anchorId}`;
+
+    const { tooltip: themeTooltip } = useTheme(true)!
+
+    const trigger = useMemo(() => {
         
-        const firstChild = (tooltip.current as HTMLElement).previousElementSibling as HTMLElement
-        if (firstChild) {
-            
-            const bc = firstChild.getBoundingClientRect();
-            
-            observer.observe(firstChild);
-            // console.log(bc)
-            
-            switch( dx ) {
-                case Position.Top:
-                    return { left: bc.left + bc.width / 2, top: bc.top - (margin || 25) }
-                case Position.Bottom:
-                    return { left: bc.left + bc.width / 2, top: bc.top + (margin || 25) }
-                case Position.Left:
-                    return { left: bc.left - bc.width / 2, top: bc.top + bc.height / 2 }
-                case Position.Right:
-                    return { left: bc.right, top: bc.top + bc.height / 2 }
-                    default: 
-                    return { left: 0, top: 0 }
+        let foundAnchor = false;
+
+        // Pass 1: Look for .--tooltip-anchor recursively
+        return addPropsToChildren(
+            children,
+            (element) => {
+                // CONDITION: We only want to modify the Root (first element) 
+                // OR the element that explicitly has the anchor class.
+                // const isRoot = !foundAnchor; // This will stay true for the very first node
+                // const isAnchor = element.props.className?.includes(anchorName);
+                
+                // // We set foundAnchor to true once we hit the target 
+                // // so we don't accidentally treat deeper nodes as "root"
+                // if (isAnchor) foundAnchor = true; 
+                
+                // return isRoot || isAnchor;
+                const isMatch = element.props.className?.includes(anchorName);
+                if (isMatch) foundAnchor = true;
+                return isMatch || !foundAnchor; // If we haven't found any anchor yet, keep looking. Once we find one, stop adding props to others.
+            },
+            (index, element) => {
+                const isAnchor = element.props.className?.includes(anchorName);
+                const isRoot = index === 0;
+
+                const props: any = {};
+
+                // 1. If it's the anchor (Knob), give it the CSS ID
+                if (isAnchor || isRoot) {
+                    props.style = { ...element.props.style, anchorName: _anchorName };
+                }
+
+                // 2. If it's the root (the whole Slider), give it the Hover listeners
+                // This ensures hovering ANYWHERE on the slider shows the tooltip
+                if (isRoot) {
+                    props.onMouseEnter = (e: any) => {
+                        setHovered(true);
+                        element.props.onMouseEnter?.(e);
+                    };
+                    props.onMouseLeave = (e: any) => {
+                        setHovered(false);
+                        element.props.onMouseLeave?.(e);
+                    };
+                }
+
+                return props;
             }
+        );
+    }, [children, anchorName, _anchorName]);
 
-        }
-    }, [tooltip.current, resize, dx, isVisible, observer])
-
-    useEffect(() => {
-        
-    }, [])
+    const tooltipAnimation = useFx({
+        transition: dx == Position.Top ? TRANSITIONS.SlideInTop :
+            dx == Position.Bottom ? TRANSITIONS.SlideInBottom
+                : dx == Position.Left ? TRANSITIONS.SlideInLeft
+                    : TRANSITIONS.SlideInRight,
+        when: isVisible,
+        duration: 0.2,
+        offset: margin + 6,
+        margin: dx == Position.Top || dx == Position.Left ? -margin : margin,
+        curve: themeTooltip?.curve || TRANSITION_CURVES.EaseInOut,
+    });
 
     useImperativeHandle(ref, () => ({
-        setPosition: (pos) => {
-            setCustomPosition(pos)
-        },
-        show: () => {},
-        hide: () => {}
-    }))
+        show: () => setHovered(true),
+        hide: () => setHovered(false),
+        setPosition: () => {} // CSS Anchors handle this automatically now!
+    }));
 
-    return <Box 
-        ref={tooltipWrapper}
-        className={`--with-tooltip rel`}
-        onMouseEnter={e => setHovered(true)}
-        onMouseLeave={e => setHovered(false)}>
-        {children}
+    return <>
+        {trigger}
         <Box    
-            ref={tooltip}
             style={{
-                left: (customPosition ? customPosition.x : pos?.left) + "px",
-                top: (customPosition ? customPosition.y : pos?.top) + "px"
+                positionAnchor: _anchorName,
+                ...tooltipAnimation.style,
+                ...(
+                    dx === Position.Top || dx === Position.Bottom  ? 
+                        { "--fx-x": "-50%" } : { "--fx-y": "-50%" }
+                )
             }}
-            className={`--tooltip --${dx} abs ${className}`.trim()}
-            fx={show !== undefined ? undefined : {
-                from: dx == Position.Bottom || dx == Position.Top ? 
-                    { opacity: 0, x: `-50%`, y: dx == Position.Top ? -5 : 5 } 
-                    : { opacity: 0, y: `-50%`, x: dx == Position.Right ? 15 : -25 },
-                to: dx == Position.Bottom || dx == Position.Top ? 
-                    { opacity: 1, x: `-50%`, y: 0 } 
-                    : { opacity: 1, y: `-50%`, x: dx == Position.Right ? 10 : -20 },
-                curve: TRANSITION_CURVES.EaseInOut,
-                when: isVisible
-            }}
-            >
-            <Text className={`--text rel`}>{title}</Text>
+            as={`--tooltip --visb-${isVisible} --${variant || themeTooltip?.variant || Variant.Small} --${dx} abs ${className}`.trim()}>
+            {typeof title === 'string' ? <Text as={`--text rel`}>{title}</Text> : title}
         </Box>
-    </Box>
+    </>
 
-}
+};
 
-ToolTip.displayName = `Zuz.ToolTip`
+ToolTip.displayName = `Zuz.ToolTip`;
 
-export default ToolTip
+export default ToolTip;

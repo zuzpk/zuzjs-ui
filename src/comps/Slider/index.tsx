@@ -9,8 +9,6 @@ import ToolTip from "../Tooltip";
 import { ToolTipController } from "../Tooltip/types";
 import { SliderProps } from "./types";
 
-
-
 const Slider = ({
     ref, 
     ...props
@@ -116,6 +114,30 @@ const Slider = ({
     const getPercent = (v: number) => ((v - min) / (max - min)) * 100;
 
     const handleMouseMoveTrack = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!slider.current) return;
+        
+        const rect = slider.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const mousePercent = Math.max(0, Math.min(100, (x / rect.width) * 100));
+        
+        // 1. Fixed Tooltip Value (Actual value, not percent!)
+        if (showToolTip && tooltipTextRef.current) {
+            const currentVal = input.current ? +input.current.value : _value;
+            setTooltipValue(currentVal * 100); 
+            // Note: CSS Anchors handle the 'x' position now, so no need for setPosition
+        }
+
+        // 2. Ghost Bar Logic
+        if (showGhostBar) {
+            const currentPercent = getPercent(input.current ? +input.current.value : _value);
+            const start = Math.min(currentPercent, mousePercent);
+            const width = Math.abs(mousePercent - currentPercent);
+            slider.current.style.setProperty('--ghost-start', `${start}`);
+            slider.current.style.setProperty('--ghost-width', `${width}`);
+        }
+    };
+
+    const _handleMouseMoveTrack = (e: React.MouseEvent<HTMLDivElement>) => {
         if (!props.showGhostBar || !slider.current) return;
         
         const rect = slider.current.getBoundingClientRect();
@@ -131,8 +153,9 @@ const Slider = ({
             //     : (roundValue ? hoverVal.toFixed(2) : Math.round(hoverVal));
             // tooltipTextRef.current.textContent = String(displayValue);
             // slider.current.style.setProperty('--mouse-x', `${mousePercent}%`);
-            setTooltipValue(getPercent(input.current ? +input.current.value : _value))
-            tooltip.current?.setPosition({ x, y: -36 })
+            // setTooltipValue(getPercent(input.current ? +input.current.value : _value))
+            setTooltipValue(currentPercent)
+            // tooltip.current?.setPosition({ x, y: -36 })
         }
 
         if (showGhostBar) {
@@ -196,7 +219,7 @@ const Slider = ({
             <Box ref={track} className={`--slider-track abs fill`} />
             {showGhostBar && <Box ref={ghost} className="--slider-ghost abs fill" />}
             <Box  className={`--slider-track-filled abs fill`} style={{ width: `calc(var(--value) * 1%)` }} />
-            <Box ref={knob} className={`--slider-knob abs`} />
+            <Box ref={knob} className={`--slider-knob --tooltip-knob abs`} />
 
             <Input 
                 ref={input}
@@ -217,9 +240,10 @@ const Slider = ({
         return (
             <ToolTip 
                 ref={tooltip}
-                show={isDragging || isHovered}
+                show={isDragging}
                 position={POSITION.Top} 
                 margin={15}
+                anchorName="--tooltip-knob"
                 title={<Span ref={tooltipTextRef}>{initialTitle}</Span>}
             >
                 {renderSliderContent()}
@@ -228,43 +252,6 @@ const Slider = ({
     }
 
     return renderSliderContent();
-
-    // return <Box
-    //     ref={slider}
-    //     data-value={value || 0}
-    //     onMouseMove={handleMouseMoveTrack}
-    //     className={`--slider --${type || SLIDER.Default} ${props.showKnobOnHover === true ? '--knob-hover' : ''} flex rel ${className}`.trim()}
-    //     style={{ ...style }}>
-
-    //     {SLIDER.Text === type ? <>
-    //         <Text 
-    //             ref={text}
-    //             onMouseDown={handleMouseDown}    
-    //             className={`--slider-text`}>{value || 0}</Text> 
-    //     </> : <>
-    //         {/* Ghost Bar */}
-    //         {props.showGhostBar && <Box ref={ghost} className="--slider-ghost abs fill" />}
-    //         {/* Track bar */}
-    //         <Box ref={track} className={`--slider-track abs fill`} />
-    //         <Box ref={track} className={`--slider-track-filled abs fill`} />
-    //         {/* Knob */}
-    //         <Box ref={knob} className={`--slider-knob abs`} />
-    //         <Input 
-    //             ref={input}
-    //             onInput={handleInput}
-    //             className={`abs fill`}
-    //             tabIndex={0}
-    //             type={type || SLIDER.Default} 
-    //             defaultValue={value || 0}
-    //             step={step} 
-    //             max={max} 
-    //             min={min} />
-    //     </>}
-
-        
-        
-
-    // </Box>
 
 }
 

@@ -1859,6 +1859,9 @@ type ToolTipProps = Omit<BoxProps, `title` | `ref`> & {
     margin?: number;
     title?: string | ReactNode;
     show?: boolean;
+    variant?: ValueOf<typeof Variant>;
+    /** Tooltip will be anchored to this className in children */
+    anchorName?: string;
 };
 
 declare const ToolTip: {
@@ -1945,6 +1948,10 @@ interface ThemeConfig {
         duration?: number;
         progress?: boolean;
     };
+    tooltip?: {
+        variant?: ValueOf<typeof Variant>;
+        curve: ValueOf<typeof TRANSITION_CURVES>;
+    };
 }
 type ThemeProviderProps = {
     children: ReactNode;
@@ -1993,6 +2000,10 @@ declare const useDrawer: () => {
 };
 
 declare const useFx: (fx?: animationProps & {
+    /** Offset when transition is activce */
+    offset?: number;
+    /** Offset when transition is inactive */
+    margin?: number;
     watch?: string[];
 }, ref?: RefObject<HTMLElement>) => {
     style: any;
@@ -2073,7 +2084,7 @@ declare const buildClassString: (input: ZuzStyleString | ZuzStyleString[]) => st
 declare const css: (input: ZuzStyleString | ZuzStyleString[]) => string;
 declare const buildWithStyles: (source: dynamic) => dynamic;
 declare const getAnimationCurve: (curve?: string | ValueOf<typeof TRANSITION_CURVES>) => string;
-declare const animationTransition: (transition: ValueOf<typeof TRANSITIONS>, offset?: number) => {
+declare const animationTransition: (transition: ValueOf<typeof TRANSITIONS>, startOffset?: number, endOffset?: number) => {
     from: {};
     to: {};
 };

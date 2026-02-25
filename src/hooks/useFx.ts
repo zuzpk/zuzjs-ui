@@ -4,6 +4,10 @@ import { animationProps, dynamic } from "../types";
 
 const useFx = (
     fx?: animationProps & {
+        /** Offset when transition is activce */
+        offset?: number;
+        /** Offset when transition is inactive */
+        margin?: number;
         watch?: string[]
     }, 
     ref?: RefObject<HTMLElement>
@@ -58,7 +62,7 @@ const useFx = (
 
         if (!fx) return { style: {} };
 
-        const { transition, from, to, exit, when, duration = 0.3, delay = 0, curve, watch = [] } = fx;
+        const { transition, from, to, exit, when, duration = 0.3, delay = 0, curve, margin = 0, offset = 20, watch = [] } = fx;
 
         const isWaitingForFirstPosition = when === false && !hasMounted.current;
         // const isExiting = when === false && hasMounted.current;
@@ -67,7 +71,7 @@ const useFx = (
 
         let activeStyles: dynamic = {};
         const { from: _f, to: _t } = transition 
-            ? animationTransition(transition) 
+            ? animationTransition(transition, offset, margin) 
             : { from: from || {}, to: to || {} };
 
         activeStyles = when === undefined ? { ..._f, ..._t } : when ? { ..._t } : (exit || _f);

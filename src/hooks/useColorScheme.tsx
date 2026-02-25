@@ -47,6 +47,11 @@ export interface ThemeConfig {
         type?: ToastType,
         duration?: number,
         progress?: boolean
+    },
+
+    tooltip?: {
+        variant?: ValueOf<typeof Variant>,
+        curve: ValueOf<typeof TRANSITION_CURVES>,
     }
 }
 

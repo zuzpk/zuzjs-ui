@@ -1,7 +1,7 @@
-import { cssFilterKeys, cssTransformKeys, cssWithKeys } from "../builder/stylesheet";
-import { cssShortKey, dynamic, TRANSITION_CURVES, TRANSITIONS, ValueOf, ZuzStyleString } from "../types";
-import styleGenerator from "../builder/style-generator";
 import { PACKAGE_NAME, splitAtoms } from ".";
+import styleGenerator from "../builder/style-generator";
+import { cssTransformKeys, cssWithKeys } from "../builder/stylesheet";
+import { cssShortKey, dynamic, TRANSITION_CURVES, TRANSITIONS, ValueOf, ZuzStyleString } from "../types";
 
 const ZUZ_MAP_KEY = Symbol.for("zuz.global.map");
 
@@ -134,12 +134,13 @@ export const getAnimationCurve = ( curve?: string | ValueOf<typeof TRANSITION_CU
 
 }
 
-export const animationTransition = (transition: ValueOf<typeof TRANSITIONS>, offset = 0) => {
+export const animationTransition = (transition: ValueOf<typeof TRANSITIONS>, startOffset = 0, endOffset = 0) => {
     let _from = {};
     let _to = {};
 
     // Offset defaults to 20px if not provided for standard slides
-    const moveAmount = offset || 20;
+    const moveAmount = startOffset || 20;
+    const idleAmount = endOffset || 0;
 
     switch (transition) {
         case TRANSITIONS.SlideInLeft:
@@ -149,7 +150,7 @@ export const animationTransition = (transition: ValueOf<typeof TRANSITIONS>, off
                 '--fx-x': isLeft ? `-${moveAmount}px` : `${moveAmount}px`, 
                 opacity: 0 
             };
-            _to = { '--fx-x': '0px', opacity: 1 };
+            _to = { '--fx-x': `${idleAmount}px`, opacity: 1 };
             break;
 
         case TRANSITIONS.SlideInTop:
@@ -159,7 +160,7 @@ export const animationTransition = (transition: ValueOf<typeof TRANSITIONS>, off
                 '--fx-y': isTop ? `-${moveAmount}px` : `${moveAmount}px`, 
                 opacity: 0 
             };
-            _to = { '--fx-y': '0px', opacity: 1 };
+            _to = { '--fx-y': `${idleAmount}px`, opacity: 1 };
             break;
 
         case TRANSITIONS.ScaleIn:

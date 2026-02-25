@@ -146,7 +146,7 @@ const Select = ({
 
         <Box
             id={_id}           
-            className={`--options-list -fx flex cols abs zIndex:$max-z-index`}
+            className={`--options-list -fx flex cols abs zIndex:var(--max-z-index)`}
             aria-hidden={!choosing}
             style={{
                 maxHeight: maxHeight || `auto`

@@ -42,6 +42,7 @@ const Group = forwardRef<HTMLDivElement, GroupProps>((props, ref) => {
                 const props = child.props || {};
                 const hasFxProp = 'fx' in props;
                 const className = props.as ? Array.isArray(props.as) ? props.as.join(` `) : props.as : props.className || '';
+                // console.log(`--group`, props.as, props.className)
                 const hasIgnoreClass = typeof className === 'string' && className.includes(_classToIgnore);
                 return !hasFxProp && !hasIgnoreClass;
             },
