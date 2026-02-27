@@ -1,13 +1,13 @@
 "use client"
-import { forwardRef, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import Segmented from "../Segmented";
-import { useBase } from "../../hooks";
-import Box from "../Box";
-import TabBody from "./body";
-import { Tab, TabViewHandler, TabViewProps } from "./types";
 import { uuid } from "@zuzjs/core";
 import { useResizeObserver } from "@zuzjs/hooks";
+import { Ref, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { useBase } from "../../hooks";
+import Box from "../Box";
+import Segmented from "../Segmented";
 import { Segment } from "../Segmented/types";
+import TabBody from "./body";
+import { TabViewHandler, TabViewProps } from "./types";
 
 
 // const TabView = forwardRef<TabViewHandler, TabViewProps>((props, ref) => {
@@ -60,11 +60,12 @@ const TabView = ({
 
         switch (transitionType) {
             case "fade":
-                return { display: 'grid', gridTemplateColumns: '1fr' };
             case "scale":
-                return { display: 'grid', gridTemplateColumns: '1fr' };
+                return { display: 'grid', gridTemplateColumns: '1fr', width: `100%` };
             default: // slide
                 return { 
+                    width: `${tabs.length * 100}%`,
+                    alignItems: 'flex-start',
                     display: 'flex', 
                     transform: `translate3d(-${activeTab * size.width}px, 0, 0)`,
                     transition: `transform ${speed}s cubic-bezier(0.4, 0, 0.2, 1)`

@@ -31,8 +31,9 @@ export interface ZuzProps {
 }
 
 export interface BoxProps extends Partial<Props<`div`>> {
-    name?: string
-    ref?: Ref<HTMLDivElement>
+    name?: string;
+    ref?: Ref<HTMLDivElement>;
+    cols?: boolean;
 }
 
 export interface parallaxEffectProps {

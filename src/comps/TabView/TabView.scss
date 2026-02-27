@@ -87,9 +87,13 @@ body{
     
     .--tabview-body{
         // align-items: flex-start;
-        border-width: var(--tab-border-width) var(--tab-border-width) var(--tab-border-width) var(--tab-border-width);
-        border-style: var(--tab-border-style);
-        border-color: var(--tab-border-color);
+        // border-width: var(--tab-border-width) var(--tab-border-width) var(--tab-border-width) var(--tab-border-width);
+        // border-style: var(--tab-border-style);
+        // border-color: var(--tab-border-color);
+        // This border is causing a push to --track top left 1px.. fix it
+        outline: var(--tab-border-width) var(--tab-border-style) var(--tab-border-color);
+        outline-offset: calc(var(--tab-border-width) * -1); // Pulls it inside
+
         overflow: hidden;
         border-radius: var(--tab-body-radius);
         width: 100%;
@@ -102,14 +106,17 @@ body{
             transform-style: flat;
             will-change: transform, opacity;
             align-items: flex-start !important;
+            flex-wrap: nowrap;
         }
         .--content{
             width: 100%;
+            flex-shrink: 0;
             background: var(--tab-body, #fff);            
             padding: var(--tab-body-padding);
             // align-self: baseline;
             display: block;
-            height: auto !important;
+            // height: auto !important;
+            min-height: 1px;
         }
     }
 }

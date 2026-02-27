@@ -1,13 +1,13 @@
-import { forwardRef, ReactNode } from "react"
-import { useBase } from "../../hooks"
-import Span from "../Span"
-import { IconProps } from "./types";
-import { Variant } from "../../types/enums";
+import { forwardRef } from "react";
+import { useBase } from "../../hooks";
 import { useTheme } from "../../hooks/useColorScheme";
+import { Variant } from "../../types/enums";
+import Span from "../Span";
+import { IconProps } from "./types";
 
 const Icon = forwardRef<HTMLDivElement, IconProps>((props, ref) => {
 
-    const { name, pathCount, variant, color, ...pops } = props;
+    const { name, pathCount, variant, color, size, ...pops } = props;
     const { variant: themeVariant } = useTheme(true)!
     const {
         className,
@@ -19,6 +19,7 @@ const Icon = forwardRef<HTMLDivElement, IconProps>((props, ref) => {
         style={{
             color,
             ...style,
+            ...(size ? { fontSize: size } : {})
         }}
         className={`icon-${name} --icon --${variant || themeVariant || Variant.Small} ${className}`.trim()}
         ref={ref} 

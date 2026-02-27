@@ -198,12 +198,27 @@ body {
     &.jcc{justify-content: center;}
     &.jce{justify-content: flex-end;}
     &.jcs{justify-content: flex-start;}
+    &.wrap{flex-wrap: wrap;}
+}
+.--flex{
+    display: flex;
+    &.--cols{flex-direction: column;}
+    &.--ass{align-self: flex-start;}
+    &.--asc{align-self: center;}
+    &.--ase{align-self: flex-end;}
+    &.--aic{align-items: center;}
+    &.--aie{align-items: flex-end;}
+    &.--jcc{justify-content: center;}
+    &.--jce{justify-content: flex-end;}
+    &.--jcs{justify-content: flex-start;}
+    &.--wrap{flex-wrap: wrap;}
 }
 .flex-inline{
     display: inline-flex;
 }
 .--abs, .abs{ 
     position: absolute; 
+    &.--abc,
     &.abc{ @extend .abc }
 }
 .fixed{ 

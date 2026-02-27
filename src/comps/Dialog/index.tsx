@@ -1,4 +1,5 @@
 import { uuid } from "@zuzjs/core"
+import { KeyCode, useShortcuts } from "@zuzjs/hooks"
 import { ReactNode, Ref, useEffect, useMemo, useRef, useState } from "react"
 import { useFx } from "../../hooks"
 import useBase from "../../hooks/useBase"
@@ -7,6 +8,7 @@ import { BoxProps, ValueOf } from "../../types"
 import { DIALOG, TRANSITION_CURVES, TRANSITIONS, Variant } from "../../types/enums"
 import Box from "../Box"
 import Cover from "../Cover"
+import { layerManager } from "../layer_manager"
 import Overlay from "../Overlay"
 import { SPINNER } from "../Spinner/types"
 import DialogBody from "./body"
@@ -83,6 +85,18 @@ const Dialog = ({
         onClose(id!)
     }
 
+
+    const shortcutsConfig = useMemo(() => [
+        { 
+            keys: [KeyCode.Escape], 
+            callback: () => {
+                if (layerManager.isTop(closeDialog)) closeDialog();
+            }
+        }
+    ], [visible]);
+
+    useShortcuts(shortcutsConfig)
+    
     useEffect(() => {
         setDialogType(DIALOG.Dialog)
         setMsg(message);

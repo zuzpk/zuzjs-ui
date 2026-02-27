@@ -125,6 +125,7 @@ export const cssProps : dynamic = {
     "fontFamily": "font-family",
     "fontKerning": "font-kerning",
     "s": "font-size",
+    "fs": "font-size",
     "fontSize": "font-size",
     "fontSizeAdjust": "font-size-adjust",
     "fontStretch": "font-stretch",

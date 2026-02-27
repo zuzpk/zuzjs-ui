@@ -216,7 +216,7 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<TableController>) => {
             onSelect={onRowSelectToggle}
             onContextMenu={onRowContextMenu} />)}
         {isEmpty && renderEmpty()}
-        <Box 
+        {pagination && _paginated && <Box 
             aria-hidden={!pagination || !_paginated}
             {...( animateRows ? { fx: {
                 transition: TRANSITIONS.SlideInBottom,
@@ -224,7 +224,7 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<TableController>) => {
                 delay: .02 * (rows.length + 1),
                 when: !_loading && rows && pagination && _paginated != null
             } as animationProps} : {} )}
-            as={`--row flex aic --row-footer`}>{pagination && _paginated ? _paginated : null}</Box>
+            as={`--row flex aic --row-footer`}>{_paginated}</Box>}
     </Box>
 
 }

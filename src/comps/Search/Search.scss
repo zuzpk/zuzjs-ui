@@ -30,6 +30,7 @@ body{
     overflow: hidden;
     background: var(--search-color);
     border-radius: var(--search-radius);
+    border: var(--search-border);
 
     .--input{
         background: transparent !important;
@@ -60,7 +61,7 @@ body{
                 flex-shrink: 0;
                 width: calc(var(--search-send-size-#{$size}) * 1.65);
                 height: 100%; // Force it to fill the height of the search bar
-                aspect-ratio: 1 / 1; // Ensure it stays a consistent shape
+                // aspect-ratio: 1 / 1; // Ensure it stays a consistent shape
                 background: transparent;
                 svg {
                     width: var(--search-send-size-#{$size});

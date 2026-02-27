@@ -4,10 +4,12 @@ import { useBase, useFx } from "../../hooks";
 import { useTheme } from "../../hooks/useColorScheme";
 import { BoxProps, DRAWER_SIDE, TRANSITION_CURVES } from "../../types";
 import Box from "../Box";
+import Button from "../Button";
 import Cover from "../Cover";
 import { layerManager } from "../layer_manager";
 import Overlay from "../Overlay";
 import ScrollView from "../ScrollView";
+import SVGIcons from "../svgicons";
 import { DrawerProps } from "./types";
 
 const Drawer = ({
@@ -102,7 +104,7 @@ const Drawer = ({
         to: { ..._style.to, opacity: 1 },
         when: visible,
         curve: animation || themeDrawer?.animation || TRANSITION_CURVES.EaseInOut,
-        duration: speed || themeDrawer?.speed ||.5,
+        duration: speed || themeDrawer?.speed || .5,
         watch: [`scale`, `filter`]
     })
 
@@ -135,6 +137,7 @@ const Drawer = ({
             }}
             {...rest as BoxProps}>
             {from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? <Box className={`--handle`} /> : null}
+            <Button as={`--close-drawer --abs`} onClick={closeDrawer}>{SVGIcons.close}</Button>
             <ScrollView as={`rel`}>
                 {render ? content : visible ? content : null}
                 <Cover when={loading} />

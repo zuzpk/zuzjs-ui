@@ -6,6 +6,7 @@ import { POSITION } from "../../types";
 import Box from "../Box";
 import Button from "../Button";
 import { ButtonProps } from "../Button/types";
+import Flex from "../Flex";
 import Icon from "../Icon";
 import Input from "../Input";
 import SVGIcons from "../svgicons";
@@ -33,13 +34,26 @@ const Select = ({
         arrowDownIcon = SVGIcons.arrowDown,
         arrowUpIcon = SVGIcons.arrowUp,
         expanded,
+        multiple,
+        tokenizer,
+        wrapTokens,
+        disabled,
+        checkIcon,
+        closeIcon,
         onChange,
         ...pops } = props
-    const [ value, setValue ] = useState<Option>(
-        selected ? 
-            typeof selected === `string` ? options.find(fo => fo.value === selected)! : selected
-            : options[0]
-    )
+
+    const [ value, setValue ] = useState<Option | Option[]>(() => {
+        if (multiple || tokenizer) {
+            if (!selected) return [];
+            const arr = Array.isArray(selected) ? selected : [selected];
+            return arr.map(item => 
+                typeof item === 'string' ? options.find(o => o.value === item)! : item
+            ) as Option[];
+        }
+        return selected ? (typeof selected === 'string' ? options.find(o => o.value === selected)! : selected) : options[0];
+    })
+
     const [ choosing, setChoosing ] = useState(false)
     const [ query, setQuery ] = useState<string | null>(null)
     const _ref = useRef<HTMLButtonElement>(null);
@@ -49,33 +63,74 @@ const Select = ({
     const _id = useMemo(() => name || _did, [])
     const { reposition } = usePosition(_pop as any, { direction: POSITION.Bottom, offset: 2 })
     const { variant: themeVariant } = useTheme(true)!
+    
+    const crossIcon = closeIcon ? 
+        typeof closeIcon === `string` ? <Icon name={closeIcon} /> 
+            : closeIcon
+                : SVGIcons.close;
 
     const {
         className,
         style,
         rest
-    } = useBase(pops)
+    } = useBase(pops, undefined)
+
+    const isSelected = (o: Option) => {
+        if (Array.isArray(value)) return value.some(v => v.value === o.value);
+        return value?.value === o.value;
+    };
 
     const updateValue = (o: Option) => {
-        setValue(o)
-        setChoosing(false)
-        onChange && onChange(o)
+
+        if (disabled || o.disabled) return;
+
+        if (multiple || tokenizer) {
+            const current = Array.isArray(value) ? value : [];
+            const exists = current.find(v => v.value === o.value);
+            const nextValue = exists 
+                ? current.filter(v => v.value !== o.value)
+                : [...current, o];
+            
+            setValue(nextValue);
+            // setChoosing(false)
+            onChange?.(nextValue as any);
+        } else {
+            setValue(o)
+            setChoosing(false)
+            onChange?.(o)
+        }
     }
     
+    const removeToken = (e: React.MouseEvent, o: Option) => {
+        e.stopPropagation();
+        if (disabled) return;
+        const nextValue = (value as Option[]).filter(v => v.value !== o.value);
+        setValue(nextValue);
+        setChoosing(false)
+        onChange?.(nextValue as any);
+    };
+
     useImperativeHandle(ref, () => ({
-        setSelected: ( option: Option | string ) => {
-            if ( typeof option === `string` ){
-                const foundOption = options.find( o => o.value === option )
-                if ( foundOption ){
-                    setValue( foundOption )
-                }
-            }
-            else{
-                setValue( option )
+        setSelected: (option: Option | string | Option[] | string[]) => {
+            // Handle Array Input (Multi/Tokenizer)
+            if (Array.isArray(option)) {
+                const nextOptions = option.map(item => 
+                    typeof item === 'string' ? options.find(o => o.value === item)! : item
+                ).filter(Boolean);
+                setValue(nextOptions as Option[]);
+            } 
+            // Handle Single Input
+            else if (typeof option === 'string') {
+                const found = options.find(o => o.value === option);
+                if (found) setValue(found);
+            } 
+            else {
+                setValue(option as Option);
             }
         },
-        getValue: () => value || null
-    }))
+        // Explicitly cast to satisfy the handler interface
+        getValue: () => (value || null) as (Option | Option[] | null)
+    }), [value, options])
 
     useEffect(() => {
         if (!choosing) return;
@@ -125,23 +180,52 @@ const Select = ({
         };
     }, [choosing, reposition]);
 
-    return <Box className={`--select ${expanded == true ? `--expanded` : ``} --${variant || themeVariant} ${name ? `--${name}` : ``} rel`.trim()} name={_id}>
+    return <Box className={`--select ${expanded == true ? `--expanded` : ``} --${variant || themeVariant} ${name ? `--${name}` : ``} ${disabled ? '--disabled' : ''} rel`.trim()} name={_id}>
 
         <Button
             ref={_ref}
-            data-value={value ? `string` == typeof value ? value : value.value : value || `-1`}
-            className={`--selected flex aic rel ${className}`.trim()}
+            disabled={disabled}
+            // data-value={value ? `string` == typeof value ? value : value.value : value || `-1`}
+            className={`--select-display --selected flex aic rel ${className}`.trim()}
             withLabel={false}
             style={style}
             onClick={(e) => {
                 e.stopPropagation()
-                setChoosing(prev => !prev)
+                if ( !disabled ) setChoosing(prev => !prev)
             }}
             {...rest as ButtonProps}>
-            <Text className={`--label`}>{value ? `string` == typeof value ? value : value.label : label || `Choose`}</Text>
+            <Flex aic as="--label-wrapper">
+                {tokenizer && Array.isArray(value) && value.length > 0 ? (
+                    <Flex as={`--tokens-wrap${wrapTokens === true ? ` --wrap` : ``}`}>
+                        {value.map(v => (
+                            <Flex key={v.value} aic as="--token">
+                                <Text as={`--token-label`}>{v.label}</Text>
+                                <Box as={`--token-remove`} onClick={(e) => removeToken(e, v)}>
+                                    {crossIcon}
+                                </Box>
+                            </Flex>
+                        ))}
+                        {value.length < options.length && <Text as="--label">
+                            {label || 'Choose'}
+                        </Text>}
+                    </Flex>
+                    ) : (
+                        <Text as="--label">
+                            {Array.isArray(value) 
+                                ? (value.length > 0 ? `${value.length} selected` : label || 'Choose')
+                                : (value?.label || label || 'Choose')}
+                        </Text>
+                    )}
+            </Flex>
+
             <Box className={`--svg-arrow rel flex aic jcc`}>{choosing ? 
                 `string` === typeof arrowUpIcon ? <Icon name={arrowUpIcon} as={`--search-action`} /> : arrowUpIcon : 
                 `string` === typeof arrowDownIcon ? <Icon name={arrowDownIcon} as={`--search-action`} /> : arrowDownIcon}</Box>
+                
+            {/* <Text className={`--label`}>{value ? `string` == typeof value ? value : value.label : label || `Choose`}</Text>
+            <Box className={`--svg-arrow rel flex aic jcc`}>{choosing ? 
+                `string` === typeof arrowUpIcon ? <Icon name={arrowUpIcon} as={`--search-action`} /> : arrowUpIcon : 
+                `string` === typeof arrowDownIcon ? <Icon name={arrowDownIcon} as={`--search-action`} /> : arrowDownIcon}</Box> */}
         </Button>
 
         <Box
@@ -168,16 +252,19 @@ const Select = ({
                     placeholder={searchPlaceholder || `Search...`} />
             </Box>}
             {   
-                (query == null ? options : options.filter((o: Option) => {
-                // return 
-                    // `string` == typeof o ? 
-                    // o.toLowerCase().includes(query.toLowerCase()) 
-                    // : 
-                    return o.label.toLowerCase().includes(query.toLowerCase()) || o.value.toLowerCase().includes(query.toLowerCase())
-                }))
+                // (query == null ? options : options.filter((o: Option) => {
+                // // return 
+                //     // `string` == typeof o ? 
+                //     // o.toLowerCase().includes(query.toLowerCase()) 
+                //     // : 
+                //     return o.label.toLowerCase().includes(query.toLowerCase()) || o.value.toLowerCase().includes(query.toLowerCase())
+                // }))
+                options
+                .filter(o => !query || o.label.toLowerCase().includes(query.toLowerCase()))
                 .map((o) => <OptionItem 
                     updateValue={updateValue} 
-                    value={value}
+                    checkIcon={checkIcon}
+                    selected={isSelected(o)}
                     key={`option-${(`string` == typeof o ? o : o.label).replace(/\s+/g, `-`)}-${`string` == typeof o ? o : o.value}`}               
                     o={o} />)
             }

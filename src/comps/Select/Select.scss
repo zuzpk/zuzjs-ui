@@ -26,26 +26,32 @@ body{
     --select-search-color: var(--text-primary);
     --select-search-margin-bottom: 4px;
 
-    // --select-radius: var(--radius);
-    // --select-text-size: var(--text);
-
-    // --select-text-size-sm: var(--text-sm);
-    // --select-padding-sm: var(--padding-sm);
-    // --select-radius-sm: var(--radius-sm);
     
-    // --select-text-size-md: var(--text-md);
-    // --select-padding-md: var(--padding-md);
-    // --select-radius-md: var(--radius-md);
-    
-    // --select-text-size-lg: var(--text-lg);
-    // --select-padding-lg: var(--padding-lg);
-    // --select-radius-lg: var(--radius-lg);
-    
-    // --select-text-size-xl: var(--text-xl);
-    // --select-padding-xl: var(--padding-xl);
-    // --select-radius-xl: var(--radius-xl);
-
     --select-option-gap: 8px;
+    --select-token-padding-xs: 1px 1px 1px 5px;
+    --select-token-padding-sm: 1px 1px 1px 5px;
+    --select-token-padding-md: 1px 1px 1px 5px;
+    --select-token-padding-lg: 1px 1px 1px 5px;
+    --select-token-padding-xl: 1px 1px 1px 5px;
+    --select-token-padding-xxl: 1px 1px 1px 5px;
+
+    --select-token-remove-size-xs: 14px;
+    --select-token-remove-size-sm: 14px;
+    --select-token-remove-size-md: 14px;
+    --select-token-remove-size-lg: 14px;
+    --select-token-remove-size-xl: 14px;
+    --select-token-remove-size-xxl: 14px;
+
+    --select-token-label-size-xs: 10px;
+    --select-token-label-size-sm: 12px;
+    --select-token-label-size-md: 13px;
+    --select-token-label-size-lg: 14px;
+    --select-token-label-size-xl: 15px;
+    --select-token-label-size-xxl: 16px;
+
+    --select-token: var(--select-token-custom, var(--background));
+    --select-token-remove-hover: var(--select-token-remove-hover-custom, #bbb);
+    --select-token-hover: var(--select-token-hover-custom, #bbb);
 
 }
 
@@ -57,11 +63,11 @@ body{
     
     @each $size in variables.$sizes {
         &.--#{$size} {
-            --select-radius: var(--radius-#{$size});
+            --select-radius: var(--select-radius-custom, --radius-#{$size});
             
-            .--selected {
+            .--select-display.--selected {
                 padding: var(--padding-#{$size});
-                border-radius: var(--radius-#{$size});
+                border-radius: var(--select-radius-custom, --radius-#{$size});
                 font-size: var(--text-#{$size});
             }
             
@@ -73,16 +79,30 @@ body{
                     border-radius: var(--radius-#{$size}) !important;
                 }
             }
+
+            .--tokens-wrap{
+                .--token{
+                    padding: var(--select-token-padding-#{$size}) !important;
+                    border-radius: var(--radius-#{$size}) !important;
+                    .--token-label{
+                        font-size: var(--select-token-label-size-#{$size});
+                    }
+                    .--token-remove{
+                        width: var(--select-token-remove-size-#{$size});
+                    }
+                }
+            }
         }
     }
 
-    .--selected{
+    .--select-display.--selected{
         width: 100%;
         gap: var(--select-gap);
         background: var(--select);
         border: var(--select-border);
         box-shadow: var(--select-shadow);
         line-height: 1;
+        justify-content: flex-start !important;
         
         .--svg-arrow{ 
             color: var(--select-arrow-color); 
@@ -95,6 +115,7 @@ body{
             background: var(--select-hover);
         }
 
+        .--label-wrapper,
         .--label{
             flex: 1;
             text-align: left;
@@ -106,6 +127,29 @@ body{
                 fill: var(--select-arrow-color);
             }
         }
+
+        .--tokens-wrap{
+            gap: 4px;
+            .--token{
+                background: var(--select-token);
+                gap: 2px;
+                overflow: hidden;
+                &:hover{
+                    background: var(--select-token-hover);
+                }
+                .--token-label{
+                    
+                }
+                .--token-remove{
+                    aspect-ratio: 1/1;
+                    line-height: 0;
+                    &:hover{
+                        background: var(--select-token-remove-hover);
+                    }
+                }
+            }
+        }
+
     }
 
     .--options-list{
@@ -149,14 +193,24 @@ body{
             justify-content: flex-start;
             gap: var(--select-option-gap);
             width: 100%;
+            overflow: hidden;
             &:hover{
                 background: var(--select-option-hover);
             }
-            &.selected{
+            &.--selected{
                 background: var(--select-selected);
+                .--select-option-check{
+                    background: var(--select-selected);
+                }
             }
-            &.--select-option-icon{
-                
+            .--select-option-check{
+                top: 0px;
+                right: 0px;
+                bottom: 0px;
+                z-index: 1;
+                padding: 10px;
+                aspect-ratio: 1/1;
+                background: var(--select-options);
             }
         }
 

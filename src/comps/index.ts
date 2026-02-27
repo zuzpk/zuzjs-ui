@@ -67,6 +67,9 @@ export * from './Fab/types';
 
 export { default as Filters, type FilterProps } from './Filters';
 
+export { default as Flex } from './Flex';
+export * from './Flex/types';
+
 export { default as Form } from './Form';
 export * from './Form/types';
 

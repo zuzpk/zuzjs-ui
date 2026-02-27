@@ -16,12 +16,12 @@ export interface SelectHandler {
      * Programmatically sets the selected option.
      * @param option - The option object or value string to select.
      */
-    setSelected: ( option: Option | string ) => void,
+    setSelected: ( option: Option | string | Option[] | string[] ) => void,
     /**
      * Retrieves the currently selected option object.
      * @returns The selected Option or null if nothing is selected.
      */
-    getValue: () => Option | null,
+    getValue: () => Option | Option[] | null,
 }
 
 /**
@@ -35,7 +35,9 @@ export type Option = {
     /** The display text for the option. */
     label: string,
     /** The underlying value for the option. */
-    value: string
+    value: string | number,
+    /** Optional flag to disable this specific option. */
+    disabled?: boolean,
 }
 
 /**
@@ -46,7 +48,9 @@ export type Value = FormEventHandler<HTMLDivElement> & Option
 export interface OptionItemProps {
     updateValue: (o: Option) => void, 
     o: Option,
-    value: Option
+    // value: Option,
+    selected?: boolean,
+    checkIcon?: string | ReactNode,
 }
 
 /**
@@ -124,5 +128,17 @@ export type SelectProps = Omit<BoxProps, "onChange" | "ref"> & {
     arrowDownIcon?: string | ReactNode,
 
     arrowUpIcon?: string | ReactNode,
+
+    disabled?: boolean,
+
+    multiple?: boolean,
+    
+    tokenizer?: boolean,
+
+    wrapTokens?: boolean,
+
+    checkIcon?: string | ReactNode,
+
+    closeIcon?: string | ReactNode,
     
 }

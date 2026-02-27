@@ -1,6 +1,6 @@
 import { BoxProps } from "../../types";
 
-export interface GridProps extends BoxProps {
+export interface GridProps extends Omit<BoxProps, 'cols'> {
   cols?: string | number;     // grid-template-columns
   rows?: string | number;     // grid-template-rows
   gap?: string | number;      // gap

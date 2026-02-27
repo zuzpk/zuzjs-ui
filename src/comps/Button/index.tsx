@@ -1,4 +1,5 @@
 "use client"
+import { removeDuplicateWords } from '@zuzjs/core';
 import { useBase } from '../../hooks';
 import { useTheme } from '../../hooks/useColorScheme';
 import Icon from '../Icon';
@@ -22,7 +23,7 @@ const Button = ({ ref, ...props} : ButtonProps) => {
     const { variant: themeVariant } = useTheme(true)!
     
     return <button
-        className={`--button --${kind} --${variant || themeVariant} flex aic ${!reset ? `jcc` : ``} ${icon ? `--with-icon` : ``} ${className}`.trim().replace(/\s+/g, ' ')}
+        className={removeDuplicateWords(`--button --${kind} --${variant || themeVariant} flex aic ${!reset ? `jcc` : ``} ${icon ? `--with-icon` : ``} ${className}`).trim().replace(/\s+/g, ' ')}
         style={style}
         ref={ref}
         disabled={state == ButtonState.Loading || props.skeleton?.enabled || disabled}

@@ -1,8 +1,8 @@
 "use client"
-import React, { CSSProperties, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { useResizeObserver } from '@zuzjs/hooks';
+import { CSSProperties, useEffect, useMemo, useRef } from 'react';
 import Box from '../Box';
 import { TabBodyProps } from './types';
-import { useResizeObserver } from '@zuzjs/hooks';
 
 const TabBody = ({ 
     isActive, 
@@ -16,7 +16,8 @@ const TabBody = ({
 
     const contentRef = useRef<HTMLDivElement>(null);
     const contentSize = useResizeObserver(contentRef);
-
+    const isSlide = transitionType === "slide" || !transitionType;
+    
     useEffect(() => {
         if (isActive && contentSize.height > 0) {
             onHeightChange(contentSize.height);
@@ -26,11 +27,11 @@ const TabBody = ({
     const animationStyle = useMemo(() => {
 
         const base = {
-            // width: width,      // Force exact pixels
-            // minWidth: width,   // Prevent shrinking
-            // maxWidth: width,   // Prevent expansion
+            width: width > 0 ? `${width}px` : '100%',
+            minWidth: width > 0 ? `${width}px` : '100%',
             flexShrink: 0,     // Critical for flex tracks
-            height: 'fit-content'
+            height: 'fit-content',
+            boxSizing: `border-box`
         };
 
         if (transitionType === "fade") {

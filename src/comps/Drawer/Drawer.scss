@@ -4,6 +4,10 @@ body{
     --drawer-radius-v: 0px;
     --drawer-radius-h: 0px;
     --drawer-shadow: var(--zuz-shadow);
+    --drawer-close-bg: var(--manatee-100);
+    --drawer-close-color: var(--manatee-800);
+    --drawer-close-bg-hover: var(--manatee-900);
+    --drawer-close-color-hover: #fff;
 }
 
 .drawer-h{
@@ -51,5 +55,28 @@ body{
         border-radius: 10px;
         background: var(--drawer-handle-color);
         margin: 12px auto 0px auto;
+    }
+
+    .--close-drawer{
+        background: var(--drawer-close-bg) !important;
+        border-radius: 50% !important;
+        width: 25px;
+        height: 25px;
+        aspect-ratio: 1 / 1;
+        right: 20px;
+        top: 20px;
+        z-index: 10001;
+        padding: 3px;
+        corner-shape: round !important;
+        svg {
+            fill: var(--drawer-close-color);
+        }
+
+        &:hover{
+            background: var(--drawer-close-bg-hover) !important;
+            svg {
+                fill: var(--drawer-close-color-hover);
+            }
+        }
     }
 }
