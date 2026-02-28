@@ -255,3 +255,45 @@ body {
 .no-overflow{overflow:hidden;}
 .w-full{width: 100%;}
 .h-full{height: 100%;}
+
+.--is-busy {
+    
+    position: relative;
+    overflow: hidden; // Clips the rotating square to the component shape
+    z-index: 0;
+
+    &::before {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        left: -50%;
+        top: -50%;
+        width: 200%;
+        height: 200%;
+        background-color: transparent;
+        background-repeat: no-repeat;
+        background-size: 50% 50%, 50% 50%;
+        background-position: 0 0, 100% 0, 100% 100%, 0 100%;
+        // Use your theme variables for the "spinning" colors
+        background-image: linear-gradient(var(--primary), var(--primary));
+        animation: rotate-border 2s linear infinite;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        left: 2px; // This creates the "thickness" of your border
+        top: 2px;
+        width: calc(100% - 4px);
+        height: calc(100% - 4px);
+        background: inherit; // Matches component background
+        border-radius: inherit; // Matches component shape
+    }
+}
+
+@keyframes rotate-border {
+    100% {
+        transform: rotate(1turn);
+    }
+}

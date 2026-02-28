@@ -28,6 +28,8 @@ export interface ZuzProps {
 
     dragOptions?: DragOptions;
 
+    busy?: boolean;
+
 }
 
 export interface BoxProps extends Partial<Props<`div`>> {

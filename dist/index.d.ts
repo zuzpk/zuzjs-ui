@@ -215,6 +215,7 @@ interface ZuzProps {
     /** Makes Component Draggable */
     draggable?: boolean;
     dragOptions?: DragOptions;
+    busy?: boolean;
 }
 interface BoxProps extends Partial<Props<`div`>> {
     name?: string;

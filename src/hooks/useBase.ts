@@ -18,6 +18,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
     const {
         as,
         fx,
+        busy = false,
         transition: autoTransition,
         skeleton,
         className,
@@ -52,6 +53,11 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
         }
     }
 
+    const zuzClasses = [
+        className,
+        busy === true ? `--is-busy` : ``
+    ].filter(Boolean).join(` `)
+
     const animationConfig = autoTransition ? {
         transition: autoTransition,
         duration: 0.3
@@ -67,7 +73,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
             ...dragStyle
         },
         className: [
-            className || ``, 
+            zuzClasses, 
             manifestClasses || ``,
             skeleton?.enabled ? `--skeleton` : ``,
             draggable ? `--draggable` : ``,
