@@ -123,6 +123,15 @@ const Dialog = ({
         if ( undefined != forceLoading ) setLoading(forceLoading)
     }, [forceLoading]);
 
+    useEffect(() => {
+        if ( visible ){
+            layerManager.push(closeDialog)
+        }else{
+            layerManager.pop(closeDialog)
+        }
+        return () => layerManager.pop(closeDialog)
+    }, [visible])
+
     const baseZIndex = useMemo(() => 10000 + (index * 10), [index]);
 
     return <>

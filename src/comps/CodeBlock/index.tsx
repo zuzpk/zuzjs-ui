@@ -1,8 +1,10 @@
 "use client"
-import React, { RefObject, useMemo, useRef } from 'react';
-import { CodeBlockProps } from './types';
+import { copyToClipboard } from '@zuzjs/core';
+import { RefObject, useMemo, useRef } from 'react';
 import useBase from '../../hooks/useBase';
 import Box from '../Box';
+import Button from '../Button';
+import { CodeBlockProps } from './types';
 
 const CodeBlock = ({
     ref,
@@ -11,6 +13,7 @@ const CodeBlock = ({
 
     const { 
         code,
+        copy,
         lang = 'tsx', 
         showLines = false, 
         highlight = "",
@@ -75,17 +78,19 @@ const CodeBlock = ({
             let html = line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
             const isHighlighted = highlightedLines.has(index + 1);
 
-            let tokens: string[] = [];
-            rules.forEach(rule => {
-                html = html.replace(rule.re, (m) => {
-                    const id = `ZUZ_ID_${tokens.length}_ZUZ`; 
-                    tokens.push(`<span class="--token-${rule.name}">${m}</span>`);
-                    return id;
+            if ( lang != `plain` ){
+                let tokens: string[] = [];
+                rules.forEach(rule => {
+                    html = html.replace(rule.re, (m) => {
+                        const id = `ZUZ_ID_${tokens.length}_ZUZ`; 
+                        tokens.push(`<span class="--token-${rule.name}">${m}</span>`);
+                        return id;
+                    });
                 });
-            });
 
-            for (let i = tokens.length - 1; i >= 0; i--) {
-                html = html.replace(`ZUZ_ID_${i}_ZUZ`, tokens[i]);
+                for (let i = tokens.length - 1; i >= 0; i--) {
+                    html = html.replace(`ZUZ_ID_${i}_ZUZ`, tokens[i]);
+                }
             }
 
             return `<div class="--code-line ${showLines == true ? `--with-ln` : ``} ${isHighlighted ? '--is-highlighted' : ''}">
@@ -94,10 +99,9 @@ const CodeBlock = ({
             </div>`;
         }).join('');
     }, [code, highlightedLines]);
-    
 
     return <Box 
-        as={`--code-block ${className}`} 
+        as={`--code-block rel ${className}`} 
         style={style}
         {...pops}>
         <pre 
@@ -107,6 +111,10 @@ const CodeBlock = ({
                 dangerouslySetInnerHTML={{ __html: processedHtml }} 
             />
         </pre>
+        { copy && <Button as={`--copy-code abs`} onClick={() => {
+            copyToClipboard(code);
+            copy.onCopy?.()
+        }}>Copy</Button> }
     </Box>
 }
 

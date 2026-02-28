@@ -593,9 +593,13 @@ declare const CheckBox: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<rea
 interface CodeBlockProps extends ZuzProps {
     ref?: Ref<HTMLPreElement>;
     code: string;
-    lang?: 'typescript' | 'javascript' | 'tsx' | 'css' | 'json';
+    lang?: `plain` | 'typescript' | 'javascript' | 'tsx' | 'css' | 'json';
     showLines?: boolean;
     highlight?: string;
+    copy?: {
+        onCopy?: () => void;
+        icon?: string;
+    };
 }
 
 declare const CodeBlock: ({ ref, ...props }: CodeBlockProps) => react_jsx_runtime.JSX.Element;
