@@ -13,6 +13,7 @@ body{
     --select-options-max-height: 400px;
     --select-options-top: 0.1rem;
     --select-options-padding: 4px;
+    --select-option-color-disabled: var(--text-primary-disabled);    
     --select-option-color: var(--text-primary);    
     --select-option-hover: var((--background));
     --select-option-radius: var(--select-radius);
@@ -111,6 +112,20 @@ body{
             }
         }
 
+        &:disabled{
+            .--label{
+                color: var(--text-primary-disabled);
+            }
+            .--svg-arrow{
+                svg {
+                    fill: var(--text-primary-disabled);
+                }
+            }
+            &:hover{
+                background: var(--select);
+            }
+        }
+
         &:hover{
             background: var(--select-hover);
         }
@@ -160,6 +175,8 @@ body{
         width: 100%;
         max-height: var(--select-options-max-height);
         overflow-x: hidden;
+        overflow-y: auto;
+        touch-action: pan-y;
         gap: 2px;
         background: var(--select-options);
         // border-radius: var(--select-radius);
@@ -167,11 +184,13 @@ body{
         box-shadow: var(--select-options-shadow);
         z-index: var(--max-z-index);
         scrollbar-color: var(--scrollbar-color);
+        overscroll-behavior-y: contain;
 
         .--select-search{
             margin-bottom: var(--select-search-margin-bottom);
             background: var(--select-search);
             top: 0px;
+            z-index: 3;
             .--search-input{
                 background: inherit;
                 border: var(--select-search-border);
@@ -194,6 +213,13 @@ body{
             gap: var(--select-option-gap);
             width: 100%;
             overflow: hidden;
+
+            &:disabled{
+                color: var(--text-primary-disabled);
+                &:hover{
+                    background: transparent;
+                }
+            }
             &:hover{
                 background: var(--select-option-hover);
             }
@@ -202,6 +228,9 @@ body{
                 .--select-option-check{
                     background: var(--select-selected);
                 }
+            }
+            .--option-item-meta{
+                gap: 8px;
             }
             .--select-option-check{
                 top: 0px;

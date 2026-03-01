@@ -1,7 +1,7 @@
 import * as react from 'react';
 import react__default, { ElementType, ComponentPropsWithoutRef, Ref, ReactNode, MouseEvent as MouseEvent$1, RefObject, FC, CSSProperties, FormEventHandler, JSX, HTMLAttributes, ComponentPropsWithRef } from 'react';
 import * as _zuzjs_hooks from '@zuzjs/hooks';
-import { DragOptions, LineChartProps, MediaItem, useMediaPlayer, Command } from '@zuzjs/hooks';
+import { DragOptions, LineChartProps, MediaItem, useMediaPlayer, ScrollBreakpoint, Command } from '@zuzjs/hooks';
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import { PubSub } from '@zuzjs/core';
 
@@ -1299,6 +1299,8 @@ declare const Radio: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react.
 type ScrollViewProps = BoxProps & {
     style?: CSSProperties;
     speed?: number;
+    smooth?: boolean;
+    breakpoints?: ScrollBreakpoint;
 };
 
 declare const ScrollView: react.ForwardRefExoticComponent<Omit<ScrollViewProps, "ref"> & react.RefAttributes<HTMLDivElement>>;

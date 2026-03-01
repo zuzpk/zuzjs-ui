@@ -110,6 +110,22 @@ const Select = ({
         onChange?.(nextValue as any);
     };
 
+    const handleListWheel = (e: React.WheelEvent) => {
+        const el = e.currentTarget;
+        const isAtTop = el.scrollTop === 0 && e.deltaY < 0;
+        const isAtBottom = el.scrollHeight - el.scrollTop === el.clientHeight && e.deltaY > 0;
+
+        // If we are scrolling inside the list and not at the boundaries,
+        // kill the event so ScrollView never sees it.
+        if (!isAtTop && !isAtBottom) {
+            e.stopPropagation();
+        } else {
+            // If we hit the boundary, still stop it to prevent ScrollView from moving
+            e.preventDefault(); 
+            e.stopPropagation();
+        }
+    };
+
     useImperativeHandle(ref, () => ({
         setSelected: (option: Option | string | Option[] | string[]) => {
             // Handle Array Input (Multi/Tokenizer)
@@ -222,16 +238,13 @@ const Select = ({
                 `string` === typeof arrowUpIcon ? <Icon name={arrowUpIcon} as={`--search-action`} /> : arrowUpIcon : 
                 `string` === typeof arrowDownIcon ? <Icon name={arrowDownIcon} as={`--search-action`} /> : arrowDownIcon}</Box>
                 
-            {/* <Text className={`--label`}>{value ? `string` == typeof value ? value : value.label : label || `Choose`}</Text>
-            <Box className={`--svg-arrow rel flex aic jcc`}>{choosing ? 
-                `string` === typeof arrowUpIcon ? <Icon name={arrowUpIcon} as={`--search-action`} /> : arrowUpIcon : 
-                `string` === typeof arrowDownIcon ? <Icon name={arrowDownIcon} as={`--search-action`} /> : arrowDownIcon}</Box> */}
         </Button>
 
         <Box
             id={_id}           
-            className={`--options-list -fx flex cols abs zIndex:var(--max-z-index)`}
+            className={`--options-list --allow-scroll -fx flex cols abs zIndex:var(--max-z-index)`}
             aria-hidden={!choosing}
+            onWheel={handleListWheel}
             style={{
                 maxHeight: maxHeight || `auto`
             }}
@@ -252,13 +265,6 @@ const Select = ({
                     placeholder={searchPlaceholder || `Search...`} />
             </Box>}
             {   
-                // (query == null ? options : options.filter((o: Option) => {
-                // // return 
-                //     // `string` == typeof o ? 
-                //     // o.toLowerCase().includes(query.toLowerCase()) 
-                //     // : 
-                //     return o.label.toLowerCase().includes(query.toLowerCase()) || o.value.toLowerCase().includes(query.toLowerCase())
-                // }))
                 options
                 .filter(o => !query || o.label.toLowerCase().includes(query.toLowerCase()))
                 .map((o) => <OptionItem 

@@ -35,9 +35,9 @@ const OptionItem = ({
             updateValue(o)
         }}
         disabled={isDisabled}
-        as={`--select-option-item ${selected ? `--selected` : ``} ${isDisabled ? `--disabled` : ``} rel`.trim()}>
+        as={`--select-option-item --no-shrink ${selected ? `--selected` : ``} ${isDisabled ? `--disabled` : ``} rel`.trim()}>
         {/* // className={value && (`string` == typeof o ? o : o.value) == (`string` == typeof value ? value : value.value) ? `selected` : ``}> */}
-            <Flex>
+            <Flex as={`--option-item-meta --aic`}>
                 { o.icon && <Icon name={o.icon} as={`--select-option-icon --icon-${o.value}`} color={o.iconColor} /> }
                 <Text suppressHydrationWarning>{`string` == typeof o ? o : o.label}</Text>
             </Flex>

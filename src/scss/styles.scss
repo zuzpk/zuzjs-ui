@@ -79,6 +79,7 @@ body {
     --muted-hover: #f6f6f6;
     --text-primary: #111;
     --text-primary-hover: #222;
+    --text-primary-disabled: #989898;
     --text-secondary: #444;
     --text-secondary-hover: #666;
     --border-primary: #ddd;
@@ -94,6 +95,7 @@ body {
         --muted-hover: #2e2f31;
         --text-primary: #fff;
         --text-primary-hover: #f6f6f6;
+        --text-primary-disabled: #6d6d6d;
         --text-secondary: #e3e3e3;
         --text-secondary-hover: #d8d8d8;
         --border-primary: #333;
@@ -187,6 +189,7 @@ body {
     translate: var(--fx-x, 0px) calc(var(--abc-y) + var(--fx-y, 0px));
 }
 .--sticky{position: sticky;}
+.--no-shrink{flex-shrink: 0;}
 .flex{
     display: flex;
     &.cols{flex-direction: column;}
