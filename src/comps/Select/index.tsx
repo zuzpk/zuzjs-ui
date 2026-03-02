@@ -1,4 +1,5 @@
 "use client"
+import { _ } from "@zuzjs/core";
 import { ChangeEvent, Ref, useEffect, useId, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useBase, usePosition } from "../../hooks";
 import { useTheme } from "../../hooks/useColorScheme";
@@ -196,12 +197,18 @@ const Select = ({
         };
     }, [choosing, reposition]);
 
+    const _currentOption = useMemo(() =>  _(value).isArray() ? 
+            (value as Option[]).length > 0 ? (value as Option[])[0] : undefined
+                : value as Option, [value])
+
+    
+
     return <Box className={`--select ${expanded == true ? `--expanded` : ``} --${variant || themeVariant} ${name ? `--${name}` : ``} ${disabled ? '--disabled' : ''} rel`.trim()} name={_id}>
 
         <Button
             ref={_ref}
             disabled={disabled}
-            // data-value={value ? `string` == typeof value ? value : value.value : value || `-1`}
+            data-value={_currentOption?.value ?? `-1`}
             className={`--select-display --selected flex aic rel ${className}`.trim()}
             withLabel={false}
             style={style}
@@ -210,6 +217,7 @@ const Select = ({
                 if ( !disabled ) setChoosing(prev => !prev)
             }}
             {...rest as ButtonProps}>
+            { _currentOption?.icon && <Icon as={`--selected-icon`} name={_currentOption.icon} /> }
             <Flex aic as="--label-wrapper">
                 {tokenizer && Array.isArray(value) && value.length > 0 ? (
                     <Flex as={`--tokens-wrap${wrapTokens === true ? ` --wrap` : ``}`}>

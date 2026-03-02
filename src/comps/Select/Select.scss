@@ -114,7 +114,10 @@ body{
 
         &:disabled{
             .--label{
-                color: var(--text-primary-disabled);
+                color: var(--select-option-color-disabled);
+            }
+            .--selected-icon{
+                color: var(--select-option-color-disabled);
             }
             .--svg-arrow{
                 svg {
@@ -128,6 +131,10 @@ body{
 
         &:hover{
             background: var(--select-hover);
+        }
+
+        .--selected-icon{
+            color: var(--select-option-color);
         }
 
         .--label-wrapper,
