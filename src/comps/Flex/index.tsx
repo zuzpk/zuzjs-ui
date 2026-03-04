@@ -6,8 +6,12 @@ import { FlexProps } from "./types";
 const Flex: FC<FlexProps> = ({ 
     cols, 
     gap, 
-    aic, 
-    jcc, 
+    ais,
+    aic,
+    aie,
+    jcs, 
+    jcc,
+    jce, 
     className = "", 
     style, 
     ...props 
@@ -17,8 +21,12 @@ const Flex: FC<FlexProps> = ({
     const flexClasses = [
         "--flex",
         cols ? "--cols" : "", // Matching your 'cols' class for direction
+        ais ? "--ais" : "",
         aic ? "--aic" : "",
+        aie ? "--aie" : "",
+        jcs ? "--jcs" : "",
         jcc ? "--jcc" : "",
+        jce ? "--jce" : "",
         className
     ].filter(Boolean).join(" ");
 

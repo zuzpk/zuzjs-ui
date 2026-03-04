@@ -10,6 +10,15 @@ body{
     --drawer-close-color-hover: #fff;
 }
 
+[color-scheme="dark"] {
+    body {
+        --drawer-close-bg: #555;
+        --drawer-close-bg-hover: #444;
+        --drawer-close-color: #b6b6b6;
+        --drawer-close-color-hover: #fff;
+    }
+}
+
 .drawer-h{
     min-width: 320px;
     max-width: 90vw;

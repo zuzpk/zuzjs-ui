@@ -917,9 +917,17 @@ type FlexProps = BoxProps & {
     /** Shortcut for gap */
     gap?: number | string;
     /** Shortcut for align-items: center */
+    ais?: boolean;
+    /** Shortcut for align-items: flex-start */
     aic?: boolean;
+    /** Shortcut for align-items: flex-end */
+    aie?: boolean;
     /** Shortcut for justify-content: center */
     jcc?: boolean;
+    /** Shortcut for justify-content: end */
+    jce?: boolean;
+    /** Shortcut for justify-content: start */
+    jcs?: boolean;
 };
 
 declare const Flex: FC<FlexProps>;
