@@ -3,7 +3,11 @@ import { BoxProps } from "../../types/interfaces";
 import { SheetHandler } from "../Sheet";
 import { SPINNER } from "../Spinner/types";
 
+export type ValidationSchema = Record<string, (value: any, allValues: dynamic) => string | null | boolean>;
+
 export type FormProps = Omit<BoxProps, `ref`> & {
+
+    schema?: ValidationSchema;
     /** Name of form, will be appended to --form-{name} in className 
      * whitespace will be replaced with dash (-)
     */

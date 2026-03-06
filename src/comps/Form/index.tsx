@@ -1,74 +1,49 @@
 "use client"
 import { _, withPost } from "@zuzjs/core";
 import { addPropsToChildren } from "@zuzjs/core/react";
-import { ReactNode, Ref, startTransition, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { Ref, startTransition, useCallback, useImperativeHandle, useMemo, useRef, useState } from "react";
 import useBase from "../../hooks/useBase";
 import useToast from "../../hooks/useToast";
 import { dynamic, FormInputs } from "../../types";
 import { FORMVALIDATION } from "../../types/enums";
 import Box from "../Box";
-import { ButtonHandler } from "../Button/types";
 import Cover from "../Cover";
-// import { SheetHandler } from "../Sheet/types";
-import { isSheetHandler, SheetHandler } from "../Sheet";
+import { isSheetHandler } from "../Sheet";
+import { FormProvider, useFormActions } from "./context";
 import { FormHandler, FormProps } from "./types";
-// import Sheet, { isSheetHandler } from "../Sheet/sheet";
 
+const unflatten = (data: any) => {
+    const result: any = {};
+    for (const key in data) {
+        const keys = key.split(/[\[\]]+/).filter(Boolean);
+        keys.reduce((acc, part, i) => {
+            if (i === keys.length - 1) {
+                acc[part] = data[key];
+            } else {
+                // If the next part is a number, create an array, otherwise an object
+                const nextIsNumber = !isNaN(Number(keys[i + 1]));
+                acc[part] = acc[part] || (nextIsNumber ? [] : {});
+            }
+            return acc[part];
+        }, result);
+    }
+    return result;
+};
 
-/**
- * {@link Form} is a controlled component designed to handle form data submission, validation, and display of loading or error states.
- * It allows for optional server-side submission through an action endpoint and customizable success/error handling callbacks.
- * 
- * The component also provides an interface for controlling loading and error states from a parent component using {@link FormHandler}.
- * 
- * @param props - Properties to configure form behavior, validation messages, submission handling, and visual feedback.
- * @param ref - Reference to the {@link FormHandler} interface, exposing methods to control loading and error states from the parent.
- */
-
-// const Form = forwardRef<FormHandler, FormProps>((props, ref) => {
-const Form = ({
-    ref,
-    ...props
-} : FormProps & {
-    ref?: Ref<FormHandler>
-}) => {
-
+const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> }) => {
     const { 
-        name,
-        cover, 
-        spinner, 
-        errors,
-        action,
-        children, 
-        withData,
-        beforeSubmit,
-        onSubmit,
-        onError,
-        onSuccess,
-        resetOnSuccess,
-        ...pops } = props
+        schema, name, cover, spinner, errors, action, children, 
+        withData, beforeSubmit, onSubmit, onError, onSuccess, resetOnSuccess, ...pops 
+    } = props;
 
-    const {
-        className,
-        style,
-        rest
-    } = useBase(pops)
-
-    const [ loading, setLoading ] = useState(false)
+    const { className, style, rest } = useBase(pops);
+    const [loading, setLoading] = useState(false);
     const innerRef = useRef<HTMLDivElement>(null);
-    const sheet = useRef<SheetHandler>(null)
-    const submit = useRef<ButtonHandler>(null)
-    const toast = useToast()
+    const toast = useToast();
+    const actions = useFormActions();
 
-    /**
-     * Utility function to select multiple DOM elements within the form based on a CSS query.
-     * @param query - CSS selector to match elements inside the form.
-     */
-    const _nodes = useCallback(( query: string ) => {
-        if ( innerRef.current )
-            return innerRef.current!.querySelectorAll(query)
-        return []
-    }, [innerRef.current])
+    const _nodes = useCallback((query: string) => 
+        innerRef.current ? innerRef.current.querySelectorAll(query) : [], [innerRef.current]);
 
     const _getFields = (el: any) => {
         return {
@@ -87,71 +62,62 @@ const Form = ({
         return _pin.join('')
     }
 
-    /**
-     * Validates form fields based on their type and custom attributes.
-     * 
-     * @param el - The element to validate.
-     * @returns Whether the element meets the required validation criteria.
-     */
-    const _validate = useCallback(( el: any ) : boolean => {
+    const _getValFromNode = (el: any) => {
+        if ( el.classList.contains('--otp') ){
+            return _getPinValue(el)
+        }
+        if ( el.classList.contains('--select') ){
+            return el.querySelector('button.--selected')?.dataset.value 
+        }
+        if ( el.classList.contains('--checkbox') || el.getAttribute("type") === `checkbox` ){
+            return el.checked
+        }
+        return el.value
+    }
 
-        const { name : _name, required: _required, with: _with } = _getFields(el)
+    // Validation logic (keeping your robust implementation)
+    const _validate = useCallback((el: any): boolean => {
 
-        if ( _required ){
-            /**
-             * @internal
-             * Required field validation */ 
-            if ( el.type == `checkbox` && el.checked == false ){
-                return false
+        const { 
+            name : fieldName, 
+            required, 
+            with: withAttr 
+        } = _getFields(el)
+
+        // Resolve Value first
+        const val = _getValFromNode(el)
+
+        // Custom Schema Check (Priority)
+        if (schema && schema[fieldName] && actions?.getSnapshot()) {
+            const customResult = schema[fieldName](val, actions.getSnapshot().values);
+            if (customResult === false || typeof customResult === "string") {
+                // If string returned, update context error
+                if (typeof customResult === "string") actions?.setFieldError(fieldName, customResult);
+                return false;
             }
-
-            if( el.classList.contains(`--otp`) ){
-                const _pin = _getPinValue(el)
-                if( _pin == `` || _pin.length < parseInt(el.getAttribute(`data-size`)) ){
-                    return false
-                }
-            }
-
-            if( el.classList.contains(`--select`) && el.querySelector(`button.--selected`).dataset.value == `-1` ){
-                return false
-            }
-
-            if ( el.value == `` )
-                return false     
         }
 
-        /**
-         * @internal
-         * Additional validation based on `with` attribute
-         */
-        if ( el.getAttribute(`with`) ){
+        // Native / FORMVALIDATION checks
+        // const required = el.required || el.getAttribute('data-required') === 'true';
+        
+        if (required) {
+            if (el.type === 'checkbox' && !el.checked) return false;
+            if (el.classList.contains('--select') && (val === '-1' || !val)) return false;
+            if (!val || val === '') return false;
+        }
 
-            let _with = el.getAttribute(`with`)
-            if ( _with.includes(`@`) ){
-                _with = _with.split(`@`)[0]
-                if ( _with == `match` ){
-                    _with = FORMVALIDATION.MatchField
-                }
-            }
-
-            switch ( _with.toUpperCase() ){
-                case FORMVALIDATION.IPV4:
-                    return _(el.value).isIPv4();
-                case FORMVALIDATION.IPV6:
-                    return _(el.value).isIPv6();
-                case FORMVALIDATION.Email:
-                    return _(el.value).isEmail()
-                case FORMVALIDATION.Uri:
-                    try{
-                        new URL(el.value)
-                        return true
-                    }
-                    catch(e){ return false }
-                case FORMVALIDATION.Password:
-                    console.log(`Add FORMVALIDATION.Password`)
-                    return false
+        if (withAttr) {
+            const normalizedWith = withAttr.includes('@') ? 
+                withAttr.split('@')[0] == `match` ? FORMVALIDATION.MatchField
+                    : withAttr.split('@')[0] 
+                        : withAttr;
+            switch (normalizedWith.toUpperCase()) {
+                case FORMVALIDATION.IPV4: return _(val).isIPv4();
+                case FORMVALIDATION.IPV6: return _(val).isIPv6();
+                case FORMVALIDATION.Email: return _(val).isEmail();
+                case FORMVALIDATION.Uri: try { new URL(val); return true; } catch { return false; }
                 case FORMVALIDATION.MatchField:
-                    const [ __, field, condition ] = el.getAttribute(`with`).split(`@`)
+                    const [ __, field, condition ] = withAttr.split(`@`)
                     const _el = document.querySelector<FormInputs>(`[name=${field.trim()}]`)
                     if ( !_el ) return false
 
@@ -177,21 +143,14 @@ const Form = ({
                             break;
                     }
                     break;
-                default:
-                    return true
             }
         }
-        
+
         return true;
-    }, [innerRef.current])
 
+    }, [schema, actions]);
 
-    /**
-     * Constructs the form data and validates the fields.
-     * 
-     * @returns Form data object along with validation status and error information.
-     */
-    const _buildFormData = useCallback((  ) : {
+    const _buildFormData = useCallback(() : {
         error: boolean,
         errorMsg: string,
         data: FormData | dynamic,
@@ -199,43 +158,38 @@ const Form = ({
     } => {
 
         const data : dynamic = {}
-        const payload : dynamic = {}
-        let _error: HTMLElement | null = null
+        const flatPayload: dynamic = {};
+        let firstErrorEl: HTMLElement | null = null;
         let _errorMsg: HTMLElement | string | null = null
 
-        Array.from(_nodes(`[name]`))
-            .forEach((el : any) => {
+        _nodes("[name]").forEach((el: any) => {
 
-                const { name : _name, required: _required, with: _with } = _getFields(el)
+            const { 
+                name : fieldName, 
+                required, 
+                with: withAttr 
+            } = _getFields(el)
 
-                let valid = true
-                if ( _required || _with )
-                    valid = _validate(el)
+            // const fieldName = el.name || el.getAttribute('name');
+            const isValid = required || withAttr ? _validate(el) : true;
+            const value = _getValFromNode(el)
 
-                data[_name] = {
-                    valid: valid,
-                    value: el.type == `checkbox` ? el.checked == true ? el.value : false
-                        : el.classList.contains(`--otp`) ? _getPinValue(el)
-                            : el.classList.contains(`--select`) ? el.querySelector(`button.--selected`).dataset.value : el.value
-                }
+            data[fieldName] = { valid : isValid, value }
+            flatPayload[fieldName] = value;
+            actions?.setFieldError(fieldName, isValid ? null : (errors?.[fieldName] || "Invalid"));
 
-                payload[_name] = el.type == `checkbox` ? el.checked == true ? true : false
-                    :el.classList.contains(`--otp`) ? _getPinValue(el)
-                        : el.classList.contains(`--select`) ? el.querySelector(`button.--selected`).dataset.value : el.value
+            if (!isValid) {
+                el.classList.add("--with-error");
+                if (!firstErrorEl) firstErrorEl = el;
+                _errorMsg = errors?.[fieldName];
+            } else {
+                el.classList.remove("--with-error");
+            }
 
-                if ( !valid ){
-                    if ( _error == null && errors ){
-                        _error = el
-                        _errorMsg = errors[_name]
-                    }
-                    el.classList.add(`input-with-error`)
-                }else
-                    el.classList.remove(`input-with-error`)            
-                
-            })
+        });
 
-        if ( _error ){
-            const _nxt = (_error as HTMLElement)
+        if ( firstErrorEl ){
+            const _nxt = (firstErrorEl as HTMLElement)
             if ( _nxt.classList.contains(`--otp`) ){
                 for( const i  of Array.from(_nxt.querySelectorAll(`.--input`))){
                     const input = i as HTMLInputElement
@@ -249,165 +203,91 @@ const Form = ({
                 _nxt.focus()
         }
 
+        const nestedPayload = unflatten(flatPayload);
+
         return {
-            error: _error != null,
+            error: firstErrorEl != null,
             errorMsg: _errorMsg || `Fix errors to continue...`,
-            data, payload
+            data, 
+            payload: nestedPayload
         }
-            
+
     }, [innerRef.current])
 
-    /**
-     * Handler for form submission that validates and processes the form data.
-     */
-    const _onSubmit = useCallback(( ) => {
+    const _onSubmit = useCallback(() => {
         
         const { error, errorMsg, payload } = _buildFormData()
 
         if ( error ){
             toast.error(errorMsg)
-            // sheet.current!.error(errorMsg)
+            return
         }
-        else if ( action ){
-            
-            // If `action` is defined, submit the form data to the specified endpoint
-            startTransition( async () => {
-                
-                beforeSubmit && beforeSubmit(payload)
 
-                if ( isSheetHandler(cover) ){
-                    (cover as SheetHandler).setLoading(true)
+        if (action) {
+            startTransition(async () => {
+                setLoading(true);
+                withPost(action, { ...payload, ...withData })
+                    .then((res) => {
+                        setLoading(false);
+                        if (resetOnSuccess) actions?.reset();
+                        onSuccess?.(res);
+                        if ( !onSuccess ) toast.success(res.message || `Redirecting...`)
+                    })
+                    .catch(err => {
+                        setLoading(false);
+                        onError ? onError(err) : toast.error(err.message);
+                    });
+            });
+        } else {
+            onSubmit?.(payload);
+        }
+    }, [action, actions, errors]);
+
+    // AUTO-PROP INJECTION Logic
+    const buildChildren = useMemo(() => {
+        return addPropsToChildren(
+            children,
+            (child) => child.props.name !== undefined || child.props.type === 'submit',
+            (index, child) => {
+                if (child.props.type === 'submit') {
+                    return { onClick: _onSubmit };
                 }
-                else setLoading(true)
-                // sheet.current!.hide()
-                toast.clearAll()
-                
-                // submit.current?.setState(ButtonState.Loading)
-                
-                withPost(action, { ...payload, ...(withData || {}) })
-                .then( _resp  => {
-                    const resp = _resp as dynamic
-                    
-                    // submit.current?.reset()
-
-                    if ( isSheetHandler(cover) ){
-                        (cover as SheetHandler).setLoading(false)
+                // Inject real-time state listeners for components with 'name'
+                return {
+                    onChange: (val: any) => {
+                        const name = child.props.name;
+                        const actualVal = val?.target ? val.target.value : val;
+                        actions?.setFieldValue(name, actualVal);
+                        if (child.props.onChange) child.props.onChange(val);
                     }
-                    else setLoading(false)
-
-                    if ( resetOnSuccess ){
-                        Array.from(_nodes(`[name]`)).forEach((el : any) => {
-                            if ( el instanceof HTMLInputElement) el.value = ``
-                        })
-                    }
-
-                    if ( onSuccess ) 
-                        onSuccess(resp)
-                    else{
-                        toast.clearAll()
-                        // sheet.current!.hide()
-                        // sheet.current!.success(resp.message || `Redirecting..`)
-                        toast.success(resp.message || `Redirecting...`)
-                    }
-                    
-                })
-                .catch(err => {
-
-                    // console.warn(`Error occurred while submitting form`, err)
-
-                    if ( isSheetHandler(cover) ){
-                        (cover as SheetHandler).setLoading(false)
-                    }
-                    else setLoading(false)
-                    // submit.current?.reset()
-
-                    if( onError ) 
-                        onError(err)
-                    else
-                        toast.error(err.message || `We cannot process your request at this time.`)
-                        // sheet.current!.show(err.message || `We cannot process your request at this time.`, 4, SHEET.Error)
-
-                })
-
-            })
-
-        }
-
-        else {
-            onSubmit && onSubmit(payload)
-        }
-
-    }, [action, sheet.current, innerRef.current])
-
-    /**
-     * Initializes the form by adding click event listeners to submit buttons.
-     */
-    const _init = useCallback(() => {
-        const _submit = _nodes(`[type=submit]`)
-        if ( !_submit || _submit.length == 0 ) {
-            console.warn(`You should add at least 1 button with type=\`SUBMIT\``)
-        }
-        else {
-            _submit.forEach(el => {
-                (el as HTMLButtonElement).addEventListener(`click`, _onSubmit)
-            })
-        }
-    }, [innerRef.current])
-
-    const buildChildren = useMemo(() => addPropsToChildren(
-        children, 
-        child => child.props.type == `submit`,
-        index => ({ ref: submit })
-    ), [children])
+                };
+            }
+        );
+    }, [children, actions]);
 
     useImperativeHandle(ref, () => ({
-        setLoading(mod : boolean){
-            if ( mod ){
-                sheet.current?.hide()
-                try{ toast.clearAll() }catch(e){}
-            }
-            setLoading(mod)
-        },
-        showError(errorMsg : string | ReactNode ){
-            if (typeof errorMsg == `string`){
-                toast.error(errorMsg)
-            }
-            else { sheet.current!.error(errorMsg, 4) } 
-        },
-        hideError(){
-            sheet.current!.hide()
-            try{ toast.clearAll() }catch(e){}
-        },
-        init(){
-            _init()
-        },
-        submit(){
-            _onSubmit()
-        }
-    }))
-    
-    useEffect(_init, [])
+        setLoading: (m) => setLoading(m),
+        submit: () => _onSubmit(),
+        init: () => {},
+        hideError: () => toast.clearAll()
+    }));
 
-    return <Box
-        ref={innerRef}
-        style={style}
-        className={`--form flex rel ${className} ${name ? `--form-${name.replace(/\s+/g, `-`)}` : ``}`}
-        propsToRemove={[`withData`, `action`, `onSubmit`, `onSuccess`, `onError`]}>
+    return (
+        <Box ref={innerRef} style={style} className={`--form flex rel ${className}`}>
+            {!isSheetHandler(cover) && <Cover when={loading} spinner={spinner} {...cover} />}
+            {buildChildren}
+        </Box>
+    );
+};
 
-        {/* {<Sheet ref={sheet} as={`--sheet-form`} />} */}
+FormInternal.displayName = `Zuz.FormInternal`
 
-        { !isSheetHandler(cover) && <Cover 
-            message={cover ? cover.message || undefined : `working`} 
-            spinner={spinner}
-            color={cover ? `color` in cover ? cover.color : `#ffffff` : `#ffffff`}
-            when={loading}
-        />}
-
-        {buildChildren}
-
-    </Box>
-
-}
+// Final Export wrapped in Provider
+const Form = (props: FormProps & { ref?: Ref<FormHandler> }) => (
+    <FormProvider initialValues={props.withData}>
+        <FormInternal {...props} />
+    </FormProvider>
+);
 
 Form.displayName = `Zuz.Form`
 

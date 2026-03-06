@@ -1,14 +1,18 @@
 "use client"
 import { useBase } from '../../hooks';
 import { useTheme } from '../../hooks/useColorScheme';
-import { Variant } from '../../types';
+import { useFormStore } from '../Form/context';
 import { InputProps } from './types';
 
 const Input = ({ ref, ...props } : InputProps) => {
 
     const { 
         variant, 
-        numeric, onConfirm, ...pops } = props
+        numeric, 
+        name,
+        onConfirm, 
+        ...pops 
+    } = props
 
     const {
         style,
@@ -18,6 +22,9 @@ const Input = ({ ref, ...props } : InputProps) => {
 
     const { variant: themeVariant } = useTheme(true)!
 
+    const formState = useFormStore();
+    const error = name ? formState?.errors[name] : null;
+
     const handleInput = (event: React.InputEvent<HTMLInputElement>) => {
         if (numeric ) {
             event.currentTarget.value = event.currentTarget.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');            
@@ -25,7 +32,8 @@ const Input = ({ ref, ...props } : InputProps) => {
     }
  
     return <input
-        className={`--input --${variant || themeVariant} flex ${className}`.trim()}
+        name={name}
+        className={`--input --${variant || themeVariant} ${error ? '--has-error' : ''} --flex ${className}`.trim()}
         style={style}
         onInput={handleInput}
         onKeyDown={(e) => {

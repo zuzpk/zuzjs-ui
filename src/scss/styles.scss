@@ -162,7 +162,10 @@ body {
     /* Only apply this if the property isn't already set by a class */
     translate: var(--fx-x, 0px) var(--fx-y, 0px);
 }
-
+.--with-error,
+.input-with-error{
+    box-shadow: inset 0px 0px 0px 1px #ff8b8b;
+}
 .abc, .center-h, .--center-x, .--center-y, .center-v, .abs {
     --fx-x: 0px;
     --fx-y: 0px;

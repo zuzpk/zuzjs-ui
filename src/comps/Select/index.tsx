@@ -44,7 +44,9 @@ const Select = ({
         onChange,
         ...pops } = props
 
-    const [ value, setValue ] = useState<Option | Option[]>(() => {
+    const [ value, setValue ] = useState<Option | Option[] | null>(() => {
+
+        // Handle Multiple/Tokenizer
         if (multiple || tokenizer) {
             if (!selected) return [];
             const arr = Array.isArray(selected) ? selected : [selected];
@@ -52,7 +54,18 @@ const Select = ({
                 typeof item === 'string' ? options.find(o => o.value === item)! : item
             ) as Option[];
         }
-        return selected ? (typeof selected === 'string' ? options.find(o => o.value === selected)! : selected) : options[0];
+
+        // Handle Single Select
+        if (selected) {
+            return typeof selected === 'string' ? options.find(o => o.value === selected)! : selected;
+        }
+
+        // Fallback to option with value -1
+        const defaultOption = options.find(o => String(o.value) === "-1");
+        if (defaultOption) return defaultOption;
+
+        return null
+
     })
 
     const [ choosing, setChoosing ] = useState(false)
@@ -197,17 +210,22 @@ const Select = ({
         };
     }, [choosing, reposition]);
 
-    const _currentOption = useMemo(() =>  _(value).isArray() ? 
-            (value as Option[]).length > 0 ? (value as Option[])[0] : undefined
-                : value as Option, [value])
-
-    
+    const _currentOption = useMemo(() =>  {
+        if ( !value ) return undefined;
+        return _(value).isArray() ? 
+                (value as Option[]).length > 0 ? (value as Option[])[0] : undefined
+                : value as Option
+    }, [value])
 
     return <Box className={`--select ${expanded == true ? `--expanded` : ``} --${variant || themeVariant} ${name ? `--${name}` : ``} ${disabled ? '--disabled' : ''} rel`.trim()} name={_id}>
+
+        {/* PERSISTENT TOP LABEL: This never disappears */}
+        { label && <Text as="--select-top-label">{label}</Text> }
 
         <Button
             ref={_ref}
             disabled={disabled}
+            // If value is null, data-value becomes -1 for CSS styling
             data-value={_currentOption?.value ?? `-1`}
             className={`--select-display --selected flex aic rel ${className}`.trim()}
             withLabel={false}
@@ -235,6 +253,10 @@ const Select = ({
                     </Flex>
                     ) : (
                         <Text as="--label">
+                            {/* DISPLAY LOGIC: 
+                                If multi: show count or 'Select...'
+                                If single: show option label or 'Select...'
+                            */}
                             {Array.isArray(value) 
                                 ? (value.length > 0 ? `${value.length} selected` : label || 'Choose')
                                 : (value?.label || label || 'Choose')}
