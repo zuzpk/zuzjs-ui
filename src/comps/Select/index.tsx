@@ -8,6 +8,7 @@ import Box from "../Box";
 import Button from "../Button";
 import { ButtonProps } from "../Button/types";
 import Flex from "../Flex";
+import { useForm } from "../Form/context";
 import Icon from "../Icon";
 import Input from "../Input";
 import SVGIcons from "../svgicons";
@@ -44,29 +45,65 @@ const Select = ({
         onChange,
         ...pops } = props
 
-    const [ value, setValue ] = useState<Option | Option[] | null>(() => {
+    // const formContext = useFormStore()
+    // const formActions = useFormActions()
+    // const formValue = name && formContext ? formContext.values[name] : undefined;
+    const form = useForm()
+    const inForm = name && form.values && form.setFieldValue
+    const error = inForm ? form.errors?.[name] : null
+    const formValue = inForm ? form.values?.[name] : undefined;
 
-        // Handle Multiple/Tokenizer
+    // Helper to map raw values (strings/IDs) to Option objects
+    const mapToOption = (val: any): Option | Option[] | null => {
+        if (!val && val !== 0) return null;
         if (multiple || tokenizer) {
-            if (!selected) return [];
-            const arr = Array.isArray(selected) ? selected : [selected];
+            const arr = Array.isArray(val) ? val : [val];
             return arr.map(item => 
-                typeof item === 'string' ? options.find(o => o.value === item)! : item
-            ) as Option[];
+                typeof item === 'string' || typeof item === 'number' 
+                    ? options.find(o => String(o.value) === String(item))! 
+                    : item
+            ).filter(Boolean) as Option[];
         }
+        return typeof val === 'string' || typeof val === 'number' 
+            ? options.find(o => String(o.value) === String(val))! 
+            : val;
+    };
 
-        // Handle Single Select
-        if (selected) {
-            return typeof selected === 'string' ? options.find(o => o.value === selected)! : selected;
-        }
-
-        // Fallback to option with value -1
+    const [internalValue, setValue] = useState<Option | Option[] | null>(() => {
+        if (selected) return mapToOption(selected);
         const defaultOption = options.find(o => String(o.value) === "-1");
-        if (defaultOption) return defaultOption;
+        return defaultOption || null;
+    });
 
-        return null
+    // The active value is either from the Form Store or local state
+    const value = useMemo(() => {
+        if (formValue) return mapToOption(formValue);
+        return internalValue;
+    }, [formValue, internalValue]);
 
-    })
+    // const [ value, setValue ] = useState<Option | Option[] | null>(() => {
+
+    //     // Handle Multiple/Tokenizer
+    //     if (multiple || tokenizer) {
+    //         if (!selected) return [];
+    //         const arr = Array.isArray(selected) ? selected : [selected];
+    //         return arr.map(item => 
+    //             typeof item === 'string' ? options.find(o => o.value === item)! : item
+    //         ) as Option[];
+    //     }
+
+    //     // Handle Single Select
+    //     if (selected) {
+    //         return typeof selected === 'string' ? options.find(o => o.value === selected)! : selected;
+    //     }
+
+    //     // Fallback to option with value -1
+    //     const defaultOption = options.find(o => String(o.value) === "-1");
+    //     if (defaultOption) return defaultOption;
+
+    //     return null
+
+    // })
 
     const [ choosing, setChoosing ] = useState(false)
     const [ query, setQuery ] = useState<string | null>(null)
@@ -119,7 +156,12 @@ const Select = ({
         e.stopPropagation();
         if (disabled) return;
         const nextValue = (value as Option[]).filter(v => v.value !== o.value);
-        setValue(nextValue);
+        // setValue(nextValue);
+        if (inForm) {
+            form.setFieldValue?.(name, nextValue.map(v => v.value));
+        } else {
+            setValue(nextValue);
+        }
         setChoosing(false)
         onChange?.(nextValue as any);
     };
@@ -142,21 +184,29 @@ const Select = ({
 
     useImperativeHandle(ref, () => ({
         setSelected: (option: Option | string | Option[] | string[]) => {
-            // Handle Array Input (Multi/Tokenizer)
-            if (Array.isArray(option)) {
-                const nextOptions = option.map(item => 
-                    typeof item === 'string' ? options.find(o => o.value === item)! : item
-                ).filter(Boolean);
-                setValue(nextOptions as Option[]);
-            } 
-            // Handle Single Input
-            else if (typeof option === 'string') {
-                const found = options.find(o => o.value === option);
-                if (found) setValue(found);
-            } 
-            else {
-                setValue(option as Option);
+            
+            const next = mapToOption(option);
+            if (inForm) {
+                const raw = Array.isArray(next) ? next.map(v => v.value) : (next as Option)?.value;
+                form.setFieldValue?.(name, raw);
+            } else {
+                setValue(next);
             }
+
+            // if (Array.isArray(option)) {
+            //     const nextOptions = option.map(item => 
+            //         typeof item === 'string' ? options.find(o => o.value === item)! : item
+            //     ).filter(Boolean);
+            //     setValue(nextOptions as Option[]);
+            // } 
+            // // Handle Single Input
+            // else if (typeof option === 'string') {
+            //     const found = options.find(o => o.value === option);
+            //     if (found) setValue(found);
+            // } 
+            // else {
+            //     setValue(option as Option);
+            // }
         },
         // Explicitly cast to satisfy the handler interface
         getValue: () => (value || null) as (Option | Option[] | null)

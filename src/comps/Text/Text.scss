@@ -1,0 +1,198 @@
+/* Core setup - Ensure container allows character movement */
+.--text-fx {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.--text-fx .--fx-char {
+    display: inline-block;
+    animation-delay: var(--delay);
+    animation-duration: var(--duration);
+    animation-iteration-count: var(--iteration);
+    animation-fill-mode: both;
+    position: relative; /* Required for glitch */
+}
+
+/* 1. Typewriter: Use steps(1) to "pop" characters in */
+.--fx-typewriter {
+    animation-name: zuz-typewriter;
+    animation-timing-function: steps(1, end); 
+    // opacity: 0;
+}
+
+/* 2. Bounce: Harder, faster movement */
+.--fx-bounce { 
+    animation-name: zuz-bounce; 
+    animation-timing-function: cubic-bezier(0.28, 0.84, 0.42, 1);
+}
+
+/* 3. Wave: Slower, smoother sine-wave style */
+.--fx-wave { 
+    animation-name: zuz-wave; 
+    animation-timing-function: ease-in-out; 
+}
+
+/* Animations */
+@keyframes zuz-typewriter {
+    /* Start hidden */
+    0% { 
+        opacity: 0; 
+        visibility: hidden;
+    }
+    /* End visible */
+    100% { 
+        opacity: var(--target-opacity, 1);
+        visibility: visible;
+    }
+}
+
+@keyframes zuz-bounce {
+    0%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-20px) scaleY(1.1); }
+    60% { transform: translateY(-15px); }
+}
+
+@keyframes zuz-wave {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Glitch Pseudo-elements need content */
+.--fx-glitch::before, .--fx-glitch::after {
+    content: attr(data-char);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+}
+
+.--fx-slide { animation-name: zuz-slide; }
+.--fx-fade { animation-name: zuz-fade; }
+
+/* Add a cursor effect to the container if variant is typewriter */
+.--text-fx:has(.--fx-typewriter)::after {
+    content: '|';
+    position: absolute;
+    right: -4px;
+    animation: zuz-cursor-move var(--duration) var(--delay) steps(1) both;
+    opacity: 0;
+}
+
+/* Glitch Effect */
+.--fx-glitch {
+    animation: zuz-glitch-main 3s infinite;
+}
+
+.--fx-glitch::before,
+.--fx-glitch::after {
+    content: attr(data-char);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.--fx-glitch::before {
+    left: 2px;
+    text-shadow: -2px 0 #ff00c1; /* Magenta/Red split */
+    clip-path: inset(45% 0 45% 0);
+    animation: zuz-glitch-split 2s infinite linear alternate-reverse;
+}
+
+.--fx-glitch::after {
+    left: -2px;
+    text-shadow: 2px 0 #00fff9; /* Cyan/Blue split */
+    clip-path: inset(10% 0 85% 0);
+    animation: zuz-glitch-split 3s infinite linear alternate-reverse;
+}
+
+@keyframes zuz-glitch-split {
+    0% { clip-path: inset(10% 0 30% 0); }
+    20% { clip-path: inset(60% 0 10% 0); }
+    40% { clip-path: inset(20% 0 50% 0); }
+    60% { clip-path: inset(80% 0 5% 0); }
+    80% { clip-path: inset(30% 0 60% 0); }
+    100% { clip-path: inset(50% 0 20% 0); }
+}
+
+@keyframes zuz-slide {
+    0% { opacity: 0; transform: translateY(20px); filter: blur(4px); }
+    100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+@keyframes zuz-fade {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes zuz-cursor-move {
+    0% { opacity: 1; }
+    99% { opacity: 1; }
+    100% { opacity: 0; } /* Hide cursor when next char starts */
+}
+
+.--fx-reveal {
+    animation-name: zuz-reveal;
+    clip-path: inset(0 100% 0 0);
+}
+
+@keyframes zuz-reveal {
+    to { clip-path: inset(0 0 0 0); }
+}
+
+/* 2. Pop (Playful, bouncy scaling) */
+.--fx-pop {
+    animation-name: zuz-pop;
+    animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes zuz-pop {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* 3. Fog/Blur (Elegant transition) */
+.--fx-fog {
+    animation-name: zuz-fog;
+}
+
+@keyframes zuz-fog {
+    0% { 
+        filter: blur(10px); 
+        letter-spacing: 10px; 
+        opacity: 0; 
+        transform: scale(1.2); 
+    }
+    100% { 
+        filter: blur(0); 
+        letter-spacing: normal; 
+        opacity: 1; 
+        transform: scale(1); 
+    }
+}
+
+.--fx-glitch-v2 {
+    animation: zuz-glitch-v2 0.2s infinite;
+}
+
+@keyframes zuz-glitch-v2 {
+    0% { transform: translate(0); text-shadow: none; }
+    20% { transform: translate(-2px, 2px); text-shadow: 2px 0 red; }
+    40% { transform: translate(-2px, -2px); text-shadow: -2px 0 blue; }
+    60% { transform: translate(2px, 2px); text-shadow: 2px 0 green; }
+    80% { transform: translate(2px, -2px); text-shadow: -2px 0 yellow; }
+    100% { transform: translate(0); }
+}
+
+.--fx-shuffle {
+    animation: zuz-shuffle var(--duration) var(--delay) ease-out both;
+}
+
+@keyframes zuz-shuffle {
+    0% { opacity: 0; transform: translateY(5px); filter: blur(2px); }
+    20% { content: '#'; opacity: 1; }
+    40% { content: '&'; }
+    60% { content: '0'; }
+    80% { content: 'X'; }
+    100% { opacity: var(--target-opacity, 1); transform: translateY(0); filter: blur(0); }
+}

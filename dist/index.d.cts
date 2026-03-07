@@ -1,6 +1,5 @@
 import * as react from 'react';
-import react__default, { ElementType, ComponentPropsWithoutRef, Ref, ReactNode, MouseEvent as MouseEvent$1, RefObject, FC, CSSProperties, FormEventHandler, JSX, HTMLAttributes, ComponentPropsWithRef } from 'react';
-import * as _zuzjs_hooks from '@zuzjs/hooks';
+import react__default, { ElementType, ComponentPropsWithoutRef, Ref, ReactNode, MouseEvent as MouseEvent$1, RefObject, FC, CSSProperties, FormEventHandler, JSX, ComponentPropsWithRef } from 'react';
 import { DragOptions, LineChartProps, MediaItem, useMediaPlayer, ScrollBreakpoint, Command } from '@zuzjs/hooks';
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import { PubSub } from '@zuzjs/core';
@@ -584,12 +583,12 @@ interface CheckboxHandler {
     toggle: (triggerChange?: boolean) => void;
 }
 
-declare const CheckBox: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react.DetailedHTMLProps<react.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "ref">, keyof ZuzProps> & {
-    type?: ValueOf<typeof CHECKBOX>;
-    variant?: ValueOf<typeof Variant>;
-    checked?: boolean;
-    onSwitch?: (checked: boolean, value: string | number | readonly string[]) => void;
-} & react.RefAttributes<CheckboxHandler>>;
+declare const CheckBox: {
+    ({ ref, ...props }: CheckBoxProps & {
+        ref?: Ref<CheckboxHandler>;
+    }): react_jsx_runtime.JSX.Element;
+    displayName: string;
+};
 
 interface CodeBlockProps extends ZuzProps {
     ref?: Ref<HTMLPreElement>;
@@ -1503,12 +1502,12 @@ declare const Spinner: {
     displayName: string;
 };
 
-declare const Switch: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react.DetailedHTMLProps<react.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "ref">, keyof ZuzProps> & {
-    type?: ValueOf<typeof CHECKBOX>;
-    variant?: ValueOf<typeof Variant>;
-    checked?: boolean;
-    onSwitch?: (checked: boolean, value: string | number | readonly string[]) => void;
-} & react.RefAttributes<CheckboxHandler>>;
+declare const Switch: {
+    ({ ref, ...props }: CheckBoxProps & {
+        ref?: Ref<CheckboxHandler>;
+    }): react_jsx_runtime.JSX.Element;
+    displayName: string;
+};
 
 interface TableController {
     setLoading: (mod: boolean) => void;
@@ -1813,30 +1812,24 @@ declare const Terminal: ({ ref, commands, onCommand, welcomeMessage, prompt, var
     ref?: Ref<TerminalHandler>;
 }) => react_jsx_runtime.JSX.Element;
 
-declare const Text: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react.DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>, "ref">, keyof ZuzProps> & {
+type TextFxVariant = 'bounce' | 'wave' | 'slide' | 'fade' | 'glitch' | `glitch-v2` | 'typewriter' | `fog` | `pop` | `reveal` | `shuffle`;
+type TextProps = Props<`h1` | `h2` | `h3` | `h4` | `h5` | `h6` | `p` | `span` | `div` | `label`> & {
+    ref?: Ref<HTMLHeadingElement>;
     h?: number;
     html?: ReactNode | string;
     lines?: number;
-} & react.RefAttributes<HTMLHeadingElement>>;
+    tfx?: TextFxVariant;
+    duration?: number;
+    stagger?: number;
+    repeat?: boolean;
+    reveal?: boolean;
+    hover?: boolean;
+};
 
-declare const TextArea: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react.DetailedHTMLProps<react.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>, "ref">, keyof ZuzProps> & {
-    autoResize?: boolean;
-    resize?: `none` | `block` | `both` | `horizontal` | `vertical`;
-    maxHeight?: number | string;
-    variant?: ValueOf<typeof Variant>;
-    command?: string;
-    commands?: _zuzjs_hooks.Command[];
-    cmd?: (value: string, textarea: HTMLTextAreaElement | HTMLInputElement) => void;
-    renderDropdown?: (props: {
-        show: boolean;
-        position: {
-            top: number;
-            left: number;
-        };
-        commands: _zuzjs_hooks.Command[];
-        onSelect: (value: string) => void;
-    }) => React.ReactNode;
-} & react.RefAttributes<HTMLTextAreaElement>>;
+declare const Text: {
+    ({ ref, ...props }: TextProps): react_jsx_runtime.JSX.Element;
+    displayName: string;
+};
 
 type TextAreaProps = Props<`textarea`> & {
     autoResize?: boolean;
@@ -1855,6 +1848,13 @@ type TextAreaProps = Props<`textarea`> & {
         commands: Command[];
         onSelect: (value: string) => void;
     }) => React.ReactNode;
+};
+
+declare const TextArea: {
+    ({ ref, ...props }: TextAreaProps & {
+        ref?: Ref<HTMLTextAreaElement>;
+    }): react_jsx_runtime.JSX.Element;
+    displayName: string;
 };
 
 type TextWheelProps = Omit<BoxProps, "name"> & {

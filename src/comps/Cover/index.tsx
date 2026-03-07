@@ -51,6 +51,7 @@ const Cover = forwardRef<HTMLDivElement, CoverProps >((props, ref) => {
         {<Spinner variant={spinnerSize || themeSpinner?.variant || Variant.Small} type={spinner || themeSpinner?.type || SPINNER.Simple} />}
         {!hideMessage && <Text 
             className={`--label`}
+            tfx={`bounce`}
             style={{ color: `var(--cover-label)`  }}>{message || `loading`}</Text>}
     </Group>
 

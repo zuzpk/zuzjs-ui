@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useCallback, useContext, useMemo, useRef, useSyncExternalStore } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useSyncExternalStore } from "react";
 import { dynamic } from "../../types";
 
 interface FormStore {
@@ -30,33 +30,77 @@ export const useFormStore = () => {
 
 export const useFormActions = () => useContext(FormContext);
 
+export const useForm = () => {
+    const actions = useFormActions()
+    const store = useFormStore()
+    return {
+        ...actions,
+        ...store,
+    }
+}
+
 // Internal Provider Component used by Form
 export const FormProvider = ({ children, initialValues = {} }: { children: React.ReactNode, initialValues?: dynamic }) => {
-    const store = useRef<FormStore>({ values: initialValues, errors: {}, touched: {} });
-    const subscribers = useRef(new Set<() => void>());
 
+    const store = useRef<FormStore>({ 
+        values: initialValues, 
+        errors: {}, 
+        touched: {} 
+    });
+    const subscribers = useRef(new Set<() => void>());
     const getSnapshot = useCallback(() => store.current, []);
     const subscribe = useCallback((cb: () => void) => {
         subscribers.current.add(cb);
         return () => subscribers.current.delete(cb);
     }, []);
 
-    const notify = () => subscribers.current.forEach(cb => cb());
+    const notify = () => {
+        // console.log("Notifying", subscribers.current.size, "subscribers");
+        subscribers.current.forEach(cb => cb())
+    };
+
+    useEffect(() => {
+        if (initialValues && Object.keys(initialValues).length > 0) {
+            store.current = { 
+                ...store.current, 
+                values: {
+                    ...store.current.values,
+                    ...initialValues 
+                }
+            };
+            notify();
+        }
+    }, [initialValues]);
 
     const actions = useMemo(() => ({
         subscribe,
         getSnapshot,
         setFieldValue: (name: string, value: any) => {
             if (store.current.values[name] === value) return;
-            store.current.values = { ...store.current.values, [name]: value };
+            store.current = {
+                ...store.current,
+                values: {
+                    ...store.current.values,
+                    [name]: value
+                }
+            }
             notify();
         },
         setFieldError: (name: string, error: string | null) => {
-            store.current.errors = { ...store.current.errors, [name]: error };
+            store.current = { 
+                ...store.current,
+                errors: {
+                    ...store.current.errors, 
+                    [name]: error 
+                }
+            };
             notify();
         },
-        reset: () => {}
-    }), [subscribe, getSnapshot]);
+        reset: () => {
+             store.current = { values: {}, errors: {}, touched: {} };
+             notify();
+        }
+    }), []);
 
     return <FormContext.Provider value={actions}>{children}</FormContext.Provider>;
 };

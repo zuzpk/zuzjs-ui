@@ -1,15 +1,16 @@
 "use client"
 import { _, withPost } from "@zuzjs/core";
 import { addPropsToChildren } from "@zuzjs/core/react";
-import { Ref, startTransition, useCallback, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { Ref, startTransition, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import useBase from "../../hooks/useBase";
 import useToast from "../../hooks/useToast";
 import { dynamic, FormInputs } from "../../types";
 import { FORMVALIDATION } from "../../types/enums";
 import Box from "../Box";
+import { ButtonHandler } from "../Button/types";
 import Cover from "../Cover";
 import { isSheetHandler } from "../Sheet";
-import { FormProvider, useFormActions } from "./context";
+import { FormProvider, useFormActions, useFormStore } from "./context";
 import { FormHandler, FormProps } from "./types";
 
 const unflatten = (data: any) => {
@@ -41,6 +42,8 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
     const innerRef = useRef<HTMLDivElement>(null);
     const toast = useToast();
     const actions = useFormActions();
+    const state = useFormStore();
+    const submit = useRef<ButtonHandler>(null)
 
     const _nodes = useCallback((query: string) => 
         innerRef.current ? innerRef.current.querySelectorAll(query) : [], [innerRef.current]);
@@ -243,34 +246,53 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
         }
     }, [action, actions, errors]);
 
-    // AUTO-PROP INJECTION Logic
-    const buildChildren = useMemo(() => {
-        return addPropsToChildren(
-            children,
-            (child) => child.props.name !== undefined || child.props.type === 'submit',
-            (index, child) => {
-                if (child.props.type === 'submit') {
-                    return { onClick: _onSubmit };
-                }
-                // Inject real-time state listeners for components with 'name'
-                return {
-                    onChange: (val: any) => {
-                        const name = child.props.name;
-                        const actualVal = val?.target ? val.target.value : val;
-                        actions?.setFieldValue(name, actualVal);
-                        if (child.props.onChange) child.props.onChange(val);
-                    }
-                };
-            }
-        );
-    }, [children, actions]);
+    const _init = useCallback(() => {
+        const _submit = _nodes(`[type=submit]`)
+        if ( !_submit || _submit.length == 0 ) {
+            console.warn(`You should add at least 1 button with type=\`SUBMIT\``)
+        }
+        else {
+            _submit.forEach(el => {
+                (el as HTMLButtonElement).addEventListener(`click`, _onSubmit)
+            })
+        }
+    }, [innerRef.current])
+
+    const buildChildren = useMemo(() => addPropsToChildren(
+        children, 
+        child => child.props.type == `submit`,
+        index => ({ ref: submit })
+    ), [children])
+
+    // const buildChildren = useMemo(() => {
+    //     return addPropsToChildren(
+    //         children,
+    //         (child) => child.props.name !== undefined || child.props.type === 'submit',
+    //         (index, child) => {
+    //             if (child.props.type === 'submit') {
+    //                 return { onClick: _onSubmit };
+    //             }
+    //             // Inject real-time state listeners for components with 'name'
+    //             return {
+    //                 onChange: (val: any) => {
+    //                     const name = child.props.name;
+    //                     const actualVal = val?.target ? val.target.value : val;
+    //                     actions?.setFieldValue(name, actualVal);
+    //                     if (child.props.onChange) child.props.onChange(val);
+    //                 }
+    //             };
+    //         }
+    //     );
+    // }, [children, actions, state?.values]);
 
     useImperativeHandle(ref, () => ({
         setLoading: (m) => setLoading(m),
         submit: () => _onSubmit(),
-        init: () => {},
+        init: _init,
         hideError: () => toast.clearAll()
     }));
+
+    useEffect(_init, [])
 
     return (
         <Box ref={innerRef} style={style} className={`--form flex rel ${className}`}>

@@ -1,5 +1,5 @@
-import { FORMVALIDATION, Props, ValueOf, Variant } from '../../types';
 import { Ref } from 'react';
+import { FORMVALIDATION, Props, ValueOf, Variant } from '../../types';
 
 type FormValidation = ValueOf<typeof FORMVALIDATION>
 

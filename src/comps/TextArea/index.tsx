@@ -1,13 +1,19 @@
-import { forwardRef, useCallback, useEffect, useRef } from 'react';
+import { useCommandActions, useDebounce } from '@zuzjs/hooks';
+import { Ref, useCallback, useEffect, useRef } from 'react';
 import { useBase } from '../../hooks';
+import { useTheme } from '../../hooks/useColorScheme';
 import { Variant } from '../../types/enums';
+import Box from '../Box';
+import { useForm } from '../Form/context';
 import CommandBox from "./commands";
 import { TextAreaProps } from "./types";
-import { useCommandActions } from '@zuzjs/hooks';
-import Box from '../Box';
-import { useTheme } from '../../hooks/useColorScheme';
 
-const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => {
+const TextArea = ({
+  ref,
+  ...props
+} : TextAreaProps & {
+  ref?: Ref<HTMLTextAreaElement>
+}) => {
   const {
     autoResize,
     maxHeight,
@@ -15,6 +21,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => 
     resize = 'none',
     command,
     commands,
+    name,
     onInput,
     cmd,
     renderDropdown,
@@ -27,6 +34,17 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => 
   const frameRef = useRef<number | null>(null);
   const { variant: themeVariant } = useTheme(true)!
   const { style, className, rest } = useBase<"textarea">(pops);
+
+  const form = useForm()
+  const error = name ? form.errors?.[name] : null
+  const inForm = name && form.values && form.setFieldValue
+  const formValue = inForm ? form.values?.[name] : undefined;
+
+  const updateFieldValue = useDebounce((val) => {
+        if (inForm) {
+            form.setFieldValue?.(name, val);
+        }
+    }, 500)
 
   const {
     showDropdown,
@@ -41,9 +59,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => 
     ref: innerRef,
   });
 
-  // ------------------------------------------------------------------
   // Resize function (no state → direct DOM update)
-  // ------------------------------------------------------------------
   const resizeTextArea = useCallback(() => {
     const textarea = innerRef.current;
     if (!textarea || !autoResize) return;
@@ -70,34 +86,35 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => 
     });
   }, [autoResize, maxHeight]);
 
-  // ------------------------------------------------------------------
   // Input handler
-  // ------------------------------------------------------------------
   const handleInput = (e: React.InputEvent<HTMLTextAreaElement>) => {
+    updateFieldValue(e.currentTarget.value)
     onInput?.(e);
     handleCommandInput(e);
     resizeTextArea();
   };
 
-  // ------------------------------------------------------------------
+  useEffect(() => {
+      if (innerRef.current && name && formValue !== undefined) {
+          if (innerRef.current.value !== String(formValue)) {
+              innerRef.current.value = String(formValue);
+          }
+      }
+  }, [formValue, name]);
+
   // Initial resize + controlled value change
-  // ------------------------------------------------------------------
   useEffect(() => {
     resizeTextArea();
   }, [controlledValue, defaultValue, resizeTextArea]);
 
-  // ------------------------------------------------------------------
   // Resize on mount
-  // ------------------------------------------------------------------
   useEffect(() => {
     if (autoResize && innerRef.current) {
       resizeTextArea();
     }
   }, [autoResize, resizeTextArea]);
 
-  // ------------------------------------------------------------------
   // Cleanup
-  // ------------------------------------------------------------------
   useEffect(() => {
     return () => {
       if (frameRef.current) {
@@ -109,6 +126,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => 
   return (
     <Box as="rel">
       <textarea
+        name={name}
         className={`--input --textarea --${variant || themeVariant || Variant.Medium} flex ${className}`.trim()}
         style={{
           ...style,
@@ -120,9 +138,9 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => 
         onKeyDown={handleKeyDown}
         onInput={handleInput}
         ref={(node) => {
+          innerRef.current = node;
           if (typeof ref === 'function') ref(node);
           else if (ref) ref.current = node;
-          innerRef.current = node;
         }}
         value={controlledValue}
         defaultValue={defaultValue}
@@ -149,7 +167,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => 
       )}
     </Box>
   );
-});
+}
 
 TextArea.displayName = 'Zuz.TextArea';
 

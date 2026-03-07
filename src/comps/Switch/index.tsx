@@ -1,13 +1,18 @@
-import { forwardRef } from "react"
+import { Ref } from "react"
 import { CHECKBOX } from "../../types/enums"
 import CheckBox from "../CheckBox"
 import { CheckboxHandler, CheckBoxProps } from "../CheckBox/types"
 
-const Switch = forwardRef<CheckboxHandler, CheckBoxProps>((props, ref) => {
+const Switch = ({
+    ref,
+    ...props
+} : CheckBoxProps & {
+    ref?: Ref<CheckboxHandler>
+}) => {
 
     return <CheckBox type={CHECKBOX.Switch} {...props} ref={ref} />
 
-})
+}
 
 Switch.displayName = `Zuz.Switch`
 

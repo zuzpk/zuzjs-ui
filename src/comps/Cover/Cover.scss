@@ -1,6 +1,6 @@
 body{
     --cover-bg: rgba(255,255,255,0.8);
-    --cover-label: #111;
+    --cover-label: var(--text-primary);
 }
 .--cover{
     backdrop-filter: blur(4px);
