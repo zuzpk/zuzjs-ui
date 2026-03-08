@@ -5,6 +5,13 @@ import { SPINNER } from "../Spinner/types";
 
 export type ValidationSchema = Record<string, (value: any, allValues: dynamic) => string | null | boolean>;
 
+export type ValidationResult = {
+    [key: string]: {
+        valid: boolean;
+        value: string;
+    }
+}
+
 export type FormProps = Omit<BoxProps, `ref`> & {
 
     schema?: ValidationSchema;
@@ -21,13 +28,13 @@ export type FormProps = Omit<BoxProps, `ref`> & {
     /** Additional data to include with form submission */
     withData?: dynamic;
     /** Handler function called before form submission with validated form data */
-    beforeSubmit?: (data: FormData | dynamic) => void;
+    beforeSubmit?: (data: FormData | dynamic, validationResult: ValidationResult) => void;
     /** Handler function called on form submission with validated form data */
-    onSubmit?: (data: FormData | dynamic) => void;
+    onSubmit?: (data: FormData | dynamic, validationResult: ValidationResult) => void;
     /** Callback triggered upon successful form submission */
     onSuccess?: (data: dynamic) => void;
     /** Callback triggered when form submission encounters an error */
-    onError?: (error: any) => void;
+    onError?: (error: any, validationResult: ValidationResult) => void;
     /** Cover properties to display loading or processing message */
     cover?: {
         /** Background color of the loading cover */

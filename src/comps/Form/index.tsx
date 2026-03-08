@@ -11,7 +11,7 @@ import { ButtonHandler } from "../Button/types";
 import Cover from "../Cover";
 import { isSheetHandler } from "../Sheet";
 import { FormProvider, useFormActions, useFormStore } from "./context";
-import { FormHandler, FormProps } from "./types";
+import { FormHandler, FormProps, ValidationResult } from "./types";
 
 const unflatten = (data: any) => {
     const result: any = {};
@@ -156,12 +156,12 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
     const _buildFormData = useCallback(() : {
         error: boolean,
         errorMsg: string,
-        data: FormData | dynamic,
+        data: ValidationResult,
         payload: FormData | dynamic,
     } => {
 
-        const data : dynamic = {}
-        const flatPayload: dynamic = {};
+        const data : ValidationResult = {}
+        const flatPayload: dynamic = { ...(actions?.getSnapshot().values || {}) };
         let firstErrorEl: HTMLElement | null = null;
         let _errorMsg: HTMLElement | string | null = null
 
@@ -215,11 +215,11 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
             payload: nestedPayload
         }
 
-    }, [innerRef.current])
+    }, [innerRef.current, actions])
 
     const _onSubmit = useCallback(() => {
         
-        const { error, errorMsg, payload } = _buildFormData()
+        const { error, errorMsg, payload, data } = _buildFormData()
 
         if ( error ){
             toast.error(errorMsg)
@@ -227,9 +227,10 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
         }
 
         if (action) {
+            // console.log(payload, withData, { ...payload, ...withData })
             startTransition(async () => {
                 setLoading(true);
-                withPost(action, { ...payload, ...withData })
+                withPost(action, { ...withData, ...payload })
                     .then((res) => {
                         setLoading(false);
                         if (resetOnSuccess) actions?.reset();
@@ -242,7 +243,8 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
                     });
             });
         } else {
-            onSubmit?.(payload);
+            // console.log(data)
+            onSubmit?.(payload, data);
         }
     }, [action, actions, errors]);
 
