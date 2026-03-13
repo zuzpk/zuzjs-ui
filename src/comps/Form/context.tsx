@@ -12,6 +12,7 @@ interface FormContextValue {
     subscribe: (cb: () => void) => () => void;
     getSnapshot: () => FormStore;
     setFieldValue: (name: string, value: any) => void;
+    deleteFieldValue: (name: string) => void;
     setFieldError: (name: string, error: string | null) => void;
     reset: () => void;
 }
@@ -47,6 +48,7 @@ export const FormProvider = ({ children, initialValues = {} }: { children: React
         errors: {}, 
         touched: {} 
     });
+    const prevInitialKeys = useRef<Set<string>>(new Set(Object.keys(initialValues)));
     const subscribers = useRef(new Set<() => void>());
     const getSnapshot = useCallback(() => store.current, []);
     const subscribe = useCallback((cb: () => void) => {
@@ -60,14 +62,22 @@ export const FormProvider = ({ children, initialValues = {} }: { children: React
     };
 
     useEffect(() => {
+        // console.log(initialValues)
         if (initialValues && Object.keys(initialValues).length > 0) {
+            const newKeys = new Set(Object.keys(initialValues));
+            const removedKeys = [...prevInitialKeys.current].filter(k => !newKeys.has(k));
+            
+            const currentValues = { ...store.current.values };
+            removedKeys.forEach(k => delete currentValues[k]);
+            
             store.current = { 
                 ...store.current, 
                 values: {
-                    ...store.current.values,
+                    ...currentValues,
                     ...initialValues 
                 }
             };
+            prevInitialKeys.current = newKeys;
             notify();
         }
     }, [initialValues]);
@@ -84,6 +94,12 @@ export const FormProvider = ({ children, initialValues = {} }: { children: React
                     [name]: value
                 }
             }
+            notify();
+        },
+        deleteFieldValue: (name: string) => {
+            if (!(name in store.current.values)) return;
+            const { [name]: _, ...rest } = store.current.values;
+            store.current = { ...store.current, values: rest };
             notify();
         },
         setFieldError: (name: string, error: string | null) => {

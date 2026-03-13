@@ -86,6 +86,9 @@
         }
         
         .--col{
+            .--colv{
+                flex: 1;
+            }
             .--arrow{
                 width: var(--table-head-arrow);
                 margin-left: var(--table-head-arrow-margin);

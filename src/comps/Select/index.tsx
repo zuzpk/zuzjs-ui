@@ -260,6 +260,12 @@ const Select = ({
         };
     }, [choosing, reposition]);
 
+    useEffect(() => {
+        return () => {
+            if (inForm) form.deleteFieldValue?.(name);
+        };
+    }, []);
+
     const _currentOption = useMemo(() =>  {
         if ( !value ) return undefined;
         return _(value).isArray() ? 

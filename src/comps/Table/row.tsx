@@ -1,5 +1,5 @@
-import { Fragment, useEffect, useMemo, useRef } from "react"
 import { useDelayed } from "@zuzjs/hooks"
+import { Fragment, useEffect, useMemo, useRef } from "react"
 import { dynamic } from "../../types"
 import { CHECKBOX, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums"
 import { animationProps } from "../../types/interfaces"

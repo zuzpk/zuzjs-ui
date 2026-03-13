@@ -1,8 +1,8 @@
+import { PubSub } from "@zuzjs/core"
 import { CSSProperties, ReactNode, useState } from "react"
 import Box from "../Box"
-import type { Column } from "./types"
-import { PubSub } from "@zuzjs/core"
 import SVGIcons from "../svgicons"
+import type { Column } from "./types"
 
 const TColumn = <T, >(props: Column<T> & { 
     idx: number,
@@ -29,7 +29,7 @@ const TColumn = <T, >(props: Column<T> & {
         }}
         as={`--col flex aic ${as || ``} ${sortable ? `--sortable` : ``}`}
         onClick={_onSort}>
-        <Box>
+        <Box as={`--colv`}>
             {value as ReactNode}
         </Box>
         { idx == -1 

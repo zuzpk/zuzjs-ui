@@ -123,6 +123,12 @@ const TextArea = ({
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+        if (inForm) form.deleteFieldValue?.(name);
+    };
+  }, []);
+
   return (
     <Box as="rel">
       <textarea

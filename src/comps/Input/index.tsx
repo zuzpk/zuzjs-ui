@@ -35,15 +35,6 @@ const Input = ({ ref, ...props } : InputProps) => {
         }
     }, 500)
 
-    // If the store value changes externally, update the DOM value
-    useEffect(() => {
-        if (inputRef.current && name && formValue !== undefined) {
-            if (inputRef.current.value !== String(formValue)) {
-                inputRef.current.value = String(formValue);
-            }
-        }
-    }, [formValue, name]);
-
     const handleInput = (event: React.InputEvent<HTMLInputElement>) => {
 
         let val = event.currentTarget.value;
@@ -58,6 +49,21 @@ const Input = ({ ref, ...props } : InputProps) => {
         props.onInput?.(event);
 
     }
+
+    // If the store value changes externally, update the DOM value
+    useEffect(() => {
+        if (inputRef.current && name && formValue !== undefined) {
+            if (inputRef.current.value !== String(formValue)) {
+                inputRef.current.value = String(formValue);
+            }
+        }
+    }, [formValue, name]);
+
+    useEffect(() => {
+        return () => {
+            if (inForm) form.deleteFieldValue?.(name);
+        };
+    }, []);
  
     return <input
         name={name}
