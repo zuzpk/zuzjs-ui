@@ -75,6 +75,12 @@ body{
             .--options-list{
                 padding: var(--padding-#{$size}-x);
                 border-radius: calc(var(--radius-#{$size})/2);
+                
+                .--select-options-head{
+                    font-size: var(--text-#{$size}) !important;
+                    padding: var(--padding-#{$size}-x);
+                }
+
                 button.--select-option-item {
                     padding: var(--padding-#{$size}) !important;
                     border-radius: var(--radius-#{$size}) !important;
@@ -195,11 +201,10 @@ body{
 
         .--select-search{
             margin-bottom: var(--select-search-margin-bottom);
-            background: var(--select-search);
             top: 0px;
             z-index: 3;
-            .--search-input{
-                background: inherit;
+            .--input{
+                background: var(--select-search);
                 border: var(--select-search-border);
                 padding: var(--select-search-padding);
                 border-radius: var(--select-search-radius);
@@ -208,6 +213,9 @@ body{
             }
         }
 
+        .--select-options-head{
+            opacity: 0.5;
+        }
         button.--select-option-item{
             background: transparent;
             border: 0px;

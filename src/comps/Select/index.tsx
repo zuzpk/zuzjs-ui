@@ -1,18 +1,20 @@
 "use client"
 import { _ } from "@zuzjs/core";
-import { ChangeEvent, Ref, useEffect, useId, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { useDebounce } from "@zuzjs/hooks";
+import { Ref, useEffect, useId, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useBase, usePosition } from "../../hooks";
 import { useTheme } from "../../hooks/useColorScheme";
-import { POSITION } from "../../types";
+import { POSITION, Variant } from "../../types";
 import Box from "../Box";
 import Button from "../Button";
 import { ButtonProps } from "../Button/types";
 import Flex from "../Flex";
 import { useForm } from "../Form/context";
 import Icon from "../Icon";
-import Input from "../Input";
+import Search from "../Search";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
+import OptionGroupHead from "./groupHead";
 import OptionItem from "./optionItem";
 import { Option, SelectHandler, SelectProps } from "./types";
 
@@ -266,6 +268,8 @@ const Select = ({
         };
     }, []);
 
+    const updateQuery = useDebounce((q: string) => setQuery(q == `` ? null : q), 300)
+
     const _currentOption = useMemo(() =>  {
         if ( !value ) return undefined;
         return _(value).isArray() ? 
@@ -274,9 +278,6 @@ const Select = ({
     }, [value])
 
     return <Box className={`--select ${expanded == true ? `--expanded` : ``} --${variant || themeVariant} ${name ? `--${name}` : ``} ${disabled ? '--disabled' : ''} rel`.trim()} name={_id}>
-
-        {/* PERSISTENT TOP LABEL: This never disappears */}
-        { label && <Text as="--select-top-label">{label}</Text> }
 
         <Button
             ref={_ref}
@@ -341,7 +342,13 @@ const Select = ({
                 when: choosing,
                 duration: .05
             }}>
-            {withSearch && <Box as={`--select-search --sticky`}>
+            { withSearch && <Box as={`--select-search --no-shrink flex --sticky`}><Search 
+                ref={_search}
+                variant={Variant.Small}
+                placeholder={searchPlaceholder || `Search...`}
+                onChange={updateQuery}
+            /></Box>}
+            {/* {withSearch && <Box as={`--select-search --sticky`}>
                 <Input 
                     ref={_search}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -349,7 +356,9 @@ const Select = ({
                     }}
                     className={`--search-input`}
                     placeholder={searchPlaceholder || `Search...`} />
-            </Box>}
+            </Box>} */}
+            {/* PERSISTENT TOP LABEL: This never disappears */}
+            { label && <OptionGroupHead label={label} /> }
             {   
                 options
                 .filter(o => !query || o.label.toLowerCase().includes(query.toLowerCase()))

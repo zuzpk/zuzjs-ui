@@ -2,7 +2,7 @@ import { ReactNode } from "react"
 import { InputProps } from "../Input/types"
 import { KeyCombination } from "../KeyboardKeys/types"
 
-export type SearchProps = InputProps & {
+export type SearchProps = Omit<InputProps, `onChange`> & {
     onSubmit?: (value: string) => void,
     onChange?: (value: string) => void,
     onClear?: () => void,

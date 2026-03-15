@@ -1311,7 +1311,7 @@ type ScrollViewProps = BoxProps & {
 
 declare const ScrollView: react.ForwardRefExoticComponent<Omit<ScrollViewProps, "ref"> & react.RefAttributes<HTMLDivElement>>;
 
-type SearchProps = InputProps & {
+type SearchProps = Omit<InputProps, `onChange`> & {
     onSubmit?: (value: string) => void;
     onChange?: (value: string) => void;
     onClear?: () => void;

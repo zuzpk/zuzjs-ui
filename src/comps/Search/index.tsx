@@ -71,7 +71,7 @@ const Search = forwardRef<SearchHandler, SearchProps>((props, ref) => {
  
     return <Box 
         style={style}
-        className={`--search ${reverse ? `--search-rev` : ``} --${props.variant || themeVariant || Variant.Medium} flex aic ${typeof props.as === 'string' && props.as.includes(`abs`) ? `` : `rel`} ${className}`.trim()}>
+        className={`--search --no-shrink ${reverse ? `--search-rev` : ``} --${props.variant || themeVariant || Variant.Medium} flex aic ${typeof props.as === 'string' && props.as.includes(`abs`) ? `` : `rel`} ${className}`.trim()}>
         {/* { reverse && actionBtn } */}
         <Input 
             ref={innerRef}
