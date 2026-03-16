@@ -138,7 +138,7 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<TableController>) => {
     }, [_loading, rows])
 
     useEffect(() => {
-        rowKeys.current = rows.map(() => uuid(8)); // Update only when rows change
+        if ( rows.length && !rowKeys.current ) rowKeys.current = rows.map(() => uuid(8)); // Update only when rows change
     }, [rows]);
 
     // useEffect(() => {

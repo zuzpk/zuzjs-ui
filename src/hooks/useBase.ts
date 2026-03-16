@@ -19,6 +19,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
         as,
         fx,
         busy = false,
+        stripes,
         transition: autoTransition,
         skeleton,
         className,
@@ -55,7 +56,9 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
 
     const zuzClasses = [
         className,
-        busy === true ? `--is-busy` : ``
+        busy === true ? `--is-busy` : ``,
+        stripes ? `--has-stripes --stripes-${stripes}` : ``
+
     ].filter(Boolean).join(` `)
 
     const animationConfig = autoTransition ? {

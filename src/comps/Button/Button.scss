@@ -13,6 +13,13 @@ body{
     --button-ghost-hover: var(--surface);
 }
 
+[color-scheme="dark"]{
+    body{
+        --button-disabled: var(--gray-900);
+        --button-disabled-color: var(--gray-800);
+    }
+}
+
 .--button{
 
     width: fit-content;

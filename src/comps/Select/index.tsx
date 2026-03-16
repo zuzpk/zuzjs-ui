@@ -296,7 +296,7 @@ const Select = ({
             <Flex aic as="--label-wrapper">
                 {tokenizer && Array.isArray(value) && value.length > 0 ? (
                     <Flex as={`--tokens-wrap${wrapTokens === true ? ` --wrap` : ``}`}>
-                        {value.map(v => (
+                        {value?.map(v => (
                             <Flex key={v.value} aic as="--token">
                                 <Text as={`--token-label`}>{v.label}</Text>
                                 <Box as={`--token-remove`} onClick={(e) => removeToken(e, v)}>
@@ -361,8 +361,8 @@ const Select = ({
             { label && <OptionGroupHead label={label} /> }
             {   
                 options
-                .filter(o => !query || o.label.toLowerCase().includes(query.toLowerCase()))
-                .map((o) => <OptionItem 
+                ?.filter(o => !query || o.label.toLowerCase().includes(query.toLowerCase()))
+                ?.map((o) => <OptionItem 
                     updateValue={updateValue} 
                     checkIcon={checkIcon}
                     selected={isSelected(o)}

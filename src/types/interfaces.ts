@@ -30,6 +30,8 @@ export interface ZuzProps {
 
     busy?: boolean;
 
+    stripes?: `background` | `overlay`;
+
 }
 
 export interface BoxProps extends Partial<Props<`div`>> {

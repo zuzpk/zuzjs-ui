@@ -16,7 +16,7 @@ const CheckBox = ({
     ref?: Ref<CheckboxHandler>
 }) => {
     
-    const { name, required, type, value, size, variant, checked: defaultCheck, onSwitch, ...pops } = props;
+    const { name, required, type, value, size, variant, checked: defaultCheck, disabled, onSwitch, ...pops } = props;
 
     const form = useForm()
     const inForm = !!(name && form.values)
@@ -75,7 +75,14 @@ const CheckBox = ({
     }));
     
     return <Label 
-        className={`--${(type || CHECKBOX.Default).toLowerCase()} ${!type || type === CHECKBOX.Default ? `--checkbox` : `--switch`} --${(variant || themeVariant) || Variant.Small} flex aic jcc ${isChecked ? `is-checked` : ``} rel`.trim()}
+        aria-hidden={disabled}
+        className={[
+            `--${(type || CHECKBOX.Default).toLowerCase()}`, 
+            `${!type || type === CHECKBOX.Default ? `--checkbox` : `--switch`}`, 
+            `--${(variant || themeVariant) || Variant.Small}`,
+            `flex aic jcc ${isChecked ? `is-checked` : ``} rel`,
+            `${disabled ? `--disabled` : ``}`
+        ].join(` `).trim()}
         {...pops as LabelProps } >
         {(!type || type == CHECKBOX.Default) && SVGIcons.check}
         <Input
@@ -96,6 +103,7 @@ const CheckBox = ({
                 e.stopPropagation()
                 handleChange(e.target.checked);
             }}
+            disabled={disabled}
             // onChange={(e: ChangeEvent<HTMLInputElement>) => {
             //     onSwitch && onSwitch(e.target.checked, value || `cb`)
             //     _setChecked(e.target.checked)

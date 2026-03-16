@@ -215,6 +215,7 @@ interface ZuzProps {
     draggable?: boolean;
     dragOptions?: DragOptions;
     busy?: boolean;
+    stripes?: `background` | `overlay`;
 }
 interface BoxProps extends Partial<Props<`div`>> {
     name?: string;
