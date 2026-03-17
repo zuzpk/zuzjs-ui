@@ -2,6 +2,7 @@ import {
     ComponentPropsWithoutRef,
     ElementType
 } from 'react';
+import { FORMVALIDATION } from './enums';
 import { ZuzProps } from './interfaces';
 
 /**
@@ -17,5 +18,9 @@ export type dynamic = {
 export type Props<T extends ElementType> = ZuzProps & Omit<ComponentPropsWithoutRef<T>, keyof ZuzProps>;
 
 export type FormInputs = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+
+export type FormValidation = ValueOf<typeof FORMVALIDATION>
+
+export type WithFormValidation = FormValidation | `${FormValidation}${string}`
 
 export type AnimationTransition = `back` | `expo` | `sine` | `power` | `circ` | `bounce` | `elastic` | `ease` | `spring` | `liquid`

@@ -1,13 +1,11 @@
 import { Ref } from 'react';
-import { FORMVALIDATION, Props, ValueOf, Variant } from '../../types';
-
-type FormValidation = ValueOf<typeof FORMVALIDATION>
+import { Props, ValueOf, Variant, WithFormValidation } from '../../types';
 
 export type InputProps = Props<`input`> & {
     ref?: Ref<HTMLInputElement>,
     numeric?: boolean,
     variant?: ValueOf<typeof Variant>,
-    with?: FormValidation | `${FormValidation}${string}`,
+    with?: WithFormValidation,
     /**
      * Triggers when Enter / Return is Pressed
      */

@@ -173,9 +173,14 @@ body {
     /* Only apply this if the property isn't already set by a class */
     translate: var(--fx-x, 0px) var(--fx-y, 0px);
 }
-.--with-error,
+.--has-error:not(.--select),
+.--with-error:not(.--select),
 .input-with-error{
     box-shadow: inset 0px 0px 0px 1px #ff8b8b;
+}
+.--select.--with-error .--select-display{
+    box-shadow: 0px 0px 0px 1px #ff8b8b;
+    border-radius: inherit;
 }
 .abc, .center-h, .--center-x, .--center-y, .center-v, .abs {
     --fx-x: 0px;
@@ -272,6 +277,14 @@ body {
 .no-overflow{overflow:hidden;}
 .w-full{width: 100%;}
 .h-full{height: 100%;}
+
+.--line-clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  /* Use --lines variable, default to 1 if not provided */
+  -webkit-line-clamp: var(--line-count, 1); 
+}
 
 .--is-busy {
     

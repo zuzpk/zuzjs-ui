@@ -45,6 +45,8 @@ const Select = ({
         checkIcon,
         closeIcon,
         onChange,
+        required,
+        with : withProp,
         ...pops } = props
 
     // const formContext = useFormStore()
@@ -277,7 +279,17 @@ const Select = ({
                 : value as Option
     }, [value])
 
-    return <Box className={`--select ${expanded == true ? `--expanded` : ``} --${variant || themeVariant} ${name ? `--${name}` : ``} ${disabled ? '--disabled' : ''} rel`.trim()} name={_id}>
+    console.log(error)
+
+    return <Box 
+        data-required={required ? "true" : undefined}
+        with={withProp}
+        className={[
+            `--select ${expanded == true ? `--expanded` : ``}`,
+            `--${variant || themeVariant}`,
+            `${name ? `--${name}` : ``}`, 
+            `${disabled ? '--disabled' : ''} rel`
+        ].join(` `).trim()} name={_id}>
 
         <Button
             ref={_ref}

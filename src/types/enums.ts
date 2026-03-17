@@ -1,5 +1,4 @@
 import { AnchorType } from "@zuzjs/hooks";
-import { dynamic } from "./shared";
 
 export const AVATAR = {
     Circle : "CIRCLE",
@@ -71,7 +70,9 @@ export const FORMVALIDATION = {
     Password : "PASSWORD",
     MatchField : "MATCHFIELD",
     Pattern : "*",
-    GreaterThan : "GREATER_THAN"
+    GreaterThan : "GREATER_THAN",
+    NotEmpty : "NOT_EMPTY", 
+    NotMinusOne : "NOT_MINUS_ONE",
 } as const
 
 export const ALERT = {

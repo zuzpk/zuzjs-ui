@@ -1,5 +1,5 @@
 import { Command } from '@zuzjs/hooks';
-import { Props, ValueOf } from '../../types';
+import { Props, ValueOf, WithFormValidation } from '../../types';
 import { Variant } from '../../types/enums';
 
 export type TextAreaProps = Props<`textarea`> & {
@@ -9,6 +9,7 @@ export type TextAreaProps = Props<`textarea`> & {
     variant?: ValueOf<typeof Variant>,
     command?: string,
     commands?: Command[],
+    with?: WithFormValidation,
     cmd?: (value: string, textarea: HTMLTextAreaElement | HTMLInputElement) => void,
     renderDropdown?: (props: {
         show: boolean;

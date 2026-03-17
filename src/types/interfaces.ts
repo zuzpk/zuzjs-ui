@@ -2,7 +2,7 @@ import { DragOptions } from "@zuzjs/hooks";
 import { Ref } from "react";
 import { ZuzStyleString } from "./css";
 import { SKELETON, TRANSITION_CURVES, TRANSITIONS } from "./enums";
-import { dynamic, Props, ValueOf } from "./shared";
+import { dynamic, Props, ValueOf, WithFormValidation } from "./shared";
 
 export interface ZuzProps {
 
@@ -38,6 +38,7 @@ export interface BoxProps extends Partial<Props<`div`>> {
     name?: string;
     ref?: Ref<HTMLDivElement>;
     cols?: boolean;
+    with?: WithFormValidation,
 }
 
 export interface parallaxEffectProps {
