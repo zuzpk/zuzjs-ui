@@ -57,5 +57,5 @@ export interface FormHandler {
     /** Resets the form to its initial state */
     init: () => void;
 
-    submit: () => void;
+    submit: (more?: dynamic) => void;
 }

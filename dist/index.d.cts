@@ -1027,7 +1027,7 @@ interface FormHandler {
     hideError: () => void;
     /** Resets the form to its initial state */
     init: () => void;
-    submit: () => void;
+    submit: (more?: dynamic) => void;
 }
 
 declare const Form: {
@@ -1390,6 +1390,8 @@ type Option = {
     value: string | number;
     /** Optional flag to disable this specific option. */
     disabled?: boolean;
+    /** Special value parameter for categorization or grouping or passing additional metadata. */
+    tag?: string;
 };
 /**
  * Represents an option object with a label and value.

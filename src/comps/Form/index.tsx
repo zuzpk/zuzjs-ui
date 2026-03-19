@@ -217,7 +217,7 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
 
     }, [innerRef.current, actions])
 
-    const _onSubmit = useCallback(() => {
+    const _onSubmit = useCallback((more: dynamic = {}) => {
         
         const { error, errorMsg, payload, data } = _buildFormData()
 
@@ -230,7 +230,7 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
             // console.log(payload, withData, { ...payload, ...withData })
             startTransition(async () => {
                 setLoading(true);
-                withPost(action, { ...withData, ...payload })
+                withPost(action, { ...withData, ...payload, ...more })
                     .then((res) => {
                         setLoading(false);
                         if (resetOnSuccess) actions?.reset();
@@ -246,7 +246,7 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
             // console.log(data)
             onSubmit?.(payload, data);
         }
-    }, [action, actions, errors]);
+    }, [_buildFormData, action, withData, onSuccess, onError, resetOnSuccess, onSubmit]);
 
     const _init = useCallback(() => {
         const _submit = _nodes(`[type=submit]`)
@@ -266,35 +266,31 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
         index => ({ ref: submit })
     ), [children])
 
-    // const buildChildren = useMemo(() => {
-    //     return addPropsToChildren(
-    //         children,
-    //         (child) => child.props.name !== undefined || child.props.type === 'submit',
-    //         (index, child) => {
-    //             if (child.props.type === 'submit') {
-    //                 return { onClick: _onSubmit };
-    //             }
-    //             // Inject real-time state listeners for components with 'name'
-    //             return {
-    //                 onChange: (val: any) => {
-    //                     const name = child.props.name;
-    //                     const actualVal = val?.target ? val.target.value : val;
-    //                     actions?.setFieldValue(name, actualVal);
-    //                     if (child.props.onChange) child.props.onChange(val);
-    //                 }
-    //             };
-    //         }
-    //     );
-    // }, [children, actions, state?.values]);
+    const onSubmitRef = useRef(_onSubmit);
 
     useImperativeHandle(ref, () => ({
         setLoading: (m) => setLoading(m),
-        submit: () => _onSubmit(),
+        submit: (more?: dynamic) => onSubmitRef.current(more),
         init: _init,
         hideError: () => toast.clearAll()
-    }));
+    }), [_onSubmit, _init]);
 
     useEffect(_init, [])
+
+    useEffect(() => {
+        onSubmitRef.current = _onSubmit;
+    }, [_onSubmit]);
+
+    useEffect(() => {
+        const buttons = _nodes(`[type=submit]`);
+        const handlers = Array.from(buttons).map(el => {
+            const btn = el as HTMLButtonElement;
+            btn.addEventListener(`click`, _onSubmit);
+            return () => btn.removeEventListener(`click`, _onSubmit);
+        });
+
+        return () => handlers.forEach(cleanup => cleanup());
+    }, [_onSubmit, _nodes]);
 
     return (
         <Box ref={innerRef} style={style} className={`--form flex rel ${className}`}>

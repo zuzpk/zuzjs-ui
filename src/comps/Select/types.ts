@@ -1,5 +1,5 @@
-import { FormEventHandler, ReactNode, Ref } from "react"
-import { BoxProps, ValueOf, Variant } from "../../types"
+import { FormEventHandler, ReactNode, Ref } from "react";
+import { BoxProps, ValueOf, Variant } from "../../types";
 
 /**
  * Interface for the Select component handle, accessible via React ref.
@@ -38,6 +38,8 @@ export type Option = {
     value: string | number,
     /** Optional flag to disable this specific option. */
     disabled?: boolean,
+    /** Special value parameter for categorization or grouping or passing additional metadata. */
+    tag?: string;
 }
 
 /**
