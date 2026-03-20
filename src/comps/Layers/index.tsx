@@ -51,6 +51,18 @@ const LayersRenderer = ({
                 setMenuVisible(true);
             }, 16);
         },
+        update(id: number, props: Partial<LayerItem['props']>) {
+            setLayers(prev => prev.map(l => {
+                if (l.id !== id) return l;
+                return {
+                    ...l,
+                    props: {
+                        ...(l.props as Record<string, unknown>),
+                        ...(props as Record<string, unknown>)
+                    }
+                } as LayerItem;
+            }));
+        },
         remove(id: number) {
             // setLayers(t => t.filter(layer => layer.id !== id));
             setLayers(prev => prev.map(l => l.id === id ? { ...l, props: { ...l.props, forceClose: true } } : l));
@@ -181,6 +193,7 @@ const LayersProvider : FC<{
             return LayersController.current?.add(layer)!
         }, 
         openMenu: (props: ContextMenuProps) => LayersController.current?.openMenu(props)!,
+        update: (id: number, props: Partial<LayerItem['props']>) => LayersController.current?.update(id, props)!,
         remove: (id: number) => LayersController.current?.remove(id)!, 
         loading: (id: number, mode: boolean) => LayersController.current?.loading(id, mode)!, 
         clear: (type: LayerType) => LayersController.current?.clear(type)!, 

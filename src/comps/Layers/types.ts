@@ -14,6 +14,7 @@ export type LayerItem = {
 export interface LayersController {
   add: (layer: Omit<LayerItem, 'id'>) => number;
   openMenu: (props: ContextMenuProps) => void;
+  update: (id: number, props: Partial<LayerItem['props']>) => void;
   remove: (id: number) => void;
   loading: (id: number, mode: boolean) => void;
   clear: (type: LayerType) => void;

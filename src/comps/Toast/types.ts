@@ -36,6 +36,7 @@ export interface ToastProps {
   id?: number;
   type: ToastType;
   icon?: string;
+  busy?: boolean;
   title?: string | ReactNode;
   message?: string | ReactNode;
   duration?: number;
@@ -46,6 +47,8 @@ export interface ToastProps {
   variant?: ValueOf<typeof Variant>;
   inBackground?: boolean;
   progress?: boolean;
+  progressValue?: number;
+  width?: number | string;
   onClose?: (id: number) => void;
   onClick?: () => void;
 }

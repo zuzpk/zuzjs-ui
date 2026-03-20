@@ -7,6 +7,7 @@ import Button from "../Button";
 import Icon from "../Icon";
 import ProgressBar from "../ProgressBar";
 import { ProgressHandler } from "../ProgressBar/types";
+import Spinner from "../Spinner";
 import Text from "../Text";
 import { ToastDefaultTitle, ToastPosition, ToastProps, ToastStyle, ToastType } from "./types";
 
@@ -19,7 +20,14 @@ const Toast : FC<ToastProps & {
 }> = (props) => {
 
     const { 
-        index, id, type, icon, title, message, 
+        index, 
+        id, 
+        type, 
+        icon,
+        busy, 
+        width,
+        title, 
+        message, 
         duration, 
         sticky = false, 
         actions = [],
@@ -28,6 +36,7 @@ const Toast : FC<ToastProps & {
         isHovered, 
         total,  
         progress,
+        progressValue,
         forceClose, 
         variant,
         onClick, 
@@ -37,13 +46,15 @@ const Toast : FC<ToastProps & {
     const [visible, setVisible] = useState(false);
     const [expired, setExpired] = useState(false);
     const { toast: themeToast } = useTheme(true)!;
+    const hasControlledProgress = typeof progressValue === 'number';
+    const normalizedProgress = hasControlledProgress ? Math.max(0, Math.min(1, progressValue!)) : undefined;
 
     const isHiding = expired || forceClose;
-    const _position = position || themeToast?.position || ToastPosition.TopCenter
-    const _type = type || themeToast?.type || ToastType.Default
-    const _toastStyle = toastStyle || themeToast?.style || ToastStyle.Stack
-    const _duration = duration || themeToast?.duration || 4
-    const _progress = progress || themeToast?.progress || false
+    const _position = position ?? themeToast?.position ?? ToastPosition.TopCenter
+    const _type = type ?? themeToast?.type ?? ToastType.Default
+    const _toastStyle = toastStyle ?? themeToast?.style ?? ToastStyle.Stack
+    const _duration = duration ?? themeToast?.duration ?? 4
+    const _progress = progress ?? themeToast?.progress ?? false
 
     const remainingRef = useRef(_duration * 1000);
     const requestRef = useRef<number>(undefined);
@@ -71,7 +82,7 @@ const Toast : FC<ToastProps & {
                 
                 const delta = time - lastTickRef.current;
                 
-                if (!isHovered && !sticky && !isHiding) {
+                if (!hasControlledProgress && !isHovered && !sticky && !isHiding) {
                     remainingRef.current -= delta;
                     
                     // Update Progress Bar DOM directly (No Re-render!)
@@ -148,10 +159,13 @@ const Toast : FC<ToastProps & {
             cursor: (!actions || actions.length === 0) ? 'pointer' : 'default',
             transition: `${toastAnimation.style.transition}, transform 0.3s ease, opacity 0.3s ease`,
         }}>
-        <Box as={`--ico flex aic jcc`}>
+        <Box as={`--ico flex aic jcc rel`}>
             { icon ? <Icon name={icon} /> : <Box as={`--no-icon`} /> }
+            { busy === true && <Spinner as={`abs abc`} /> }
         </Box>
-        <Box as={`--meta flex cols`}>
+        <Box 
+            as={`--meta flex cols`}
+            style={width ? { width, minWidth: width, maxWidth: width, } : undefined}>
             <Text as={`--tt`}>{title || ToastDefaultTitle[type]}</Text>
             <Text as={`--tm`}>{message}</Text>
         </Box>
@@ -167,8 +181,9 @@ const Toast : FC<ToastProps & {
                     ))}
                 </Box>
             )}
-        {_progress && <ProgressBar
+        {(_progress || hasControlledProgress) && <ProgressBar
             as={`abs`}
+            progress={normalizedProgress}
             ref={progressBarRef} />}
     </Box>
 }

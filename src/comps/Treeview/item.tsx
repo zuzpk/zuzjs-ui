@@ -2,7 +2,8 @@ import { forwardRef, useEffect, useMemo, useState } from "react";
 import Box from "../Box";
 import Button from "../Button";
 import Icon from "../Icon";
-import Text, { TextProps } from "../Text";
+import Text from "../Text";
+import { TextProps } from "../Text/types";
 import SVGIcons from "../svgicons";
 import { TreeItemHandler, TreeItemProps } from "./types";
 
