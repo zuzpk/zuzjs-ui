@@ -21,7 +21,7 @@ export enum ToastStyle {
 }
 export interface ToastAction {
     label: string;
-    onClick: () => void;
+    onClick: (e: any) => void;
     variant?: 'primary' | 'secondary';
 }
 
@@ -50,7 +50,7 @@ export interface ToastProps {
   progressValue?: number;
   width?: number | string;
   onClose?: (id: number) => void;
-  onClick?: () => void;
+  onClick?: (e: any) => void;
 }
 
 export {

@@ -133,9 +133,12 @@ const Toast : FC<ToastProps & {
     const stackScale = isHovered ? 1 : Math.max(0.85, 1 - index * 0.05);
     const stackOpacity = isHovered ? 1 : Math.max(0.4, 1 - index * 0.2);
 
-    const handleContainerClick = () => {
-        if (onClick) onClick();
-        else if (!actions || actions.length === 0) setExpired(true);
+    const handleContainerClick = (e: any) => {
+        if (onClick) onClick(e);
+        else if (
+            (busy !== true) && 
+            (!actions || actions.length === 0)
+        ) setExpired(true);
     };
 
     const baseTransform = toastAnimation.style.transform || 'translate(0, 0)';
@@ -175,7 +178,8 @@ const Toast : FC<ToastProps & {
                         <Button 
                             key={i} 
                             as="--snack-btn bold" 
-                            onClick={(e) => { e.stopPropagation(); action.onClick(); }}>
+                            variant={Variant.XSmall}
+                            onClick={(e) => { e.stopPropagation(); action.onClick(e); }}>
                             {action.label}
                         </Button>
                     ))}

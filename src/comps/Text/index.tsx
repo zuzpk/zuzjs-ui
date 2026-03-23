@@ -1,5 +1,5 @@
 import { useIntersectionObserver } from '@zuzjs/hooks';
-import { HTMLAttributes, useEffect, useMemo, useRef, useState } from 'react';
+import { HTMLAttributes, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useBase } from '../../hooks';
 import Span from '../Span';
 import { TextProps } from './types';
@@ -12,6 +12,7 @@ const Text = ({
     const { 
         h, html, children, lines, 
         tfx, 
+        delay = 0,
         duration = 0.5, 
         stagger = 0.05, 
         repeat = true, 
@@ -56,31 +57,94 @@ const Text = ({
 
     const Tag = `h${props.h || 1}` as `h1` | `h2` | `h3` | `h4` | `h5` | `h6`
 
+    const textContent = useMemo(() => {
+        if (typeof children === 'string') return children;
+        if (Array.isArray(children) && children.length === 1 && typeof children[0] === 'string') return children[0];
+        return null;
+    }, [children]);
+
+    // Detect gradient-clip text so char spans can be positioned into one continuous gradient
+    const hasTextClip = useMemo(() => {
+        const asStr = Array.isArray(props.as) ? props.as.join(' ') : (props.as || '');
+        return typeof asStr === 'string' && asStr.includes('text-clip');
+    }, [props.as]);
+
+    // Measure after layout settles and keep spans synced if fonts or wrapping change.
+    useLayoutEffect(() => {
+        if (!hasTextClip || !innerRef.current || textContent === null) return;
+
+        const parent = innerRef.current;
+        let rafId = 0;
+        let rafId2 = 0;
+
+        const syncGradient = () => {
+            const parentRect = parent.getBoundingClientRect();
+            const bgImage = getComputedStyle(parent).backgroundImage;
+            const parentWidth = parentRect.width;
+            const chars = parent.querySelectorAll<HTMLSpanElement>('.--fx-char');
+
+            chars.forEach(el => {
+                const charRect = el.getBoundingClientRect();
+                const offsetX = charRect.left - parentRect.left;
+                el.style.backgroundImage = bgImage;
+                el.style.backgroundRepeat = 'no-repeat';
+                el.style.backgroundSize = `${parentWidth}px 100%`;
+                el.style.backgroundPosition = `-${offsetX}px 0`;
+                el.style.backgroundClip = 'text';
+                (el.style as any).webkitBackgroundClip = 'text';
+                el.style.color = 'transparent';
+            });
+        };
+
+        const scheduleSync = () => {
+            cancelAnimationFrame(rafId);
+            cancelAnimationFrame(rafId2);
+            rafId = requestAnimationFrame(() => {
+                rafId2 = requestAnimationFrame(syncGradient);
+            });
+        };
+
+        scheduleSync();
+
+        const resizeObserver = new ResizeObserver(scheduleSync);
+        resizeObserver.observe(parent);
+
+        if (typeof document !== 'undefined' && 'fonts' in document) {
+            (document as Document & { fonts?: FontFaceSet }).fonts?.ready.then(scheduleSync);
+        }
+
+        window.addEventListener('resize', scheduleSync);
+
+        return () => {
+            cancelAnimationFrame(rafId);
+            cancelAnimationFrame(rafId2);
+            resizeObserver.disconnect();
+            window.removeEventListener('resize', scheduleSync);
+        };
+    }, [hasTextClip, textContent, tfx, shouldAnimate]);
+
     const content = useMemo(() => {
         if (html) return <Span dangerouslySetInnerHTML={{ __html: html }} />;
         
-        if (tfx && typeof children === 'string') {
-            return children.split('').map((char, i) => {
+        if (tfx && textContent !== null) {
+            return textContent.split('').map((char, i) => {
                 const isSpace = char === ' ';
                 const isEntrance = ['typewriter', 'reveal', 'fog', 'slide', 'pop'].includes(tfx);
                 const finalIteration = isEntrance ? '1' : (repeat ? 'infinite' : '1');
-                
 
                 return (
                     <Span 
                         key={i} 
                         data-char={char} // Essential for Glitch
-                        className={`--fx-char ${shouldAnimate ? `--fx-${tfx}` : ''}`}
+                        className={`--fx-char -fx ${shouldAnimate ? `--fx-${tfx}` : ''}`}
                         style={{ 
-                            '--delay': `${i * stagger}s`,
+                            '--delay': `${delay + i * stagger}s`,
                             '--duration': `${duration}s`,
                             '--iteration': finalIteration,
-                            '--target-opacity': targetOpacity, // Pass the final goal here
+                            '--target-opacity': targetOpacity, 
                             display: isSpace ? 'inline' : 'inline-block',
                             whiteSpace: 'pre',
-                            // If reveal is on but not yet triggered, hide everything
-                            // opacity: (reveal && ratio < 1) ? 0 : undefined
-                            opacity: !shouldAnimate && tfx === 'typewriter' ? 0 : undefined
+                            opacity: !shouldAnimate && tfx === 'typewriter' ? 0 : undefined,
                         } as React.CSSProperties}
                     >
                         {char}
@@ -90,20 +154,22 @@ const Text = ({
         }
 
         return children;
-    }, [children, html, tfx, shouldAnimate, stagger, duration, repeat]);
+    }, [children, html, tfx, textContent, shouldAnimate, delay, stagger, duration, repeat]);
+
+    // console.log(tfx, children, content)
 
     return <Tag
         ref={innerRef}
         onMouseEnter={() => hover && setIsHovered(true)}
         onMouseLeave={() => hover && setIsHovered(false)}
-        style={{
+        style={ tfx ? {
             ...style,
             display: tfx ? 'flex' : style?.display,
             flexWrap: tfx ? 'wrap' : style?.flexWrap,
             opacity: tfx && !shouldAnimate ? 0 : (tfx ? 1 : style?.opacity),
             transition: tfx ? 'opacity 0.4s ease' : undefined
-        }}
-        className={`${className} ${tfx ? '--text-fx' : ''}`.trim()}
+        } : style }
+        className={`${className} ${tfx ? '--text-fx -fx' : ''}`.trim()}
         {...rest as HTMLAttributes<HTMLHeadingElement>}>
         {content}
     </Tag>

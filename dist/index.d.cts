@@ -1121,7 +1121,7 @@ declare enum ToastStyle {
 }
 interface ToastAction {
     label: string;
-    onClick: () => void;
+    onClick: (e: any) => void;
     variant?: 'primary' | 'secondary';
 }
 declare const ToastDefaultTitle: dynamic;
@@ -1143,7 +1143,7 @@ interface ToastProps {
     progressValue?: number;
     width?: number | string;
     onClose?: (id: number) => void;
-    onClick?: () => void;
+    onClick?: (e: any) => void;
 }
 
 type LayerType = "dialog" | "drawer" | "toast" | "menu";
@@ -1835,6 +1835,8 @@ type TextProps = Props<`h1` | `h2` | `h3` | `h4` | `h5` | `h6` | `p` | `span` | 
     html?: ReactNode | string;
     lines?: number;
     tfx?: TextFxVariant;
+    /** Init delay before animation starts */
+    delay?: number;
     duration?: number;
     stagger?: number;
     repeat?: boolean;
@@ -2100,7 +2102,8 @@ interface SnackProps {
 }
 interface SnackBtn {
     label?: string;
-    onClick?: () => void;
+    hide?: boolean;
+    onClick?: (e: any) => void;
 }
 type SnackPatch = Partial<Omit<ToastProps, 'id' | 'onClose'>>;
 interface SnackController {

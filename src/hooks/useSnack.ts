@@ -20,7 +20,8 @@ interface SnackProps {
 
 interface SnackBtn {
     label?: string;
-    onClick?: () => void;
+    hide?: boolean;
+    onClick?: (e: any) => void;
 }
 
 type SnackPatch = Partial<Omit<ToastProps, 'id' | 'onClose'>>;
@@ -88,8 +89,8 @@ const useSnack = () => {
             actions: [
                 {
                     label: ok?.label || "Ok",
-                    onClick: () => {
-                        ok?.onClick?.();
+                    onClick: (e) => {
+                        ok?.onClick?.(e);
                         hide(id);
                     }
                 }
@@ -110,19 +111,20 @@ const useSnack = () => {
             sticky: true,
             actions: [
                 {
-                    label: cancel?.label || "Cancel",
-                    onClick: () => {
-                        cancel?.onClick?.();
-                        hide(id);
+                    label: ok?.label || "Ok",
+                    onClick: (e: any) => {
+                        ok?.onClick?.(e);
+                        if ( ( ok?.hide ?? false ) === true ) hide(id);
                     }
                 },
                 {
-                    label: ok?.label || "Ok",
-                    onClick: () => {
-                        ok?.onClick?.();
-                        hide(id);
+                    label: cancel?.label || "Cancel",
+                    onClick: (e: any) => {
+                        cancel?.onClick?.(e);
+                        if ( (cancel?.hide ?? true) === true ) hide(id);
                     }
-                }
+                },
+                
             ]
         });
         return toController(id);

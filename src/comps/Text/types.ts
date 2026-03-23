@@ -9,6 +9,8 @@ export type TextProps = Props<`h1` | `h2` | `h3` | `h4` | `h5` | `h6` | `p` | `s
     html?: ReactNode | string;
     lines?: number;
     tfx?: TextFxVariant;
+    /** Init delay before animation starts */
+    delay?: number;
     duration?: number;
     stagger?: number;
     repeat?: boolean;

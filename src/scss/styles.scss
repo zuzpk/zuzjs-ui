@@ -90,6 +90,7 @@ body {
     --stripe-bg-b: #e0e0e0;
     --stripe-overlay-a: rgba(255, 255, 255, 0);
     --stripe-overlay-b: rgba(0, 0, 0, 0.05);
+    interpolate-size: allow-keywords;
 }
 [color-scheme="dark"] {
     body{

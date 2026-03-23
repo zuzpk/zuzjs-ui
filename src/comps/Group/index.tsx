@@ -41,18 +41,30 @@ const Group = forwardRef<HTMLDivElement, GroupProps>((props, ref) => {
                 if ( child.type === Fragment ) return false;
                 const props = child.props || {};
                 const hasFxProp = 'fx' in props;
+                const hasTextFxProp = 'tfx' in props;
                 const className = props.as ? Array.isArray(props.as) ? props.as.join(` `) : props.as : props.className || '';
                 // console.log(`--group`, props.as, props.className)
                 const hasIgnoreClass = typeof className === 'string' && className.includes(_classToIgnore);
-                return !hasFxProp && !hasIgnoreClass;
+                return !hasIgnoreClass && (!hasFxProp || hasTextFxProp);
             },
-            index => ({ fx: {
-                ..._fx,
-                delay: (_fxDelay || 0) + index * (_fxStep || .1), // how to increment per index ?
-                when: when == undefined ? fx?.when || _when : when
-            } })
+            (index, element) => {
+                const groupDelay = (_fxDelay ?? 0) + index * (_fxStep ?? .1)
+                const elementProps = element.props || {}
+
+                if ('tfx' in elementProps) {
+                    return {
+                        delay: (elementProps.delay ?? 0) + groupDelay
+                    }
+                }
+
+                return { fx: {
+                    ..._fx,
+                    delay: groupDelay,
+                    when: when == undefined ? fx?.when || _when : when
+                } }
+            }
         )
-    }, [children, when, _when, _fx])
+    }, [children, when, _when, _fx, _fxDelay, _fxStep, _classToIgnore, fx])
 
     return <Box className={`--group`} ref={ref} {...rest}>
         {Children}
