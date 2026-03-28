@@ -1,12 +1,20 @@
 body{
     --cover-bg: rgba(255,255,255,0.8);
     --cover-label: var(--text-primary);
+    --cover-radius: var(--cover-radius, 0px);
+}
+[color-scheme="dark"]{
+    body{
+        --cover-bg: rgba(0,0,0,0.8);
+        --cover-label: var(--text-primary);
+    }
 }
 .--cover{
     backdrop-filter: blur(4px);
     z-index: 99999;
     gap: 15px;
     pointer-events: auto;
+    border-radius: var(--cover-radius);
     .label{
         font-size: 14px;
         animation: breath 1s linear infinite;

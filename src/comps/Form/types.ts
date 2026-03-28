@@ -32,7 +32,7 @@ export type FormProps = Omit<BoxProps, `ref`> & {
     /** Handler function called on form submission with validated form data */
     onSubmit?: (data: FormData | dynamic, validationResult: ValidationResult) => void;
     /** Callback triggered upon successful form submission */
-    onSuccess?: (data: dynamic) => void;
+    onSuccess?: (data: dynamic, payload?: dynamic) => void;
     /** Callback triggered when form submission encounters an error */
     onError?: (error: any, validationResult: ValidationResult) => void;
     /** Cover properties to display loading or processing message */

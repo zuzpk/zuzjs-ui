@@ -29,7 +29,7 @@ const Avatar = forwardRef<AvatarHandler, AvatarProps>((props, ref) => {
     return <Box
             className={`--avatar --${variant || Variant.Small} --${(type || AVATAR.Circle).toLowerCase()} rel flex aic jcc ${className}`.trim()}
             style={{
-                background: color || `var(--primary)`,
+                background: color || `var(--avatar-bg, var(--primary))`,
                 ...inlineStyle,
                 ...baseStyle,
             }}

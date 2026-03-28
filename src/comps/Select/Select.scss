@@ -51,6 +51,7 @@ body{
     --select-token-label-size-xxl: 16px;
 
     --select-token: var(--select-token-custom, var(--background));
+    --select-token-remove: var(--select-token-remove-custom, var(--select-arrow-color));
     --select-token-remove-hover: var(--select-token-remove-hover-custom, #bbb);
     --select-token-hover: var(--select-token-hover-custom, #bbb);
 
@@ -171,6 +172,9 @@ body{
                 .--token-remove{
                     aspect-ratio: 1/1;
                     line-height: 0;
+                    svg{
+                        fill: var(--select-token-remove);
+                    }
                     &:hover{
                         background: var(--select-token-remove-hover);
                     }

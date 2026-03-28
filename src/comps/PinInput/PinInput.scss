@@ -1,5 +1,7 @@
-:root{
-    --pin-radius: 4px;
+@use "../../scss/variables";
+
+body{
+    --pin-radius: 6px;
     --pin-gap: 4px;
     --pin-shadow: inset 0px 0px 0px 2px #111;
     --pin-padding: 5px;
@@ -9,9 +11,19 @@
     width: 100%;
     gap: var(--pin-gap);
 
+    
+    @each $size in variables.$sizes {
+        &.--#{$size}{
+            --pin-radius: var(--radius-#{$size});
+        }
+    }
+
     .--input{
+        
         text-align: center;
         padding: var(--pin-padding) !important;
+        border: var(--pin-input-border, var(--input-border)) !important;
+
         &:not(:last-child),
         &:not(:first-child){
             border-radius: 0px !important;

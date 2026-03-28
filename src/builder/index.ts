@@ -1,13 +1,12 @@
-import { 
-    Project, 
-    ScriptKind, 
-    SyntaxKind, 
-} from "ts-morph";
-import styleGenerator from "./style-generator";
-import pc from "picocolors"
-import path from "path";
 import fs from "fs";
+import path from "path";
+import {
+    Project,
+    ScriptKind,
+    SyntaxKind,
+} from "ts-morph";
 import { splitAtoms } from "../funs";
+import styleGenerator from "./style-generator";
 
 class Builder {
 

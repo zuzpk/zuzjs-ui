@@ -234,7 +234,7 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
                     .then((res) => {
                         setLoading(false);
                         if (resetOnSuccess) actions?.reset();
-                        onSuccess?.(res);
+                        onSuccess?.(res, { ...withData, ...payload, ...more });
                         if ( !onSuccess ) toast.success(res.message || `Redirecting...`)
                     })
                     .catch(err => {

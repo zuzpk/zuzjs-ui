@@ -1,0 +1,6 @@
+body{
+    --form-padding: 0px;
+}
+.--form{
+    padding: var(--form-padding, 0px);
+}

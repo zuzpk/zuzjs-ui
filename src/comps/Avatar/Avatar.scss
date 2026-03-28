@@ -1,5 +1,11 @@
-:root{
+body{
     --avatar-bg: #fff;
+}
+
+[color-scheme="dark"]{
+    body{
+        --avatar-bg: #fff1;
+    }
 }
 
 .--avatar{

@@ -1,4 +1,5 @@
 "use client"
+import { uuid } from "@zuzjs/core";
 import { forwardRef, ReactNode, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { animationTransition } from "../../funs/css";
 import { useBase } from "../../hooks";
@@ -10,7 +11,6 @@ import Button from "../Button";
 import Cover from "../Cover";
 import Overlay from "../Overlay";
 import { SPINNER } from "../Spinner/types";
-import { uuid } from "@zuzjs/core";
 
 export type SheetProps = ZuzProps & {
     title?: string,
@@ -54,8 +54,8 @@ export interface SheetHandler {
     hide: () => void,
 }
 
-let _sheetTimeout: NodeJS.Timeout | null = null
-let _sheetWobbleTimeout: NodeJS.Timeout | null = null
+let _sheetTimeout: ReturnType<typeof setTimeout> | null = null
+let _sheetWobbleTimeout: ReturnType<typeof setTimeout> | null = null
 
 const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
 
@@ -83,7 +83,7 @@ const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
     const lastTransform = useRef<string | null>(null)
     const [ loading, setLoading ] = useState(false)
     const [ render, setRender ] = useState(true)
-    const _render = useRef<NodeJS.Timeout>(null)
+    const _render = useRef<ReturnType<typeof setTimeout> | null>(null)
 
     const renderMessage = msg //useMemo(() => msg, [msg])
 

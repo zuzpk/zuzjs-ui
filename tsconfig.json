@@ -11,6 +11,7 @@
     "outDir": "dist/cjs",
     "rootDir": "./src",
     "jsx": "react-jsx",
+    "types": ["node", "react", "react-dom"],
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
     "moduleResolution": "bundler",
@@ -18,7 +19,8 @@
     "stripInternal": true,
     "removeComments": false,
     "allowImportingTsExtensions": false,
-    "noEmit": false
+    "noEmit": false,
+    "ignoreDeprecations": "6.0",
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "src/**/_*.*"]

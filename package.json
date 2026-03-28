@@ -1,6 +1,6 @@
 {
   "name": "@zuzjs/ui",
-  "version": "1.0.55",
+  "version": "1.0.56",
   "description": "ZuzJS UI Library",
   "keywords": [
     "react",
@@ -49,6 +49,7 @@
   "dependencies": {
     "@zuzjs/core": "workspace:*",
     "@zuzjs/hooks": "workspace:*",
+    "@zuzjs/logger": "workspace:*",
     "chokidar": "^5.0.0",
     "commander": "^14.0.2",
     "date-fns": "^4.1.0",
@@ -57,7 +58,6 @@
     "md5": "^2.3.0",
     "moment": "^2.30.1",
     "nanoid": "^5.1.6",
-    "picocolors": "^1.1.1",
     "ts-morph": "^27.0.2"
   },
   "peerDependencies": {
@@ -66,9 +66,10 @@
   },
   "devDependencies": {
     "@types/md5": "^2.3.6",
+    "@types/node": "^25.5.0",
     "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",
-    "tsup": "^8.5.1",
-    "npm-run-all": "^4.1.5"
+    "npm-run-all": "^4.1.5",
+    "tsup": "^8.5.1"
   }
 }

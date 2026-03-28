@@ -11,20 +11,30 @@ const __dirname = path.dirname(__filename);
 const packageJsonPath = path.resolve(__dirname, "..", "ui", "package.json");
 const backupPath = path.resolve(__dirname, "..", "ui", "package.json.bak");
 
-/** @zuzjs/core package.json */
-const corePackageJsonPath = path.resolve(__dirname, "..", "core", "package.json");
-const corePack = JSON.parse(fs.readFileSync(corePackageJsonPath, "utf8"));
-
-/** @zuzjs/hooks package.json */
-const hooksPackageJsonPath = path.resolve(__dirname, "..", "hooks", "package.json");
-const hooksPack = JSON.parse(fs.readFileSync(hooksPackageJsonPath, "utf8"));
+const packages = [
+    {
+        id: "core",
+        name: "@zuzjs/core"
+    },
+    {
+        id: "hooks",
+        name: "@zuzjs/hooks"
+    },
+    {
+        id: "logger",
+        name: "@zuzjs/logger"
+    }
+]
 
 /**Backup Package.json to backupPath */
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"))
 fs.writeFileSync(backupPath, JSON.stringify(packageJson, null, 2))
 
-packageJson.dependencies["@zuzjs/core"] = `^${corePack.version}`
-packageJson.dependencies["@zuzjs/hooks"] = `^${hooksPack.version}`
+for(const pack of packages) {
+    const packPath = path.resolve(__dirname, "..", pack.id, "package.json")
+    const packJson = JSON.parse(fs.readFileSync(packPath, "utf8"))
+    packageJson.dependencies[pack.name] = `^${packJson.version}`
+}
 
 delete packageJson.scripts
 delete packageJson.devDependencies

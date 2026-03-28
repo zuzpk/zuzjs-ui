@@ -1,6 +1,8 @@
 "use client"
 import { ChangeEventHandler, forwardRef, useEffect, useRef } from 'react';
 import { useBase } from '../../hooks';
+import { useTheme } from '../../hooks/useColorScheme';
+import { Variant } from '../../types';
 import Box from '../Box';
 import Input from '../Input';
 import { InputProps } from '../Input/types';
@@ -51,6 +53,8 @@ const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
         }
     }
 
+    const { variant: themeVariant } = useTheme(true)!
+    
     useEffect(() => {
         inputs.current = inputs.current.slice(0, size || length);
     }, [size || length]);
@@ -58,7 +62,7 @@ const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
     return <Box 
         name={name}
         style={style}
-        className={`--otp flex aic rel`}
+        className={`--otp --${pops.variant ?? themeVariant ??  Variant.Medium} flex aic rel`}
         data-required={required}
         data-size={size || length || 4}
         {..._with}>

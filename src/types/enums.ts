@@ -106,6 +106,8 @@ export const TRANSITIONS = {
     SlideInTop : "SLIDE_FROM_TOP",
     SlideInRight : "SLIDE_FROM_RIGHT",
     SlideInBottom : "SLIDE_FROM_BOTTOM",
+    SlideInTopScale : "SLIDE_FROM_BOTTOM_SCALE",
+    SlideInBottomScale : "SLIDE_FROM_BOTTOM_SCALE",
     SlideInLeft : "SLIDE_FROM_LEFT",
     
     

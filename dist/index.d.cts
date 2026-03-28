@@ -105,6 +105,8 @@ declare const TRANSITIONS: {
     readonly SlideInTop: "SLIDE_FROM_TOP";
     readonly SlideInRight: "SLIDE_FROM_RIGHT";
     readonly SlideInBottom: "SLIDE_FROM_BOTTOM";
+    readonly SlideInTopScale: "SLIDE_FROM_BOTTOM_SCALE";
+    readonly SlideInBottomScale: "SLIDE_FROM_BOTTOM_SCALE";
     readonly SlideInLeft: "SLIDE_FROM_LEFT";
 };
 declare const Status: {
@@ -1005,7 +1007,7 @@ type FormProps = Omit<BoxProps, `ref`> & {
     /** Handler function called on form submission with validated form data */
     onSubmit?: (data: FormData | dynamic, validationResult: ValidationResult) => void;
     /** Callback triggered upon successful form submission */
-    onSuccess?: (data: dynamic) => void;
+    onSuccess?: (data: dynamic, payload?: dynamic) => void;
     /** Callback triggered when form submission encounters an error */
     onError?: (error: any, validationResult: ValidationResult) => void;
     /** Cover properties to display loading or processing message */

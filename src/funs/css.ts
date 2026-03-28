@@ -162,6 +162,20 @@ export const animationTransition = (transition: ValueOf<typeof TRANSITIONS>, sta
             };
             _to = { '--fx-y': `${idleAmount}px`, opacity: 1 };
             break;
+        case TRANSITIONS.SlideInTopScale:
+        case TRANSITIONS.SlideInBottomScale:
+            const _isTop = transition === TRANSITIONS.SlideInTopScale;
+            _from = { 
+                '--fx-y': _isTop ? `-${moveAmount}px` : `${moveAmount}px`, 
+                scale: 1.1,
+                // opacity: 0.5
+            };
+            _to = { 
+                '--fx-y': `${idleAmount}px`, 
+                scale: 1,
+                // opacity: 1 
+            };
+            break;
 
         case TRANSITIONS.ScaleIn:
             // Scale and Rotate are usually "center-relative" anyway, 

@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-import { program } from "commander";
+import { colors } from "@zuzjs/logger";
 import chokidar from 'chokidar';
+import { program } from "commander";
+import fs from "fs";
 import path, { basename } from "path";
-import pc from "picocolors";
-import fs, { readdirSync, statSync } from "fs"
-import builder from "./builder"
+import { fileURLToPath } from "url";
+import builder from "./builder";
 import styleGenerator from "./builder/style-generator";
 import { cssDirect, cssProps } from "./builder/stylesheet";
 import { dynamic } from "./types/shared";
-import { fileURLToPath } from "url";
 
 const options = program.opts();
 const cwd = process.cwd();
@@ -39,8 +39,8 @@ const checkUpdate = async () => {
 
         if (latest !== pkg.version.trim()) {
 
-            const line1 = `  Update available! ${pc.dim(pkg.version)} → ${pc.green(latest)}  `;
-            const line2 = `  Run: ${pc.cyan(`npm i ${pkg.name}@latest`)}  `;
+            const line1 = `  Update available! ${colors.dim(pkg.version)} → ${colors.green(latest)}  `;
+            const line2 = `  Run: ${colors.cyan(`npm i ${pkg.name}@latest`)}  `;
 
             const getVisibleLength = (str: string) => 
                 str.replace(/\u001b\[[0-9;]*m/g, '').length;
@@ -49,12 +49,12 @@ const checkUpdate = async () => {
             const len2 = getVisibleLength(line2);
             const contentLen = Math.max(len1, len2);
 
-            const top = pc.yellow(`┌${"─".repeat(contentLen + 2)}┐`);
-            const bottom = pc.yellow(`└${"─".repeat(contentLen + 2)}┘`);
+            const top = colors.yellow(`┌${"─".repeat(contentLen + 2)}┐`);
+            const bottom = colors.yellow(`└${"─".repeat(contentLen + 2)}┘`);
             
             const padLine = (line: string, len: number) => {
                 const padding = " ".repeat(contentLen - len);
-                return `${pc.yellow("│")} ${line}${padding} ${pc.yellow("│")}`;
+                return `${colors.yellow("│")} ${line}${padding} ${colors.yellow("│")}`;
             };
 
             console.log(`\n${top}`);
@@ -130,9 +130,9 @@ program
         fs.writeFileSync(snippetPath, JSON.stringify(snippetContent, null, 2));
         fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
 
-        console.log(pc.green('✔ Zuz VS Code configuration initialized!'));
-        console.log(pc.cyan('  - .vscode/zuz.code-snippets (Splitted zp/zs)'));
-        console.log(pc.cyan('  - .vscode/settings.json (QuickSuggestions enabled)'));
+        console.log(colors.green('✔ Zuz VS Code configuration initialized!'));
+        console.log(colors.cyan('  - .vscode/zuz.code-snippets (Splitted zp/zs)'));
+        console.log(colors.cyan('  - .vscode/settings.json (QuickSuggestions enabled)'));
         
     });
 
@@ -163,12 +163,12 @@ program
             if ( builder.isSupportedFile(filePath) ) {
                 builder.processFile(path.resolve(cwd, filePath));
             }
-            if ( isReady ) console.log(pc.gray(`○ File added: ${filePath}`));
+            if ( isReady ) console.log(colors.gray(`○ File added: ${filePath}`));
         });
 
         watcher.on('change', filePath => {
             if ( builder.isSupportedFile(filePath) ) {
-                console.log(pc.gray(`○ File changed: ${filePath}`));
+                console.log(colors.gray(`○ File changed: ${filePath}`));
 
                 const fullPath = path.resolve(cwd, filePath);
                 styleGenerator.clearFileCache(fullPath)
@@ -177,7 +177,7 @@ program
 
                 writeFiles()
 
-                console.log(pc.blue('⚡ Zuz CSS updated.'));
+                console.log(colors.blue('⚡ Zuz CSS updated.'));
             }
         });
 
@@ -187,14 +187,14 @@ program
             
             writeFiles()
 
-            console.log(pc.green(`\n✓ Initial Build Complete.`));
-            console.log(pc.cyan(`○ Watching: ${basename(cwd)}\n`));
+            console.log(colors.green(`\n✓ Initial Build Complete.`));
+            console.log(colors.cyan(`○ Watching: ${basename(cwd)}\n`));
 
-            // console.log(pc.yellow(`○ Total unique utility classes identified: ${builder.getStyleCount()}`));
+            // console.log(colors.yellow(`○ Total unique utility classes identified: ${builder.getStyleCount()}`));
 
         });
 
-        watcher.on('error', error => console.error(pc.red(`Watcher Error: ${error}`)));
+        watcher.on('error', error => console.error(colors.red(`Watcher Error: ${error}`)));
     });
 
 program.parse(process.argv)
