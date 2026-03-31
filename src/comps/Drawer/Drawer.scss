@@ -1,13 +1,14 @@
 body{
     --drawer-color: var(--surface);
     --drawer-handle-color: var(--muted);
-    --drawer-radius-v: 0px;
-    --drawer-radius-h: 0px;
+    --drawer-radius: 0px;
     --drawer-shadow: var(--zuz-shadow);
     --drawer-close-bg: var(--manatee-100);
     --drawer-close-color: var(--manatee-800);
     --drawer-close-bg-hover: var(--manatee-900);
     --drawer-close-color-hover: #fff;
+    --drawer-border-color: var(--border-primary);
+    --drawer-border: 1px var(--drawer-border-color) solid;
 }
 
 [color-scheme="dark"] {
@@ -24,14 +25,14 @@ body{
     max-width: 90vw;
     top: calc(0px + var(--m));
     bottom: calc(0px + var(--m));
-    border-radius: var(--drawer-radius-h);
+    border-radius: var(--drawer-radius-h, var(--drawer-radius));
 }
 .drawer-v{
     min-height: 10vh;
     max-height: 90vh;
     left: calc(0px + var(--m));
     right: calc(0px + var(--m));
-    border-radius: var(--drawer-radius-v);
+    border-radius: var(--drawer-radius-v, var(--drawer-radius));
 }
 .--drawer{
     background: var(--drawer-color);

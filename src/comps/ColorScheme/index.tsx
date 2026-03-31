@@ -1,18 +1,18 @@
 "use client"
+import { useDelayed } from "@zuzjs/hooks";
 import { forwardRef, useCallback, useMemo } from "react";
-import { useColorScheme } from "../../hooks/useColorScheme";
+import useBase from "../../hooks/useBase";
+import { useColorScheme, useTheme } from "../../hooks/useColorScheme";
+import { ValueOf } from "../../types";
+import { COLORTHEME } from "../../types/enums";
+import Button from "../Button";
 import Segmented from "../Segmented";
 import SVGIcons from "../svgicons";
 import { ColorSchemeProps } from "./types";
-import { useDelayed } from "@zuzjs/hooks";
-import useBase from "../../hooks/useBase";
-import Button from "../Button";
-import { COLORTHEME, Variant } from "../../types/enums";
-import { ValueOf } from "../../types";
 
 const ColorScheme = forwardRef<HTMLDivElement, ColorSchemeProps>((props, ref) => {
 
-    const { type, ...pops } = props
+    const { type, variant, ...pops } = props
     const mounted = useDelayed()
     const { 
         colorScheme, 
@@ -26,6 +26,8 @@ const ColorScheme = forwardRef<HTMLDivElement, ColorSchemeProps>((props, ref) =>
             : `dark`            
         )
     }, [colorScheme])
+
+    const { variant: themeVariant } = useTheme(true)!
 
     const { className, style } = useBase(pops)
 
@@ -56,7 +58,8 @@ const ColorScheme = forwardRef<HTMLDivElement, ColorSchemeProps>((props, ref) =>
     /> : <Button 
         onClick={loopSchemes}
         style={style}
-        as={`--color-scheme-switch --${pops.variant || Variant.Small} ${className}`.trim()}>{
+        variant={variant}
+        as={`--color-scheme-switch ${className}`.trim()}>{
         colorScheme == `system` ? SVGIcons.colorSchemeSystem
         : colorScheme == `light` ? SVGIcons.colorSchemeLight 
         : SVGIcons.colorSchemeDark

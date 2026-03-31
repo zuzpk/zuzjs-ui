@@ -295,6 +295,7 @@ const Select = ({
             ref={_ref}
             disabled={disabled}
             // If value is null, data-value becomes -1 for CSS styling
+            variant={variant || themeVariant}
             data-value={_currentOption?.value ?? `-1`}
             className={`--select-display --selected flex aic rel ${className}`.trim()}
             withLabel={false}

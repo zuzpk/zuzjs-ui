@@ -3,8 +3,8 @@
 
 body{
 
-    --search-color: var(--gray-100);
-    --search-send-color: #111;
+    --search-color: var(--surface);
+    --search-send-color: var(--text-primary);
     --search-send-bg: transparent;
     --search-send-border: 0px;
     
@@ -15,13 +15,9 @@ body{
     --search-send-size-xl: 42px;
     --search-send-size-xxl: 48px;
 
-}
+    --search-border-color: var(--border-primary);
+    --search-border: 1px var(--search-border-color) solid;
 
-[color-scheme="dark"] {
-    body{
-        --search-send-color: #fff;
-        --search-color: #444;
-    }
 }
 
 .--search{
@@ -59,7 +55,7 @@ body{
 
             .--send {
                 flex-shrink: 0;
-                width: calc(var(--search-send-size-#{$size}) * 1.65);
+                width: calc(var(--search-send-size-#{$size}) * 1.5);
                 height: 100%; // Force it to fill the height of the search bar
                 // aspect-ratio: 1 / 1; // Ensure it stays a consistent shape
                 background: transparent;

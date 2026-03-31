@@ -231,13 +231,13 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
             startTransition(async () => {
                 setLoading(true);
                 withPost(action, { ...withData, ...payload, ...more })
-                    .then((res) => {
+                    .then((res: dynamic) => {
                         setLoading(false);
                         if (resetOnSuccess) actions?.reset();
                         onSuccess?.(res, { ...withData, ...payload, ...more });
                         if ( !onSuccess ) toast.success(res.message || `Redirecting...`)
                     })
-                    .catch(err => {
+                    .catch((err: any) => {
                         setLoading(false);
                         onError ? onError(err) : toast.error(err.message);
                     });
