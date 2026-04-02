@@ -5,6 +5,24 @@ import Box from "../Box";
 import Span from "../Span";
 import { isKeyCombination, KeyboardKey, KeyboardKeyProps, KeysLabelMap, KeysMap } from "./types";
 
+/**
+ * KeyboardKeys component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <KeyboardKeys keys={["Ctrl", "K"]} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <KeyboardKeys keys={["Cmd", "Shift", "P"]} size="sm" variant="dark" />
+ * ```
+ * @param keys - keys prop
+ * @param size - Component size
+ * @param variant - Visual variant or style
+ */
 const KeyBoardKeys = forwardRef<HTMLDivElement, KeyboardKeyProps>(({
     children,
     keys,

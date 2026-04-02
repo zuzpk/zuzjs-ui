@@ -11,6 +11,24 @@ import { TabViewHandler, TabViewProps } from "./types";
 
 
 // const TabView = forwardRef<TabViewHandler, TabViewProps>((props, ref) => {
+/**
+ * TabView component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <TabView tabs={[{ label: "Tab 1", content: "Content 1" }]} onChange={(active) => console.log(active)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <TabView tabs={[{ label: "Tab 1", content: "Content 1" }, { label: "Tab 2", content: "Content 2" }]} defaultActive={0} />
+ * ```
+ * @param tabs - tabs prop
+ * @param onChange - Callback function triggered when value changes
+ * @param defaultActive - defaultActive prop
+ */
 const TabView = ({
     ref,
     ...props

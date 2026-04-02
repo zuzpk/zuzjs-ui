@@ -10,6 +10,25 @@ import { BoxProps } from "../../types";
 import ProgressBar from "../ProgressBar";
 import Image from "../Image";
 
+/**
+ * ChatBubble component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <ChatBubble message="Hello! How can I help?" sender="assistant" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <ChatBubble message="I need help with my order" sender="user" timestamp={new Date()} avatar="user-icon" />
+ * ```
+ * @param message - Message text or element
+ * @param sender - sender prop
+ * @param timestamp - timestamp prop
+ * @param avatar - avatar prop
+ */
 const Bubble = forwardRef<HTMLDivElement, BubbleProps>((props, ref) => {
 
     const { 

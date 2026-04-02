@@ -8,6 +8,27 @@ import Spinner from '../Spinner';
 import { SPINNER } from '../Spinner/types';
 import { ButtonProps, ButtonState } from './types';
 
+/**
+ * Button component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Button onClick={() => console.log("clicked")}>Click me</Button>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Button kind="solid" variant="primary" icon="check" state="loading" spinner="simple">Save Changes</Button>
+ * ```
+ * @param onClick - Callback function triggered on click
+ * @param kind - kind prop
+ * @param variant - Visual variant or style
+ * @param icon - Icon identifier
+ * @param state - state prop
+ * @param spinner - spinner prop
+ */
 const Button = ({ ref, ...props} : ButtonProps) => {
 
     const { 

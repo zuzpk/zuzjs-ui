@@ -10,6 +10,25 @@ import Span from "../Span";
 import SVGIcons from "../svgicons";
 import { DatePickerProps } from "./types";
 
+/**
+ * DatePicker component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <DatePicker onChange={(date) => console.log(date)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <DatePicker onChange={(date) => console.log(date)} selected={new Date()} format="MM/dd/yyyy" disabled={false} />
+ * ```
+ * @param onChange - Callback function triggered when value changes
+ * @param selected - Currently selected item/date
+ * @param format - format prop
+ * @param disabled - Whether component is disabled
+ */
 const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) => {
 
     const { icon, defaultValue, value, size, variant, numeric, type, onConfirm, ...pops } = props

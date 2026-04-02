@@ -16,6 +16,26 @@ import DialogFooter from "./footer"
 import DialogHead from "./head"
 import { DialogActionHandler, DialogHandler, DialogProps } from "./types"
 
+/**
+ * Dialog component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Dialog title="Confirm" message="Are you sure?" action={[{ label: "OK" }, { label: "Cancel" }]} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Dialog title="Save Changes?" message="Your edits will be lost" type="warning" action={[{ label: "Save", handler: () => {} }, { label: "Discard" }]} onShow={() => console.log("shown")} />
+ * ```
+ * @param title - Title text or element
+ * @param message - Message text or element
+ * @param type - Component or input type
+ * @param action - action prop
+ * @param onShow - Callback function triggered when showing
+ */
 const Dialog = ({
     ref,
     ...props

@@ -4,6 +4,24 @@ import { useBase } from "../../hooks";
 import Box from "../Box";
 import { ScrollViewProps } from "./types";
 
+/**
+ * ScrollView component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <ScrollView><div>Scrollable content here</div></ScrollView>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <ScrollView direction="vertical" scrollbar="auto" onScroll={(pos) => console.log(pos)}>Long content</ScrollView>
+ * ```
+ * @param direction - direction prop
+ * @param scrollbar - scrollbar prop
+ * @param onScroll - Callback function triggered on scroll
+ */
 const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
 
     const { 

@@ -6,6 +6,23 @@ import Text from "../Text";
 import { NetworkManagerprops } from "./types";
 import { useNetworkStatus } from "@zuzjs/hooks";
 
+/**
+ * Network component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Network nodes={[{ id: "1", label: "Node 1" }]} links={[]} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Network nodes={[{ id: "1", label: "A" }, { id: "2", label: "B" }]} links={[{ source: "1", target: "2" }]} />
+ * ```
+ * @param nodes - Tree node definitions
+ * @param links - Links between nodes
+ */
 const NetworkManager = forwardRef<HTMLDivElement, NetworkManagerprops>((props, ref) => {
 
     const isOnline = useNetworkStatus()

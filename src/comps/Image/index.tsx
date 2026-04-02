@@ -4,6 +4,26 @@ import { Props } from '../../types';
 
 export type ImageProps = Props<`img`> & {}
 
+/**
+ * Image component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Image src="https://example.com/image.jpg" alt="Description" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Image src="https://example.com/image.jpg" alt="Product" width="300px" height="auto" objectFit="cover" />
+ * ```
+ * @param src - Source URL
+ * @param alt - Alt text
+ * @param width - width prop
+ * @param height - height prop
+ * @param objectFit - objectFit prop
+ */
 const Image = forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
 
     const innerRef = useRef<HTMLImageElement>(null)

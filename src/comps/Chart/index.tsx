@@ -6,6 +6,26 @@ import { CHART, ChartProps } from "./types";
 import { useLineChart, UseLineChartDimensions, useResizeObserver } from "@zuzjs/hooks";
 import { BoxProps } from "../../types";
 
+/**
+ * Chart component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Chart type="line" data={[{ x: "Jan", y: 10 }, { x: "Feb", y: 20 }]} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Chart type="bar" data={[{ x: "Q1", y: 100 }, { x: "Q2", y: 150 }]} xKey="x" yKey="y" title="Quarterly Revenue" />
+ * ```
+ * @param type - Component or input type
+ * @param data - Data for visualization
+ * @param xKey - xKey prop
+ * @param yKey - yKey prop
+ * @param title - Title text or element
+ */
 const Chart = forwardRef<HTMLDivElement, ChartProps>((props, ref) => {
 
     const { 

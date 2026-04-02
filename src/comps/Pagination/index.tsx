@@ -9,6 +9,25 @@ import { ProgressHandler } from "../ProgressBar/types";
 import SVGIcons from "../svgicons";
 import { PaginationController, PaginationPage, PaginationPageItem, PaginationProps, PaginationStyle } from "./types";
 
+/**
+ * Pagination component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Pagination total={100} pageSize={10} onChange={(page) => console.log(page)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Pagination total={250} pageSize={50} defaultPage={1} onChange={(page) => console.log(page)} />
+ * ```
+ * @param total - total prop
+ * @param pageSize - pageSize prop
+ * @param onChange - Callback function triggered when value changes
+ * @param defaultPage - defaultPage prop
+ */
 const Pagination = ({
     ref,
     ...props

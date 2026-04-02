@@ -12,6 +12,25 @@ import Text from "../Text";
 import { ToastDefaultTitle, ToastPosition, ToastProps, ToastStyle, ToastType } from "./types";
 
 // const Toast: FC<ToastProps & { index: number; total: number; isHovered: boolean; forceClose?: boolean }> = (props) => {
+/**
+ * Toast component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Toast message="Operation successful" type="success" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Toast message="Error occurred" type="error" duration={5000} action={{ label: "Retry", onClick: () => {} }} />
+ * ```
+ * @param message - Message text or element
+ * @param type - Component or input type
+ * @param duration - duration prop
+ * @param action - action prop
+ */
 const Toast : FC<ToastProps & {
     index: number;
     total: number;

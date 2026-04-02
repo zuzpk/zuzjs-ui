@@ -9,6 +9,26 @@ import ToolTip from "../Tooltip";
 import { ToolTipController } from "../Tooltip/types";
 import { SliderProps } from "./types";
 
+/**
+ * Slider component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Slider value={50} onChange={(val) => console.log(val)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Slider value={50} min={0} max={100} step={5} onChange={(val) => console.log(val)} />
+ * ```
+ * @param value - Current value
+ * @param min - min prop
+ * @param max - max prop
+ * @param step - step prop
+ * @param onChange - Callback function triggered when value changes
+ */
 const Slider = ({
     ref, 
     ...props

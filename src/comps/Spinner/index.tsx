@@ -4,6 +4,24 @@ import { Variant, type BoxProps } from "../../types";
 import Box from "../Box";
 import { SPINNER, SpinnerProps } from "./types";
 
+/**
+ * Spinner component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Spinner />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Spinner type="dots" variant="primary" size="lg" />
+ * ```
+ * @param type - Component or input type
+ * @param variant - Visual variant or style
+ * @param size - Component size
+ */
 const Spinner = (props : SpinnerProps) => {
 
     const { type, variant, color, ...pops } = props;

@@ -12,6 +12,24 @@ export type GroupProps = BoxProps & {
     classToIgnore?: string
 }
 
+/**
+ * Group component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Group>Group content</Group>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Group spacing="md" variant="card" direction="vertical">Grouped elements</Group>
+ * ```
+ * @param spacing - spacing prop
+ * @param variant - Visual variant or style
+ * @param direction - direction prop
+ */
 const Group = forwardRef<HTMLDivElement, GroupProps>((props, ref) => {
 
     const { 

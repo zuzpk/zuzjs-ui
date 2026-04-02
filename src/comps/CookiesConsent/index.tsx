@@ -6,6 +6,26 @@ import Button from "../Button";
 import Text from "../Text";
 import { CookieConsentProps } from "./types";
 
+/**
+ * CookiesConsent component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <CookiesConsent message="We use cookies to enhance your experience" onAccept={() => console.log("accepted")} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <CookiesConsent title="Cookie Policy" message="Help us improve..." acceptLabel="I agree" rejectLabel="Decline" onAccept={() => {}} onReject={() => {}} />
+ * ```
+ * @param message - Message text or element
+ * @param onAccept - onAccept prop
+ * @param title - Title text or element
+ * @param acceptLabel - acceptLabel prop
+ * @param rejectLabel - rejectLabel prop
+ */
 const CookiesConsent = forwardRef<HTMLDivElement, CookieConsentProps>((props, ref) => {
 
     const [ accepted, setAccepted ] = useState<`pending` | `accepted` | `rejected` | `wait`>(`wait`)

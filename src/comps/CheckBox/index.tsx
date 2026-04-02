@@ -9,6 +9,25 @@ import Label, { LabelProps } from "../Label";
 import SVGIcons from "../svgicons";
 import { CheckboxHandler, CheckBoxProps } from "./types";
 
+/**
+ * CheckBox component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <CheckBox label="I agree" onChange={(checked) => console.log(checked)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <CheckBox label="Remember me" defaultChecked={true} disabled={false} variant="primary" />
+ * ```
+ * @param label - Label text for the component
+ * @param onChange - Callback function triggered when value changes
+ * @param defaultChecked - Whether component is checked by default
+ * @param variant - Visual variant or style
+ */
 const CheckBox = ({
     ref,
     ...props

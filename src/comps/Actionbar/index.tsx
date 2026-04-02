@@ -9,17 +9,20 @@ import { BoxProps } from "../../types";
 
 
 /**
- * ActionBar renders a list of buttons with tooltips.
- * 
+ * Actionbar component.
+ *
  * @example
+ * // Basic usage
  * ```tsx
- * const items = [
- *   { label: 'Edit', icon: <EditIcon />, onClick: () => console.log('Edit clicked') },
- *   { label: 'Delete', icon: <DeleteIcon />, onClick: () => console.log('Delete clicked') }
- * ];
- * 
- * <ActionBar items={items} />
+ * <Actionbar />
  * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Actionbar sticky={true} />
+ * ```
+ * @param sticky - sticky prop
  */
 const ActionBar = forwardRef<ActionBarHandler, ActionBarProps>((props, ref) => {
 

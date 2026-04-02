@@ -8,6 +8,25 @@ import { useForm } from '../Form/context';
 import CommandBox from "./commands";
 import { TextAreaProps } from "./types";
 
+/**
+ * TextArea component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <TextArea placeholder="Enter message..." onChange={(e) => console.log(e.target.value)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <TextArea placeholder="Description..." rows={5} maxLength={500} onChange={(e) => console.log(e.target.value)} />
+ * ```
+ * @param placeholder - Placeholder text
+ * @param onChange - Callback function triggered when value changes
+ * @param rows - Array of row data
+ * @param maxLength - maxLength prop
+ */
 const TextArea = ({
   ref,
   ...props

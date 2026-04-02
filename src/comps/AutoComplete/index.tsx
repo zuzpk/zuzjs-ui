@@ -11,6 +11,25 @@ import SVGIcons from "../svgicons";
 import { AutoCompleteProps } from "./types";
 import { useDebounce } from "@zuzjs/hooks";
 
+/**
+ * AutoComplete component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <AutoComplete options={["Apple", "Banana", "Cherry"]} placeholder="Search fruits..." />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <AutoComplete options={["Apple", "Banana", "Cherry"]} onSelect={(item) => console.log(item)} renderOption={(opt) => <span>{opt}</span>} />
+ * ```
+ * @param options - Array of available options
+ * @param placeholder - Placeholder text
+ * @param onSelect - Callback function triggered on selection
+ * @param renderOption - renderOption prop
+ */
 const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) => {
 
     const { fx, action, data, withStyle, onChange, ...pops } = props

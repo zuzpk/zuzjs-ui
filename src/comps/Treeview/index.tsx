@@ -5,6 +5,25 @@ import TreeItem from "./item";
 import { TreeViewHandler, TreeViewProps } from "./types";
 
 
+/**
+ * TreeView component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Treeview roots={["root"]} nodes={[{ tag: "root", label: "Root", isHead: true }]} onNodeSelect={(tag) => console.log(tag)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Treeview roots={["root"]} nodes={[{ tag: "root", label: "Root", isHead: true, expanded: true }, { tag: "child", label: "Child", under: "root" }]} selected="root" onNodeSelect={(tag) => console.log(tag)} />
+ * ```
+ * @param roots - Root node identifiers
+ * @param nodes - Tree node definitions
+ * @param onNodeSelect - Callback function triggered on node selection
+ * @param selected - Currently selected item/date
+ */
 const TreeView = forwardRef<TreeViewHandler, TreeViewProps>((props, ref) => {
 
     const { as, nodes, onNodeSelect, tag: treeViewTag, icons, roots, selected: _selected, ...rest } = props

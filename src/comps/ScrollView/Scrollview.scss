@@ -20,12 +20,15 @@ body{
     width: 100%;
     height: 100%;
     overflow: hidden;
+    min-height: 0;
     
     .--scroll-content{
         width: 100%;
         height: 100%;
         padding: var(--scrollbar-content-padding);
         -webkit-overflow-scrolling: touch; 
+        min-height: 0; 
+        min-width: 0;
         // scroll-behavior: smooth;         /* smooth scrolling on scrollTo() */
         scroll-snap-type: none;          /* optional, unless you want snapping */
         overscroll-behavior: contain;    /* already added — great! */

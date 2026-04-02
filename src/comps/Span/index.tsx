@@ -2,6 +2,23 @@
 import { useBase } from '../../hooks';
 import { SpanProps } from './types';
 
+/**
+ * Span component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Span>Text span</Span>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Span variant="muted" size="sm">Secondary text</Span>
+ * ```
+ * @param variant - Visual variant or style
+ * @param size - Component size
+ */
 const Span = ({ 
     ref, 
     ...props 

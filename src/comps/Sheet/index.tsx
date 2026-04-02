@@ -57,6 +57,26 @@ export interface SheetHandler {
 let _sheetTimeout: ReturnType<typeof setTimeout> | null = null
 let _sheetWobbleTimeout: ReturnType<typeof setTimeout> | null = null
 
+/**
+ * Sheet component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Sheet isOpen={true} onClose={() => setOpen(false)}>Content here</Sheet>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Sheet isOpen={true} onClose={() => setOpen(false)} position="bottom" size="md" backdrop>Bottom sheet</Sheet>
+ * ```
+ * @param isOpen - Whether sheet is open
+ * @param onClose - Callback function triggered when closing
+ * @param position - position prop
+ * @param size - Component size
+ * @param backdrop - backdrop prop
+ */
 const Sheet = forwardRef<SheetHandler, SheetProps>((props, ref) => {
 
     const { 

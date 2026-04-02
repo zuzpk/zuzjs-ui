@@ -19,6 +19,25 @@ export type CoverProps = BoxProps & {
     hideMessage?: boolean
 }
 
+/**
+ * Cover component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Cover src="https://example.com/image.jpg" alt="Cover image" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Cover src="https://example.com/image.jpg" alt="Cover" objectFit="cover" height="400px" />
+ * ```
+ * @param src - Source URL
+ * @param alt - Alt text
+ * @param objectFit - objectFit prop
+ * @param height - height prop
+ */
 const Cover = forwardRef<HTMLDivElement, CoverProps >((props, ref) => {
 
     const { message, spinner, spinnerSize, color, when, hideMessage, ...pops } = props;

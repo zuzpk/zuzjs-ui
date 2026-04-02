@@ -13,59 +13,24 @@ import TRow from "./row";
 import type { Column, TableController, TableProps, TableSortCallback } from "./types";
 
 /**
- * `Table` is a highly flexible and customizable generic component for rendering data in a tabular format.
- *
- * This component supports features such as:
- * - Dynamic column schema and row data.
- * - Sortable and selectable rows.
- * - Optional pagination with custom control.
- * - Row-level animation and hover states.
- * - Loading placeholders and spinners.
- * - Context menu support for rows.
- *
- * @template T - The shape of the row data object.
- *
- * @param props - The props for configuring the table behavior and appearance.
- * @param props.schema - Column definitions used to render the table header and body.
- * @param props.rows - The array of row data to display.
- * @param props.rowCount - Optional total row count for server-side pagination.
- * @param props.rowsPerPage - Number of rows shown per page.
- * @param props.currentPage - Current page index (for pagination control).
- * @param props.pagination - Whether pagination is enabled.
- * @param props.paginationHash - A value to force pagination re-render.
- * @param props.showPaginationOnZeroPageCount - Show pagination controls even with 0 rows.
- * @param props.animateRows - Whether to animate rows on render/update.
- * @param props.header - Whether to show the header row.
- * @param props.rowClassName - CSS class name to apply to each row.
- * @param props.selectableRows - Whether rows are selectable.
- * @param props.hoverable - Whether rows should show hover styles.
- * @param props.sortBy - Default column key to sort rows.
- * @param props.loading - Enables loading state with placeholder rows and spinner.
- * @param props.loadingRowCount - Number of placeholder rows to render during loading.
- * @param props.loadingMessage - Optional loading text to show next to spinner.
- * @param props.spinner - Spinner type to use when loading.
- * @param props.onSort - Callback when a column header triggers sorting.
- * @param props.onRowSelectToggle - Callback when a row’s selected state changes.
- * @param props.onPageChange - Callback when pagination state changes.
- * @param props.onRowContextMenu - Callback when a row is right-clicked.
- * @param props.className - Additional class names to apply to the root table container.
- * @param props.style - Inline styles to apply to the root table container.
- *
- * @returns The rendered table component.
+ * Table component.
  *
  * @example
+ * // Basic usage
  * ```tsx
- * <Table
- *   schema={[
- *     { id: 'name', value: 'Name', sortable: true },
- *     { id: 'email', value: 'Email' },
- *   ]}
- *   rows={[{ name: 'Kamran', email: 'kamran@example.com' }]}
- *   selectableRows
- *   pagination
- *   loading={false}
- * />
+ * <Table schema={[{ id: "name", value: "Name" }]} rows={[{ name: "Jane Doe" }]} rowsPerPage={10} />
  * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Table schema={[{ id: "id", value: "ID" }, { id: "name", value: "Name" }]} rows={[{ id: 1, name: "Jane" }]} sortable filterable rowsPerPage={20} />
+ * ```
+ * @param schema - schema prop
+ * @param rows - Array of row data
+ * @param rowsPerPage - rowsPerPage prop
+ * @param sortable - sortable prop
+ * @param filterable - filterable prop
  */
 const Table = <T, >(props: TableProps<T>, ref: Ref<TableController>) => {
 
@@ -231,6 +196,21 @@ const Table = <T, >(props: TableProps<T>, ref: Ref<TableController>) => {
 
 Table.displayName = `Zuz.Table`
 
+/**
+ * Table component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Table schema={[{ id: "name", value: "Name" }]} rows={[{ name: "Jane Doe" }]} rowsPerPage={10} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Table schema={[{ id: "id", value: "ID" }, { id: "name", value: "Name" }]} rows={[{ id: 1, name: "Jane" }]} sortable filterable rowsPerPage={20} />
+ * ```
+ */
 const ForwardedTable = forwardRef(Table) as <T>(props: TableProps<T> & { ref?: Ref<TableController> }) => JSX.Element
 
 export default ForwardedTable

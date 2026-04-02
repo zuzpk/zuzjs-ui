@@ -6,6 +6,26 @@ import { useTheme } from '../../hooks/useColorScheme';
 import { useForm } from '../Form/context';
 import { InputProps } from './types';
 
+/**
+ * Input component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Input placeholder="Enter text..." onChange={(e) => console.log(e.target.value)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Input placeholder="Email" type="email" variant="primary" disabled={false} onConfirm={(value) => console.log(value)} />
+ * ```
+ * @param placeholder - Placeholder text
+ * @param onChange - Callback function triggered when value changes
+ * @param type - Component or input type
+ * @param variant - Visual variant or style
+ * @param onConfirm - Callback function triggered on confirmation
+ */
 const Input = ({ ref, ...props } : InputProps) => {
 
     const { 

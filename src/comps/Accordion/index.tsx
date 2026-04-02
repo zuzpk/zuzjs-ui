@@ -6,6 +6,25 @@ import Text from "../Text";
 import SVGIcons from "../svgicons";
 import { AccordionHandler, AccordionProps } from "./types";
 
+/**
+ * Accordion component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Accordion title="Account" message="Manage your profile and security" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Accordion title="Settings" message="Configure preferences" variant="sm" disabled={false} />
+ * ```
+ * @param title - Title text or element
+ * @param message - Message text or element
+ * @param variant - Visual variant or style
+ * @param disabled - Whether component is disabled
+ */
 const Accordion = forwardRef<AccordionHandler, AccordionProps>((props, ref) => {
     
     const { title, message, ...rest } = props;

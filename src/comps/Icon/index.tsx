@@ -5,6 +5,24 @@ import { Variant } from "../../types/enums";
 import Span from "../Span";
 import { IconProps } from "./types";
 
+/**
+ * Icon component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Icon name="star" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Icon name="star" variant="lg" color="gold" />
+ * ```
+ * @param name - name prop
+ * @param variant - Visual variant or style
+ * @param color - color prop
+ */
 const Icon = forwardRef<HTMLDivElement, IconProps>((props, ref) => {
 
     const { name, pathCount, variant, color, size, ...pops } = props;

@@ -7,6 +7,25 @@ import Box from "../Box";
 import Text from "../Text";
 import { ToolTipController, ToolTipProps } from "./types";
 
+/**
+ * Tooltip component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Tooltip content="Helpful text">Hover me</Tooltip>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Tooltip content="Full description here" position="top" delay={200} variant="dark">Information icon</Tooltip>
+ * ```
+ * @param content - Content text or element
+ * @param position - position prop
+ * @param delay - delay prop
+ * @param variant - Visual variant or style
+ */
 const ToolTip = ({
     ref,
     ...props

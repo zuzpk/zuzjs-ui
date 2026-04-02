@@ -17,6 +17,24 @@ export type BadgeProps = BoxProps & {
     spinner?: ValueOf<typeof SPINNER>,
 }
 
+/**
+ * Badge component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Badge>New</Badge>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Badge variant="error" size="lg" icon="star">Premium</Badge>
+ * ```
+ * @param variant - Visual variant or style
+ * @param size - Component size
+ * @param icon - Icon identifier
+ */
 const Badge : React.FC<BadgeProps> = ({ 
     size = 5, 
     type = `dead`,

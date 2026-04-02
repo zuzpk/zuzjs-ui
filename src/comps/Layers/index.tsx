@@ -177,6 +177,23 @@ const LayersRenderer = ({
 
 }
 
+/**
+ * Layers component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Layers>Content with layering</Layers>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Layers zIndex={10} opacity={0.9}>Stacked content</Layers>
+ * ```
+ * @param zIndex - Z-index stacking order
+ * @param opacity - Opacity level (0-1)
+ */
 const LayersProvider : FC<{
     children: ReactNode
 }> = ({

@@ -4,6 +4,23 @@ import Box from '../Box';
 import Span from '../Span';
 import { TextWheelHandler, TextWheelProps } from './types';
 
+/**
+ * TextWheel component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <TextWheel items={["Option 1", "Option 2", "Option 3"]} onChange={(selected) => console.log(selected)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <TextWheel items={[{ label: "Red", value: "red" }, { label: "Blue", value: "blue" }]} onChange={(val) => console.log(val)} />
+ * ```
+ * @param items - Array of items
+ * @param onChange - Callback function triggered when value changes
+ */
 const TextWheel = forwardRef<TextWheelHandler, TextWheelProps>((props, ref) => {
 
     const { as, value, color, direction, ...rest } = props

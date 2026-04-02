@@ -51,9 +51,9 @@ body{
         .--segment-item{
             padding: var(--tab-padding) !important;
             color: var(--tab-label-color);
-            background: var(--muted);
+            background: var(--tab-background, var(--muted));
             &:hover{
-                background: var(--muted-hover);
+                background: var(--tab-background-hover, var(--muted-hover));
             }
             .--segment-label{
                 font-weight: var(--tab-label-weight) !important;
@@ -61,9 +61,9 @@ body{
             
             &.--segment-active{
                 color: var(--tab-label-active-color);
-                background: var(--surface);
+                background: var(--tab-background-active, var(--surface));
                 &:hover{
-                    background: var(--surface);
+                    background: var(--tab-background-active, var(--surface));
                 }
             }
 

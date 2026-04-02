@@ -1,18 +1,28 @@
 "use client"
 import MediaPlayerBase from "./base";
 import { Controls, Progress, Stage, TrackInfo, Volume } from "./parts";
-import { MediaPlayerProps } from "./types";
 
 /**
- * MediaPlayer Component
- * A compound component for building flexible audio/video interfaces.
+ * MediaPlayer component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <MediaPlayer src="https://example.com/video.mp4" type="video" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <MediaPlayer src="https://example.com/video.mp4" type="video" controls autoplay={false} width="100%" />
+ * ```
+ * @param src - Source URL
+ * @param type - Component or input type
+ * @param controls - controls prop
+ * @param autoplay - Whether carousel autoplays
+ * @param width - width prop
  */
-const MediaPlayerMain = ({ ref, ...props } : MediaPlayerProps) => {
-    return <MediaPlayerBase {...props} ref={ref} />;
-}
-// --- Attach Sub-Components ---
-// This allows the <MediaPlayer.Controls /> syntax
-const MediaPlayer = Object.assign(MediaPlayerMain, {
+const MediaPlayer = Object.assign(MediaPlayerBase, {
     Stage,
     TrackInfo,
     Controls,

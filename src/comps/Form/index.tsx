@@ -303,6 +303,24 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
 FormInternal.displayName = `Zuz.FormInternal`
 
 // Final Export wrapped in Provider
+/**
+ * Form component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Form onSubmit={(data) => console.log(data)}><input /></Form>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Form onSubmit={(data) => console.log(data)} validation={{ email: "required" }} onError={() => {}}><input placeholder="Email" /></Form>
+ * ```
+ * @param onSubmit - Callback function triggered on form submission
+ * @param validation - validation prop
+ * @param onError - Callback function triggered on error
+ */
 const Form = (props: FormProps & { ref?: Ref<FormHandler> }) => (
     <FormProvider initialValues={props.withData}>
         <FormInternal {...props} />

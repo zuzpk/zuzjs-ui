@@ -11,6 +11,25 @@ import KeyBoardKeys from '../KeyboardKeys';
 import SVGIcons from '../svgicons';
 import { SearchHandler, SearchProps } from './types';
 
+/**
+ * Search component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Search onChange={(query) => console.log(query)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Search onChange={(query) => console.log(query)} placeholder="Search..." debounceMs={300} onSubmit={(q) => {}} />
+ * ```
+ * @param onChange - Callback function triggered when value changes
+ * @param placeholder - Placeholder text
+ * @param debounceMs - debounceMs prop
+ * @param onSubmit - Callback function triggered on form submission
+ */
 const Search = forwardRef<SearchHandler, SearchProps>((props, ref) => {
 
     const { 

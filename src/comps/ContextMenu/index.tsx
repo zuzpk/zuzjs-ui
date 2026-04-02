@@ -7,6 +7,23 @@ import Box from "../Box";
 import MenuItem from "./item";
 import { ContextItem, ContextMenuProps, MenuItemProps } from "./types";
 
+/**
+ * ContextMenu component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <ContextMenu items={[{ label: "Edit" }, { label: "Delete" }]}>Right-click here</ContextMenu>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <ContextMenu items={[{ label: "Copy", icon: "copy" }, { label: "Paste", icon: "paste" }]} onSelect={(item) => console.log(item)}>Content</ContextMenu>
+ * ```
+ * @param items - Array of items
+ * @param onSelect - Callback function triggered on selection
+ */
 const ContextMenu = ({
     ref,
     ...props

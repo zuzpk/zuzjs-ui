@@ -1,31 +1,52 @@
 import { FormEventHandler, ReactNode, Ref } from "react";
 import { BoxProps, ValueOf, Variant } from "../../types";
 
+export type SelectPrimitive = string | number
+export type SelectSingleValue = Option | SelectPrimitive
+export type SelectValue = SelectSingleValue | Option[] | SelectPrimitive[] | null
+export type SelectSingleChange = Option
+export type SelectEditableChange = Option | SelectPrimitive
+export type SelectMultipleChange = Option[]
+
 /**
- * Interface for the Select component handle, accessible via React ref.
- * 
+ * Ref handle exposed by `Select`.
+ *
  * @example
  * ```tsx
- * const selectRef = useRef<SelectHandler>(null);
- * // ...
- * selectRef.current?.setSelected("option-value");
+ * const selectRef = useRef<SelectHandler>(null)
+ *
+ * <Select ref={selectRef} options={options} label="Status" />
+ *
+ * selectRef.current?.setSelected("in-progress")
+ * const selected = selectRef.current?.getValue()
  * ```
  */
 export interface SelectHandler {
     /**
-     * Programmatically sets the selected option.
-     * @param option - The option object or value string to select.
+     * Programmatically sets the selected value.
+     *
+     * Accepts option objects, primitive values, arrays, or `null`.
+     * @param option - The next value to set.
      */
-    setSelected: ( option: Option | string | Option[] | string[] ) => void,
+    setSelected: ( option: SelectValue ) => void,
     /**
-     * Retrieves the currently selected option object.
-     * @returns The selected Option or null if nothing is selected.
+     * Returns the current selected value.
+     * @returns Current `Option`, array of `Option`, primitive value, or `null`.
      */
-    getValue: () => Option | Option[] | null,
+    getValue: () => Option | Option[] | SelectPrimitive | null,
 }
 
 /**
- * Represents an individual option within the Select component.
+ * Represents a selectable option.
+ *
+ * @example
+ * ```tsx
+ * const options: Option[] = [
+ *   { label: "Todo", value: "todo" },
+ *   { label: "In Progress", value: "in-progress", icon: "clock" },
+ *   { label: "Done", value: "done", disabled: true }
+ * ]
+ * ```
  */
 export type Option = {
     /** Optional icon to display next to the label. Can be a string (URL/Path) or a ReactNode. */
@@ -55,10 +76,7 @@ export interface OptionItemProps {
     checkIcon?: string | ReactNode,
 }
 
-/**
- * Props for the Select component.
- */
-export type SelectProps = Omit<BoxProps, "onChange" | "ref"> & {
+type SelectCommonProps = Omit<BoxProps, "onChange" | "ref"> & {
 
 
     ref?: Ref<SelectHandler>,
@@ -79,7 +97,8 @@ export type SelectProps = Omit<BoxProps, "onChange" | "ref"> & {
 
     /**
      * Array of options to be displayed in the select dropdown.
-     * * @example
+        *
+        * @example
      * ```tsx
      * [
      *  {
@@ -99,20 +118,9 @@ export type SelectProps = Omit<BoxProps, "onChange" | "ref"> & {
     label?: string,
 
     /**
-     * The currently selected option.
-     */
-    selected?: string | Option,
-
-    /**
      * Enables the search functionality within the select dropdown.
      */
     search?: boolean,
-
-    /**
-     * Callback function triggered when the selected option changes.
-     * @param v - The newly selected option.
-     */
-    onChange?: (v : Option) => void,
 
     /**
      * Placeholder text for the search input field.
@@ -136,14 +144,183 @@ export type SelectProps = Omit<BoxProps, "onChange" | "ref"> & {
 
     disabled?: boolean,
 
-    multiple?: boolean,
-    
-    tokenizer?: boolean,
-
     wrapTokens?: boolean,
 
     checkIcon?: string | ReactNode,
 
     closeIcon?: string | ReactNode,
-    
 }
+
+type SelectChangeValue<
+    TMultiple extends boolean,
+    TTokenizer extends boolean,
+    TEditable extends boolean,
+> = TMultiple extends true
+    ? SelectMultipleChange
+    : TTokenizer extends true
+        ? SelectMultipleChange
+        : TEditable extends true
+            ? SelectEditableChange
+            : SelectSingleChange
+
+type SelectSelectedValue<
+    TMultiple extends boolean,
+    TTokenizer extends boolean,
+    TEditable extends boolean,
+> = TMultiple extends true
+    ? Option[] | SelectPrimitive[] | null
+    : TTokenizer extends true
+        ? Option[] | SelectPrimitive[] | null
+        : TEditable extends true
+            ? SelectSingleValue | null
+            : SelectSingleValue | null
+
+type SelectModeProps<
+    TMultiple extends boolean,
+    TTokenizer extends boolean,
+    TEditable extends boolean,
+> = TEditable extends true
+    ? {
+        multiple?: false,
+        tokenizer?: false,
+        editable: true,
+        editablePlaceholder?: string,
+    }
+    : TMultiple extends true
+        ? {
+            /**
+             * Enables multi-select behavior.
+             *
+             * @example
+             * ```tsx
+             * <Select label="Roles" options={roleOptions} multiple />
+             * ```
+             */
+            multiple: true,
+            tokenizer?: TTokenizer,
+            editable?: false | undefined,
+            editablePlaceholder?: never,
+        }
+        : TTokenizer extends true
+            ? {
+                /**
+                 * Renders selected items as removable tokens.
+                 */
+                tokenizer: true,
+                multiple?: TMultiple,
+                editable?: false | undefined,
+                editablePlaceholder?: never,
+            }
+            : {
+                multiple?: false,
+                tokenizer?: false,
+                editable?: false | undefined,
+                editablePlaceholder?: never,
+            }
+
+export type SelectProps<
+    TMultiple extends boolean = false,
+    TTokenizer extends boolean = false,
+    TEditable extends boolean = false,
+> = SelectCommonProps & SelectModeProps<TMultiple, TTokenizer, TEditable> & {
+    /**
+     * The currently selected option.
+     */
+    selected?: SelectSelectedValue<TMultiple, TTokenizer, TEditable>,
+
+    /**
+     * Callback function triggered when the selected option changes.
+     */
+    onChange?: (v: SelectChangeValue<TMultiple, TTokenizer, TEditable>) => void,
+}
+
+export type SelectSingleProps = SelectProps<false, false, false>
+export type SelectEditableProps = SelectProps<false, false, true>
+export type SelectMultipleProps = SelectProps<true, boolean, false>
+export type SelectTokenizerProps = SelectProps<boolean, true, false>
+
+export type SelectInternalProps = SelectCommonProps & {
+    /**
+     * The currently selected option.
+     */
+    selected?: SelectSingleValue | Option[] | SelectPrimitive[] | null,
+
+    /**
+     * Callback function triggered when the selected option changes.
+     * @param v - The newly selected option.
+        *
+        * @example
+        * ```tsx
+        * onChange={(v) => {
+        *   if (Array.isArray(v)) {
+        *     console.log("Multi value", v.map(item => item.value))
+        *   } else {
+        *     console.log("Single value", v)
+        *   }
+        * }}
+        * ```
+     */
+    onChange?: (v : Option | Option[] | SelectPrimitive) => void,
+
+    /**
+     * Enables multi-select behavior.
+     *
+     * @example
+     * ```tsx
+     * <Select label="Roles" options={roleOptions} multiple />
+     * ```
+     */
+    multiple?: boolean,
+    
+    /**
+     * Renders selected items as removable tokens.
+     */
+    tokenizer?: boolean,
+
+    /**
+     * Allows entering custom values when not in `multiple` or `tokenizer` mode.
+     */
+    editable?: boolean,
+
+    editablePlaceholder?: string,
+}
+
+/**
+ * Props for `Select`.
+ *
+ * @example
+ * ```tsx
+ * <Select
+ *   label="Fruit"
+ *   options={[
+ *     { label: "Apple", value: "apple" },
+ *     { label: "Orange", value: "orange" }
+ *   ]}
+ *   selected="apple"
+ *   onChange={(value) => console.log(value)}
+ * />
+ * ```
+ *
+ * @example
+ * ```tsx
+ * <Select
+ *   label="Tags"
+ *   options={[
+ *     { label: "UI", value: "ui" },
+ *     { label: "Backend", value: "backend" }
+ *   ]}
+ *   multiple
+ *   search
+ * />
+ * ```
+ *
+ * @example
+ * ```tsx
+ * <Select
+ *   label="Assignee"
+ *   options={users}
+ *   editable
+ *   editablePlaceholder="Type a custom assignee"
+ * />
+ * ```
+ */

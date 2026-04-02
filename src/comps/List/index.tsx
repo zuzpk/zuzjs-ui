@@ -5,6 +5,24 @@ import { Variant } from "../../types/enums";
 import Item from "./item";
 import { ListItemObject, ListProps } from "./types";
 
+/**
+ * List component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <List items={[{ label: "Item 1" }, { label: "Item 2" }]} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <List items={[{ label: "Tasks", count: 5 }, { label: "Done", count: 2 }]} onSelect={(item) => {}} divider />
+ * ```
+ * @param items - Array of items
+ * @param onSelect - Callback function triggered on selection
+ * @param divider - divider prop
+ */
 const List = forwardRef<HTMLUListElement | HTMLOListElement, ListProps>((props, ref) => {
 
     const { items, variant, direction, seperator, ol, ...pops } = props

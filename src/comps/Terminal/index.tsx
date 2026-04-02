@@ -7,6 +7,25 @@ import Span from "../Span";
 import Text from "../Text";
 import { TerminalHandler, TerminalLine, TerminalProps } from "./types";
 
+/**
+ * Terminal component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Terminal welcomeMessage="Welcome" commands={{ help: "Shows all commands" }} onCommand={(cmd) => console.log(cmd)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Terminal welcomeMessage="CLI v1.0" commands={{ list: "List items", run: "Execute task" }} onCommand={(cmd) => `Executed: ${cmd}`} prompt="$" />
+ * ```
+ * @param welcomeMessage - welcomeMessage prop
+ * @param commands - commands prop
+ * @param onCommand - Callback function triggered on command execution
+ * @param prompt - prompt prop
+ */
 const Terminal = ({ 
     ref,
     commands,

@@ -13,6 +13,25 @@ export type PinInputProps = InputProps & {
     length?: number,
 }
 
+/**
+ * PinInput component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <PinInput length={4} onChange={(pin) => console.log(pin)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <PinInput length={6} onChange={(pin) => console.log(pin)} type="numeric" variant="primary" />
+ * ```
+ * @param length - Length of PIN/key sequence
+ * @param onChange - Callback function triggered when value changes
+ * @param type - Component or input type
+ * @param variant - Visual variant or style
+ */
 const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
 
     const { size, length, mask, ...pops } = props

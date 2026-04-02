@@ -4,6 +4,25 @@ import { useBase } from '../../hooks';
 import Span from '../Span';
 import { TextProps } from './types';
 
+/**
+ * Text component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Text>Paragraph text</Text>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Text size="lg" weight="bold" align="center" color="primary">Emphasized text</Text>
+ * ```
+ * @param size - Component size
+ * @param weight - weight prop
+ * @param align - Alignment direction
+ * @param color - color prop
+ */
 const Text = ({
     ref,
     ...props

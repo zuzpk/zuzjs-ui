@@ -72,6 +72,25 @@ const dedupeByDate = <T extends QuickOption>(options: readonly T[]): T[] => {
   });
 }
 
+/**
+ * Calendar component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Calendar onChange={(date) => console.log(date)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Calendar onChange={(date) => console.log(date)} selected={new Date()} minDate={new Date(2024, 0, 1)} maxDate={new Date()} />
+ * ```
+ * @param onChange - Callback function triggered when value changes
+ * @param selected - Currently selected item/date
+ * @param minDate - minDate prop
+ * @param maxDate - maxDate prop
+ */
 const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
 
     const { defaultValue, variant, onChange, ...pops } = props

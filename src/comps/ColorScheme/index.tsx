@@ -10,6 +10,24 @@ import Segmented from "../Segmented";
 import SVGIcons from "../svgicons";
 import { ColorSchemeProps } from "./types";
 
+/**
+ * ColorScheme component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <ColorScheme type="system" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <ColorScheme type="light" variant="sm" onChange={(scheme) => console.log(scheme)} />
+ * ```
+ * @param type - Component or input type
+ * @param variant - Visual variant or style
+ * @param onChange - Callback function triggered when value changes
+ */
 const ColorScheme = forwardRef<HTMLDivElement, ColorSchemeProps>((props, ref) => {
 
     const { type, variant, ...pops } = props

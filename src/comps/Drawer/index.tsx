@@ -12,6 +12,26 @@ import ScrollView from "../ScrollView";
 import SVGIcons from "../svgicons";
 import { DrawerProps } from "./types";
 
+/**
+ * Drawer component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Drawer open={true} onClose={() => setOpen(false)}>Drawer content here</Drawer>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Drawer open={true} onClose={() => setOpen(false)} position="right" size="lg" variant="overlay">Navigation menu</Drawer>
+ * ```
+ * @param open - Whether drawer/sheet is open
+ * @param onClose - Callback function triggered when closing
+ * @param position - position prop
+ * @param size - Component size
+ * @param variant - Visual variant or style
+ */
 const Drawer = ({
     ref,
     ...props

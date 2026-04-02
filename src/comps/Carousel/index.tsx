@@ -115,6 +115,25 @@ function CarouselInner<T>(props: CarouselProps<T>, ref: React.ForwardedRef<HTMLD
     );
 }
 
+/**
+ * Carousel component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Carousel><div>Slide 1</div><div>Slide 2</div><div>Slide 3</div></Carousel>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Carousel autoplay interval={5000} onSlideChange={(index) => console.log(index)} controls="dots"><div>Slide 1</div><div>Slide 2</div></Carousel>
+ * ```
+ * @param autoplay - Whether carousel autoplays
+ * @param interval - Autoplay interval in milliseconds
+ * @param onSlideChange - Callback function triggered on slide change
+ * @param controls - controls prop
+ */
 export const Carousel = forwardRef(CarouselInner) as <T>(
     props: CarouselProps<T> & { ref?: React.ForwardedRef<HTMLDivElement> }
 ) => ReturnType<typeof CarouselInner>;

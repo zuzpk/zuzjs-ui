@@ -14,6 +14,25 @@ export type PasswordProps = Omit<InputProps, `type` | `numeric`> & {
     strenthMeter?: boolean
 }
 
+/**
+ * Password component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Password onChange={(pass) => console.log(pass)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Password onChange={(pass) => console.log(pass)} strength={true} showStrength variant="primary" />
+ * ```
+ * @param onChange - Callback function triggered when value changes
+ * @param strength - strength prop
+ * @param showStrength - showStrength prop
+ * @param variant - Visual variant or style
+ */
 const Password = forwardRef<HTMLInputElement, PasswordProps>((props, ref) => {
 
     const { strenthMeter, onChange, ...pops } = props

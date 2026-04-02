@@ -8,6 +8,23 @@ import SVGIcons from "../svgicons";
 import Text from "../Text";
 import { CrumbItem, CrumbProps } from "./types";
 
+/**
+ * Crumb component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Crumb items={[{ label: "Home" }, { label: "Products" }]} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Crumb items={[{ label: "Home", href: "/" }, { label: "Shop", href: "/shop" }, { label: "Shoes" }]} separator="/" />
+ * ```
+ * @param items - Array of items
+ * @param separator - separator prop
+ */
 const Crumb = forwardRef<HTMLUListElement | HTMLOListElement, CrumbProps>((props, ref) => {
 
     const { items : _crumbItems, maxItems } = props

@@ -1,5 +1,5 @@
 import * as react from 'react';
-import react__default, { ElementType, ComponentPropsWithoutRef, Ref, ReactNode, MouseEvent as MouseEvent$1, RefObject, FC, CSSProperties, FormEventHandler, JSX, ComponentPropsWithRef } from 'react';
+import react__default, { ElementType, ComponentPropsWithoutRef, Ref, ReactNode, MouseEvent as MouseEvent$1, RefObject, FC, CSSProperties, FormEventHandler, ReactElement, JSX, ComponentPropsWithRef } from 'react';
 import { DragOptions, LineChartProps, MediaItem, useMediaPlayer, ScrollBreakpoint, Command } from '@zuzjs/hooks';
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import { PubSub } from '@zuzjs/core';
@@ -333,6 +333,25 @@ interface AccordionHandler {
     close: () => void;
 }
 
+/**
+ * Accordion component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Accordion title="Account" message="Manage your profile and security" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Accordion title="Settings" message="Configure preferences" variant="sm" disabled={false} />
+ * ```
+ * @param title - Title text or element
+ * @param message - Message text or element
+ * @param variant - Visual variant or style
+ * @param disabled - Whether component is disabled
+ */
 declare const Accordion: react.ForwardRefExoticComponent<Omit<AccordionProps, "ref"> & react.RefAttributes<AccordionHandler>>;
 
 interface ActionBarHandler {
@@ -366,17 +385,20 @@ type ActionBarProps = BoxProps & {
 };
 
 /**
- * ActionBar renders a list of buttons with tooltips.
+ * Actionbar component.
  *
  * @example
+ * // Basic usage
  * ```tsx
- * const items = [
- *   { label: 'Edit', icon: <EditIcon />, onClick: () => console.log('Edit clicked') },
- *   { label: 'Delete', icon: <DeleteIcon />, onClick: () => console.log('Delete clicked') }
- * ];
- *
- * <ActionBar items={items} />
+ * <Actionbar />
  * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Actionbar sticky={true} />
+ * ```
+ * @param sticky - sticky prop
  */
 declare const ActionBar: react.ForwardRefExoticComponent<Omit<ActionBarProps, "ref"> & react.RefAttributes<ActionBarHandler>>;
 
@@ -392,6 +414,25 @@ interface AlertHandler {
     close: () => void;
 }
 
+/**
+ * Alert component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Alert type="info">This is an informational alert</Alert>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Alert type="warning" dismissible onDismiss={() => console.log('dismissed')} icon="alert_circle">Warning: Please review the details</Alert>
+ * ```
+ * @param type - Component or input type
+ * @param dismissible - dismissible prop
+ * @param onDismiss - Callback function triggered on dismissal
+ * @param icon - Icon identifier
+ */
 declare const Alert: react.ForwardRefExoticComponent<Omit<AlertProps, "ref"> & react.RefAttributes<AlertHandler>>;
 
 type InputProps = Props<`input`> & {
@@ -411,6 +452,25 @@ type AutoCompleteProps = InputProps & {
     withStyle?: string;
 };
 
+/**
+ * AutoComplete component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <AutoComplete options={["Apple", "Banana", "Cherry"]} placeholder="Search fruits..." />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <AutoComplete options={["Apple", "Banana", "Cherry"]} onSelect={(item) => console.log(item)} renderOption={(opt) => <span>{opt}</span>} />
+ * ```
+ * @param options - Array of available options
+ * @param placeholder - Placeholder text
+ * @param onSelect - Callback function triggered on selection
+ * @param renderOption - renderOption prop
+ */
 declare const AutoComplete: react.ForwardRefExoticComponent<Omit<AutoCompleteProps, "ref"> & react.RefAttributes<HTMLDivElement>>;
 
 type AvatarProps = Props<"img"> & {
@@ -425,6 +485,25 @@ type AvatarProps = Props<"img"> & {
 interface AvatarHandler {
 }
 
+/**
+ * Avatar component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Avatar src="https://example.com/avatar.jpg" alt="User" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Avatar src="https://example.com/avatar.jpg" alt="User" size="lg" variant="rounded" />
+ * ```
+ * @param src - Source URL
+ * @param alt - Alt text
+ * @param size - Component size
+ * @param variant - Visual variant or style
+ */
 declare const Avatar: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react.DetailedHTMLProps<react.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>, "ref">, keyof ZuzProps> & {
     type?: ValueOf<typeof AVATAR>;
     size?: number;
@@ -453,8 +532,45 @@ type BadgeProps = BoxProps & {
     loading?: boolean;
     spinner?: ValueOf<typeof SPINNER>;
 };
+/**
+ * Badge component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Badge>New</Badge>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Badge variant="error" size="lg" icon="star">Premium</Badge>
+ * ```
+ * @param variant - Visual variant or style
+ * @param size - Component size
+ * @param icon - Icon identifier
+ */
 declare const Badge: react__default.FC<BadgeProps>;
 
+/**
+ * Box component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Box>Content goes here</Box>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Box padding="lg" variant="subtle" borderRadius="md" shadow="sm">Styled container with spacing and effects</Box>
+ * ```
+ * @param padding - padding prop
+ * @param variant - Visual variant or style
+ * @param borderRadius - borderRadius prop
+ * @param shadow - shadow prop
+ */
 declare const Box: {
     ({ ref, style, ...props }: BoxProps): react_jsx_runtime.JSX.Element;
     displayName: string;
@@ -481,6 +597,27 @@ declare const ButtonState: {
 };
 type ButtonState = typeof ButtonState[keyof typeof ButtonState];
 
+/**
+ * Button component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Button onClick={() => console.log("clicked")}>Click me</Button>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Button kind="solid" variant="primary" icon="check" state="loading" spinner="simple">Save Changes</Button>
+ * ```
+ * @param onClick - Callback function triggered on click
+ * @param kind - kind prop
+ * @param variant - Visual variant or style
+ * @param icon - Icon identifier
+ * @param state - state prop
+ * @param spinner - spinner prop
+ */
 declare const Button: {
     ({ ref, ...props }: ButtonProps): react_jsx_runtime.JSX.Element;
     displayName: string;
@@ -492,6 +629,25 @@ type CalendarProps = {
     onChange: (date: Date | null) => void;
 };
 
+/**
+ * Calendar component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Calendar onChange={(date) => console.log(date)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Calendar onChange={(date) => console.log(date)} selected={new Date()} minDate={new Date(2024, 0, 1)} maxDate={new Date()} />
+ * ```
+ * @param onChange - Callback function triggered when value changes
+ * @param selected - Currently selected item/date
+ * @param minDate - minDate prop
+ * @param maxDate - maxDate prop
+ */
 declare const Calendar: react.ForwardRefExoticComponent<CalendarProps & react.RefAttributes<HTMLInputElement>>;
 
 type CarouselEffect = 'slide' | 'coverflow' | 'fade' | 'stack';
@@ -517,6 +673,25 @@ type CarouselProps<T> = BoxProps & {
 };
 
 declare function CarouselInner<T>(props: CarouselProps<T>, ref: React.ForwardedRef<HTMLDivElement>): react_jsx_runtime.JSX.Element;
+/**
+ * Carousel component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Carousel><div>Slide 1</div><div>Slide 2</div><div>Slide 3</div></Carousel>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Carousel autoplay interval={5000} onSlideChange={(index) => console.log(index)} controls="dots"><div>Slide 1</div><div>Slide 2</div></Carousel>
+ * ```
+ * @param autoplay - Whether carousel autoplays
+ * @param interval - Autoplay interval in milliseconds
+ * @param onSlideChange - Callback function triggered on slide change
+ * @param controls - controls prop
+ */
 declare const Carousel: <T>(props: CarouselProps<T> & {
     ref?: React.ForwardedRef<HTMLDivElement>;
 }) => ReturnType<typeof CarouselInner>;
@@ -530,6 +705,26 @@ type ChartProps = BoxProps & LineChartProps & {
     animDelay?: number;
 };
 
+/**
+ * Chart component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Chart type="line" data={[{ x: "Jan", y: 10 }, { x: "Feb", y: 20 }]} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Chart type="bar" data={[{ x: "Q1", y: 100 }, { x: "Q2", y: 150 }]} xKey="x" yKey="y" title="Quarterly Revenue" />
+ * ```
+ * @param type - Component or input type
+ * @param data - Data for visualization
+ * @param xKey - xKey prop
+ * @param yKey - yKey prop
+ * @param title - Title text or element
+ */
 declare const Chart: react.ForwardRefExoticComponent<Omit<ChartProps, "ref"> & react.RefAttributes<HTMLDivElement>>;
 
 declare enum BubbleStatus {
@@ -562,6 +757,25 @@ type BubbleProps = BoxProps & {
     arrow?: boolean;
 };
 
+/**
+ * ChatBubble component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <ChatBubble message="Hello! How can I help?" sender="assistant" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <ChatBubble message="I need help with my order" sender="user" timestamp={new Date()} avatar="user-icon" />
+ * ```
+ * @param message - Message text or element
+ * @param sender - sender prop
+ * @param timestamp - timestamp prop
+ * @param avatar - avatar prop
+ */
 declare const Bubble: react.ForwardRefExoticComponent<Omit<BubbleProps, "ref"> & react.RefAttributes<HTMLDivElement>>;
 
 /**
@@ -590,6 +804,25 @@ interface CheckboxHandler {
     toggle: (triggerChange?: boolean) => void;
 }
 
+/**
+ * CheckBox component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <CheckBox label="I agree" onChange={(checked) => console.log(checked)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <CheckBox label="Remember me" defaultChecked={true} disabled={false} variant="primary" />
+ * ```
+ * @param label - Label text for the component
+ * @param onChange - Callback function triggered when value changes
+ * @param defaultChecked - Whether component is checked by default
+ * @param variant - Visual variant or style
+ */
 declare const CheckBox: {
     ({ ref, ...props }: CheckBoxProps & {
         ref?: Ref<CheckboxHandler>;
@@ -609,6 +842,25 @@ interface CodeBlockProps extends ZuzProps {
     };
 }
 
+/**
+ * CodeBlock component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <CodeBlock language="tsx">const greeting = "Hello World";</CodeBlock>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <CodeBlock language="tsx" showLineNumbers copyable highlight={[2, 5]}>const greet = () => console.log("Hi");<br/>greet();</CodeBlock>
+ * ```
+ * @param language - language prop
+ * @param showLineNumbers - showLineNumbers prop
+ * @param copyable - copyable prop
+ * @param highlight - highlight prop
+ */
 declare const CodeBlock: ({ ref, ...props }: CodeBlockProps) => react_jsx_runtime.JSX.Element;
 
 /**
@@ -652,6 +904,24 @@ type ColorSchemeProps = Omit<SegmentProps, `items`> & {
     type?: "switch" | "toggle" | "system";
 };
 
+/**
+ * ColorScheme component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <ColorScheme type="system" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <ColorScheme type="light" variant="sm" onChange={(scheme) => console.log(scheme)} />
+ * ```
+ * @param type - Component or input type
+ * @param variant - Visual variant or style
+ * @param onChange - Callback function triggered when value changes
+ */
 declare const ColorScheme$1: react.ForwardRefExoticComponent<Omit<ColorSchemeProps, "ref"> & react.RefAttributes<HTMLDivElement>>;
 
 /**
@@ -731,6 +1001,23 @@ interface ContextMenuHandler {
     hide: (e: MouseEvent$1 | TouchEvent) => void;
 }
 
+/**
+ * ContextMenu component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <ContextMenu items={[{ label: "Edit" }, { label: "Delete" }]}>Right-click here</ContextMenu>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <ContextMenu items={[{ label: "Copy", icon: "copy" }, { label: "Paste", icon: "paste" }]} onSelect={(item) => console.log(item)}>Content</ContextMenu>
+ * ```
+ * @param items - Array of items
+ * @param onSelect - Callback function triggered on selection
+ */
 declare const ContextMenu: {
     ({ ref, ...props }: ContextMenuProps & {}): react_jsx_runtime.JSX.Element;
     displayName: string;
@@ -744,6 +1031,26 @@ type CookieConsentProps = {
     position?: ValueOf<typeof Position>;
 };
 
+/**
+ * CookiesConsent component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <CookiesConsent message="We use cookies to enhance your experience" onAccept={() => console.log("accepted")} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <CookiesConsent title="Cookie Policy" message="Help us improve..." acceptLabel="I agree" rejectLabel="Decline" onAccept={() => {}} onReject={() => {}} />
+ * ```
+ * @param message - Message text or element
+ * @param onAccept - onAccept prop
+ * @param title - Title text or element
+ * @param acceptLabel - acceptLabel prop
+ * @param rejectLabel - rejectLabel prop
+ */
 declare const CookiesConsent: react.ForwardRefExoticComponent<CookieConsentProps & react.RefAttributes<HTMLDivElement>>;
 
 type CoverProps = BoxProps & {
@@ -754,6 +1061,25 @@ type CoverProps = BoxProps & {
     when?: boolean;
     hideMessage?: boolean;
 };
+/**
+ * Cover component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Cover src="https://example.com/image.jpg" alt="Cover image" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Cover src="https://example.com/image.jpg" alt="Cover" objectFit="cover" height="400px" />
+ * ```
+ * @param src - Source URL
+ * @param alt - Alt text
+ * @param objectFit - objectFit prop
+ * @param height - height prop
+ */
 declare const Cover: react.ForwardRefExoticComponent<Omit<CoverProps, "ref"> & react.RefAttributes<HTMLDivElement>>;
 
 declare enum CropShape {
@@ -770,6 +1096,25 @@ interface CropHandler {
     setScale: (scale: number) => void;
 }
 
+/**
+ * Cropper component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Cropper src="https://example.com/image.jpg" onCrop={(data) => console.log(data)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Cropper src="https://example.com/image.jpg" aspectRatio={16/9} onCrop={(data) => console.log(data)} guides />
+ * ```
+ * @param src - Source URL
+ * @param aspectRatio - aspectRatio prop
+ * @param onCrop - Callback function triggered on crop action
+ * @param guides - guides prop
+ */
 declare const Cropper: react.ForwardRefExoticComponent<Omit<CropperProps, "ref"> & react.RefAttributes<CropHandler>>;
 
 type CrumbItem = {
@@ -785,6 +1130,23 @@ type CrumbProps = BoxProps & {
     basePath?: string;
 };
 
+/**
+ * Crumb component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Crumb items={[{ label: "Home" }, { label: "Products" }]} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Crumb items={[{ label: "Home", href: "/" }, { label: "Shop", href: "/shop" }, { label: "Shoes" }]} separator="/" />
+ * ```
+ * @param items - Array of items
+ * @param separator - separator prop
+ */
 declare const Crumb: react.ForwardRefExoticComponent<Omit<CrumbProps, "ref"> & react.RefAttributes<HTMLOListElement | HTMLUListElement>>;
 
 type DatePickerProps = InputProps & {
@@ -792,6 +1154,25 @@ type DatePickerProps = InputProps & {
     defaultValue?: Date | null;
 };
 
+/**
+ * DatePicker component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <DatePicker onChange={(date) => console.log(date)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <DatePicker onChange={(date) => console.log(date)} selected={new Date()} format="MM/dd/yyyy" disabled={false} />
+ * ```
+ * @param onChange - Callback function triggered when value changes
+ * @param selected - Currently selected item/date
+ * @param format - format prop
+ * @param disabled - Whether component is disabled
+ */
 declare const DatePicker: react.ForwardRefExoticComponent<Omit<DatePickerProps, "ref"> & react.RefAttributes<HTMLInputElement>>;
 
 type DialogProps = ZuzProps & {
@@ -827,6 +1208,26 @@ interface DialogHandler {
     hide: () => void;
 }
 
+/**
+ * Dialog component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Dialog title="Confirm" message="Are you sure?" action={[{ label: "OK" }, { label: "Cancel" }]} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Dialog title="Save Changes?" message="Your edits will be lost" type="warning" action={[{ label: "Save", handler: () => {} }, { label: "Discard" }]} onShow={() => console.log("shown")} />
+ * ```
+ * @param title - Title text or element
+ * @param message - Message text or element
+ * @param type - Component or input type
+ * @param action - action prop
+ * @param onShow - Callback function triggered when showing
+ */
 declare const Dialog: {
     ({ ref, ...props }: DialogProps & {
         index: number;
@@ -853,6 +1254,26 @@ interface DrawerHandler {
     close: () => void;
 }
 
+/**
+ * Drawer component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Drawer open={true} onClose={() => setOpen(false)}>Drawer content here</Drawer>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Drawer open={true} onClose={() => setOpen(false)} position="right" size="lg" variant="overlay">Navigation menu</Drawer>
+ * ```
+ * @param open - Whether drawer/sheet is open
+ * @param onClose - Callback function triggered when closing
+ * @param position - position prop
+ * @param size - Component size
+ * @param variant - Visual variant or style
+ */
 declare const Drawer: {
     ({ ref, ...props }: DrawerProps & {
         ref?: Ref<HTMLDivElement>;
@@ -906,12 +1327,48 @@ type FabProps = Omit<ButtonProps, `icon`> & {
     position?: ValueOf<typeof Position>;
 };
 
+/**
+ * Fab component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Fab icon="plus" onClick={() => console.log("clicked")} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Fab icon="plus" onClick={() => console.log("clicked")} variant="primary" size="lg" />
+ * ```
+ * @param icon - Icon identifier
+ * @param onClick - Callback function triggered on click
+ * @param variant - Visual variant or style
+ * @param size - Component size
+ */
 declare const Fab: react.ForwardRefExoticComponent<Omit<FabProps, "ref"> & react.RefAttributes<HTMLButtonElement>>;
 
 type FilterProps = {
     names?: ValueOf<typeof FILTER>[];
     strength?: number;
 };
+/**
+ * Filters component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Filters filters={[{ label: "Category", values: ["All", "New", "Sale"] }]} onApply={(selected) => console.log(selected)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Filters filters={[{ label: "Price", type: "range", min: 0, max: 1000 }, { label: "Brand", values: ["Nike", "Adidas"] }]} onApply={(selected) => {}} />
+ * ```
+ * @param filters - filters prop
+ * @param onApply - Callback function triggered on filter apply
+ */
 declare const Filters: {
     (props: FilterProps): react_jsx_runtime.JSX.Element;
     displayName: string;
@@ -936,6 +1393,26 @@ type FlexProps = BoxProps & {
     jcs?: boolean;
 };
 
+/**
+ * Flex component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Flex gap="md" align="center">Item 1 | Item 2 | Item 3</Flex>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Flex gap="lg" align="center" justify="space-between" direction="row" wrap={true}>Flexible layout</Flex>
+ * ```
+ * @param gap - Spacing between items
+ * @param align - Alignment direction
+ * @param justify - Justification direction
+ * @param direction - direction prop
+ * @param wrap - wrap prop
+ */
 declare const Flex: FC<FlexProps>;
 
 type SheetProps = ZuzProps & {
@@ -967,6 +1444,26 @@ interface SheetHandler {
     warn: (message: string | ReactNode, duration?: number) => void;
     hide: () => void;
 }
+/**
+ * Sheet component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Sheet isOpen={true} onClose={() => setOpen(false)}>Content here</Sheet>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Sheet isOpen={true} onClose={() => setOpen(false)} position="bottom" size="md" backdrop>Bottom sheet</Sheet>
+ * ```
+ * @param isOpen - Whether sheet is open
+ * @param onClose - Callback function triggered when closing
+ * @param position - position prop
+ * @param size - Component size
+ * @param backdrop - backdrop prop
+ */
 declare const Sheet: react.ForwardRefExoticComponent<ZuzProps & {
     title?: string;
     message?: string | ReactNode;
@@ -1032,6 +1529,24 @@ interface FormHandler {
     submit: (more?: dynamic) => void;
 }
 
+/**
+ * Form component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Form onSubmit={(data) => console.log(data)}><input /></Form>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Form onSubmit={(data) => console.log(data)} validation={{ email: "required" }} onError={() => {}}><input placeholder="Email" /></Form>
+ * ```
+ * @param onSubmit - Callback function triggered on form submission
+ * @param validation - validation prop
+ * @param onError - Callback function triggered on error
+ */
 declare const Form: {
     (props: FormProps & {
         ref?: Ref<FormHandler>;
@@ -1054,6 +1569,24 @@ interface GridProps extends Omit<BoxProps, 'cols'> {
     template?: string;
 }
 
+/**
+ * Grid component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Grid columns={3}><div>1</div><div>2</div><div>3</div></Grid>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Grid columns={4} gap="lg" minColWidth="200px"><div>Cell 1</div><div>Cell 2</div></Grid>
+ * ```
+ * @param columns - Number of columns
+ * @param gap - Spacing between items
+ * @param minColWidth - minColWidth prop
+ */
 declare const Grid: {
     (props: GridProps): react_jsx_runtime.JSX.Element;
     displayName: string;
@@ -1065,6 +1598,24 @@ type GroupProps = BoxProps & {
     fxStep?: number;
     classToIgnore?: string;
 };
+/**
+ * Group component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Group>Group content</Group>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Group spacing="md" variant="card" direction="vertical">Grouped elements</Group>
+ * ```
+ * @param spacing - spacing prop
+ * @param variant - Visual variant or style
+ * @param direction - direction prop
+ */
 declare const Group: react.ForwardRefExoticComponent<Omit<GroupProps, "ref"> & react.RefAttributes<HTMLDivElement>>;
 
 type IconProps = Omit<BoxProps, `name`> & {
@@ -1076,11 +1627,69 @@ type IconProps = Omit<BoxProps, `name`> & {
     size?: number;
 };
 
+/**
+ * Icon component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Icon name="star" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Icon name="star" variant="lg" color="gold" />
+ * ```
+ * @param name - name prop
+ * @param variant - Visual variant or style
+ * @param color - color prop
+ */
 declare const Icon: react.ForwardRefExoticComponent<Omit<IconProps, "ref"> & react.RefAttributes<HTMLDivElement>>;
 
 type ImageProps = Props<`img`> & {};
+/**
+ * Image component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Image src="https://example.com/image.jpg" alt="Description" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Image src="https://example.com/image.jpg" alt="Product" width="300px" height="auto" objectFit="cover" />
+ * ```
+ * @param src - Source URL
+ * @param alt - Alt text
+ * @param width - width prop
+ * @param height - height prop
+ * @param objectFit - objectFit prop
+ */
 declare const Image: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react.DetailedHTMLProps<react.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>, "ref">, keyof ZuzProps> & react.RefAttributes<HTMLImageElement>>;
 
+/**
+ * Input component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Input placeholder="Enter text..." onChange={(e) => console.log(e.target.value)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Input placeholder="Email" type="email" variant="primary" disabled={false} onConfirm={(value) => console.log(value)} />
+ * ```
+ * @param placeholder - Placeholder text
+ * @param onChange - Callback function triggered when value changes
+ * @param type - Component or input type
+ * @param variant - Visual variant or style
+ * @param onConfirm - Callback function triggered on confirmation
+ */
 declare const Input: {
     ({ ref, ...props }: InputProps): react_jsx_runtime.JSX.Element;
     displayName: string;
@@ -1097,9 +1706,44 @@ type KeyboardKeyProps = BoxProps & {
     variant?: ValueOf<typeof Variant>;
 };
 
+/**
+ * KeyboardKeys component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <KeyboardKeys keys={["Ctrl", "K"]} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <KeyboardKeys keys={["Cmd", "Shift", "P"]} size="sm" variant="dark" />
+ * ```
+ * @param keys - keys prop
+ * @param size - Component size
+ * @param variant - Visual variant or style
+ */
 declare const KeyBoardKeys: react.ForwardRefExoticComponent<Omit<KeyboardKeyProps, "ref"> & react.RefAttributes<HTMLDivElement>>;
 
 type LabelProps = Props<`label`> & {};
+/**
+ * Label component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Label>Username</Label>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Label required={true} error="Username is required">Username</Label>
+ * ```
+ * @param required - required prop
+ * @param error - error prop
+ */
 declare const Label: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react.DetailedHTMLProps<react.LabelHTMLAttributes<HTMLLabelElement>, HTMLLabelElement>, "ref">, keyof ZuzProps> & react.RefAttributes<HTMLLabelElement>>;
 
 declare enum ToastType {
@@ -1150,6 +1794,23 @@ interface ToastProps {
 
 type LayerType = "dialog" | "drawer" | "toast" | "menu";
 
+/**
+ * Layers component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Layers>Content with layering</Layers>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Layers zIndex={10} opacity={0.9}>Stacked content</Layers>
+ * ```
+ * @param zIndex - Z-index stacking order
+ * @param opacity - Opacity level (0-1)
+ */
 declare const LayersProvider: FC<{
     children: ReactNode;
 }>;
@@ -1171,6 +1832,24 @@ type ListProps = Props<`ul` | `ol`> & {
     ol?: boolean;
 };
 
+/**
+ * List component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <List items={[{ label: "Item 1" }, { label: "Item 2" }]} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <List items={[{ label: "Tasks", count: 5 }, { label: "Done", count: 2 }]} onSelect={(item) => {}} divider />
+ * ```
+ * @param items - Array of items
+ * @param onSelect - Callback function triggered on selection
+ * @param divider - divider prop
+ */
 declare const List: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react.DetailedHTMLProps<react.OlHTMLAttributes<HTMLOListElement>, HTMLOListElement>, "ref"> | Omit<react.DetailedHTMLProps<react.HTMLAttributes<HTMLUListElement>, HTMLUListElement>, "ref">, keyof ZuzProps> & {
     variant?: ValueOf<typeof Variant>;
     items: ListItem[];
@@ -1210,7 +1889,27 @@ type MediaPlayerContextType = ReturnType<typeof useMediaPlayer> & {
     defaultArtist?: string;
 };
 
-declare const MediaPlayer: (({ ref, ...props }: MediaPlayerProps) => react_jsx_runtime.JSX.Element) & {
+/**
+ * MediaPlayer component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <MediaPlayer src="https://example.com/video.mp4" type="video" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <MediaPlayer src="https://example.com/video.mp4" type="video" controls autoplay={false} width="100%" />
+ * ```
+ * @param src - Source URL
+ * @param type - Component or input type
+ * @param controls - controls prop
+ * @param autoplay - Whether carousel autoplays
+ * @param width - width prop
+ */
+declare const MediaPlayer: (({ ref, icons: customIcons, children, ...props }: MediaPlayerProps) => react_jsx_runtime.JSX.Element) & {
     Stage: () => react_jsx_runtime.JSX.Element;
     TrackInfo: () => react_jsx_runtime.JSX.Element;
     Controls: () => react_jsx_runtime.JSX.Element;
@@ -1224,11 +1923,47 @@ type NetworkManagerprops = BoxProps & {
     onlineMessage?: string;
 };
 
+/**
+ * Network component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Network nodes={[{ id: "1", label: "Node 1" }]} links={[]} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Network nodes={[{ id: "1", label: "A" }, { id: "2", label: "B" }]} links={[{ source: "1", target: "2" }]} />
+ * ```
+ * @param nodes - Tree node definitions
+ * @param links - Links between nodes
+ */
 declare const NetworkManager: react.ForwardRefExoticComponent<Omit<NetworkManagerprops, "ref"> & react.RefAttributes<HTMLDivElement>>;
 
 type OverlayProps = BoxProps & {
     when?: boolean;
 };
+/**
+ * Overlay component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Overlay onClick={() => console.log("clicked")} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Overlay visible={true} zIndex={100} opacity={0.5} onClick={() => {}} />
+ * ```
+ * @param visible - Whether element is visible
+ * @param zIndex - Z-index stacking order
+ * @param opacity - Opacity level (0-1)
+ * @param onClick - Callback function triggered on click
+ */
 declare const Overlay: react.ForwardRefExoticComponent<Omit<OverlayProps, "ref"> & react.RefAttributes<HTMLDivElement>>;
 
 declare enum PaginationStyle {
@@ -1265,6 +2000,25 @@ type PaginationProps = Omit<BoxProps, "ref"> & {
     onPageChange?: PaginationCallback;
 };
 
+/**
+ * Pagination component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Pagination total={100} pageSize={10} onChange={(page) => console.log(page)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Pagination total={250} pageSize={50} defaultPage={1} onChange={(page) => console.log(page)} />
+ * ```
+ * @param total - total prop
+ * @param pageSize - pageSize prop
+ * @param onChange - Callback function triggered when value changes
+ * @param defaultPage - defaultPage prop
+ */
 declare const Pagination: {
     ({ ref, ...props }: PaginationProps & {
         ref?: Ref<PaginationController>;
@@ -1275,6 +2029,25 @@ declare const Pagination: {
 type PasswordProps = Omit<InputProps, `type` | `numeric`> & {
     strenthMeter?: boolean;
 };
+/**
+ * Password component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Password onChange={(pass) => console.log(pass)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Password onChange={(pass) => console.log(pass)} strength={true} showStrength variant="primary" />
+ * ```
+ * @param onChange - Callback function triggered when value changes
+ * @param strength - strength prop
+ * @param showStrength - showStrength prop
+ * @param variant - Visual variant or style
+ */
 declare const Password: react.ForwardRefExoticComponent<Omit<PasswordProps, "ref"> & react.RefAttributes<HTMLInputElement>>;
 
 type PinInputProps = InputProps & {
@@ -1282,6 +2055,25 @@ type PinInputProps = InputProps & {
     size?: number;
     length?: number;
 };
+/**
+ * PinInput component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <PinInput length={4} onChange={(pin) => console.log(pin)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <PinInput length={6} onChange={(pin) => console.log(pin)} type="numeric" variant="primary" />
+ * ```
+ * @param length - Length of PIN/key sequence
+ * @param onChange - Callback function triggered when value changes
+ * @param type - Component or input type
+ * @param variant - Visual variant or style
+ */
 declare const PinInput: react.ForwardRefExoticComponent<Omit<PinInputProps, "ref"> & react.RefAttributes<HTMLInputElement>>;
 
 type ProgressBarProps = BoxProps & {
@@ -1294,6 +2086,26 @@ interface ProgressHandler {
     getProgress?: () => number;
 }
 
+/**
+ * ProgressBar component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <ProgressBar value={65} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <ProgressBar value={65} max={100} variant="success" animated label="65%" />
+ * ```
+ * @param value - Current value
+ * @param max - max prop
+ * @param variant - Visual variant or style
+ * @param animated - animated prop
+ * @param label - Label text for the component
+ */
 declare const ProgressBar: react.ForwardRefExoticComponent<Omit<ProgressBarProps, "ref"> & react.RefAttributes<ProgressHandler>>;
 
 type RadioProps = Props<"input"> & {
@@ -1306,6 +2118,26 @@ interface RadioHandler {
     toggle: (triggerChange?: boolean) => void;
 }
 
+/**
+ * Radio component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Radio label="Option 1" value="opt1" onChange={(val) => console.log(val)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Radio label="Option 1" value="opt1" defaultChecked={true} variant="primary" />
+ * ```
+ * @param label - Label text for the component
+ * @param value - Current value
+ * @param onChange - Callback function triggered when value changes
+ * @param defaultChecked - Whether component is checked by default
+ * @param variant - Visual variant or style
+ */
 declare const Radio: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react.DetailedHTMLProps<react.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "ref">, keyof ZuzProps> & {
     type?: ValueOf<typeof RADIO>;
     variant?: ValueOf<typeof Variant>;
@@ -1319,6 +2151,24 @@ type ScrollViewProps = BoxProps & {
     breakpoints?: ScrollBreakpoint;
 };
 
+/**
+ * ScrollView component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <ScrollView><div>Scrollable content here</div></ScrollView>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <ScrollView direction="vertical" scrollbar="auto" onScroll={(pos) => console.log(pos)}>Long content</ScrollView>
+ * ```
+ * @param direction - direction prop
+ * @param scrollbar - scrollbar prop
+ * @param onScroll - Callback function triggered on scroll
+ */
 declare const ScrollView: react.ForwardRefExoticComponent<Omit<ScrollViewProps, "ref"> & react.RefAttributes<HTMLDivElement>>;
 
 type SearchProps = Omit<InputProps, `onChange`> & {
@@ -1337,52 +2187,91 @@ interface SearchHandler {
     focus: () => void;
 }
 
+/**
+ * Search component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Search onChange={(query) => console.log(query)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Search onChange={(query) => console.log(query)} placeholder="Search..." debounceMs={300} onSubmit={(q) => {}} />
+ * ```
+ * @param onChange - Callback function triggered when value changes
+ * @param placeholder - Placeholder text
+ * @param debounceMs - debounceMs prop
+ * @param onSubmit - Callback function triggered on form submission
+ */
 declare const Search: react.ForwardRefExoticComponent<Omit<SearchProps, "ref"> & react.RefAttributes<SearchHandler>>;
 
 /**
- * `SelectTabs` component is a segmented control that allows switching between segments.
- *
- * @component
- * @param {SegmentProps} props - Props for the segmented control component.
- * @param {React.Ref<HTMLDivElement>} ref - Ref for the root div element.
- * @returns {JSX.Element} The rendered segmented control.
+ * Segmented component.
  *
  * @example
- * // Usage example
- * const segments = [
- *   { index: 0, label: "Home", icon: "home_icon" },
- *   { index: 1, label: "Profile", icon: "profile_icon" },
- *   { index: 2, label: "Settings", icon: "settings_icon" }
- * ];
+ * // Basic usage
+ * ```tsx
+ * <Segmented options={["Tab 1", "Tab 2"]} onChange={(val) => console.log(val)} />
+ * ```
  *
- * <SelectTabs selected={1} items={segments} />
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Segmented options={[{ label: "All", value: "all" }, { label: "Active", value: "active" }]} defaultValue="all" />
+ * ```
+ * @param options - Array of available options
+ * @param onChange - Callback function triggered when value changes
+ * @param defaultValue - Default value
  */
 declare const Segmented: react.ForwardRefExoticComponent<Omit<SegmentProps, "ref"> & react.RefAttributes<SegmentController>>;
 
+type SelectPrimitive = string | number;
+type SelectSingleValue = Option | SelectPrimitive;
+type SelectValue = SelectSingleValue | Option[] | SelectPrimitive[] | null;
+type SelectSingleChange = Option;
+type SelectEditableChange = Option | SelectPrimitive;
+type SelectMultipleChange = Option[];
 /**
- * Interface for the Select component handle, accessible via React ref.
+ * Ref handle exposed by `Select`.
  *
  * @example
  * ```tsx
- * const selectRef = useRef<SelectHandler>(null);
- * // ...
- * selectRef.current?.setSelected("option-value");
+ * const selectRef = useRef<SelectHandler>(null)
+ *
+ * <Select ref={selectRef} options={options} label="Status" />
+ *
+ * selectRef.current?.setSelected("in-progress")
+ * const selected = selectRef.current?.getValue()
  * ```
  */
 interface SelectHandler {
     /**
-     * Programmatically sets the selected option.
-     * @param option - The option object or value string to select.
+     * Programmatically sets the selected value.
+     *
+     * Accepts option objects, primitive values, arrays, or `null`.
+     * @param option - The next value to set.
      */
-    setSelected: (option: Option | string | Option[] | string[]) => void;
+    setSelected: (option: SelectValue) => void;
     /**
-     * Retrieves the currently selected option object.
-     * @returns The selected Option or null if nothing is selected.
+     * Returns the current selected value.
+     * @returns Current `Option`, array of `Option`, primitive value, or `null`.
      */
-    getValue: () => Option | Option[] | null;
+    getValue: () => Option | Option[] | SelectPrimitive | null;
 }
 /**
- * Represents an individual option within the Select component.
+ * Represents a selectable option.
+ *
+ * @example
+ * ```tsx
+ * const options: Option[] = [
+ *   { label: "Todo", value: "todo" },
+ *   { label: "In Progress", value: "in-progress", icon: "clock" },
+ *   { label: "Done", value: "done", disabled: true }
+ * ]
+ * ```
  */
 type Option = {
     /** Optional icon to display next to the label. Can be a string (URL/Path) or a ReactNode. */
@@ -1408,10 +2297,7 @@ interface OptionItemProps {
     selected?: boolean;
     checkIcon?: string | ReactNode;
 }
-/**
- * Props for the Select component.
- */
-type SelectProps = Omit<BoxProps, "onChange" | "ref"> & {
+type SelectCommonProps = Omit<BoxProps, "onChange" | "ref"> & {
     ref?: Ref<SelectHandler>;
     /**
      * Size of the select field.
@@ -1424,7 +2310,8 @@ type SelectProps = Omit<BoxProps, "onChange" | "ref"> & {
     required?: boolean;
     /**
      * Array of options to be displayed in the select dropdown.
-     * * @example
+        *
+        * @example
      * ```tsx
      * [
      *  {
@@ -1442,18 +2329,9 @@ type SelectProps = Omit<BoxProps, "onChange" | "ref"> & {
      */
     label?: string;
     /**
-     * The currently selected option.
-     */
-    selected?: string | Option;
-    /**
      * Enables the search functionality within the select dropdown.
      */
     search?: boolean;
-    /**
-     * Callback function triggered when the selected option changes.
-     * @param v - The newly selected option.
-     */
-    onChange?: (v: Option) => void;
     /**
      * Placeholder text for the search input field.
      */
@@ -1470,19 +2348,126 @@ type SelectProps = Omit<BoxProps, "onChange" | "ref"> & {
     arrowDownIcon?: string | ReactNode;
     arrowUpIcon?: string | ReactNode;
     disabled?: boolean;
-    multiple?: boolean;
-    tokenizer?: boolean;
     wrapTokens?: boolean;
     checkIcon?: string | ReactNode;
     closeIcon?: string | ReactNode;
 };
-
-declare const Select: {
-    ({ ref, ...props }: SelectProps & {
-        ref?: Ref<SelectHandler>;
-    }): react_jsx_runtime.JSX.Element;
-    displayName: string;
+type SelectChangeValue<TMultiple extends boolean, TTokenizer extends boolean, TEditable extends boolean> = TMultiple extends true ? SelectMultipleChange : TTokenizer extends true ? SelectMultipleChange : TEditable extends true ? SelectEditableChange : SelectSingleChange;
+type SelectSelectedValue<TMultiple extends boolean, TTokenizer extends boolean, TEditable extends boolean> = TMultiple extends true ? Option[] | SelectPrimitive[] | null : TTokenizer extends true ? Option[] | SelectPrimitive[] | null : TEditable extends true ? SelectSingleValue | null : SelectSingleValue | null;
+type SelectModeProps<TMultiple extends boolean, TTokenizer extends boolean, TEditable extends boolean> = TEditable extends true ? {
+    multiple?: false;
+    tokenizer?: false;
+    editable: true;
+    editablePlaceholder?: string;
+} : TMultiple extends true ? {
+    /**
+     * Enables multi-select behavior.
+     *
+     * @example
+     * ```tsx
+     * <Select label="Roles" options={roleOptions} multiple />
+     * ```
+     */
+    multiple: true;
+    tokenizer?: TTokenizer;
+    editable?: false | undefined;
+    editablePlaceholder?: never;
+} : TTokenizer extends true ? {
+    /**
+     * Renders selected items as removable tokens.
+     */
+    tokenizer: true;
+    multiple?: TMultiple;
+    editable?: false | undefined;
+    editablePlaceholder?: never;
+} : {
+    multiple?: false;
+    tokenizer?: false;
+    editable?: false | undefined;
+    editablePlaceholder?: never;
 };
+type SelectProps<TMultiple extends boolean = false, TTokenizer extends boolean = false, TEditable extends boolean = false> = SelectCommonProps & SelectModeProps<TMultiple, TTokenizer, TEditable> & {
+    /**
+     * The currently selected option.
+     */
+    selected?: SelectSelectedValue<TMultiple, TTokenizer, TEditable>;
+    /**
+     * Callback function triggered when the selected option changes.
+     */
+    onChange?: (v: SelectChangeValue<TMultiple, TTokenizer, TEditable>) => void;
+};
+type SelectSingleProps = SelectProps<false, false, false>;
+type SelectEditableProps = SelectProps<false, false, true>;
+type SelectMultipleProps = SelectProps<true, boolean, false>;
+type SelectTokenizerProps = SelectProps<boolean, true, false>;
+type SelectInternalProps = SelectCommonProps & {
+    /**
+     * The currently selected option.
+     */
+    selected?: SelectSingleValue | Option[] | SelectPrimitive[] | null;
+    /**
+     * Callback function triggered when the selected option changes.
+     * @param v - The newly selected option.
+        *
+        * @example
+        * ```tsx
+        * onChange={(v) => {
+        *   if (Array.isArray(v)) {
+        *     console.log("Multi value", v.map(item => item.value))
+        *   } else {
+        *     console.log("Single value", v)
+        *   }
+        * }}
+        * ```
+     */
+    onChange?: (v: Option | Option[] | SelectPrimitive) => void;
+    /**
+     * Enables multi-select behavior.
+     *
+     * @example
+     * ```tsx
+     * <Select label="Roles" options={roleOptions} multiple />
+     * ```
+     */
+    multiple?: boolean;
+    /**
+     * Renders selected items as removable tokens.
+     */
+    tokenizer?: boolean;
+    /**
+     * Allows entering custom values when not in `multiple` or `tokenizer` mode.
+     */
+    editable?: boolean;
+    editablePlaceholder?: string;
+};
+
+type SelectComponent = {
+    <TMultiple extends boolean = false, TTokenizer extends boolean = false, TEditable extends boolean = false>(props: SelectProps<TMultiple, TTokenizer, TEditable> & {
+        ref?: Ref<SelectHandler>;
+    }): ReactElement;
+    displayName?: string;
+};
+/**
+ * Select component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Select options={[{ label: "Option 1", value: "1" }]} onChange={(val) => console.log(val)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Select options={[{ label: "Red", value: "red" }, { label: "Blue", value: "blue" }]} multiple searchable onSelect={(item) => {}} />
+ * ```
+ * @param options - Array of available options
+ * @param onChange - Callback function triggered when value changes
+ * @param multiple - multiple prop
+ * @param searchable - searchable prop
+ * @param onSelect - Callback function triggered on selection
+ */
+declare const Select: SelectComponent;
 
 interface SliderController {
 }
@@ -1501,6 +2486,26 @@ type SliderProps = Omit<BoxProps, `ref`> & {
     onChange?: (value: number) => void;
 };
 
+/**
+ * Slider component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Slider value={50} onChange={(val) => console.log(val)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Slider value={50} min={0} max={100} step={5} onChange={(val) => console.log(val)} />
+ * ```
+ * @param value - Current value
+ * @param min - min prop
+ * @param max - max prop
+ * @param step - step prop
+ * @param onChange - Callback function triggered when value changes
+ */
 declare const Slider: {
     ({ ref, ...props }: SliderProps): react_jsx_runtime.JSX.Element;
     displayName: string;
@@ -1510,16 +2515,70 @@ type SpanProps = Props<`span`> & {
     ref?: Ref<HTMLSpanElement>;
 };
 
+/**
+ * Span component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Span>Text span</Span>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Span variant="muted" size="sm">Secondary text</Span>
+ * ```
+ * @param variant - Visual variant or style
+ * @param size - Component size
+ */
 declare const Span: {
     ({ ref, ...props }: SpanProps): react_jsx_runtime.JSX.Element;
     displayName: string;
 };
 
+/**
+ * Spinner component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Spinner />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Spinner type="dots" variant="primary" size="lg" />
+ * ```
+ * @param type - Component or input type
+ * @param variant - Visual variant or style
+ * @param size - Component size
+ */
 declare const Spinner: {
     (props: SpinnerProps): react_jsx_runtime.JSX.Element;
     displayName: string;
 };
 
+/**
+ * Switch component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Switch onChange={(checked) => console.log(checked)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Switch defaultChecked={true} disabled={false} variant="primary" onChange={(checked) => console.log(checked)} />
+ * ```
+ * @param onChange - Callback function triggered when value changes
+ * @param defaultChecked - Whether component is checked by default
+ * @param disabled - Whether component is disabled
+ * @param variant - Visual variant or style
+ */
 declare const Switch: {
     ({ ref, ...props }: CheckBoxProps & {
         ref?: Ref<CheckboxHandler>;
@@ -1676,6 +2735,21 @@ type TableProps<T> = BoxProps & {
     onSort?: TableSortCallback;
 };
 
+/**
+ * Table component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Table schema={[{ id: "name", value: "Name" }]} rows={[{ name: "Jane Doe" }]} rowsPerPage={10} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Table schema={[{ id: "id", value: "ID" }, { id: "name", value: "Name" }]} rows={[{ id: 1, name: "Jane" }]} sortable filterable rowsPerPage={20} />
+ * ```
+ */
 declare const ForwardedTable: <T>(props: TableProps<T> & {
     ref?: Ref<TableController>;
 }) => JSX.Element;
@@ -1690,6 +2764,23 @@ type TableOfContentsProps = BoxProps & {
     items: TableOfContentItem[];
 };
 
+/**
+ * TableOfContents component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <TableOfContents items={[{ id: "intro", label: "Introduction" }, { id: "guide", label: "Guide" }]} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <TableOfContents items={[{ id: "intro", label: "Intro" }, { id: "api", label: "API" }]} onSelect={(id) => console.log(id)} />
+ * ```
+ * @param items - Array of items
+ * @param onSelect - Callback function triggered on selection
+ */
 declare const TableOfContents: ({ ref, ...props }: TableOfContentsProps) => react_jsx_runtime.JSX.Element;
 
 interface TabBodyProps {
@@ -1800,6 +2891,24 @@ interface TabViewHandler {
     setTab: (index: number) => void;
 }
 
+/**
+ * TabView component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <TabView tabs={[{ label: "Tab 1", content: "Content 1" }]} onChange={(active) => console.log(active)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <TabView tabs={[{ label: "Tab 1", content: "Content 1" }, { label: "Tab 2", content: "Content 2" }]} defaultActive={0} />
+ * ```
+ * @param tabs - tabs prop
+ * @param onChange - Callback function triggered when value changes
+ * @param defaultActive - defaultActive prop
+ */
 declare const TabView: {
     ({ ref, ...props }: TabViewProps & {
         ref?: Ref<TabViewHandler>;
@@ -1826,6 +2935,25 @@ interface TerminalProps {
 type TerminalCommandFn = (args: string[]) => string | Promise<string>;
 type TerminalCommands = Record<string, TerminalCommandFn>;
 
+/**
+ * Terminal component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Terminal welcomeMessage="Welcome" commands={{ help: "Shows all commands" }} onCommand={(cmd) => console.log(cmd)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Terminal welcomeMessage="CLI v1.0" commands={{ list: "List items", run: "Execute task" }} onCommand={(cmd) => `Executed: ${cmd}`} prompt="$" />
+ * ```
+ * @param welcomeMessage - welcomeMessage prop
+ * @param commands - commands prop
+ * @param onCommand - Callback function triggered on command execution
+ * @param prompt - prompt prop
+ */
 declare const Terminal: ({ ref, commands, onCommand, welcomeMessage, prompt, variant, ...props }: TerminalProps & {
     ref?: Ref<TerminalHandler>;
 }) => react_jsx_runtime.JSX.Element;
@@ -1846,6 +2974,25 @@ type TextProps = Props<`h1` | `h2` | `h3` | `h4` | `h5` | `h6` | `p` | `span` | 
     hover?: boolean;
 };
 
+/**
+ * Text component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Text>Paragraph text</Text>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Text size="lg" weight="bold" align="center" color="primary">Emphasized text</Text>
+ * ```
+ * @param size - Component size
+ * @param weight - weight prop
+ * @param align - Alignment direction
+ * @param color - color prop
+ */
 declare const Text: {
     ({ ref, ...props }: TextProps): react_jsx_runtime.JSX.Element;
     displayName: string;
@@ -1871,6 +3018,25 @@ type TextAreaProps = Props<`textarea`> & {
     }) => React.ReactNode;
 };
 
+/**
+ * TextArea component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <TextArea placeholder="Enter message..." onChange={(e) => console.log(e.target.value)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <TextArea placeholder="Description..." rows={5} maxLength={500} onChange={(e) => console.log(e.target.value)} />
+ * ```
+ * @param placeholder - Placeholder text
+ * @param onChange - Callback function triggered when value changes
+ * @param rows - Array of row data
+ * @param maxLength - maxLength prop
+ */
 declare const TextArea: {
     ({ ref, ...props }: TextAreaProps & {
         ref?: Ref<HTMLTextAreaElement>;
@@ -1890,8 +3056,44 @@ interface TextWheelHandler {
     updateValue: (v: number | string) => void;
 }
 
+/**
+ * TextWheel component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <TextWheel items={["Option 1", "Option 2", "Option 3"]} onChange={(selected) => console.log(selected)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <TextWheel items={[{ label: "Red", value: "red" }, { label: "Blue", value: "blue" }]} onChange={(val) => console.log(val)} />
+ * ```
+ * @param items - Array of items
+ * @param onChange - Callback function triggered when value changes
+ */
 declare const TextWheel: react__default.ForwardRefExoticComponent<Omit<TextWheelProps, "ref"> & react__default.RefAttributes<TextWheelHandler>>;
 
+/**
+ * Toast component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Toast message="Operation successful" type="success" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Toast message="Error occurred" type="error" duration={5000} action={{ label: "Retry", onClick: () => {} }} />
+ * ```
+ * @param message - Message text or element
+ * @param type - Component or input type
+ * @param duration - duration prop
+ * @param action - action prop
+ */
 declare const Toast: FC<ToastProps & {
     index: number;
     total: number;
@@ -1917,6 +3119,25 @@ type ToolTipProps = Omit<BoxProps, `title` | `ref`> & {
     anchorName?: string;
 };
 
+/**
+ * Tooltip component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Tooltip content="Helpful text">Hover me</Tooltip>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Tooltip content="Full description here" position="top" delay={200} variant="dark">Information icon</Tooltip>
+ * ```
+ * @param content - Content text or element
+ * @param position - position prop
+ * @param delay - delay prop
+ * @param variant - Visual variant or style
+ */
 declare const ToolTip: {
     ({ ref, ...props }: ToolTipProps & {
         ref?: Ref<ToolTipController>;
@@ -1967,6 +3188,25 @@ interface TreeItemHandler {
     onSelect?: (v: TreeNode) => void;
 }
 
+/**
+ * TreeView component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Treeview roots={["root"]} nodes={[{ tag: "root", label: "Root", isHead: true }]} onNodeSelect={(tag) => console.log(tag)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Treeview roots={["root"]} nodes={[{ tag: "root", label: "Root", isHead: true, expanded: true }, { tag: "child", label: "Child", under: "root" }]} selected="root" onNodeSelect={(tag) => console.log(tag)} />
+ * ```
+ * @param roots - Root node identifiers
+ * @param nodes - Tree node definitions
+ * @param onNodeSelect - Callback function triggered on node selection
+ * @param selected - Currently selected item/date
+ */
 declare const TreeView: react.ForwardRefExoticComponent<Omit<TreeViewProps, "ref"> & react.RefAttributes<TreeViewHandler>>;
 
 type ColorScheme = ValueOf<typeof COLORTHEME>;
@@ -2166,4 +3406,4 @@ declare const animationTransition: (transition: ValueOf<typeof TRANSITIONS>, sta
 };
 declare const getAnimationTransition: (transition: ValueOf<typeof TRANSITIONS>, to?: boolean, from?: boolean) => dynamic;
 
-export { ALERT, AVATAR, Accordion, type AccordionHandler, type AccordionProps, ActionBar, type ActionBarHandler, type ActionBarItem, type ActionBarProps, Alert, type AlertHandler, type AlertProps, type AnimationTransition, AutoComplete, type AutoCompleteProps, Avatar, type AvatarHandler, type AvatarProps, Badge, type BadgeProps, Box, type BoxProps, Bubble, BubbleMediaType, type BubbleProps, BubbleStatus, Button, type ButtonHandler, type ButtonProps, ButtonState, CHART, CHECKBOX, COLORTHEME, Calendar, type CalendarProps, Carousel, type CarouselEffect, type CarouselProps, Chart, type ChartProps, CheckBox, type CheckBoxProps, type CheckboxHandler, CodeBlock, type CodeBlockProps, ColorScheme$1 as ColorScheme, type Column, type ContextItem, ContextMenu, type ContextMenuHandler, type ContextMenuProps, type CookieConsentProps, CookiesConsent, Cover, type CoverProps, type CropHandler, CropShape, Cropper, type CropperProps, Crumb, type CrumbItem, type CrumbProps, DATATYPE, DIALOG, DIALOG_ACTION_POSITION, DRAWER_SIDE, DatePicker, Dialog, type DialogActionHandler, type DialogController, type DialogHandler, type DialogProps, Drawer, type DrawerController, type DrawerHandler, type DrawerProps, FILTER, FORMVALIDATION, FORMVALIDATION_STYLE, Fab, type FabProps, type FilterProps, Filters, Flex, type FlexProps, Form, type FormHandler, type FormInputs, type FormProps, type FormValidation, Grid, type GridProps, Group, type GroupProps, Icon, type IconProps, Image, type ImageProps, Input, type InputProps, type KeyCombination, type KeyboardKey, type KeyboardKeyProps, KeyBoardKeys as KeyboardKeys, KeysLabelMap, KeysMap, Label, type LabelProps, type LayerHandler, LayersProvider, List, type ListItem, type ListItemObject, type ListProps, type LoopMode, MediaPlayer, type MediaPlayerContextType, type MediaPlayerController, type MediaPlayerIcons, type MediaPlayerProps, type MenuItemProps, type MorphOptions, type NetworkManagerprops, NetworkManager as NetworkStatus, ORIGIN, type Option, type OptionItemProps, OriginType, Overlay, type OverlayProps, PACKAGE_NAME, POSITION, PROGRESS, Pagination, type PaginationCallback, type PaginationController, type PaginationPage, type PaginationPageItem, type PaginationProps, PaginationStyle, Password, type PasswordProps, PinInput, type PinInputProps, Position, ProgressBar, type ProgressBarProps, type ProgressHandler, type Props, RADIO, Radio, type RadioHandler, type RadioProps, type Row, type RowSelectCallback, SHEET, SHEET_ACTION_POSITION, SKELETON, SLIDER, SORT, SPINNER, ScrollView, type ScrollViewProps, Search, type SearchHandler, type SearchProps, type Segment, type SegmentController, type SegmentItemProps, type SegmentProps, Select, type SelectHandler, type SelectProps, Segmented as SelectTabs, Sheet, type SheetHandler, type SheetProps, type Skeleton, Slider, type SliderController, type SliderProps, type ToastAction as SnackAction, type SnackController, ToastPosition as SnackPosition, ToastStyle as SnackStyle, ToastType as SnackType, Span, type SpanProps, Spinner, type SpinnerProps, Status, Switch, type CheckboxHandler as SwitchHandler, TRANSITIONS, TRANSITION_CURVES, type Tab, type TabBodyProps, type TabProps, TabView, type TabViewHandler, type TabViewProps, ForwardedTable as Table, type TableController, type TableOfContentItem, TableOfContents, type TableOfContentsProps, type TableProps, type TableSortCallback, Terminal, type TerminalCommandFn, type TerminalCommands, type TerminalHandler, type TerminalLine, type TerminalProps, Text, type TextAreaProps, TextWheel, type TextWheelHandler, type TextWheelProps, TextArea as Textarea, ThemeProvider, type ToastAction, ToastDefaultTitle, ToastPosition, type ToastProps, Toast as ToastProvider, ToastStyle, ToastType, ToolTip, type ToolTipController, type ToolTipProps, type TreeItemHandler, type TreeItemProps, type TreeNode, type TreeNodeIcons, TreeView, type TreeViewHandler, type TreeViewProps, type ValidationResult, type ValidationSchema, type Value, type ValueOf, Variant, type WithFormValidation, type ZuzCommonValues, type ZuzProps, type ZuzStyleString, type animationProps, animationTransition, buildClassString, buildWithStyles, cleanProps, css, type cssShortKey, type cssShortKeys, type dynamic, getAnimationCurve, getAnimationTransition, getZuzMap, isKeyCombination, type parallaxEffectProps, setZuzMap, splitAtoms, useBase, useContextMenu, useDialog, useDrawer, useFx, useMorph, usePosition, useSnack, useToast };
+export { ALERT, AVATAR, Accordion, type AccordionHandler, type AccordionProps, ActionBar, type ActionBarHandler, type ActionBarItem, type ActionBarProps, Alert, type AlertHandler, type AlertProps, type AnimationTransition, AutoComplete, type AutoCompleteProps, Avatar, type AvatarHandler, type AvatarProps, Badge, type BadgeProps, Box, type BoxProps, Bubble, BubbleMediaType, type BubbleProps, BubbleStatus, Button, type ButtonHandler, type ButtonProps, ButtonState, CHART, CHECKBOX, COLORTHEME, Calendar, type CalendarProps, Carousel, type CarouselEffect, type CarouselProps, Chart, type ChartProps, CheckBox, type CheckBoxProps, type CheckboxHandler, CodeBlock, type CodeBlockProps, ColorScheme$1 as ColorScheme, type Column, type ContextItem, ContextMenu, type ContextMenuHandler, type ContextMenuProps, type CookieConsentProps, CookiesConsent, Cover, type CoverProps, type CropHandler, CropShape, Cropper, type CropperProps, Crumb, type CrumbItem, type CrumbProps, DATATYPE, DIALOG, DIALOG_ACTION_POSITION, DRAWER_SIDE, DatePicker, Dialog, type DialogActionHandler, type DialogController, type DialogHandler, type DialogProps, Drawer, type DrawerController, type DrawerHandler, type DrawerProps, FILTER, FORMVALIDATION, FORMVALIDATION_STYLE, Fab, type FabProps, type FilterProps, Filters, Flex, type FlexProps, Form, type FormHandler, type FormInputs, type FormProps, type FormValidation, Grid, type GridProps, Group, type GroupProps, Icon, type IconProps, Image, type ImageProps, Input, type InputProps, type KeyCombination, type KeyboardKey, type KeyboardKeyProps, KeyBoardKeys as KeyboardKeys, KeysLabelMap, KeysMap, Label, type LabelProps, type LayerHandler, LayersProvider, List, type ListItem, type ListItemObject, type ListProps, type LoopMode, MediaPlayer, type MediaPlayerContextType, type MediaPlayerController, type MediaPlayerIcons, type MediaPlayerProps, type MenuItemProps, type MorphOptions, type NetworkManagerprops, NetworkManager as NetworkStatus, ORIGIN, type Option, type OptionItemProps, OriginType, Overlay, type OverlayProps, PACKAGE_NAME, POSITION, PROGRESS, Pagination, type PaginationCallback, type PaginationController, type PaginationPage, type PaginationPageItem, type PaginationProps, PaginationStyle, Password, type PasswordProps, PinInput, type PinInputProps, Position, ProgressBar, type ProgressBarProps, type ProgressHandler, type Props, RADIO, Radio, type RadioHandler, type RadioProps, type Row, type RowSelectCallback, SHEET, SHEET_ACTION_POSITION, SKELETON, SLIDER, SORT, SPINNER, ScrollView, type ScrollViewProps, Search, type SearchHandler, type SearchProps, type Segment, type SegmentController, type SegmentItemProps, type SegmentProps, Select, type SelectEditableChange, type SelectEditableProps, type SelectHandler, type SelectInternalProps, type SelectMultipleChange, type SelectMultipleProps, type SelectPrimitive, type SelectProps, type SelectSingleChange, type SelectSingleProps, type SelectSingleValue, Segmented as SelectTabs, type SelectTokenizerProps, type SelectValue, Sheet, type SheetHandler, type SheetProps, type Skeleton, Slider, type SliderController, type SliderProps, type ToastAction as SnackAction, type SnackController, ToastPosition as SnackPosition, ToastStyle as SnackStyle, ToastType as SnackType, Span, type SpanProps, Spinner, type SpinnerProps, Status, Switch, type CheckboxHandler as SwitchHandler, TRANSITIONS, TRANSITION_CURVES, type Tab, type TabBodyProps, type TabProps, TabView, type TabViewHandler, type TabViewProps, ForwardedTable as Table, type TableController, type TableOfContentItem, TableOfContents, type TableOfContentsProps, type TableProps, type TableSortCallback, Terminal, type TerminalCommandFn, type TerminalCommands, type TerminalHandler, type TerminalLine, type TerminalProps, Text, type TextAreaProps, TextWheel, type TextWheelHandler, type TextWheelProps, TextArea as Textarea, ThemeProvider, type ToastAction, ToastDefaultTitle, ToastPosition, type ToastProps, Toast as ToastProvider, ToastStyle, ToastType, ToolTip, type ToolTipController, type ToolTipProps, type TreeItemHandler, type TreeItemProps, type TreeNode, type TreeNodeIcons, TreeView, type TreeViewHandler, type TreeViewProps, type ValidationResult, type ValidationSchema, type Value, type ValueOf, Variant, type WithFormValidation, type ZuzCommonValues, type ZuzProps, type ZuzStyleString, type animationProps, animationTransition, buildClassString, buildWithStyles, cleanProps, css, type cssShortKey, type cssShortKeys, type dynamic, getAnimationCurve, getAnimationTransition, getZuzMap, isKeyCombination, type parallaxEffectProps, setZuzMap, splitAtoms, useBase, useContextMenu, useDialog, useDrawer, useFx, useMorph, usePosition, useSnack, useToast };

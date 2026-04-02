@@ -8,6 +8,26 @@ import { RadioHandler, RadioProps } from "./types";
 import { InputProps } from "../Input/types";
 import { useTheme } from "../../hooks/useColorScheme";
 
+/**
+ * Radio component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Radio label="Option 1" value="opt1" onChange={(val) => console.log(val)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Radio label="Option 1" value="opt1" defaultChecked={true} variant="primary" />
+ * ```
+ * @param label - Label text for the component
+ * @param value - Current value
+ * @param onChange - Callback function triggered when value changes
+ * @param defaultChecked - Whether component is checked by default
+ * @param variant - Visual variant or style
+ */
 const Radio = forwardRef<RadioHandler, RadioProps>((props, _ref) => {
 
     const { children, className, name, required, type, value, variant, checked: defaultCheck, onSwitch, ...pops } = props;

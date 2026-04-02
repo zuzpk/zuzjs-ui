@@ -75,7 +75,7 @@ body{
             
             .--options-list{
                 padding: var(--padding-#{$size}-x);
-                border-radius: calc(var(--radius-#{$size})/4);
+                border-radius: calc(var(--radius-#{$size})/3);
                 
                 .--select-options-head{
                     font-size: var(--text-#{$size}) !important;
@@ -126,6 +126,9 @@ body{
             .--selected-icon{
                 color: var(--select-option-color-disabled);
             }
+            .--select-input{
+                color: var(--select-option-color-disabled);
+            }
             .--svg-arrow{
                 svg {
                     fill: var(--text-primary-disabled);
@@ -157,6 +160,53 @@ body{
             }
         }
 
+        &.--editable{
+            .--label-wrapper{
+                min-width: 0;
+                flex-wrap: wrap;
+                gap: 4px;
+
+                &.--has-tags{
+                    .--select-input{
+                        flex: 1;
+                        min-width: 60px;
+                    }
+                }
+            }
+
+            .--select-input{
+                width: 100%;
+                min-width: 0;
+                background: transparent;
+                border: 0;
+                color: var(--select-option-color);
+                font: inherit;
+                outline: none;
+                padding: 0;
+            }
+
+            .--select-input::placeholder{
+                color: var(--select-option-color-disabled);
+            }
+
+            .--select-toggle{
+                background: transparent !important;
+                border: 0 !important;
+                box-shadow: none !important;
+                min-height: auto !important;
+                min-width: var(--select-arrow-width);
+                padding: 0 !important;
+                svg{ 
+                    fill: var(--select-arrow-color); 
+                    font-size: var(--select-arrow-size);
+                }
+            }
+
+            .--select-toggle:hover{
+                background: transparent !important;
+            }
+        }
+
         .--tokens-wrap{
             gap: 4px;
             .--token{
@@ -165,9 +215,6 @@ body{
                 overflow: hidden;
                 &:hover{
                     background: var(--select-token-hover);
-                }
-                .--token-label{
-                    
                 }
                 .--token-remove{
                     aspect-ratio: 1/1;
@@ -319,9 +366,6 @@ body{
         }
         &.selected{
             background: var(--select-selected);
-        }
-        &.--select-option-icon{
-            
         }
     }
 

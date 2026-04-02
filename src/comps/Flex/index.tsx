@@ -3,6 +3,26 @@ import { FC } from "react";
 import Box from "../Box";
 import { FlexProps } from "./types";
 
+/**
+ * Flex component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Flex gap="md" align="center">Item 1 | Item 2 | Item 3</Flex>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Flex gap="lg" align="center" justify="space-between" direction="row" wrap={true}>Flexible layout</Flex>
+ * ```
+ * @param gap - Spacing between items
+ * @param align - Alignment direction
+ * @param justify - Justification direction
+ * @param direction - direction prop
+ * @param wrap - wrap prop
+ */
 const Flex: FC<FlexProps> = ({ 
     cols, 
     gap, 

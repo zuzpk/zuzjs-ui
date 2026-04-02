@@ -6,6 +6,25 @@ import Box from '../Box';
 import Button from '../Button';
 import { CodeBlockProps } from './types';
 
+/**
+ * CodeBlock component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <CodeBlock language="tsx">const greeting = "Hello World";</CodeBlock>
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <CodeBlock language="tsx" showLineNumbers copyable highlight={[2, 5]}>const greet = () => console.log("Hi");<br/>greet();</CodeBlock>
+ * ```
+ * @param language - language prop
+ * @param showLineNumbers - showLineNumbers prop
+ * @param copyable - copyable prop
+ * @param highlight - highlight prop
+ */
 const CodeBlock = ({
     ref,
     ...props

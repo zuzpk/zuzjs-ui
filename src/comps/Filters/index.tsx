@@ -8,6 +8,23 @@ export type FilterProps = {
     strength?: number,
 }
 
+/**
+ * Filters component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Filters filters={[{ label: "Category", values: ["All", "New", "Sale"] }]} onApply={(selected) => console.log(selected)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Filters filters={[{ label: "Price", type: "range", min: 0, max: 1000 }, { label: "Brand", values: ["Nike", "Adidas"] }]} onApply={(selected) => {}} />
+ * ```
+ * @param filters - filters prop
+ * @param onApply - Callback function triggered on filter apply
+ */
 const Filters = (props : FilterProps) => {
 
     const { names, strength } = props

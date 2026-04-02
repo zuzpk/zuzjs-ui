@@ -1,13 +1,11 @@
 "use client"
-import { _ } from "@zuzjs/core";
 import { useDebounce } from "@zuzjs/hooks";
-import { Ref, useEffect, useId, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { ChangeEvent, ReactElement, Ref, useEffect, useId, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useBase, usePosition } from "../../hooks";
 import { useTheme } from "../../hooks/useColorScheme";
 import { POSITION, Variant } from "../../types";
 import Box from "../Box";
 import Button from "../Button";
-import { ButtonProps } from "../Button/types";
 import Flex from "../Flex";
 import { useForm } from "../Form/context";
 import Icon from "../Icon";
@@ -16,19 +14,45 @@ import SVGIcons from "../svgicons";
 import Text from "../Text";
 import OptionGroupHead from "./groupHead";
 import OptionItem from "./optionItem";
-import { Option, SelectHandler, SelectProps } from "./types";
+import { Option, SelectHandler, SelectInternalProps, SelectPrimitive, SelectProps, SelectValue } from "./types";
 
-// const Select = forwardRef<SelectHandler, SelectProps>((props, ref) => {
-const Select = ({
+type SelectComponent = {
+    <TMultiple extends boolean = false, TTokenizer extends boolean = false, TEditable extends boolean = false>(
+        props: SelectProps<TMultiple, TTokenizer, TEditable> & { ref?: Ref<SelectHandler> }
+    ): ReactElement
+    displayName?: string
+}
+
+/**
+ * Select component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Select options={[{ label: "Option 1", value: "1" }]} onChange={(val) => console.log(val)} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Select options={[{ label: "Red", value: "red" }, { label: "Blue", value: "blue" }]} multiple searchable onSelect={(item) => {}} />
+ * ```
+ * @param options - Array of available options
+ * @param onChange - Callback function triggered when value changes
+ * @param multiple - multiple prop
+ * @param searchable - searchable prop
+ * @param onSelect - Callback function triggered on selection
+ */
+const Select = (({
     ref,
     ...props
-} : SelectProps & {
+} : SelectInternalProps & {
     ref?: Ref<SelectHandler>
 }) => {
 
-    const { 
-        selected, 
-        options, 
+    const {
+        selected,
+        options,
         label,
         name,
         variant,
@@ -44,85 +68,80 @@ const Select = ({
         disabled,
         checkIcon,
         closeIcon,
+        editable,
+        editablePlaceholder,
         onChange,
         required,
-        with : withProp,
-        ...pops } = props
+        with: withProp,
+        ...pops
+    } = props
 
-    // const formContext = useFormStore()
-    // const formActions = useFormActions()
-    // const formValue = name && formContext ? formContext.values[name] : undefined;
     const form = useForm()
     const inForm = name && form.values && form.setFieldValue
     const error = inForm ? form.errors?.[name] : null
-    const formValue = inForm ? form.values?.[name] : undefined;
+    const formValue = inForm ? form.values?.[name] : undefined
+    const supportsManualInput = editable === true && multiple !== true && tokenizer !== true
 
-    // Helper to map raw values (strings/IDs) to Option objects
-    const mapToOption = (val: any): Option | Option[] | null => {
-        if (!val && val !== 0) return null;
+    const isPrimitiveValue = (val: unknown): val is SelectPrimitive => {
+        return typeof val === "string" || typeof val === "number"
+    }
+
+    const isOptionValue = (val: unknown): val is Option => {
+        return typeof val === "object" && val !== null && !Array.isArray(val) && "value" in val && "label" in val
+    }
+
+    const findOption = (val: SelectPrimitive) => {
+        return options.find(o => String(o.value) === String(val))
+    }
+
+    const normalizeValue = (val: unknown): Option | Option[] | string | null => {
+        if (val === undefined || val === null) return null
+        if (supportsManualInput && val === "") return ""
+
         if (multiple || tokenizer) {
-            const arr = Array.isArray(val) ? val : [val];
-            return arr.map(item => 
-                typeof item === 'string' || typeof item === 'number' 
-                    ? options.find(o => String(o.value) === String(item))! 
-                    : item
-            ).filter(Boolean) as Option[];
+            const arr = Array.isArray(val) ? val : [val]
+            return arr
+                .map(item => isPrimitiveValue(item) ? findOption(item) : item)
+                .filter((item): item is Option => isOptionValue(item))
         }
-        return typeof val === 'string' || typeof val === 'number' 
-            ? options.find(o => String(o.value) === String(val))! 
-            : val;
-    };
 
-    const [internalValue, setValue] = useState<Option | Option[] | null>(() => {
-        if (selected) return mapToOption(selected);
-        const defaultOption = options.find(o => String(o.value) === "-1");
-        return defaultOption || null;
-    });
+        if (isPrimitiveValue(val)) {
+            const matched = findOption(val)
+            if (matched) return matched
+            return supportsManualInput ? String(val) : null
+        }
 
-    // The active value is either from the Form Store or local state
-    const value = useMemo(() => {
-        if (formValue) return mapToOption(formValue);
-        return internalValue;
-    }, [formValue, internalValue]);
+        return isOptionValue(val) ? val : null
+    }
 
-    // const [ value, setValue ] = useState<Option | Option[] | null>(() => {
+    const getInitialValue = () => {
+        if (selected !== undefined) return normalizeValue(selected)
+        const defaultOption = options.find(o => String(o.value) === "-1")
+        if (defaultOption) return defaultOption
+        return supportsManualInput ? "" : null
+    }
 
-    //     // Handle Multiple/Tokenizer
-    //     if (multiple || tokenizer) {
-    //         if (!selected) return [];
-    //         const arr = Array.isArray(selected) ? selected : [selected];
-    //         return arr.map(item => 
-    //             typeof item === 'string' ? options.find(o => o.value === item)! : item
-    //         ) as Option[];
-    //     }
+    const serializeValue = (nextValue: Option | Option[] | string | null) => {
+        if (Array.isArray(nextValue)) return nextValue.map(v => v.value)
+        if (isOptionValue(nextValue)) return nextValue.value
+        return nextValue
+    }
 
-    //     // Handle Single Select
-    //     if (selected) {
-    //         return typeof selected === 'string' ? options.find(o => o.value === selected)! : selected;
-    //     }
-
-    //     // Fallback to option with value -1
-    //     const defaultOption = options.find(o => String(o.value) === "-1");
-    //     if (defaultOption) return defaultOption;
-
-    //     return null
-
-    // })
-
+    const [ internalValue, setValue ] = useState<Option | Option[] | string | null>(() => getInitialValue())
     const [ choosing, setChoosing ] = useState(false)
     const [ query, setQuery ] = useState<string | null>(null)
-    const _ref = useRef<HTMLButtonElement>(null);
-    const _search = useRef<HTMLInputElement>(null);
-    const _pop = useRef<HTMLDivElement>(null);
+    const _container = useRef<HTMLDivElement>(null)
+    const _search = useRef<HTMLInputElement>(null)
+    const _pop = useRef<HTMLDivElement>(null)
     const _did = useId()
-    const _id = useMemo(() => name || _did, [])
+    const _id = useMemo(() => name || _did, [name, _did])
     const { reposition } = usePosition(_pop as any, { direction: POSITION.Bottom, offset: 2 })
     const { variant: themeVariant } = useTheme(true)!
-    
-    const crossIcon = closeIcon ? 
-        typeof closeIcon === `string` ? <Icon name={closeIcon} /> 
+
+    const crossIcon = closeIcon ?
+        typeof closeIcon === "string" ? <Icon name={closeIcon} />
             : closeIcon
-                : SVGIcons.close;
+                : SVGIcons.close
 
     const {
         className,
@@ -130,173 +149,227 @@ const Select = ({
         rest
     } = useBase(pops, undefined)
 
+    const {
+        onClick: _baseOnClick,
+        ...forwardedRest
+    } = (rest || {}) as typeof rest & {
+        onClick?: unknown
+    }
+
+    const value = useMemo(() => {
+        if (formValue !== undefined) return normalizeValue(formValue)
+        return internalValue
+    }, [formValue, internalValue, options, supportsManualInput, multiple, tokenizer])
+
+    const currentOption = useMemo(() => {
+        if (!value || Array.isArray(value) || !isOptionValue(value)) return undefined
+        return value
+    }, [value])
+
+    const editableValue = useMemo(() => {
+        if (!supportsManualInput) return ""
+        if (isOptionValue(value)) return String(value.value ?? "")
+        if (isPrimitiveValue(value)) return String(value)
+        return ""
+    }, [supportsManualInput, value])
+
     const isSelected = (o: Option) => {
-        if (Array.isArray(value)) return value.some(v => v.value === o.value);
-        return value?.value === o.value;
-    };
+        if (Array.isArray(value)) return value.some(v => v.value === o.value)
+        if (isOptionValue(value)) return value.value === o.value
+        if (supportsManualInput && isPrimitiveValue(value)) return String(value) === String(o.value)
+        return false
+    }
+
+    const updateStoredValue = (nextValue: Option | Option[] | string | null) => {
+        if (inForm) {
+            form.setFieldValue?.(name, serializeValue(nextValue))
+            return
+        }
+
+        setValue(nextValue)
+    }
+
+    const emitChange = (nextValue: Option | Option[] | string) => {
+        onChange?.(nextValue)
+    }
 
     const updateValue = (o: Option) => {
 
-        if (disabled || o.disabled) return;
+        if (disabled || o.disabled) return
 
         if (multiple || tokenizer) {
-            const current = Array.isArray(value) ? value : [];
-            const exists = current.find(v => v.value === o.value);
-            const nextValue = exists 
+            const current = Array.isArray(value) ? value : []
+            const exists = current.find(v => v.value === o.value)
+            const nextValue = exists
                 ? current.filter(v => v.value !== o.value)
-                : [...current, o];
-            
-            setValue(nextValue);
-            // setChoosing(false)
-            onChange?.(nextValue as any);
-        } else {
-            setValue(o)
+                : [...current, o]
+
+            updateStoredValue(nextValue)
+            emitChange(nextValue)
+            return
+        }
+
+        updateStoredValue(o)
+        setChoosing(false)
+        emitChange(o)
+    }
+
+    const handleManualInput = (e: ChangeEvent<HTMLInputElement>) => {
+        const nextRawValue = e.currentTarget.value
+        const matchedOption = nextRawValue === "" ? null : findOption(nextRawValue)
+        const nextValue = matchedOption ?? nextRawValue
+
+        updateStoredValue(nextValue)
+        emitChange(nextValue)
+    }
+
+    const handleEditableKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key !== "Enter") return
+        e.preventDefault()
+
+        if (supportsManualInput) {
             setChoosing(false)
-            onChange?.(o)
         }
     }
-    
+
     const removeToken = (e: React.MouseEvent, o: Option) => {
-        e.stopPropagation();
-        if (disabled) return;
-        const nextValue = (value as Option[]).filter(v => v.value !== o.value);
-        // setValue(nextValue);
-        if (inForm) {
-            form.setFieldValue?.(name, nextValue.map(v => v.value));
-        } else {
-            setValue(nextValue);
-        }
+        e.stopPropagation()
+        if (disabled) return
+        const nextValue = (value as Option[]).filter(v => v.value !== o.value)
+
+        updateStoredValue(nextValue)
         setChoosing(false)
-        onChange?.(nextValue as any);
-    };
+        emitChange(nextValue)
+    }
 
     const handleListWheel = (e: React.WheelEvent) => {
-        const el = e.currentTarget;
-        const isAtTop = el.scrollTop === 0 && e.deltaY < 0;
-        const isAtBottom = el.scrollHeight - el.scrollTop === el.clientHeight && e.deltaY > 0;
+        const el = e.currentTarget
+        const isAtTop = el.scrollTop === 0 && e.deltaY < 0
+        const isAtBottom = el.scrollHeight - el.scrollTop === el.clientHeight && e.deltaY > 0
 
-        // If we are scrolling inside the list and not at the boundaries,
-        // kill the event so ScrollView never sees it.
         if (!isAtTop && !isAtBottom) {
-            e.stopPropagation();
+            e.stopPropagation()
         } else {
-            // If we hit the boundary, still stop it to prevent ScrollView from moving
-            e.preventDefault(); 
-            e.stopPropagation();
+            e.preventDefault()
+            e.stopPropagation()
         }
-    };
+    }
 
     useImperativeHandle(ref, () => ({
-        setSelected: (option: Option | string | Option[] | string[]) => {
-            
-            const next = mapToOption(option);
-            if (inForm) {
-                const raw = Array.isArray(next) ? next.map(v => v.value) : (next as Option)?.value;
-                form.setFieldValue?.(name, raw);
-            } else {
-                setValue(next);
-            }
-
-            // if (Array.isArray(option)) {
-            //     const nextOptions = option.map(item => 
-            //         typeof item === 'string' ? options.find(o => o.value === item)! : item
-            //     ).filter(Boolean);
-            //     setValue(nextOptions as Option[]);
-            // } 
-            // // Handle Single Input
-            // else if (typeof option === 'string') {
-            //     const found = options.find(o => o.value === option);
-            //     if (found) setValue(found);
-            // } 
-            // else {
-            //     setValue(option as Option);
-            // }
+        setSelected: (option: SelectValue) => {
+            updateStoredValue(normalizeValue(option))
         },
-        // Explicitly cast to satisfy the handler interface
-        getValue: () => (value || null) as (Option | Option[] | null)
-    }), [value, options])
+        getValue: () => (value ?? null) as (Option | Option[] | SelectPrimitive | null)
+    }), [value, options, supportsManualInput, multiple, tokenizer, inForm, name])
 
     useEffect(() => {
-        if (!choosing) return;
+        if (inForm || selected === undefined) return
+        setValue(normalizeValue(selected))
+    }, [selected, inForm, options, supportsManualInput, multiple, tokenizer])
+
+    useEffect(() => {
+        if (!choosing) return
 
         const handleScroll = () => {
-            reposition(); // Re-calculate top/left while scrolling
-        };
+            reposition()
+        }
 
-        // Attach to the window AND use capture to catch nested scrolls
-        window.addEventListener("scroll", handleScroll, true);
-        window.addEventListener("resize", reposition);
-        
+        window.addEventListener("scroll", handleScroll, true)
+        window.addEventListener("resize", reposition)
+
         return () => {
-            window.removeEventListener("scroll", reposition, true);
-            window.removeEventListener("resize", reposition);
-        };
-    }, [choosing, reposition]);
+            window.removeEventListener("scroll", handleScroll, true)
+            window.removeEventListener("resize", reposition)
+        }
+    }, [choosing, reposition])
 
     useEffect(() => {
         if (!choosing) {
-            // Cleanup: Clear search when closed
-            if (_search.current) _search.current.value = "";
-            setQuery(null);
-            return;
+            if (_search.current) _search.current.value = ""
+            setQuery(null)
+            return
         }
 
-        // 1. Focus search & Position menu
-        _search.current?.focus();
-        reposition();
+        _search.current?.focus()
+        reposition()
 
-        // 2. Handle clicking outside to close
         const handleOutsideClick = (e: MouseEvent) => {
-            // If click is outside the select component, close it
-            if (_pop.current && !_pop.current.contains(e.target as Node)) {
-                setChoosing(false);
+            if (_container.current && !_container.current.contains(e.target as Node)) {
+                setChoosing(false)
             }
-        };
+        }
 
-        // Use a tiny delay so the "Open" click doesn't immediately trigger "Close"
         const timeout = setTimeout(() => {
-            document.addEventListener("click", handleOutsideClick);
-        }, 0);
+            document.addEventListener("click", handleOutsideClick)
+        }, 0)
 
         return () => {
-            clearTimeout(timeout);
-            document.removeEventListener("click", handleOutsideClick);
-        };
-    }, [choosing, reposition]);
+            clearTimeout(timeout)
+            document.removeEventListener("click", handleOutsideClick)
+        }
+    }, [choosing, reposition])
 
     useEffect(() => {
         return () => {
-            if (inForm) form.deleteFieldValue?.(name);
-        };
-    }, []);
+            if (inForm) form.deleteFieldValue?.(name)
+        }
+    }, [form, inForm, name])
 
-    const updateQuery = useDebounce((q: string) => setQuery(q == `` ? null : q), 300)
+    const updateQuery = useDebounce((q: string) => setQuery(q === "" ? null : q), 300)
 
-    const _currentOption = useMemo(() =>  {
-        if ( !value ) return undefined;
-        return _(value).isArray() ? 
-                (value as Option[]).length > 0 ? (value as Option[])[0] : undefined
-                : value as Option
-    }, [value])
-
-    console.log(error)
-
-    return <Box 
+    return <Box
+        ref={_container}
         data-required={required ? "true" : undefined}
         with={withProp}
         className={[
             `--select ${expanded == true ? `--expanded` : ``}`,
             `--${variant || themeVariant}`,
-            `${name ? `--${name}` : ``}`, 
-            `${disabled ? '--disabled' : ''} rel`
-        ].join(` `).trim()} name={_id}>
+            `${name ? `--${name}` : ``}`,
+            `${error ? "--has-error" : ""}`,
+            `${disabled ? "--disabled" : ""} rel`
+        ].join(" ").trim()} name={_id}>
 
-        <Button
-            ref={_ref}
+        {supportsManualInput ? <Box
+            data-value={currentOption?.value ?? (editableValue || "-1")}
+            className={`--select-display --selected --editable flex aic rel ${className}`.trim()}
+            style={style}
+            onClick={(e) => e.stopPropagation()}
+            {...forwardedRest as any}>
+            { currentOption?.icon && <Icon as={`--selected-icon`} name={currentOption.icon} /> }
+            <Flex aic as="--label-wrapper">
+                <input
+                    aria-expanded={choosing}
+                    className="--select-input"
+                    disabled={disabled}
+                    onChange={handleManualInput}
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        if ( !disabled ) setChoosing(true)
+                    }}
+                    onKeyDown={handleEditableKeyDown}
+                    placeholder={editablePlaceholder || label || "Choose"}
+                    type="text"
+                    value={editableValue}
+                />
+            </Flex>
+
+            <Button
+                className={`--select-toggle rel flex aic jcc`}
+                disabled={disabled}
+                onClick={(e) => {
+                    e.stopPropagation()
+                    if ( !disabled ) setChoosing(prev => !prev)
+                }}
+                tabIndex={-1}
+                withLabel={false}>
+                {choosing ?
+                    typeof arrowUpIcon === "string" ? <Icon name={arrowUpIcon} as={`--search-action`} /> : arrowUpIcon :
+                    typeof arrowDownIcon === "string" ? <Icon name={arrowDownIcon} as={`--search-action`} /> : arrowDownIcon}
+            </Button>
+        </Box> : <Button
             disabled={disabled}
-            // If value is null, data-value becomes -1 for CSS styling
             variant={variant || themeVariant}
-            data-value={_currentOption?.value ?? `-1`}
+            data-value={currentOption?.value ?? `-1`}
             className={`--select-display --selected flex aic rel ${className}`.trim()}
             withLabel={false}
             style={style}
@@ -304,12 +377,12 @@ const Select = ({
                 e.stopPropagation()
                 if ( !disabled ) setChoosing(prev => !prev)
             }}
-            {...rest as ButtonProps}>
-            { _currentOption?.icon && <Icon as={`--selected-icon`} name={_currentOption.icon} /> }
+            {...forwardedRest as any}>
+            { currentOption?.icon && <Icon as={`--selected-icon`} name={currentOption.icon} /> }
             <Flex aic as="--label-wrapper">
                 {tokenizer && Array.isArray(value) && value.length > 0 ? (
                     <Flex as={`--tokens-wrap${wrapTokens === true ? ` --wrap` : ``}`}>
-                        {value?.map(v => (
+                        {value.map(v => (
                             <Flex key={v.value} aic as="--token">
                                 <Text as={`--token-label`}>{v.label}</Text>
                                 <Box as={`--token-remove`} onClick={(e) => removeToken(e, v)}>
@@ -318,30 +391,25 @@ const Select = ({
                             </Flex>
                         ))}
                         {value.length < options.length && <Text as="--label">
-                            {label || 'Choose'}
+                            {label || "Choose"}
                         </Text>}
                     </Flex>
-                    ) : (
-                        <Text as="--label">
-                            {/* DISPLAY LOGIC: 
-                                If multi: show count or 'Select...'
-                                If single: show option label or 'Select...'
-                            */}
-                            {Array.isArray(value) 
-                                ? (value.length > 0 ? `${value.length} selected` : label || 'Choose')
-                                : (value?.label || label || 'Choose')}
-                        </Text>
-                    )}
+                ) : (
+                    <Text as="--label">
+                        {Array.isArray(value)
+                            ? (value.length > 0 ? `${value.length} selected` : label || "Choose")
+                            : (currentOption?.label || label || "Choose")}
+                    </Text>
+                )}
             </Flex>
 
-            <Box className={`--svg-arrow rel flex aic jcc`}>{choosing ? 
-                `string` === typeof arrowUpIcon ? <Icon name={arrowUpIcon} as={`--search-action`} /> : arrowUpIcon : 
-                `string` === typeof arrowDownIcon ? <Icon name={arrowDownIcon} as={`--search-action`} /> : arrowDownIcon}</Box>
-                
-        </Button>
+            <Box className={`--svg-arrow rel flex aic jcc`}>{choosing ?
+                typeof arrowUpIcon === "string" ? <Icon name={arrowUpIcon} as={`--search-action`} /> : arrowUpIcon :
+                typeof arrowDownIcon === "string" ? <Icon name={arrowDownIcon} as={`--search-action`} /> : arrowDownIcon}</Box>
+        </Button>}
 
         <Box
-            id={_id}           
+            id={_id}
             className={`--options-list --allow-scroll -fx flex cols abs zIndex:var(--max-z-index)`}
             aria-hidden={!choosing}
             onWheel={handleListWheel}
@@ -355,37 +423,27 @@ const Select = ({
                 when: choosing,
                 duration: .05
             }}>
-            { withSearch && <Box as={`--select-search --no-shrink flex --sticky`}><Search 
+            { withSearch && <Box as={`--select-search --no-shrink flex --sticky`}><Search
                 ref={_search}
                 variant={Variant.Small}
                 placeholder={searchPlaceholder || `Search...`}
                 onChange={updateQuery}
             /></Box>}
-            {/* {withSearch && <Box as={`--select-search --sticky`}>
-                <Input 
-                    ref={_search}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                        setQuery(e.target.value == `` ? null : e.target.value)
-                    }}
-                    className={`--search-input`}
-                    placeholder={searchPlaceholder || `Search...`} />
-            </Box>} */}
-            {/* PERSISTENT TOP LABEL: This never disappears */}
             { label && <OptionGroupHead label={label} /> }
-            {   
+            {
                 options
                 ?.filter(o => !query || o.label.toLowerCase().includes(query.toLowerCase()))
-                ?.map((o) => <OptionItem 
-                    updateValue={updateValue} 
+                ?.map((o) => <OptionItem
+                    updateValue={updateValue}
                     checkIcon={checkIcon}
                     selected={isSelected(o)}
-                    key={`option-${(`string` == typeof o ? o : o.label).replace(/\s+/g, `-`)}-${`string` == typeof o ? o : o.value}`}               
+                    key={`option-${o.label.replace(/\s+/g, `-`)}-${o.value}`}
                     o={o} />)
             }
         </Box>
 
     </Box>
-}
+}) as SelectComponent
 
 Select.displayName = `Zuz.Select`
 

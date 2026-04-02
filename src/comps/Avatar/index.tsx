@@ -9,6 +9,25 @@ import Text from "../Text";
 import { AvatarHandler, AvatarProps } from "./types";
 
 
+/**
+ * Avatar component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <Avatar src="https://example.com/avatar.jpg" alt="User" />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <Avatar src="https://example.com/avatar.jpg" alt="User" size="lg" variant="rounded" />
+ * ```
+ * @param src - Source URL
+ * @param alt - Alt text
+ * @param size - Component size
+ * @param variant - Visual variant or style
+ */
 const Avatar = forwardRef<AvatarHandler, AvatarProps>((props, ref) => {
     
     const { 

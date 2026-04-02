@@ -5,6 +5,26 @@ import { BoxProps } from "../../types"
 import Box from "../Box"
 import { ProgressBarProps, ProgressHandler } from "./types"
 
+/**
+ * ProgressBar component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <ProgressBar value={65} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <ProgressBar value={65} max={100} variant="success" animated label="65%" />
+ * ```
+ * @param value - Current value
+ * @param max - max prop
+ * @param variant - Visual variant or style
+ * @param animated - animated prop
+ * @param label - Label text for the component
+ */
 const ProgressBar = forwardRef<ProgressHandler, ProgressBarProps>((props, ref) => {
 
     const { progress, type, animated, ...pops } = props

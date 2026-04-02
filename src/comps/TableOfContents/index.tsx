@@ -4,6 +4,23 @@ import List from "../List"
 import { TableOfContentsProps } from "./types"
 import Text from "../Text"
 
+/**
+ * TableOfContents component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <TableOfContents items={[{ id: "intro", label: "Introduction" }, { id: "guide", label: "Guide" }]} />
+ * ```
+ *
+ * @example
+ * // Advanced usage with additional props
+ * ```tsx
+ * <TableOfContents items={[{ id: "intro", label: "Intro" }, { id: "api", label: "API" }]} onSelect={(id) => console.log(id)} />
+ * ```
+ * @param items - Array of items
+ * @param onSelect - Callback function triggered on selection
+ */
 const TableOfContents = ({
     ref,
     ...props
