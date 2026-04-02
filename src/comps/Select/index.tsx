@@ -7,7 +7,7 @@ import { POSITION, Variant } from "../../types";
 import Box from "../Box";
 import Button from "../Button";
 import Flex from "../Flex";
-import { useForm } from "../Form/context";
+import { useFormActions, useFormFieldError, useFormFieldValue } from "../Form/context";
 import Icon from "../Icon";
 import Search from "../Search";
 import SVGIcons from "../svgicons";
@@ -76,10 +76,10 @@ const Select = (({
         ...pops
     } = props
 
-    const form = useForm()
-    const inForm = name && form.values && form.setFieldValue
-    const error = inForm ? form.errors?.[name] : null
-    const formValue = inForm ? form.values?.[name] : undefined
+    const form = useFormActions()
+    const inForm = Boolean(name && form?.setFieldValue)
+    const error = useFormFieldError(name)
+    const formValue = useFormFieldValue(name)
     const supportsManualInput = editable === true && multiple !== true && tokenizer !== true
 
     const isPrimitiveValue = (val: unknown): val is SelectPrimitive => {
@@ -181,8 +181,8 @@ const Select = (({
     }
 
     const updateStoredValue = (nextValue: Option | Option[] | string | null) => {
-        if (inForm) {
-            form.setFieldValue?.(name, serializeValue(nextValue))
+        if (inForm && form?.setFieldValue && name) {
+            form.setFieldValue(name, serializeValue(nextValue))
             return
         }
 
@@ -308,12 +308,6 @@ const Select = (({
             document.removeEventListener("click", handleOutsideClick)
         }
     }, [choosing, reposition])
-
-    useEffect(() => {
-        return () => {
-            if (inForm) form.deleteFieldValue?.(name)
-        }
-    }, [form, inForm, name])
 
     const updateQuery = useDebounce((q: string) => setQuery(q === "" ? null : q), 300)
 

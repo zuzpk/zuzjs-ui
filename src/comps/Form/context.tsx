@@ -31,6 +31,32 @@ export const useFormStore = () => {
 
 export const useFormActions = () => useContext(FormContext);
 
+const _noopSubscribe = () => () => {}
+
+export const useFormFieldValue = (name?: string) => {
+    const context = useContext(FormContext)
+    return useSyncExternalStore(
+        context?.subscribe ?? _noopSubscribe,
+        () => {
+            if (!context || !name) return undefined
+            return context.getSnapshot().values?.[name]
+        },
+        () => undefined
+    )
+}
+
+export const useFormFieldError = (name?: string) => {
+    const context = useContext(FormContext)
+    return useSyncExternalStore(
+        context?.subscribe ?? _noopSubscribe,
+        () => {
+            if (!context || !name) return null
+            return context.getSnapshot().errors?.[name] ?? null
+        },
+        () => null
+    )
+}
+
 export const useForm = () => {
     const actions = useFormActions()
     const store = useFormStore()
@@ -62,24 +88,34 @@ export const FormProvider = ({ children, initialValues = {} }: { children: React
     };
 
     useEffect(() => {
-        // console.log(initialValues)
-        if (initialValues && Object.keys(initialValues).length > 0) {
-            const newKeys = new Set(Object.keys(initialValues));
-            const removedKeys = [...prevInitialKeys.current].filter(k => !newKeys.has(k));
-            
-            const currentValues = { ...store.current.values };
-            removedKeys.forEach(k => delete currentValues[k]);
-            
-            store.current = { 
-                ...store.current, 
-                values: {
-                    ...currentValues,
-                    ...initialValues 
-                }
-            };
-            prevInitialKeys.current = newKeys;
-            notify();
+        if (!initialValues || Object.keys(initialValues).length === 0) return
+
+        const newKeys = new Set(Object.keys(initialValues));
+        const removedKeys = [...prevInitialKeys.current].filter(k => !newKeys.has(k));
+
+        const currentValues = { ...store.current.values };
+        removedKeys.forEach(k => delete currentValues[k]);
+
+        const nextValues = {
+            ...currentValues,
+            ...initialValues,
         }
+
+        const prevValues = store.current.values || {}
+        const nextEntries = Object.entries(nextValues)
+        const prevEntries = Object.entries(prevValues)
+        const hasChanged =
+            nextEntries.length !== prevEntries.length ||
+            nextEntries.some(([k, v]) => prevValues[k] !== v)
+
+        prevInitialKeys.current = newKeys;
+        if (!hasChanged) return
+
+        store.current = {
+            ...store.current,
+            values: nextValues,
+        }
+        notify();
     }, [initialValues]);
 
     const actions = useMemo(() => ({
