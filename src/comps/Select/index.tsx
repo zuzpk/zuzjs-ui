@@ -9,12 +9,13 @@ import Button from "../Button";
 import Flex from "../Flex";
 import { useFormActions, useFormFieldError, useFormFieldValue } from "../Form/context";
 import Icon from "../Icon";
+import Input from "../Input";
 import Search from "../Search";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
 import OptionGroupHead from "./groupHead";
 import OptionItem from "./optionItem";
-import { Option, SelectEditableProps, SelectHandler, SelectInternalProps, SelectMultipleProps, SelectPrimitive, SelectSingleProps, SelectTokenizerProps, SelectValue } from "./types";
+import type { Option, SelectEditableProps, SelectHandler, SelectInternalProps, SelectMultipleProps, SelectPrimitive, SelectSingleProps, SelectTokenizerProps, SelectValue } from "./types";
 
 type SelectPublicProps = SelectSingleProps | SelectEditableProps | SelectMultipleProps | SelectTokenizerProps
 
@@ -84,7 +85,7 @@ const Select = (({
     const error = useFormFieldError(name)
     const formValue = useFormFieldValue(name)
     const supportsManualInput = editable === true && multiple !== true && tokenizer !== true
-
+    
     const isPrimitiveValue = (val: unknown): val is SelectPrimitive => {
         return typeof val === "string" || typeof val === "number"
     }
@@ -193,7 +194,11 @@ const Select = (({
     }
 
     const emitChange = (nextValue: Option | Option[] | string) => {
-        onChange?.(nextValue)
+        onChange?.(
+            editable === true &&
+            nextValue instanceof Option ? String(nextValue.value) :
+                nextValue
+        )
     }
 
     const updateValue = (o: Option) => {
@@ -218,12 +223,12 @@ const Select = (({
     }
 
     const handleManualInput = (e: ChangeEvent<HTMLInputElement>) => {
-        const nextRawValue = e.currentTarget.value
+        const nextRawValue = e.target.value
         const matchedOption = nextRawValue === "" ? null : findOption(nextRawValue)
-        const nextValue = matchedOption ?? nextRawValue
+        const nextValue = matchedOption ? matchedOption.value : nextRawValue
 
-        updateStoredValue(nextValue)
-        emitChange(nextValue)
+        updateStoredValue(nextValue as string)
+        emitChange(nextValue as string)
     }
 
     const handleEditableKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -231,6 +236,17 @@ const Select = (({
         e.preventDefault()
 
         if (supportsManualInput) {
+            const nextRawValue = e.currentTarget.value.trim()
+            if (!nextRawValue) {
+                setChoosing(false)
+                return
+            }
+
+            const matchedOption = findOption(nextRawValue as SelectPrimitive)
+            const nextValue = matchedOption ?? nextRawValue
+
+            updateStoredValue(nextValue)
+            emitChange(nextValue)
             setChoosing(false)
         }
     }
@@ -313,6 +329,8 @@ const Select = (({
     }, [choosing, reposition])
 
     const updateQuery = useDebounce((q: string) => setQuery(q === "" ? null : q), 300)
+    const updateManualInput = useDebounce(handleManualInput, 300)
+    // const updateManualInput = useDebounce((e: ChangeEvent<HTMLInputElement>) => handleManualInput(e), 300)
 
     return <Box
         ref={_container}
@@ -334,11 +352,11 @@ const Select = (({
             {...forwardedRest as any}>
             { currentOption?.icon && <Icon as={`--selected-icon`} name={currentOption.icon} /> }
             <Flex aic as="--label-wrapper">
-                <input
+                <Input
                     aria-expanded={choosing}
                     className="--select-input"
                     disabled={disabled}
-                    onChange={handleManualInput}
+                    onChange={updateManualInput}
                     onClick={(e) => {
                         e.stopPropagation()
                         if ( !disabled ) setChoosing(true)
@@ -346,7 +364,7 @@ const Select = (({
                     onKeyDown={handleEditableKeyDown}
                     placeholder={editablePlaceholder || label || "Choose"}
                     type="text"
-                    value={editableValue}
+                    defaultValue={editableValue}
                 />
             </Flex>
 

@@ -99,7 +99,41 @@ class StyleGenerator {
                     const nextCtx = { ...ctx };
 
                     if (raw.startsWith('&')) {
-                        nextCtx.pseudo = raw.replace('&', '');
+                        // // nextCtx.pseudo = raw.replace('&', '');
+                        // const pseudoName = raw.replace('&', '');
+        
+                        // if (pseudoName === 'even') nextCtx.pseudo = 'nth-child(even)';
+                        // else if (pseudoName === 'odd') nextCtx.pseudo = 'nth-child(odd)';
+                        // else if (pseudoName.startsWith('nth')) {
+                        //     // This will capture the 'nth' part; the recursive 'walk' 
+                        //     // will pick up the argument inside the parentheses.
+                        //     nextCtx.pseudo = 'nth-child'; 
+                        // } else {
+                        //     nextCtx.pseudo = pseudoName;
+                        // }
+                        const p = raw.slice(1);
+                        // Handle Shortcuts
+                        if (p === 'even') nextCtx.pseudo = 'nth-child(even)';
+                        else if (p === 'odd') nextCtx.pseudo = 'nth-child(odd)';
+                        else if (p === 'first') nextCtx.pseudo = 'first-child';
+                        else if (p === 'last') nextCtx.pseudo = 'last-child';
+                        // Handle nth-child(x)
+                        else if (p.startsWith('nth')) {
+                            // Look ahead for the argument in this specific bracket
+                            let arg = "";
+                            let j = i + 1;
+                            let depth = 1;
+                            while (j < input.length && depth > 0) {
+                                if (input[j] === '(') depth++;
+                                if (input[j] === ')') depth--;
+                                if (depth > 0) arg += input[j];
+                                j++;
+                            }
+                            nextCtx.pseudo = `nth-child(${arg.trim()})`;
+                            i = j - 1; // Move pointer to the end of the arg bracket
+                        } 
+                        else nextCtx.pseudo = p;
+
                     } else if (raw.startsWith('@')) {
                         nextCtx.media = raw.replace('@', '');
                     } else {
@@ -114,6 +148,15 @@ class StyleGenerator {
                     if (buffer.trim()) this.pushToken(tokens, buffer.trim(), ctx);
                     buffer = "";
                     return; 
+                    // const val = buffer.trim();
+                    // // If we were waiting for an nth-child argument
+                    // if (ctx.pseudo === 'nth-child') {
+                    //     ctx.pseudo = `nth-child(${val})`;
+                    // } else if (val) {
+                    //     this.pushToken(tokens, val, ctx);
+                    // }
+                    // buffer = "";
+                    // return;
                 } 
                 // ONLY split on space if we are NOT inside brackets
                 else if ((char === ' ' || char === '\n') && bracketDepth === 0) {
@@ -135,6 +178,12 @@ class StyleGenerator {
     private pushToken(tokens: UtilityToken[], raw: string, ctx: any) {
 
         const trimmedRaw = raw.trim();
+
+        // Special Case: if we are inside an nth-child context, the 'raw' is the argument (e.g., "3" or "2n+1")
+        if (ctx.pseudo === 'nth-child' && !trimmedRaw.includes(':')) {
+            ctx.pseudo = `nth-child(${trimmedRaw})`;
+            return; // Don't push a token yet, wait for the actual property inside
+        }
 
         // 1. if it's a standard property (w:100)
         if (trimmedRaw.includes(':')){
