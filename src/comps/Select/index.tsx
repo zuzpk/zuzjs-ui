@@ -14,12 +14,15 @@ import SVGIcons from "../svgicons";
 import Text from "../Text";
 import OptionGroupHead from "./groupHead";
 import OptionItem from "./optionItem";
-import { Option, SelectHandler, SelectInternalProps, SelectPrimitive, SelectProps, SelectValue } from "./types";
+import { Option, SelectEditableProps, SelectHandler, SelectInternalProps, SelectMultipleProps, SelectPrimitive, SelectSingleProps, SelectTokenizerProps, SelectValue } from "./types";
+
+type SelectPublicProps = SelectSingleProps | SelectEditableProps | SelectMultipleProps | SelectTokenizerProps
 
 type SelectComponent = {
-    <TMultiple extends boolean = false, TTokenizer extends boolean = false, TEditable extends boolean = false>(
-        props: SelectProps<TMultiple, TTokenizer, TEditable> & { ref?: Ref<SelectHandler> }
-    ): ReactElement
+    (props: SelectSingleProps & { ref?: Ref<SelectHandler> }): ReactElement
+    (props: SelectEditableProps & { ref?: Ref<SelectHandler> }): ReactElement
+    (props: SelectMultipleProps & { ref?: Ref<SelectHandler> }): ReactElement
+    (props: SelectTokenizerProps & { ref?: Ref<SelectHandler> }): ReactElement
     displayName?: string
 }
 

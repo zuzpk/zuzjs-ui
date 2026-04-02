@@ -2442,7 +2442,16 @@ type SelectInternalProps = SelectCommonProps & {
 };
 
 type SelectComponent = {
-    <TMultiple extends boolean = false, TTokenizer extends boolean = false, TEditable extends boolean = false>(props: SelectProps<TMultiple, TTokenizer, TEditable> & {
+    (props: SelectSingleProps & {
+        ref?: Ref<SelectHandler>;
+    }): ReactElement;
+    (props: SelectEditableProps & {
+        ref?: Ref<SelectHandler>;
+    }): ReactElement;
+    (props: SelectMultipleProps & {
+        ref?: Ref<SelectHandler>;
+    }): ReactElement;
+    (props: SelectTokenizerProps & {
         ref?: Ref<SelectHandler>;
     }): ReactElement;
     displayName?: string;
