@@ -233,6 +233,9 @@ export * from './Drawer/types';
 export { default as Fab } from './Fab';
 export * from './Fab/types';
 
+export { default as Fieldset } from './Fieldset';
+export * from './Fieldset/types';
+
 /**
  * Filter helpers UI.
  * @example

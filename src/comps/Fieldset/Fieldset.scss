@@ -1,0 +1,66 @@
+@use "../../scss/variables";
+
+body{
+    --fieldset: var(--surface);
+    --fieldset-border: 1px solid var(--border-primary);
+    --fieldset-legend: var(--surface);
+    --fieldset-legend-border: var(--fieldset-border);
+}
+
+.--fieldset{
+    border: var(--fieldset-border);
+    padding: 15px;
+    display: flex;
+    background: var(--fieldset);
+    .--legend{
+        &.--top-start{
+            top: -0.75lh;
+            left: 40px;
+        }
+        &.--top-center{
+            top: -0.75lh;
+            left: 50%;
+            translate-x: -50%;
+        }
+        &.--top-end{
+            top: -0.75lh;
+            right: 40px;
+        }
+        &.--bottom-start{
+            bottom: -0.75lh;
+            left: 40px;
+        }
+        &.--bottom-center{
+            bottom: -0.75lh;
+            left: 50%;
+            translate-x: -50%;
+        }
+        &.--bottom-end{
+            bottom: -0.75lh;
+            right: 40px;
+        }
+        :nth-child(1){
+            background: var(--fieldset-legend);
+            border: var(--fieldset-legend-border);
+        }
+    }
+
+    @each $size in variables.$sizes {
+
+        &.--#{$size}{
+
+            border-radius: var(--radius-#{$size});
+
+            .--legend{
+                :nth-child(1){
+                    font-size: var(--text-#{$size});
+                    padding: calc(var(--padding-#{$size}-x) / 3) var(--padding-#{$size}-y, 5px);
+                    border-radius: var(--radius-#{$size});
+                }
+            }
+
+        }
+
+    }
+
+}

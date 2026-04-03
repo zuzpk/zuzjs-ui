@@ -110,6 +110,7 @@ body{
                 width: var(--scrollbar-track-size);
                 top: 0;
                 pointer-events: auto;
+                border-radius: var(--scrollbar-thumb-radius, 20px);
             }
 
         }
@@ -122,6 +123,7 @@ body{
             .--scroll-thumb{
                 height: var(--scrollbar-track-size);
                 bottom: 0;
+                border-radius: var(--scrollbar-thumb-radius, 20px);
             }
 
         }

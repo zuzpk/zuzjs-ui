@@ -33,6 +33,32 @@ export const Position = POSITION
 export const ORIGIN = AnchorType
 export const OriginType = ORIGIN
 
+export const PLACEMENTS = {
+    // Top
+    Top: 'top',
+    TopStart: 'top-start',
+    TopCenter: 'top-center',
+    TopEnd: 'top-end',
+
+    // Bottom
+    Bottom: 'bottom',
+    BottomStart: 'bottom-start',
+    BottomCenter: 'bottom-center',
+    BottomEnd: 'bottom-end',
+
+    // Left
+    Left: 'left',
+    LeftStart: 'left-start',
+    LeftCenter: 'left-center',
+    LeftEnd: 'left-end',
+
+    // Right
+    Right: 'right',
+    RightStart: 'right-start',
+    RightCenter: 'right-center',
+    RightEnd: 'right-end',
+} as const;
+
 export const Variant = {
     XSmall : `xs`,
     Small : `sm`,

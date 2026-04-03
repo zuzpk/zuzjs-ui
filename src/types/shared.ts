@@ -2,7 +2,7 @@ import {
     ComponentPropsWithoutRef,
     ElementType
 } from 'react';
-import { FORMVALIDATION } from './enums';
+import { FORMVALIDATION, PLACEMENTS } from './enums';
 import { ZuzProps } from './interfaces';
 
 /**
@@ -24,3 +24,5 @@ export type FormValidation = ValueOf<typeof FORMVALIDATION>
 export type WithFormValidation = FormValidation | `${FormValidation}${string}`
 
 export type AnimationTransition = `back` | `expo` | `sine` | `power` | `circ` | `bounce` | `elastic` | `ease` | `spring` | `liquid`
+
+export type Placement = ValueOf<typeof PLACEMENTS>;
