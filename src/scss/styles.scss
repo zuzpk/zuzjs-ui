@@ -119,7 +119,7 @@ body {
 }
 
 .--no-scroll{overflow: hidden;}
-[aria-hidden="true"] {
+[aria-hidden="true"]:not(.monaco-editor *):not(.monaco-aria-container) {
 	user-select: none;
 	pointer-events: none;
     cursor: auto;
