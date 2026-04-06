@@ -83,6 +83,7 @@ body {
     --text-primary: #111;
     --text-primary-hover: #222;
     --text-primary-disabled: #989898;
+    --text-primary-inverted: #fff;
     --text-secondary: #444;
     --text-secondary-hover: #666;
     --border-primary: #ddd;
@@ -103,6 +104,7 @@ body {
         --muted: #272829;
         --muted-hover: #2e2f31;
         --text-primary: #fff;
+        --text-primary-inverted: #111;
         --text-primary-hover: #f6f6f6;
         --text-primary-disabled: #6d6d6d;
         --text-secondary: #e3e3e3;
@@ -237,7 +239,7 @@ body {
     &.--jce{justify-content: flex-end;}
     &.--jcs{justify-content: flex-start;}
     &.--wrap{flex-wrap: wrap;}
-}
+}  
 .flex-inline{
     display: inline-flex;
 }
@@ -280,6 +282,10 @@ body {
 .no-overflow{overflow:hidden;}
 .w-full{width: 100%;}
 .h-full{height: 100%;}
+.dim-25{opacity: 0.25;}
+.dim-50{opacity: 0.5;}
+.dim-75{opacity: 0.75;}
+.dim-100{opacity: 1;}
 
 .--line-clamp {
   display: -webkit-box;

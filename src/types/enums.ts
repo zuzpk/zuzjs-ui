@@ -158,7 +158,8 @@ export const SHEET = {
     Error : "ERROR",
     Success : "SUCCESS",
     Warn : "WARN",
-    Promise : 'PROMISE'
+    Promise : 'PROMISE',
+    Confirm : "CONFIRM",
 } as const
 export const DIALOG = SHEET
 

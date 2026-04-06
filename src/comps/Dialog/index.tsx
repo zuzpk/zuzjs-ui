@@ -1,4 +1,4 @@
-import { uuid } from "@zuzjs/core"
+import { dynamic, uuid } from "@zuzjs/core"
 import { KeyCode, useShortcuts } from "@zuzjs/hooks"
 import { ReactNode, Ref, useEffect, useMemo, useRef, useState } from "react"
 import { useFx } from "../../hooks"
@@ -8,6 +8,8 @@ import { BoxProps, ValueOf } from "../../types"
 import { DIALOG, TRANSITION_CURVES, TRANSITIONS, Variant } from "../../types/enums"
 import Box from "../Box"
 import Cover from "../Cover"
+import Form from "../Form"
+import { ValidationResult } from "../Form/types"
 import { layerManager } from "../layer_manager"
 import Overlay from "../Overlay"
 import { SPINNER } from "../Spinner/types"
@@ -49,11 +51,15 @@ const Dialog = ({
         index, 
         id, 
         title: _title,
+        description: _description,
+        titleAlignment,
         message,
+        content,
         transition,
         curve,
         speed,
         type, 
+        width,
         action: _action,
         actionPosition,
         spinner,
@@ -62,6 +68,10 @@ const Dialog = ({
         inBackground,
         forceClose,
         forceLoading,
+        useForm,
+        formProps,
+        onConfirm,
+        onCancel,
         onClose,
         onShow,
         onHide,
@@ -70,11 +80,18 @@ const Dialog = ({
 
     const dialogID = useMemo(() => uuid(12), [])
     const [ title, setTitle ] = useState<string | ReactNode>(_title || ``)
-    const [ msg, setMsg ] = useState<string | ReactNode>(message || ``)
+    const [ description, setDescription ] = useState<string | ReactNode>(_description || ``)
+    const [ msg, setMsg ] = useState<string | ReactNode>(content || message || ``)
     const [ dialogType, setDialogType ] = useState<ValueOf<typeof DIALOG>>(type || DIALOG.Dialog);
     const [ visible, setVisible ] = useState(false)
     const [ render, setRender ] = useState(true)
-    const [ action, setAction ] = useState<DialogActionHandler[] | null>(_action || null)
+    const [ action, setAction ] = useState<DialogActionHandler[] | null>(() => {
+        if (!_action) return null;
+        return _action.map((a) => ({
+            ...a,
+            key: a.key || uuid(12)
+        }));
+    })
     const [ loading, setLoading ] = useState(false)
     const { 
         variant: themeVariant,
@@ -119,15 +136,9 @@ const Dialog = ({
     
     useEffect(() => {
         setDialogType(DIALOG.Dialog)
-        setMsg(message);
+        setMsg(content || message);
         setTitle(title);
-        if ( action ) setAction(action.reduce((ar, b) => {
-            ar.push({
-                ...b,
-                key: b.key || uuid(12)
-            })
-            return ar
-        }, [] as DialogActionHandler[]));
+        setDescription(description);
         setVisible(true);
 
         setTimeout(() => onShow ? onShow() : () => {}, 500)
@@ -154,43 +165,54 @@ const Dialog = ({
 
     const baseZIndex = useMemo(() => 10000 + (index * 10), [index]);
 
+    const _dialog = <Box
+        as={`--dialog --${(type ?? DIALOG.Default).toLowerCase()} ${visible ? `--visible` : ``} ${className} fixed abc`.trim()}
+        style={{
+            ...dialogAnimation.style,
+            zIndex: baseZIndex + 1,
+            pointerEvents: inBackground == true ? 'none' : 'auto',
+            width: width || `auto`,
+            ...(inBackground == true ? {
+                scale: `0.92`,
+                filter: `blur(2px)`
+            } : {})
+        }}
+        {...rest as BoxProps}
+        ref={innerRef}>
+            
+
+        <DialogHead
+            title={title} 
+            description={_description}
+            titlePosition={titleAlignment || themeDialog?.titleAlignment || `center`}
+            onClose={closeDialog} />
+
+        <DialogBody
+            message={msg}
+            render={render}
+            action={action} />
+
+        {action && action.length > 0 && <DialogFooter
+            variant={_variant}
+            action={action} 
+            dialogID={dialogID} 
+            useForm={useForm}
+            actionPosition={actionPosition} />}
+
+        <Cover when={loading} spinner={spinner || themeDialog?.spinner || themeSpinner?.type || SPINNER.Simple} message={loadingMessage || themeDialog?.loadingMessage} />
+
+    </Box>
+
     return <>
         <Overlay 
             style={{ zIndex: baseZIndex }}
             when={visible} />
-        <Box
-            as={`--dialog --${(type ?? DIALOG.Default).toLowerCase()} ${visible ? `--visible` : ``} ${className} fixed abc`.trim()}
-            style={{
-                ...dialogAnimation.style,
-                zIndex: baseZIndex + 1,
-                pointerEvents: inBackground == true ? 'none' : 'auto',
-                ...(inBackground == true ? {
-                    scale: `0.92`,
-                    filter: `blur(2px)`
-                } : {})
-            }}
-            {...rest as BoxProps}
-            ref={innerRef}>
-                
-
-            <DialogHead
-                title={title} 
-                onClose={closeDialog} />
-
-            <DialogBody
-                message={msg}
-                render={render}
-                action={action} />
-
-            {action && action.length > 0 && <DialogFooter
-                variant={_variant}
-                action={action} 
-                dialogID={dialogID} 
-                actionPosition={actionPosition} />}
-
-            <Cover when={loading} spinner={spinner || themeDialog?.spinner || themeSpinner?.type || SPINNER.Simple} message={loadingMessage || themeDialog?.loadingMessage} />
-
-        </Box>
+        
+        { useForm ? <Form 
+            onSubmit={((data: dynamic, result: ValidationResult) => {
+                onConfirm?.(data, result);
+            }) as any}
+            {...formProps}>{_dialog}</Form> : _dialog}
     </>
 
 }

@@ -4,9 +4,11 @@ body{
     --dialog-radius: 10px;
     --dialog-min-width: 300px;
     --dialog-head-padding: var(--padding-lg-x);
-    --dialog-title-position: center;
     --dialog-title-opacity: 0.75;
     --dialog-title-font-size: 16px;
+    --dialog-description-font-size: 14px;
+    --dialog-title-size: 16px;
+    --dialog-description-size: 14px;
 
     --dialog-closer-size: 24px;
     --dialog-closer-bg: var(--background);
@@ -21,9 +23,9 @@ body{
 
     --dialog-footer: var(--background);
     --dialog-footer-padding: 10px;
-    --dialog-action: var(--background);
-    --dialog-action-color: #fff;
-    --dialog-action-hover: var(--background-hover);
+    --dialog-action: var(--primary);
+    --dialog-action-color: var(--text-primary-inverted);
+    --dialog-action-hover: var(--primary-hover);
     --dialog-action-radius: 7px;
     --dialog-action-padding: 7px 20px;
     --dialog-action-font-size: 16px;
@@ -60,14 +62,30 @@ body{
     }
 
     .--head{
-        padding: var(--dialog-head-padding);
+        padding: var(--dialog-head-padding-custom, var(--dialog-head-padding));
         .--title{
             flex: 1;
-            font-size: var(--dialog-title-font-size);
+            font-size: var(--dialog-title-size, var(--dialog-title-font-size));
             opacity: var(--dialog-title-opacity);
             text-align: var(--dialog-title-position);
-            padding: 0px 45px;
+            padding: var(--dialog-title-padding, 10px);
         }
+        .--description{
+            opacity: 0.5;
+            font-size: var(--dialog-description-size, var(--dialog-description-font-size));
+            text-align: var(--dialog-title-position);
+        }
+
+        .--position-left{
+            --dialog-title-position: left;
+        }
+        .--position-center{
+            --dialog-title-position: center;
+        }
+        .--position-right{
+            --dialog-title-position: right;
+        }
+
         .--closer{
             width: var(--dialog-closer-size);
             height: var(--dialog-closer-size);
@@ -103,14 +121,18 @@ body{
         padding: var(--dialog-footer-padding);
         background: var(--dialog-footer);
         border-radius: 0px 0px var(--dialog-radius) var(--dialog-radius);
+        gap: var(--dialog-footer-gap, 10px);
         .--action{
-            background: var(--dialog-action);
-            color: var(--dialog-action-color);
             border-radius: var(--dialog-action-radius);
             padding: var(--dialog-action-padding);
             font-size: var(--dialog-action-font-size);
             font-weight: var(--dialog-action-font-weight);
             border: 0px;
+        }
+
+        .--action.--solid{
+            background: var(--dialog-action);
+            color: var(--dialog-action-color);
             &:hover{
                 background: var(--dialog-action-hover);
             }

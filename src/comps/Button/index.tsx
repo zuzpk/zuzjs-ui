@@ -6,6 +6,7 @@ import Icon from '../Icon';
 import Span from '../Span';
 import Spinner from '../Spinner';
 import { SPINNER } from '../Spinner/types';
+import ToolTip from '../Tooltip';
 import { ButtonProps, ButtonState } from './types';
 
 /**
@@ -35,6 +36,8 @@ const Button = ({ ref, ...props} : ButtonProps) => {
         reset, 
         kind = `solid`,
         variant, 
+        tooltip,
+        tooltipProps,
         icon, iconSize, children, withLabel, spinner, state, disabled, ...pops } = props
     const {
         style,
@@ -43,8 +46,8 @@ const Button = ({ ref, ...props} : ButtonProps) => {
     } = useBase<"button">(pops)
     const { variant: themeVariant } = useTheme(true)!
     
-    return <button
-        className={removeDuplicateWords(`--button --${kind} --${variant || themeVariant} flex aic ${!reset ? `jcc` : ``} ${icon ? `--with-icon` : ``} ${className}`).trim().replace(/\s+/g, ' ')}
+    const _button = <button
+        className={removeDuplicateWords(`--button ${tooltip ? `--tooltip-anchor` : ``} --${kind} --${variant || themeVariant} flex aic ${!reset ? `jcc` : ``} ${icon ? `--with-icon` : ``} ${className}`).trim().replace(/\s+/g, ' ')}
         style={style}
         ref={ref}
         disabled={state == ButtonState.Loading || props.skeleton?.enabled || disabled}
@@ -61,6 +64,8 @@ const Button = ({ ref, ...props} : ButtonProps) => {
         </>}
 
     </button>
+
+    return tooltip ? <ToolTip title={tooltip} {...tooltipProps}>{_button}</ToolTip> : _button;
 }
 
 Button.displayName = `Zuz.Button`

@@ -1,3 +1,5 @@
+@use "../../scss/variables";
+
 body{
     --table: transparent;
     --table-row-gap: 2px;
@@ -41,10 +43,12 @@ body{
 }
 
 .--table{
+
     background: var(--table);
     gap: var(--table-row-gap);
     flex: 1;
-
+    border: var(--table-border);
+    border-radius: var(--table-radius);
     &.--hoverable{
         .--row{
             &:not(.--row-head):not(.--row-footer){
@@ -57,7 +61,7 @@ body{
     .--row{
         background: var(--table-row);
         border-radius: var(--table-row-radius);
-
+        
         &.--row-clickable{cursor: pointer !important;}
 
         &:not(.--row-head):not(.--row-footer){

@@ -1,6 +1,7 @@
 import { Ref } from "react"
 import { Props, ValueOf, Variant } from "../../types"
 import { SPINNER } from "../Spinner/types"
+import { ToolTipProps } from "../Tooltip/types"
 
 export type ButtonProps = Props<`button`> & {
     ref?: Ref<HTMLButtonElement>,
@@ -11,7 +12,9 @@ export type ButtonProps = Props<`button`> & {
     state?: ButtonState,
     variant?: ValueOf<typeof Variant>,
     reset?: boolean,
-    kind?: `solid` | `subtle` | `surface` | `outline` | `ghost` | `plain`
+    tooltip?: string,
+    tooltipProps?: Omit<ToolTipProps, `title`>
+    kind?: ButtonKind
 }
 
 export interface ButtonHandler extends HTMLButtonElement {
@@ -23,5 +26,7 @@ export const ButtonState = {
     Loading : `loading`,
     Normal: `normal`,
 }
+
+export type ButtonKind = `solid` | `subtle` | `surface` | `outline` | `ghost` | `plain`
 
 export type ButtonState = typeof ButtonState[keyof typeof ButtonState]

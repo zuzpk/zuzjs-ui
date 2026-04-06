@@ -1,5 +1,6 @@
 body{
     --avatar-bg: #fff;
+    --avatar-text-size: 14px;
 }
 
 [color-scheme="dark"]{
@@ -48,8 +49,8 @@ body{
     }
 
     .--avatar-label{
-        color: #fff;
-        font-size: 14px;
+        color: var(--text-primary);
+        font-size: var(--avatar-text-size);
         font-weight: 700;
     }
     

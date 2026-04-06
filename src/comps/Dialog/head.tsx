@@ -1,26 +1,38 @@
 "use client"
 import React, { ReactNode } from 'react';
-import Button from '../Button';
-import SVGIcons from '../svgicons';
-import Box from '../Box';
 import { ValueOf, Variant } from '../../types';
+import Button from '../Button';
+import Flex from '../Flex';
+import SVGIcons from '../svgicons';
+import Text from '../Text';
 
 const DialogHead : React.FC<{
     title?: string | ReactNode,
+    description?: string | ReactNode,
+    titlePosition?: `left` | `center` | `right`,
     onClose: () => void,
     variant?: ValueOf<typeof Variant>
 }> = ({
     title = `Alert`,
+    description,
+    titlePosition = `center`,
     onClose
 }) => {
-    return <Box as={`--head flex aic rel`}>
-        <Box as={`--${title ? `title` : `dot`} flex aic jcc rel`}>{title}</Box>
+    return <Flex as={`--head rel`}>
+        <Flex cols 
+            as={[
+                `--${title ? `title` : `dot`} rel`,
+                `--position-${titlePosition}`
+            ]}>
+            <Text>{title}</Text>
+            {description && <Text as={`--description`}>{description}</Text>}
+        </Flex>
         <Button 
             onClick={(e) => onClose()}
-            className={`--closer abs center-v`}>
+            className={`--closer abs ${titlePosition == `center` ? `center-v` : ``}`}>
                 {SVGIcons.close}
             </Button>
-    </Box>
+    </Flex>
 }
 
 export default DialogHead;
