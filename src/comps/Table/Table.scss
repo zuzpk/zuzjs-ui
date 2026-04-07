@@ -87,6 +87,8 @@ body{
             font-weight: var(--table-head-font-weight);
             padding: var(--table-head-padding) !important;
             font-size: var(--table-head-font-size);
+            background: var(--table-row-head);
+            color: var(--table-head-color);
             .--col{
                 padding: var(--table-head-col-padding);
             }

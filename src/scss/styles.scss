@@ -94,6 +94,13 @@ body {
     --stripe-overlay-a: rgba(255, 255, 255, 0);
     --stripe-overlay-b: rgba(0, 0, 0, 0.05);
     interpolate-size: allow-keywords;
+
+    --blueprint-base: black;
+    --blueprint-color: rgba(0, 0, 0, var(--blueprint-opacity, 0.2));
+    --blueprint-extension: 30px; 
+    --blueprint-dash-size: 5px;
+    --blueprint-fade-stop: 90%;
+
 }
 [color-scheme="dark"] {
     body{
@@ -117,6 +124,10 @@ body {
         --stripe-bg-b: #e0e0e0;
         --stripe-overlay-a: rgba(255, 255, 255, 0.05);
         --stripe-overlay-b: rgba(0, 0, 0, 0.1);
+
+        --blueprint-base: black;
+        --blueprint-color: rgba(255, 255, 255, var(--blueprint-opacity, 0.2));
+    
     }
 }
 
@@ -369,4 +380,84 @@ body {
       );
     }
   }
+}
+
+.--ui-blueprint {
+
+    pointer-events: none;
+
+    > * {
+        pointer-events: auto; // Re-enable for all content inside
+    }
+
+    --all-lines: var(--blueprint-color);
+
+    --t: var(--all-lines);
+    --b: var(--all-lines);
+    --l: var(--all-lines);
+    --r: var(--all-lines);
+
+    &.--bp-top    { --b: transparent; --l: transparent; --r: transparent; }
+    &.--bp-bottom { --t: transparent; --l: transparent; --r: transparent; }
+    
+    /* If you want to HIDE specific lines from the default "All": */
+    &.--bp-no-top    { --t: transparent; }
+    &.--bp-no-bottom { --b: transparent; }
+    &.--bp-no-left   { --l: transparent; }
+    &.--bp-no-right  { --r: transparent; }
+
+    &:before {
+        content: "";
+        position: absolute;
+        
+        top: 0;
+        bottom: 0;
+        left: calc(var(--blueprint-extension) * -1);
+        right: calc(var(--blueprint-extension) * -1);
+        
+        z-index: 10;
+
+        background-image: 
+            linear-gradient(to right, var(--t) 50%, transparent 0), /* Top Line */
+            linear-gradient(to right, var(--b) 50%, transparent 0); /* Bottom Line */;
+        background-size: var(--blueprint-dash-size) 1px;
+        background-repeat: repeat-x;
+        background-position: top, bottom;
+
+        mask-image: linear-gradient(
+        to right, 
+        transparent, 
+        var(--blueprint-base) calc(100% - var(--blueprint-fade-stop)), 
+        var(--blueprint-base) var(--blueprint-fade-stop), 
+        transparent
+        );
+    }
+
+    &:after {
+        content: "";
+        position: absolute;
+        
+        left: 0;
+        right: 0;
+        top: calc(var(--blueprint-extension) * -1);
+        bottom: calc(var(--blueprint-extension) * -1);
+        
+        z-index: 10;
+
+        background-image: 
+            linear-gradient(to bottom, var(--l) 50%, transparent 0), /* Top Line */
+            linear-gradient(to bottom, var(--r) 50%, transparent 0); /* Bottom Line */;
+        background-size: 1px var(--blueprint-dash-size);
+        background-repeat: repeat-y;
+        background-position: left, right;
+
+        mask-image: linear-gradient(
+        to bottom, 
+        transparent, 
+        var(--blueprint-base) calc(100% - var(--blueprint-fade-stop)), 
+        var(--blueprint-base) var(--blueprint-fade-stop), 
+        transparent
+        );
+    }
+
 }
