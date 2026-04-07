@@ -54,14 +54,29 @@ const ContextMenu = ({
         { offsetX, offsetY, preferredAnchor }
     )
 
-    const isBottom = parent && position.top > parent.current!.getBoundingClientRect().bottom;
-    const flipClass = isBottom ? '--arrow-top' : '--arrow-bottom';
+    // const isBottom = parent && position.top > parent.current!.getBoundingClientRect().bottom;
+    // const flipClass = isBottom ? '--arrow-top' : '--arrow-bottom';
+    // const arrowClass = useMemo(() => {
+    //     const anchor = calculatedAnchor.toLowerCase();
+    //     if (anchor.includes('left')) return '--arrow-left';
+    //     if (anchor.includes('right')) return '--arrow-right';
+    //     return '--arrow-center';
+    // }, [calculatedAnchor]);
+    
+    const anchorStr = calculatedAnchor.toLowerCase();
+    const isPlacedBelowTrigger = anchorStr.includes('top');    // Menu's top is at trigger
+    const isPlacedAboveTrigger = anchorStr.includes('bottom'); // Menu's bottom is at trigger
+
+    // 2. Set the CSS class for the arrow location
+    // If placed below trigger, arrow is on top of menu.
+    // If placed above trigger, arrow is on bottom of menu.
+    const flipClass = isPlacedBelowTrigger ? '--arrow-top' : '--arrow-bottom';
+
     const arrowClass = useMemo(() => {
-        const anchor = calculatedAnchor.toLowerCase();
-        if (anchor.includes('left')) return '--arrow-left';
-        if (anchor.includes('right')) return '--arrow-right';
+        if (anchorStr.includes('left')) return '--arrow-left';
+        if (anchorStr.includes('right')) return '--arrow-right';
         return '--arrow-center';
-    }, [calculatedAnchor]);
+    }, [anchorStr]);
 
     const isMeasured = position.top !== 0 || position.left !== 0;
 

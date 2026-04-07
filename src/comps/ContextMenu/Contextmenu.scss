@@ -21,6 +21,18 @@ body{
     --context-arrow-x: 20px;
 }
 
+[color-scheme="dark"]{
+    body {
+        --context: #222;
+        --context-shadow-a: 0px 0px 1px #00000080;
+        --context-shadow-b: 0px 1px 2px #00000080;
+        --context-seperator: #333;
+        --context-item: #222;
+        --context-item-color: #eee;
+        --context-item-hover: #333;
+    }
+}
+
 .--contextmenu{
 
     z-index: var(--max-z-index);
