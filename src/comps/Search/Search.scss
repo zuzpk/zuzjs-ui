@@ -67,18 +67,8 @@ body{
             }
 
             .--keyboard-keys{
-                right: calc(var(--search-send-size-#{$size}) * 2);
-            }
-
-            &.--search-rev{ 
-                flex-direction: row-reverse;
-                .--input {
-                    padding-left: 0 !important;
-                    padding-right: var(--padding-#{$size}-x) !important;
-                }
-                .--keyboard-keys{
-                    right: calc(var(--padding-#{$size}-x) * 1.2);
-                }
+                // right: calc(var(--search-send-size-#{$size}) * 3);
+                right: var(--padding-#{$size}-x);
             }
 
         }

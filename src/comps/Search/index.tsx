@@ -88,23 +88,26 @@ const Search = forwardRef<SearchHandler, SearchProps>((props, ref) => {
 
     useEffect(() => {}, [])
  
+    const actionButton = <Button
+        tabIndex={-1}
+        onClick={e => handleSubmit()}
+        className={`--send flex aic jcc`}
+        variant={props.variant || Variant.Medium}>
+        {query !== `` ?
+            !hideClearIcon && (`string` === typeof clearIcon ? <Icon name={clearIcon} as={`--search-action`} /> : clearIcon) :
+            !hideSearchIcon && (`string` === typeof searchIcon ? <Icon name={searchIcon} as={`--search-action`} /> : searchIcon)}
+    </Button>
+
     return <Box 
         style={style}
-        className={`--search --no-shrink ${reverse ? `--search-rev` : ``} --${props.variant || themeVariant || Variant.Medium} flex aic ${typeof props.as === 'string' && props.as.includes(`abs`) ? `` : `rel`} ${className}`.trim()}>
-        {/* { reverse && actionBtn } */}
+        className={`--search --no-shrink --${props.variant || themeVariant || Variant.Medium} flex aic ${typeof props.as === 'string' && props.as.includes(`abs`) ? `` : `rel`} ${className}`.trim()}>
+        {reverse && actionButton}
         <Input 
             ref={innerRef}
             onChange={handleChange}
             {...pops} />
-        {props.shortcut && <KeyBoardKeys keys={props.shortcut} as={`abs`} />}
-        <Button
-            tabIndex={-1}
-            onClick={e => handleSubmit()}
-            className={`--send flex aic jcc`}
-            variant={props.variant || Variant.Medium}>
-            {query !== `` ? 
-                !hideClearIcon && (`string` === typeof clearIcon ? <Icon name={clearIcon} as={`--search-action`} /> : clearIcon) : 
-                !hideSearchIcon && (`string` === typeof searchIcon ? <Icon name={searchIcon} as={`--search-action`} /> : searchIcon )}</Button>
+        {props.shortcut && <KeyBoardKeys keys={props.shortcut} as={`--abs`} />}
+        {!reverse && actionButton}
     </Box>
         
 })

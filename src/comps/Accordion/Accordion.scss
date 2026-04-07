@@ -1,4 +1,4 @@
-:root{
+body{
     --accordion: #fff;
     --accordion-label: #111;
     --accordion-radius: 5px;
@@ -16,6 +16,16 @@
     --accordion-detail-font-size: 15px;
 }
 
+[color-scheme="dark"]{
+    body{
+        --accordion: #1c1d1e;
+        --accordion-label: #fff;
+        --accordion-border: 1px #232426 solid;
+        --accordion-head: #1c1d1e;
+        --accordion-head-hover: #292a2c;
+        --accordion-head-arrow: #fff;
+    }
+}
 .--accordion{
 
     background: var(--accordion);

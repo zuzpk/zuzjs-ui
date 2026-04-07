@@ -390,6 +390,13 @@ body {
         pointer-events: auto; // Re-enable for all content inside
     }
 
+    &.--ui-ext-10 { --blueprint-extension: 10px; }
+    &.--ui-ext-20 { --blueprint-extension: 20px; }
+    &.--ui-ext-30 { --blueprint-extension: 30px; }
+    &.--ui-ext-40 { --blueprint-extension: 40px; }
+    &.--ui-ext-50 { --blueprint-extension: 50px; }
+
+
     --all-lines: var(--blueprint-color);
 
     --t: var(--all-lines);

@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const versionPath = path.resolve(__dirname, "..", "ui", "src", "version.ts");
 /** 
  * 1. Backup Package.json 
 */
@@ -58,5 +59,7 @@ if ( patch < 99 ) {
 }   
 
 packageJson.version = `${major}.${minor}.${patch}`
+
+fs.writeFileSync(versionPath, `const VERSION = "${packageJson.version}";export default VERSION;`)
 
 fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))

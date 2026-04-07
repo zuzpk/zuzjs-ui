@@ -1,8 +1,13 @@
 body{
-    --codeblock: #1e1e1e;
+    --codeblock: #fff;
     --codeblock-font: monospace;
     --codeblock-plain-color: var(--text-primary, "#fff");
 }
+
+[color-theme="dark"]{
+    --codeblock: #1e1e1e;
+}
+
 pre {
 //   border-radius: 0.5rem;
   overflow-x: auto;
@@ -35,7 +40,7 @@ code {
         border-radius: inherit;
         border-width: inherit;
         background: inherit;
-        color: inherit;
+        // color: inherit;
         white-space: inherit;
         padding: inherit;
         &.--lang-plain{

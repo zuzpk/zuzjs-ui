@@ -331,7 +331,7 @@ class StyleGenerator {
 
         const unitlessProps = [
             "opacity", "zIndex", "flex", "b", "font-weight", "fontWeight", "lineHeight", "scale", "ratio", "aspectRatio", "aspect-ratio",
-            "shrink", "flex-shrink", "flexShrink",
+            "shrink", "flex-shrink", "flexShrink", "line-height", "lh", "lineHeight"
         ];
         // console.log(`--ppop`, prop, val)
         if (unitlessProps.includes(prop)) return val;
