@@ -303,7 +303,7 @@ class StyleGenerator {
             const [duration, curve, delay] = parts;
             result = result
                 .replace("__VALUE__", this.processValue("transitionDuration", duration || "0s"))
-                .replace("__CURVE__", this.animationCurves[curve] || "ease-in-out")
+                .replace("__CURVE__", curve?.startsWith(`$`) ? curve.replace(this.dollorToVarRegexp, 'var(--$1)') : this.animationCurves[curve] || "ease-in-out")
                 .replace("__DELAY__", this.processValue("transitionDelay", delay || "0s"));
         } 
         

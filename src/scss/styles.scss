@@ -280,7 +280,7 @@ body {
 .tac{text-align:center;}
 .tal{text-align:left;}
 .taj{text-align:justify;}
-.grid{display: grid;}
+.--grid, .grid{display: grid;}
 .nope{pointer-events: none;}
 .nous{user-select: none;}
 .rel{position: relative;}

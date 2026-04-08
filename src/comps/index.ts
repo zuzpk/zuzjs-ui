@@ -110,11 +110,12 @@ export * from './Chart/types';
  * Chat-style message bubble.
  * @example
  * ```tsx
- * <Bubble side="left">Hello</Bubble>
+ * <ChatBubble side="left">Hello</ChatBubble>
  * ```
  */
-export { default as Bubble } from './ChatBubble';
+export { default as ChatBubble } from './ChatBubble';
 export * from './ChatBubble/types';
+export { default as ChatList } from './ChatList';
 
 /**
  * Checkbox input control.

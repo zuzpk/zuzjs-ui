@@ -20,6 +20,7 @@ export enum BubbleMediaType {
 }
 
 export type BubbleProps = BoxProps & {
+    id?: string | number,
     text?: string,
     media?: {
         type: BubbleMediaType,

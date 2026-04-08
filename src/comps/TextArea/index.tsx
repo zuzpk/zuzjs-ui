@@ -149,7 +149,7 @@ const TextArea = ({
   }, []);
 
   return (
-    <Box as="rel">
+    <Box as="rel --flex w-full">
       <textarea
         name={name}
         className={`--input --textarea --${variant || themeVariant || Variant.Medium} flex ${className}`.trim()}

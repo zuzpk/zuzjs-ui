@@ -74,8 +74,8 @@ const Grid = (props: GridProps) => {
     const { className, style, rest } = useBase(pops);
 
     const resolvedCols = columns ?? cols;
-    const resolvedGapX = columnGap ?? gapX;
-    const resolvedGapY = rowGap ?? gapY;
+    const resolvedGapX = columnGap ?? gapX ?? gap;
+    const resolvedGapY = rowGap ?? gapY ?? gap;
     const resolvedAlign = alignItems ?? align;
     const resolvedJustify = justifyContent ?? justify;
     const resolvedFlow = autoFlow ?? flow;
@@ -84,10 +84,10 @@ const Grid = (props: GridProps) => {
     const resolvedTemplate = areas ?? template;
 
     const gridStyles: CSSProperties = {
-        display: inline ? "inline-grid" : "grid",
+        ...( inline ? { display: "inline-grid" } : {} ),
         gridTemplateColumns: resolveTrackTemplate(resolvedCols),
         gridTemplateRows: resolveTrackTemplate(rows),
-        gap: gap,
+        // gridGap: gap,
         columnGap: resolvedGapX,
         rowGap: resolvedGapY,
         alignItems: resolvedAlign,
