@@ -66,7 +66,7 @@ code {
     background: var(--shade-2); /* Slightly lighter/darker than bg */
     border-left-color: var(--primary);
     width: fit-content;
-    min-width: 100%;
+    min-width: 100% !important;
 }
 
 .--line-number {

@@ -110,7 +110,7 @@ body{
                 user-select: none;
             }
             &.--selector{
-                min-width: var(--table-col-selector-size);
+                min-width: var(--table-col-selector-size) !important;
                 max-width: var(--table-col-selector-size);
             }
         }

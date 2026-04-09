@@ -43,7 +43,7 @@ body{
 .--dialog{
 
     z-index: var(--max-z-index);
-    min-width: var(--dialog-min-width);
+    min-width: var(--dialog-min-width) !important;
     pointer-events: auto !important;
     
     &.--dialog{

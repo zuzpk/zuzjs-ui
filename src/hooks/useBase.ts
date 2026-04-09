@@ -5,6 +5,12 @@ import { dynamic, Props, ZuzProps } from "../types"
 import useFx from "./useFx"
 
 let useDrag: any = null;
+type CSSVarStyle = CSSProperties & Record<`--${string}`, string | number>;
+
+const toCssSize = (value?: string | number): string | undefined => {
+    if (value === undefined || value === null) return undefined;
+    return typeof value === "number" ? `${value}px` : value;
+}
 
 const useBase = <T extends keyof JSX.IntrinsicElements>(
     props: Props<T>, 
@@ -67,10 +73,33 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
     } : fx || {}
     const { style: transitionStyle } = useFx(animationConfig, ref);
 
+    const skeletonStyle: CSSVarStyle = {};
+    if (skeleton?.enabled) {
+        const size = toCssSize(skeleton.size);
+        const width = toCssSize(skeleton.width);
+        const height = toCssSize(skeleton.height);
+        const defaultSize = toCssSize(skeleton.defaultSize);
+        const radius = toCssSize(skeleton.radius);
+
+        if (size) {
+            skeletonStyle["--skeleton-width"] = size;
+            skeletonStyle["--skeleton-height"] = size;
+        } else {
+            if (width) skeletonStyle["--skeleton-width"] = width;
+            if (height) skeletonStyle["--skeleton-height"] = height;
+            if (defaultSize) skeletonStyle["--skeleton-default-size"] = defaultSize;
+        }
+
+        if (radius) {
+            skeletonStyle["--skeleton-radius"] = radius;
+        }
+    }
+
     const manifestClasses = buildClassString(as ?? ``)
 
     return {
         style: {
+            ...skeletonStyle,
             ...incomingStyle,
             ...transitionStyle,
             ...dragStyle
@@ -79,6 +108,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
             zuzClasses, 
             manifestClasses || ``,
             skeleton?.enabled ? `--skeleton` : ``,
+            skeleton?.enabled && skeleton?.type === `CIRCLE` ? `--skeleton-circle` : ``,
             draggable ? `--draggable` : ``,
         ].join(` `).trim(),
         rest: {

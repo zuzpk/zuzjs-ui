@@ -28,7 +28,7 @@ body{
     }
 
     &:has(.--dot){
-        min-width: calc(var(--badge-size) * var(--badge-multiplier));
+        min-width: calc(var(--badge-size) * var(--badge-multiplier)) !important;
         min-height: calc(var(--badge-size) * var(--badge-multiplier));
         max-width: calc(var(--badge-size) * var(--badge-multiplier));
         max-height: calc(var(--badge-size) * var(--badge-multiplier));
@@ -56,7 +56,7 @@ body{
         --badge-radius: 50%;
         corner-shape: var(--badge-corner) !important; 
         border-radius: var(--badge-radius);
-        min-width: calc(var(--badge-size) * 1px);
+        min-width: calc(var(--badge-size) * 1px)  !important;
         min-height: calc(var(--badge-size) * 1px);
         max-width: calc(var(--badge-size) * 1px);
         max-height: calc(var(--badge-size) * 1px);

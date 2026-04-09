@@ -116,6 +116,7 @@ export * from './Chart/types';
 export { default as ChatBubble } from './ChatBubble';
 export * from './ChatBubble/types';
 export { default as ChatList } from './ChatList';
+export * from './ChatList/types';
 
 /**
  * Checkbox input control.

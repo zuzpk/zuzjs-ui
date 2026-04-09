@@ -4,7 +4,7 @@ import { DragOptions, LineChartProps, MediaItem, useMediaPlayer, ScrollBreakpoin
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import { dynamic as dynamic$1, PubSub } from '@zuzjs/core';
 
-declare const VERSION = "1.0.68";
+declare const VERSION = "1.0.69";
 
 declare const AVATAR: {
     readonly Circle: "CIRCLE";
@@ -788,6 +788,22 @@ declare enum BubbleMediaType {
     Event = "event",
     Poll = "poll"
 }
+declare enum BubbleAttachmentType {
+    File = "file",
+    Image = "image",
+    Video = "video",
+    Audio = "audio",
+    Link = "link"
+}
+type BubbleStylePreset = "default" | "ios" | "android" | "blocks" | "glass" | "minimal";
+type BubbleAttachment = {
+    id?: string | number;
+    type?: BubbleAttachmentType;
+    name: string;
+    url: string;
+    size?: string;
+    preview?: string;
+};
 type BubbleProps = BoxProps & {
     id?: string | number;
     text?: string;
@@ -795,38 +811,89 @@ type BubbleProps = BoxProps & {
         type: BubbleMediaType;
         source: string;
         duration?: string;
+        thumbnail?: string;
+        title?: string;
     };
     side?: "me" | "you";
+    stylePreset?: BubbleStylePreset;
     status?: BubbleStatus;
     timeStamp?: number;
     arrow?: boolean;
+    attachments?: BubbleAttachment[];
+    /** Auto-fetch and display link previews from URLs in text */
+    autoFetchLinkPreview?: boolean;
+    /** Optional custom preview fetcher for links found in text */
+    linkPreviewFetcher?: (url: string) => Promise<{
+        title?: string;
+        description?: string;
+        image?: string;
+        url?: string;
+    } | null>;
+    /** Message this bubble is replying to */
+    replyTo?: {
+        author: string;
+        text: string;
+        id?: string | number;
+    };
+    /** Array of emoji reactions */
+    reactions?: string[];
+    /** Whether this message is forwarded */
+    forwarded?: boolean;
+    /** Complex nested content support */
+    children?: ReactNode;
 };
 
 /**
- * ChatBubble component.
+ * ChatBubble component optimized for performance.
+ * Supports:
+ * - Complex nested content (reactions, replies, forwarded messages)
+ * - Automatic link preview fetching and display
+ * - Memoization for optimal rendering
+ * - Media attachments (audio, image, video, documents)
  *
  * @example
  * // Basic usage
  * ```tsx
- * <ChatBubble message="Hello! How can I help?" sender="assistant" />
+ * <ChatBubble text="Hello! How can I help?" side="me" />
  * ```
  *
  * @example
- * // Advanced usage with additional props
+ * // With link preview auto-fetch
  * ```tsx
- * <ChatBubble message="I need help with my order" sender="user" timestamp={new Date()} avatar="user-icon" />
+ * <ChatBubble text="Check this out: https://example.com" side="you" autoFetchLinkPreview />
  * ```
- * @param message - Message text or element
- * @param sender - sender prop
- * @param timestamp - timestamp prop
- * @param avatar - avatar prop
  */
-declare const Bubble: react.ForwardRefExoticComponent<Omit<BubbleProps, "ref"> & react.RefAttributes<HTMLDivElement>>;
+declare const Bubble: react.NamedExoticComponent<Omit<BubbleProps, "ref"> & react.RefAttributes<HTMLDivElement>>;
 
 type ChatMessage = BubbleProps;
-declare const ChatList: React.FC<{
+type ChatDateLabels = {
+    today?: ReactNode;
+    yesterday?: ReactNode;
+};
+type ChatDateLabelFormatter = (timeStamp: number, context: {
+    date: Date;
+    dayDiff: number;
+    locale?: string;
+    labels: Required<ChatDateLabels>;
+}) => ReactNode;
+interface ChatListProps {
     messages: ChatMessage[];
-}>;
+    autoScroll?: boolean;
+    onScrollTop?: () => void;
+    typing?: boolean | string;
+    dateLabels?: ChatDateLabels;
+    locale?: string;
+    formatDateLabel?: ChatDateLabelFormatter;
+}
+
+/**
+ * ChatList component optimized for performance with auto-scroll and unread indicator.
+ * - Auto scrolls to bottom when new messages arrive
+ * - Allows manual scroll without disruption
+ * - Shows unread message count when scrolled up
+ * - Memoizes child components for optimal rendering
+ */
+declare const ChatList: react.MemoExoticComponent<({ messages, autoScroll, onScrollTop, typing, dateLabels, locale, formatDateLabel, }: ChatListProps) => react_jsx_runtime.JSX.Element>;
 
 /**
  * Props for the CheckBox component.
@@ -1907,16 +1974,27 @@ type ListItemObject = {
     onClick?: (event: any) => void;
 };
 type ListItem = Props<`li`> & (ReactNode | ListItemObject);
+type VirtualScrollOptions = {
+    /** Height of each item in pixels */
+    itemHeight?: number;
+    /** Container height in pixels (auto-detected if not provided) */
+    height?: number;
+    /** Number of items to render outside visible area */
+    overscan?: number;
+};
 type ListProps = Props<`ul` | `ol`> & {
     variant?: ValueOf<typeof Variant>;
     items: ListItem[];
     direction?: "cols" | "rows";
     seperator?: ReactNode;
     ol?: boolean;
+    /** Virtual scrolling config for large lists */
+    virtual?: VirtualScrollOptions;
 };
 
 /**
- * List component.
+ * List component with virtualization support.
+ * Optimized for large lists with efficient rendering and fast scrolling.
  *
  * @example
  * // Basic usage
@@ -1925,13 +2003,14 @@ type ListProps = Props<`ul` | `ol`> & {
  * ```
  *
  * @example
- * // Advanced usage with additional props
+ * // Large list with virtual scrolling
  * ```tsx
- * <List items={[{ label: "Tasks", count: 5 }, { label: "Done", count: 2 }]} onSelect={(item) => {}} divider />
+ * <List items={items} virtual={{ itemHeight: 50 }} onSelect={(item) => {}} />
  * ```
+ *
  * @param items - Array of items
- * @param onSelect - Callback function triggered on selection
- * @param divider - divider prop
+ * @param virtual - Virtual scrolling options (itemHeight, overscan)
+ * @param seperator - Separator between items
  */
 declare const List: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react.DetailedHTMLProps<react.OlHTMLAttributes<HTMLOListElement>, HTMLOListElement>, "ref"> | Omit<react.DetailedHTMLProps<react.HTMLAttributes<HTMLUListElement>, HTMLUListElement>, "ref">, keyof ZuzProps> & {
     variant?: ValueOf<typeof Variant>;
@@ -1939,6 +2018,7 @@ declare const List: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react.D
     direction?: "cols" | "rows";
     seperator?: react.ReactNode;
     ol?: boolean;
+    virtual?: VirtualScrollOptions;
 } & react.RefAttributes<HTMLOListElement | HTMLUListElement>>;
 
 interface MediaPlayerController {
@@ -3484,4 +3564,4 @@ declare const useToast: () => {
     clearAll: () => void;
 };
 
-export { ALERT, AVATAR, Accordion, type AccordionHandler, type AccordionProps, ActionBar, type ActionBarHandler, type ActionBarItem, type ActionBarProps, Alert, type AlertHandler, type AlertProps, type AnimationTransition, AutoComplete, type AutoCompleteProps, Avatar, type AvatarHandler, type AvatarProps, Badge, type BadgeProps, Box, type BoxProps, BubbleMediaType, type BubbleProps, BubbleStatus, Button, type ButtonHandler, type ButtonKind, type ButtonProps, ButtonState, CHART, CHECKBOX, COLORTHEME, Calendar, type CalendarProps, Carousel, type CarouselEffect, type CarouselProps, Chart, type ChartProps, Bubble as ChatBubble, ChatList, CheckBox, type CheckBoxProps, type CheckboxHandler, CodeBlock, type CodeBlockProps, ColorScheme$1 as ColorScheme, type Column, type ContextItem, ContextMenu, type ContextMenuHandler, type ContextMenuProps, type CookieConsentProps, CookiesConsent, Cover, type CoverProps, type CropHandler, CropShape, Cropper, type CropperProps, Crumb, type CrumbItem, type CrumbProps, DATATYPE, DIALOG, DIALOG_ACTION_POSITION, DRAWER_SIDE, DatePicker, Dialog, type DialogActionHandler, type DialogController, type DialogHandler, type DialogProps, Drawer, type DrawerController, type DrawerHandler, type DrawerProps, FILTER, FORMVALIDATION, FORMVALIDATION_STYLE, Fab, type FabProps, Fieldset, type FieldsetProps, type FilterProps, Filters, Flex, type FlexProps, Form, type FormHandler, type FormInputs, type FormProps, type FormValidation, Grid, type GridProps, Group, type GroupProps, Icon, type IconProps, Image, type ImageProps, Input, type InputProps, type KeyCombination, type KeyboardKey, type KeyboardKeyProps, KeyBoardKeys as KeyboardKeys, KeysLabelMap, KeysMap, Label, type LabelProps, type LayerHandler, LayersProvider, List, type ListItem, type ListItemObject, type ListProps, type LoopMode, MediaPlayer, type MediaPlayerContextType, type MediaPlayerController, type MediaPlayerIcons, type MediaPlayerProps, type MenuItemProps, type MorphOptions, type NetworkManagerprops, NetworkManager as NetworkStatus, ORIGIN, type Option, type OptionItemProps, OriginType, Overlay, type OverlayProps, PACKAGE_NAME, PLACEMENTS, POSITION, PROGRESS, Pagination, type PaginationCallback, type PaginationController, type PaginationPage, type PaginationPageItem, type PaginationProps, PaginationStyle, Password, type PasswordProps, PinInput, type PinInputProps, type Placement, Position, ProgressBar, type ProgressBarProps, type ProgressHandler, type Props, RADIO, Radio, type RadioHandler, type RadioProps, type Row, type RowSelectCallback, SHEET, SHEET_ACTION_POSITION, SKELETON, SLIDER, SORT, SPINNER, ScrollView, type ScrollViewProps, Search, type SearchHandler, type SearchProps, type Segment, type SegmentController, type SegmentItemProps, type SegmentProps, Select, type SelectEditableChange, type SelectEditableProps, type SelectHandler, type SelectInternalProps, type SelectMultipleChange, type SelectMultipleProps, type SelectPrimitive, type SelectProps, type SelectSingleChange, type SelectSingleProps, type SelectSingleValue, Segmented as SelectTabs, type SelectTokenizerProps, type SelectValue, Sheet, type SheetHandler, type SheetProps, type Skeleton, Slider, type SliderController, type SliderProps, type ToastAction as SnackAction, type SnackController, ToastPosition as SnackPosition, ToastStyle as SnackStyle, ToastType as SnackType, Span, type SpanProps, Spinner, type SpinnerProps, Status, Switch, type CheckboxHandler as SwitchHandler, TRANSITIONS, TRANSITION_CURVES, type Tab, type TabBodyProps, type TabProps, TabView, type TabViewHandler, type TabViewProps, ForwardedTable as Table, type TableController, type TableOfContentItem, TableOfContents, type TableOfContentsProps, type TableProps, type TableSortCallback, Terminal, type TerminalCommandFn, type TerminalCommands, type TerminalHandler, type TerminalLine, type TerminalProps, Text, type TextAreaProps, TextWheel, type TextWheelHandler, type TextWheelProps, TextArea as Textarea, ThemeProvider, type ToastAction, ToastDefaultTitle, ToastPosition, type ToastProps, Toast as ToastProvider, ToastStyle, ToastType, ToolTip, type ToolTipController, type ToolTipProps, type TreeItemHandler, type TreeItemProps, type TreeNode, type TreeNodeIcons, TreeView, type TreeViewHandler, type TreeViewProps, type ValidationResult, type ValidationSchema, type Value, type ValueOf, Variant, type WithFormValidation, type ZuzCommonValues, type ZuzProps, type ZuzStyleString, VERSION as __ZUZJS_UI_VERSION, type animationProps, animationTransition, buildClassString, buildWithStyles, cleanProps, css, type cssShortKey, type cssShortKeys, type dynamic, getAnimationCurve, getAnimationTransition, getZuzMap, isKeyCombination, type parallaxEffectProps, setZuzMap, splitAtoms, useBase, useContextMenu, useDialog, useDrawer, useFx, useMorph, usePosition, useSnack, useToast };
+export { ALERT, AVATAR, Accordion, type AccordionHandler, type AccordionProps, ActionBar, type ActionBarHandler, type ActionBarItem, type ActionBarProps, Alert, type AlertHandler, type AlertProps, type AnimationTransition, AutoComplete, type AutoCompleteProps, Avatar, type AvatarHandler, type AvatarProps, Badge, type BadgeProps, Box, type BoxProps, type BubbleAttachment, BubbleAttachmentType, BubbleMediaType, type BubbleProps, BubbleStatus, type BubbleStylePreset, Button, type ButtonHandler, type ButtonKind, type ButtonProps, ButtonState, CHART, CHECKBOX, COLORTHEME, Calendar, type CalendarProps, Carousel, type CarouselEffect, type CarouselProps, Chart, type ChartProps, Bubble as ChatBubble, type ChatDateLabelFormatter, type ChatDateLabels, ChatList, type ChatListProps, type ChatMessage, CheckBox, type CheckBoxProps, type CheckboxHandler, CodeBlock, type CodeBlockProps, ColorScheme$1 as ColorScheme, type Column, type ContextItem, ContextMenu, type ContextMenuHandler, type ContextMenuProps, type CookieConsentProps, CookiesConsent, Cover, type CoverProps, type CropHandler, CropShape, Cropper, type CropperProps, Crumb, type CrumbItem, type CrumbProps, DATATYPE, DIALOG, DIALOG_ACTION_POSITION, DRAWER_SIDE, DatePicker, Dialog, type DialogActionHandler, type DialogController, type DialogHandler, type DialogProps, Drawer, type DrawerController, type DrawerHandler, type DrawerProps, FILTER, FORMVALIDATION, FORMVALIDATION_STYLE, Fab, type FabProps, Fieldset, type FieldsetProps, type FilterProps, Filters, Flex, type FlexProps, Form, type FormHandler, type FormInputs, type FormProps, type FormValidation, Grid, type GridProps, Group, type GroupProps, Icon, type IconProps, Image, type ImageProps, Input, type InputProps, type KeyCombination, type KeyboardKey, type KeyboardKeyProps, KeyBoardKeys as KeyboardKeys, KeysLabelMap, KeysMap, Label, type LabelProps, type LayerHandler, LayersProvider, List, type ListItem, type ListItemObject, type ListProps, type LoopMode, MediaPlayer, type MediaPlayerContextType, type MediaPlayerController, type MediaPlayerIcons, type MediaPlayerProps, type MenuItemProps, type MorphOptions, type NetworkManagerprops, NetworkManager as NetworkStatus, ORIGIN, type Option, type OptionItemProps, OriginType, Overlay, type OverlayProps, PACKAGE_NAME, PLACEMENTS, POSITION, PROGRESS, Pagination, type PaginationCallback, type PaginationController, type PaginationPage, type PaginationPageItem, type PaginationProps, PaginationStyle, Password, type PasswordProps, PinInput, type PinInputProps, type Placement, Position, ProgressBar, type ProgressBarProps, type ProgressHandler, type Props, RADIO, Radio, type RadioHandler, type RadioProps, type Row, type RowSelectCallback, SHEET, SHEET_ACTION_POSITION, SKELETON, SLIDER, SORT, SPINNER, ScrollView, type ScrollViewProps, Search, type SearchHandler, type SearchProps, type Segment, type SegmentController, type SegmentItemProps, type SegmentProps, Select, type SelectEditableChange, type SelectEditableProps, type SelectHandler, type SelectInternalProps, type SelectMultipleChange, type SelectMultipleProps, type SelectPrimitive, type SelectProps, type SelectSingleChange, type SelectSingleProps, type SelectSingleValue, Segmented as SelectTabs, type SelectTokenizerProps, type SelectValue, Sheet, type SheetHandler, type SheetProps, type Skeleton, Slider, type SliderController, type SliderProps, type ToastAction as SnackAction, type SnackController, ToastPosition as SnackPosition, ToastStyle as SnackStyle, ToastType as SnackType, Span, type SpanProps, Spinner, type SpinnerProps, Status, Switch, type CheckboxHandler as SwitchHandler, TRANSITIONS, TRANSITION_CURVES, type Tab, type TabBodyProps, type TabProps, TabView, type TabViewHandler, type TabViewProps, ForwardedTable as Table, type TableController, type TableOfContentItem, TableOfContents, type TableOfContentsProps, type TableProps, type TableSortCallback, Terminal, type TerminalCommandFn, type TerminalCommands, type TerminalHandler, type TerminalLine, type TerminalProps, Text, type TextAreaProps, TextWheel, type TextWheelHandler, type TextWheelProps, TextArea as Textarea, ThemeProvider, type ToastAction, ToastDefaultTitle, ToastPosition, type ToastProps, Toast as ToastProvider, ToastStyle, ToastType, ToolTip, type ToolTipController, type ToolTipProps, type TreeItemHandler, type TreeItemProps, type TreeNode, type TreeNodeIcons, TreeView, type TreeViewHandler, type TreeViewProps, type ValidationResult, type ValidationSchema, type Value, type ValueOf, Variant, type VirtualScrollOptions, type WithFormValidation, type ZuzCommonValues, type ZuzProps, type ZuzStyleString, VERSION as __ZUZJS_UI_VERSION, type animationProps, animationTransition, buildClassString, buildWithStyles, cleanProps, css, type cssShortKey, type cssShortKeys, type dynamic, getAnimationCurve, getAnimationTransition, getZuzMap, isKeyCombination, type parallaxEffectProps, setZuzMap, splitAtoms, useBase, useContextMenu, useDialog, useDrawer, useFx, useMorph, usePosition, useSnack, useToast };

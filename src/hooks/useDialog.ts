@@ -32,10 +32,11 @@ const useDialog = () => {
         confirmLabel?: string,
         cancelLabel?: string,
     }) : DialogController => {
+        const { confirmLabel, ...poops } = pops;
         const id = ctx.add({ 
             type: `dialog`,
             props: { 
-                ...pops, 
+                ...poops, 
                 type: DIALOG.Confirm,
                 action: pops.action ?? [
                     { 

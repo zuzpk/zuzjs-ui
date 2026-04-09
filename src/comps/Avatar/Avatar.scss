@@ -12,7 +12,7 @@ body{
 .--avatar{
     
     overflow: hidden;
-    min-width: var(--avatar-size);
+    min-width: var(--avatar-size) !important;
     min-height: var(--avatar-size);
     max-width: var(--avatar-size);
     max-height: var(--avatar-size);

@@ -22,6 +22,14 @@ body{
 
 .--button{
 
+    --button-current-bg: var(--button);
+    --button-current-hover: var(--button-hover);
+    --button-current-border: var(--button-border);
+    --button-current-color: var(--button-color);
+    --button-current-disabled-bg: var(--button-disabled);
+    --button-current-disabled-color: var(--button-disabled-color);
+    --button-current-disabled-border: var(--button-border);
+
     width: fit-content;
 
     &.--xs {
@@ -55,36 +63,83 @@ body{
         gap: var(--button-gap-xl);
     }
 
-    border: var(--button-border);
-    background: var(--button);
-    color: var(--button-color);
+    border: var(--button-current-border);
+    background: var(--button-current-bg);
+    color: var(--button-current-color);
     white-space: pre;
     cursor: pointer;
 
     &:hover{
-        background: var(--button-hover);
+        background: var(--button-current-hover);
     }
 
     &:not(.--skeleton):disabled{
-        background: var(--button-disabled);
-        color: var(--button-disabled-color);
+        background: var(--button-current-disabled-bg);
+        color: var(--button-current-disabled-color);
+        border: var(--button-current-disabled-border);
         cursor: auto !important;
     }
 
-    &.--plain{
-        background: transparent !important;
-        padding: 0px !important;
-        color: var(--text-primary) !important;
-        &:hover{
-            background: transparent !important;
-        }
+    &.--solid{
+        --button-current-bg: var(--button);
+        --button-current-hover: var(--button-hover);
+        --button-current-border: var(--button-border);
+        --button-current-color: var(--button-color);
+        --button-current-disabled-bg: var(--button-disabled);
+        --button-current-disabled-color: var(--button-disabled-color);
+        --button-current-disabled-border: var(--button-border);
     }
+
+    &.--subtle{
+        --button-current-bg: var(--surface-hover);
+        --button-current-hover: var(--surface);
+        --button-current-border: 1px solid var(--surface-hover);
+        --button-current-color: var(--text-primary);
+        --button-current-disabled-bg: var(--button-disabled);
+        --button-current-disabled-color: var(--button-disabled-color);
+        --button-current-disabled-border: 1px solid var(--button-disabled);
+    }
+
+    &.--surface{
+        --button-current-bg: var(--surface);
+        --button-current-hover: var(--surface-hover);
+        --button-current-border: 1px solid var(--border-primary);
+        --button-current-color: var(--text-primary);
+        --button-current-disabled-bg: var(--button-disabled);
+        --button-current-disabled-color: var(--button-disabled-color);
+        --button-current-disabled-border: 1px solid var(--button-disabled);
+    }
+
+    &.--outline{
+        --button-current-bg: transparent;
+        --button-current-hover: var(--surface-hover);
+        --button-current-border: 1px solid var(--border-primary);
+        --button-current-color: var(--text-primary);
+        --button-current-disabled-bg: transparent;
+        --button-current-disabled-color: var(--button-disabled-color);
+        --button-current-disabled-border: 1px solid var(--button-disabled-color);
+    }
+
+    &.--plain{
+        --button-current-bg: transparent;
+        --button-current-hover: transparent;
+        --button-current-border: 0px;
+        --button-current-color: var(--text-primary);
+        --button-current-disabled-bg: transparent;
+        --button-current-disabled-color: var(--button-disabled-color);
+        --button-current-disabled-border: 0px;
+
+        padding: 0px !important;
+    }
+
     &.--ghost{
-        background: transparent !important;
-        color: var(--text-primary) !important;
-        &:hover{
-            background: var(--button-ghost-hover) !important;
-        }
+        --button-current-bg: transparent;
+        --button-current-hover: var(--button-ghost-hover);
+        --button-current-border: 1px solid transparent;
+        --button-current-color: var(--text-primary);
+        --button-current-disabled-bg: transparent;
+        --button-current-disabled-color: var(--button-disabled-color);
+        --button-current-disabled-border: 1px solid transparent;
     }
 
 }

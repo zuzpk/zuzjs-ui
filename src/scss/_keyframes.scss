@@ -1,12 +1,9 @@
 @keyframes shimmering{
     0% {
-        transform: translateX(-100%) rotate(var(--shimmer-angle));
-    }
-    20% {
-        transform: translateX(100%) rotate(var(--shimmer-angle));
+        transform: translate3d(-500%, 0, 0) rotate(var(--shimmer-angle));
     }
     100% {
-        transform: translateX(100%) rotate(var(--shimmer-angle));
+        transform: translate3d(500%, 0, 0) rotate(var(--shimmer-angle));
     }
 }
 

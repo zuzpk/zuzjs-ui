@@ -101,6 +101,11 @@ body {
     --blueprint-dash-size: 5px;
     --blueprint-fade-stop: 90%;
 
+    --skeleton-bg: #eceff4;
+    --skeleton-highlight: rgba(255, 255, 255, 0.75);
+    --skeleton-duration: 1.25s;
+    --shimmer-angle: 20deg;
+
 }
 [color-scheme="dark"] {
     body{
@@ -127,8 +132,51 @@ body {
 
         --blueprint-base: black;
         --blueprint-color: rgba(255, 255, 255, var(--blueprint-opacity, 0.2));
+
+        --skeleton-bg: #2a2c2f;
+        --skeleton-highlight: rgba(255, 255, 255, 0.14);
     
     }
+}
+
+.--skeleton {
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    pointer-events: none;
+    color: transparent !important;
+    caret-color: transparent;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    background: var(--skeleton-bg) !important;
+    width: var(--skeleton-width, var(--skeleton-default-size, auto));
+    height: var(--skeleton-height, var(--skeleton-default-size, auto));
+    border-radius: var(--skeleton-radius, inherit);
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: -100%;
+        bottom: -100%;
+        left: -150%;
+        width: 70%;
+        pointer-events: none;
+        background: linear-gradient(
+            90deg,
+            transparent 0%,
+            var(--skeleton-highlight) 45%,
+            transparent 100%
+        );
+        animation: shimmering var(--skeleton-duration) linear infinite;
+    }
+
+    > * {
+        visibility: hidden !important;
+    }
+}
+
+.--skeleton.--skeleton-circle {
+    border-radius: 9999px !important;
 }
 
 .--no-scroll{overflow: hidden;}
@@ -227,6 +275,7 @@ body {
 .--no-shrink{flex-shrink: 0;}
 .flex{
     display: flex;
+    min-width: 0;
     &.cols{flex-direction: column;}
     &.ass{align-self: flex-start;}
     &.asc{align-self: center;}
@@ -240,6 +289,7 @@ body {
 }
 .--flex{
     display: flex;
+    min-width: 0;
     &.--cols{flex-direction: column;}
     &.--ass{align-self: flex-start;}
     &.--asc{align-self: center;}
@@ -280,7 +330,10 @@ body {
 .tac{text-align:center;}
 .tal{text-align:left;}
 .taj{text-align:justify;}
-.--grid, .grid{display: grid;}
+.--grid, .grid{
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+}
 .nope{pointer-events: none;}
 .nous{user-select: none;}
 .rel{position: relative;}
@@ -303,6 +356,7 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
   /* Use --lines variable, default to 1 if not provided */
+    line-clamp: var(--line-count, 1);
   -webkit-line-clamp: var(--line-count, 1); 
 }
 

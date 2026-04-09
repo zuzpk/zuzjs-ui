@@ -21,7 +21,7 @@ body{
 }
 
 .drawer-h{
-    min-width: 320px;
+    min-width: 320px !important;
     max-width: 90vw;
     top: calc(0px + var(--m));
     bottom: calc(0px + var(--m));

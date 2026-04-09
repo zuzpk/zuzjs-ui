@@ -33,7 +33,7 @@
     height: var(--switch-height);
     width: var(--switch-width);
     min-height: var(--switch-height);
-    min-width: var(--switch-width);
+    min-width: var(--switch-width) !important;
     max-height: var(--switch-height);
     max-width: var(--switch-width);
     

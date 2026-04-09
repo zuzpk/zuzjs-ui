@@ -379,6 +379,13 @@ export const cssDirect : dynamic = {
     "uppercase": "text-transform: uppercase;",
     "lowercase": "text-transform: lowercase;",
     "capitalize": "text-transform: capitalize;",
+    //Ratio
+    "ratio-square": "aspect-ratio: 1 / 1;",
+    "ratio-video": "aspect-ratio: 16 / 9;",
+    "ratio-monitor": "aspect-ratio: 21 / 9;",
+    "ratio-photo": "aspect-ratio: 4 / 3;",
+    "ratio-portrait": "aspect-ratio: 3 / 4;",
+    "ratio-tall": "aspect-ratio: 9 / 16;"
 }
 
 export const cssPropsWithColor = [

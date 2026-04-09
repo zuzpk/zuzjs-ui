@@ -1,4 +1,5 @@
-import { BoxProps } from "../../types"
+import { ReactNode } from "react";
+import { BoxProps } from "../../types";
 
 export enum BubbleStatus {
     Sending = 0,
@@ -19,16 +20,66 @@ export enum BubbleMediaType {
     Poll = "poll",
 }
 
+export enum BubbleAttachmentType {
+    File = "file",
+    Image = "image",
+    Video = "video",
+    Audio = "audio",
+    Link = "link",
+}
+
+export type BubbleStylePreset =
+    | "default"
+    | "ios"
+    | "android"
+    | "blocks"
+    | "glass"
+    | "minimal";
+
+export type BubbleAttachment = {
+    id?: string | number,
+    type?: BubbleAttachmentType,
+    name: string,
+    url: string,
+    size?: string,
+    preview?: string,
+};
+
 export type BubbleProps = BoxProps & {
     id?: string | number,
     text?: string,
     media?: {
         type: BubbleMediaType,
         source: string,
-        duration?: string
+        duration?: string,
+        thumbnail?: string,
+        title?: string,
     },
     side?: "me" | "you",
+    stylePreset?: BubbleStylePreset,
     status?: BubbleStatus,
     timeStamp?: number,
-    arrow?: boolean
+    arrow?: boolean,
+    attachments?: BubbleAttachment[],
+    /** Auto-fetch and display link previews from URLs in text */
+    autoFetchLinkPreview?: boolean,
+    /** Optional custom preview fetcher for links found in text */
+    linkPreviewFetcher?: (url: string) => Promise<{
+        title?: string,
+        description?: string,
+        image?: string,
+        url?: string,
+    } | null>,
+    /** Message this bubble is replying to */
+    replyTo?: {
+        author: string,
+        text: string,
+        id?: string | number,
+    },
+    /** Array of emoji reactions */
+    reactions?: string[],
+    /** Whether this message is forwarded */
+    forwarded?: boolean,
+    /** Complex nested content support */
+    children?: ReactNode,
 }

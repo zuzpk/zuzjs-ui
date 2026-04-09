@@ -82,7 +82,7 @@ body {
             }
         }
         .--button{
-            min-width: var(--pagination-table-button-size);
+            min-width: var(--pagination-table-button-size) !important;
             height: var(--pagination-table-button-size);
             font-size: var(--pagination-font-size);
             border: var(--pagination-table-button-border);

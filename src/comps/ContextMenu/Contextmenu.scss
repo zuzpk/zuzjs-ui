@@ -93,7 +93,7 @@ body{
     }
 
     .--item{
-        min-width: var(--context-item-width);
+        min-width: var(--context-item-width) !important;
         width: 100%;
         padding: var(--context-item-padding);
         gap: var(--context-item-gap);
