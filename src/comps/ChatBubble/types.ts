@@ -47,6 +47,12 @@ export type BubbleAttachment = {
 
 export type BubbleProps = BoxProps & {
     id?: string | number,
+    sender?: {
+        id: string;
+        name: string;
+        picture?: string;
+        color?: string;
+    },
     text?: string,
     media?: {
         type: BubbleMediaType,

@@ -9,6 +9,7 @@ body{
     --drawer-close-color-hover: #fff;
     --drawer-border-color: var(--border-primary);
     --drawer-border: 1px var(--drawer-border-color) solid;
+    --drawer-close-xy: 5px;
 }
 
 [color-scheme="dark"] {
@@ -73,11 +74,17 @@ body{
         width: 25px;
         height: 25px;
         aspect-ratio: 1 / 1;
-        right: 20px;
-        top: 20px;
+        top: var(--drawer-close-xy);
         z-index: 10001;
         padding: 3px;
-        corner-shape: round !important;
+        
+        &.--close-left{
+            left: var(--drawer-close-xy);
+        }
+        &.--close-right{
+            right: var(--drawer-close-xy);
+        }
+
         svg {
             fill: var(--drawer-close-color);
         }

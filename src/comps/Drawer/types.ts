@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { BoxProps, LayerHandler, ValueOf } from "../../types";
+import { BoxProps, LayerHandler, Placement, ValueOf } from "../../types";
 import { DRAWER_SIDE, TRANSITION_CURVES } from "../../types/enums";
 
 export type DrawerProps = Omit<BoxProps, `id`> & {
@@ -12,6 +12,7 @@ export type DrawerProps = Omit<BoxProps, `id`> & {
     prerender?: boolean,
     margin?: number,
     animation?: ValueOf<typeof TRANSITION_CURVES>,
+    closeBtn?: Extract<Placement, "left" | "right">,
     onClose?: (id: number) => void,
 } & LayerHandler
 

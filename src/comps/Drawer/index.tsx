@@ -44,6 +44,7 @@ const Drawer = ({
         inBackground, 
         forceClose, 
         forceLoading,
+        closeBtn,
         onClose, 
         ...pops } = props;
     const { drawer: themeDrawer } = useTheme(true)!
@@ -157,7 +158,7 @@ const Drawer = ({
             }}
             {...rest as BoxProps}>
             {from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? <Box className={`--handle`} /> : null}
-            <Button as={`--close-drawer --abs`} onClick={closeDrawer}>{SVGIcons.close}</Button>
+            { closeBtn && <Button as={`--close-drawer --close-${closeBtn} --abs --round`} onClick={closeDrawer}>{SVGIcons.close}</Button> }
             <ScrollView as={`rel`}>
                 {render ? content : visible ? content : null}
                 <Cover when={loading} />

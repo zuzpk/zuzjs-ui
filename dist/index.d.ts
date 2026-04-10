@@ -4,7 +4,7 @@ import { DragOptions, LineChartProps, MediaItem, useMediaPlayer, ScrollBreakpoin
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import { dynamic as dynamic$1, PubSub } from '@zuzjs/core';
 
-declare const VERSION = "1.0.69";
+declare const VERSION = "1.0.70";
 
 declare const AVATAR: {
     readonly Circle: "CIRCLE";
@@ -806,6 +806,12 @@ type BubbleAttachment = {
 };
 type BubbleProps = BoxProps & {
     id?: string | number;
+    sender?: {
+        id: string;
+        name: string;
+        picture?: string;
+        color?: string;
+    };
     text?: string;
     media?: {
         type: BubbleMediaType;
@@ -843,27 +849,9 @@ type BubbleProps = BoxProps & {
     children?: ReactNode;
 };
 
-/**
- * ChatBubble component optimized for performance.
- * Supports:
- * - Complex nested content (reactions, replies, forwarded messages)
- * - Automatic link preview fetching and display
- * - Memoization for optimal rendering
- * - Media attachments (audio, image, video, documents)
- *
- * @example
- * // Basic usage
- * ```tsx
- * <ChatBubble text="Hello! How can I help?" side="me" />
- * ```
- *
- * @example
- * // With link preview auto-fetch
- * ```tsx
- * <ChatBubble text="Check this out: https://example.com" side="you" autoFetchLinkPreview />
- * ```
- */
-declare const Bubble: react.NamedExoticComponent<Omit<BubbleProps, "ref"> & react.RefAttributes<HTMLDivElement>>;
+declare const Bubble: react.MemoExoticComponent<({ ref, ...props }: BubbleProps & {
+    ref?: Ref<HTMLDivElement>;
+}) => react_jsx_runtime.JSX.Element>;
 
 type ChatMessage = BubbleProps;
 type ChatDateLabels = {
@@ -1489,6 +1477,7 @@ type DrawerProps = Omit<BoxProps, `id`> & {
     prerender?: boolean;
     margin?: number;
     animation?: ValueOf<typeof TRANSITION_CURVES>;
+    closeBtn?: Extract<Placement, "left" | "right">;
     onClose?: (id: number) => void;
 } & LayerHandler;
 interface DrawerHandler {

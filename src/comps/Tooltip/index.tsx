@@ -1,5 +1,6 @@
 import { addPropsToChildren } from "@zuzjs/core/react";
 import { Ref, useId, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useBase, useFx } from "../../hooks";
 import { useTheme } from "../../hooks/useColorScheme";
 import { Position, TRANSITION_CURVES, TRANSITIONS, Variant } from "../../types";
@@ -120,7 +121,7 @@ const ToolTip = ({
 
     return <>
         {trigger}
-        <Box    
+        {createPortal(<Box    
             style={{
                 positionAnchor: _anchorName,
                 ...tooltipAnimation.style,
@@ -132,6 +133,7 @@ const ToolTip = ({
             as={`--tooltip --visb-${isVisible} --${variant || themeTooltip?.variant || Variant.Small} --${dx} abs ${className}`.trim()}>
             {typeof title === 'string' ? <Text as={`--text rel`}>{title}</Text> : title}
         </Box>
+        , document.body)}
     </>
 
 };
