@@ -1,5 +1,5 @@
 import { addPropsToChildren } from "@zuzjs/core/react";
-import { Ref, useId, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { Ref, useEffect, useId, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useBase, useFx } from "../../hooks";
 import { useTheme } from "../../hooks/useColorScheme";
@@ -42,8 +42,14 @@ const ToolTip = ({
     const dx = position || Position.Top;
     const master = useRef<HTMLDivElement>(null);
     const [ hovered, setHovered ] = useState(false)
+    const [ mounted, setMounted ] = useState(false)
     const pos = useRef(6)
     const isVisible = show === true || hovered;
+    const canUseDocument = mounted && typeof document !== "undefined";
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
     const anchorId = useId().replace(/:/g, ""); 
     const _anchorName = `--anchor-${anchorId}`;
@@ -121,19 +127,21 @@ const ToolTip = ({
 
     return <>
         {trigger}
-        {createPortal(<Box    
-            style={{
-                positionAnchor: _anchorName,
-                ...tooltipAnimation.style,
-                ...(
-                    dx === Position.Top || dx === Position.Bottom  ? 
-                        { "--fx-x": "-50%" } : { "--fx-y": "-50%" }
-                )
-            }}
-            as={`--tooltip --visb-${isVisible} --${variant || themeTooltip?.variant || Variant.Small} --${dx} abs ${className}`.trim()}>
-            {typeof title === 'string' ? <Text as={`--text rel`}>{title}</Text> : title}
-        </Box>
-        , document.body)}
+        {canUseDocument
+            ? createPortal(<Box    
+                style={{
+                    positionAnchor: _anchorName,
+                    ...tooltipAnimation.style,
+                    ...(
+                        dx === Position.Top || dx === Position.Bottom  ? 
+                            { "--fx-x": "-50%" } : { "--fx-y": "-50%" }
+                    )
+                }}
+                as={`--tooltip --visb-${isVisible} --${variant || themeTooltip?.variant || Variant.Small} --${dx} abs ${className}`.trim()}>
+                {typeof title === 'string' ? <Text as={`--text rel`}>{title}</Text> : title}
+            </Box>
+            , document.body)
+            : null}
     </>
 
 };

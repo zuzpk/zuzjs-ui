@@ -26,6 +26,7 @@ import { FlexProps } from "./types";
 const Flex: FC<FlexProps> = ({ 
     cols, 
     gap, 
+    ass,
     ais,
     aic,
     aie,
@@ -41,6 +42,7 @@ const Flex: FC<FlexProps> = ({
     const flexClasses = [
         "--flex",
         cols ? "--cols" : "", // Matching your 'cols' class for direction
+        ass ? "--ass" : "",
         ais ? "--ais" : "",
         aic ? "--aic" : "",
         aie ? "--aie" : "",

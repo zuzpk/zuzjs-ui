@@ -4,7 +4,7 @@ import { DragOptions, LineChartProps, MediaItem, useMediaPlayer, ScrollBreakpoin
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import { dynamic as dynamic$1, PubSub } from '@zuzjs/core';
 
-declare const VERSION = "1.0.70";
+declare const VERSION = "1.0.71";
 
 declare const AVATAR: {
     readonly Circle: "CIRCLE";
@@ -629,6 +629,7 @@ type ButtonProps = Props<`button`> & {
     tooltip?: string;
     tooltipProps?: Omit<ToolTipProps, `title`>;
     kind?: ButtonKind;
+    alignment?: `start` | `center` | `end`;
 };
 interface ButtonHandler extends HTMLButtonElement {
     reset: () => void;
@@ -1620,6 +1621,8 @@ type FlexProps = BoxProps & {
     cols?: boolean;
     /** Shortcut for gap */
     gap?: number | string;
+    /** Shortcut for align-self: flex-start */
+    ass?: boolean;
     /** Shortcut for align-items: center */
     ais?: boolean;
     /** Shortcut for align-items: flex-start */

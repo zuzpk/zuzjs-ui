@@ -5,6 +5,8 @@ export type FlexProps = BoxProps & {
     cols?: boolean;
     /** Shortcut for gap */
     gap?: number | string;
+    /** Shortcut for align-self: flex-start */
+    ass?: boolean;
     /** Shortcut for align-items: center */
     ais?: boolean;
     /** Shortcut for align-items: flex-start */
