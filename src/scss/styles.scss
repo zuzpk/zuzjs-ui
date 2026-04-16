@@ -105,6 +105,7 @@ body {
     --skeleton-highlight: rgba(255, 255, 255, 0.75);
     --skeleton-duration: 1.25s;
     --shimmer-angle: 20deg;
+    --stripe-angle: 45deg;
 
 }
 [color-scheme="dark"] {
@@ -410,8 +411,17 @@ body {
 
   // Mode 1: Background
   &.--stripes-background {
-    @include stripe-style(var(--stripe-bg-a), var(--stripe-bg-b));
+    @include stripe-style(
+        var(--stripe-bg-angle, var(--stripe-angle)), 
+        var(--stripe-bg-a), 
+        var(--stripe-bg-b)
+    );
     color: #999;
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+        pointer-events: none; // Prevents clicks if not using <button disabled>
+    }
   }
 
   // Mode 2: Overlay
@@ -428,10 +438,15 @@ body {
       
       // Transparent overlay using rgba
       @include stripe-style(
+        var(--stripe-overlay-angle, var(--stripe-angle)),
         var(--stripe-overlay-a), 
         var(--stripe-overlay-b), 
         30px
       );
+
+      cursor: not-allowed;
+      opacity: 0.7;
+      pointer-events: none;
     }
   }
 }

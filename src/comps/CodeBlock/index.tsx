@@ -83,33 +83,54 @@ const CodeBlock = ({
         });
 
         const rules = [
-            { name: 'comm', re: /\/\/.*/g },
+            // Comments: avoid matching URLs (e.g., https://...)
+            { name: 'comm', re: /(^|\s)(?!https?:)\/\/.*$/gm },
+            // Strings
             { name: 'str',  re: /(["'`])(?:(?=(\\?))\2.)*?\1/g },
-            { name: 'key',  re: /\b(const|let|var|export|default|import|from|return|if|else|switch|case|break|as|type|interface|class|extends|await|async|new|void|typeof)\b/g },
-            { name: 'tag',  re: /(&lt;\/?[A-Z][\w\.]*|&gt;)/g },
-            { name: 'var',  re: /(?<!&lt;\/|&lt;)\b[A-Z]\w*\b/g }, 
-            { name: 'fn',   re: /\b([a-z_]\w*)(?=\s*\()/gi },
-            { name: 'prop', re: /\.([a-z_]\w*)\b/gi },
-            { name: 'num',  re: /\b\d+\b(?![#|A-Z|a-z|_|ZUZ])/g } 
+            // Brackets (each type as its own token)
+            { name: 'paren', re: /[()]/g },
+            { name: 'curly', re: /[{}]/g },
+            { name: 'square', re: /[\[\]]/g },
+            // Keywords (expanded)
+            { name: 'key',  re: /\b(const|let|var|export|default|import|from|return|if|else|switch|case|break|as|type|interface|class|extends|await|async|new|void|typeof|function|try|catch|finally|throw|for|while|do|continue|static|get|set|public|private|protected|package|implements|instanceof|in|of|super|this|delete|yield|with|true|false|null|undefined|NaN|Infinity)\b/g },
+            // Function calls and special identifiers (connectApp, etc.)
+            { name: 'fn',   re: /\b([a-zA-Z_][\w]*)\s*(?=\()/g },
+            // PascalCase variables/classes
+            { name: 'var',  re: /(?<!&lt;\/|&lt;)\b[A-Z][A-Za-z0-9_]*\b/g },
+            // Properties
+            { name: 'prop', re: /\.([a-z_][\w]*)\b/gi },
+            // Numbers (int, float, hex, binary, octal)
+            { name: 'num',  re: /\b(0[xX][0-9a-fA-F]+|0[bB][01]+|0[oO][0-7]+|\d*\.\d+|\d+)\b/g }
         ];
 
+        // Custom handler for import { ... } to highlight identifiers inside braces
+        function highlightImportIds(html: string) {
+            return html.replace(/import\s*\{([^}]*)\}/g, (m, ids) => {
+                const highlighted = ids.split(',').map((id: string) => `<span class=\"--token-key\">${id.trim()}</span>`).join(', ');
+                return m.replace(ids, highlighted);
+            });
+        }
+
         return cleanLines.map((line, index) => {
+
             let html = line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
             const isHighlighted = highlightedLines.has(index + 1);
 
             if ( lang != `plain` ){
-                let tokens: string[] = [];
+                // To avoid nested tokens, process one rule at a time, replacing only non-overlapping matches
+                // We'll use a simple approach: for each rule, split the string by existing spans, and only apply to plain text
                 rules.forEach(rule => {
-                    html = html.replace(rule.re, (m) => {
-                        const id = `ZUZ_ID_${tokens.length}_ZUZ`; 
-                        tokens.push(`<span class="--token-${rule.name}">${m}</span>`);
-                        return id;
+                    // Split by existing spans
+                    let parts = html.split(/(<span class=\"--token-[^>]+>.*?<\/span>)/g);
+                    parts = parts.map(part => {
+                        // Only apply to non-token parts
+                        if (part.startsWith('<span class')) return part;
+                        return part.replace(rule.re, (m) => `<span class=\"--token-${rule.name}\">${m}</span>`);
                     });
+                    html = parts.join('');
                 });
-
-                for (let i = tokens.length - 1; i >= 0; i--) {
-                    html = html.replace(`ZUZ_ID_${i}_ZUZ`, tokens[i]);
-                }
+                // Now handle import { ... } highlighting
+                html = highlightImportIds(html);
             }
 
             return `<div class="--code-line ${showLines == true ? `--with-ln` : ``} ${isHighlighted ? '--is-highlighted' : ''}">

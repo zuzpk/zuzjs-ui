@@ -4,7 +4,7 @@ import { DragOptions, LineChartProps, MediaItem, useMediaPlayer, ScrollBreakpoin
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import { dynamic as dynamic$1, PubSub } from '@zuzjs/core';
 
-declare const VERSION = "1.0.71";
+declare const VERSION = "1.0.72";
 
 declare const AVATAR: {
     readonly Circle: "CIRCLE";
