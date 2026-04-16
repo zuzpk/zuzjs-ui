@@ -1,4 +1,5 @@
-body{
+body {
+    
     --alert-error: #ffd4d4;
     --alert-error-color: #ae1313;
     --alert-info: #bee3f8;
@@ -7,55 +8,78 @@ body{
     --alert-warning-color: #c05621;
     --alert-success: #c6f6d5;
     --alert-success-color: #2f855a;
-    --alert-padding: 12px;;
+
+    --alert-primary: #e0e7ff;       /* Light Indigo/Zuz Blue */
+    --alert-primary-color: #4338ca;
+    --alert-neutral: #f3f4f6;       /* Soft Gray */
+    --alert-neutral-color: #374151;
+    --alert-critical: #7f1d1d;      /* Deep Red for high-priority system errors */
+    --alert-critical-color: #ffffff;
+    --alert-tip: #faf5ff;           /* Soft Purple */
+    --alert-tip-color: #6b21a8;
+    --alert-debug: #111827;         /* Dark Terminal Style */
+    --alert-debug-color: #10b981;   /* "Matrix" Green */
+
+    --alert-padding: 12px;
     --alert-radius: 10px;
     --alert-gap: 10px;
 }
-.--alert{
 
+/* Helper mixin to reduce repetition */
+@mixin alert-variant($bg, $color) {
+    background: $bg;
+    color: $color;
+    path {
+        fill: $color;
+    }
+}
+
+.--alert {
     padding: var(--alert-padding);
     border-radius: var(--alert-radius);
     gap: var(--alert-gap);
+    display: flex; /* Added to ensure gap works */
+    align-items: flex-start;
 
-    .--icon{
+    .--icon {
         width: 20px;
         height: 20px;
+        flex-shrink: 0;
     }
-    .--meta{
+
+    .--meta {
+        display: flex;
+        flex-direction: column;
         gap: 2px;
-        .--title{
-            &.--tm{
+        .--title {
+            &.--tm {
                 font-weight: bold;
             }
         }
     }
 
-    &.--info{
-        background: var(--alert-info);
-        color: var(--alert-info-color); 
-        path{
-            fill: var(--alert-info-color);
-        }
+    /* Standard Variants */
+    &.--info    { @include alert-variant(var(--alert-info), var(--alert-info-color)); }
+    &.--warning { @include alert-variant(var(--alert-warning), var(--alert-warning-color)); }
+    &.--error   { @include alert-variant(var(--alert-error), var(--alert-error-color)); }
+    &.--success { @include alert-variant(var(--alert-success), var(--alert-success-color)); }
+
+    /* New Suggested Variants */
+    &.--primary  { @include alert-variant(var(--alert-primary), var(--alert-primary-color)); }
+    &.--neutral  { @include alert-variant(var(--alert-neutral), var(--alert-neutral-color)); }
+    &.--tip      { @include alert-variant(var(--alert-tip), var(--alert-tip-color)); }
+    
+    /* High Intensity System Alerts */
+    &.--critical { 
+        @include alert-variant(var(--alert-critical), var(--alert-critical-color));
+        box-shadow: 0 0 15px rgba(127, 29, 29, 0.4); /* Glow effect for zPanel emergencies */
     }
-    &.--warning{
-        background: var(--alert-warning);
-        color: var(--alert-warning-color); 
-        path{
-            fill: var(--alert-warning-color);
-        }
-    }
-    &.--error{
-        background: var(--alert-error);
-        color: var(--alert-error-color); 
-        path{
-            fill: var(--alert-error-color);
-        }
-    }
-    &.--success{
-        background: var(--alert-success);
-        color: var(--alert-success-color); 
-        path{
-            fill: var(--alert-success-color);
-        }
+
+    /* Developer Mode Alert */
+    &.--debug {
+        @include alert-variant(var(--alert-debug), var(--alert-debug-color));
+        font-family: 'Courier New', Courier, monospace;
+        border: 1px solid var(--alert-debug-color);
+        opacity: 0.9;
     }
 }

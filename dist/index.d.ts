@@ -4,7 +4,7 @@ import { DragOptions, LineChartProps, MediaItem, useMediaPlayer, ScrollBreakpoin
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import { dynamic as dynamic$1, PubSub } from '@zuzjs/core';
 
-declare const VERSION = "1.0.72";
+declare const VERSION = "1.0.73";
 
 declare const AVATAR: {
     readonly Circle: "CIRCLE";
@@ -107,10 +107,17 @@ declare const FORMVALIDATION: {
     readonly NotMinusOne: "NOT_MINUS_ONE";
 };
 declare const ALERT: {
+    readonly Default: "default";
     readonly Success: "success";
     readonly Error: "error";
     readonly Warning: "warning";
     readonly Info: "info";
+    readonly Primary: "primary";
+    readonly Secondary: "secondary";
+    readonly Neutral: "neutral";
+    readonly Critical: "critical";
+    readonly Tip: "tip";
+    readonly Draft: "draft";
 };
 declare const TRANSITION_CURVES: {
     readonly Spring: "SPRING";

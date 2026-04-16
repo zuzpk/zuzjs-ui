@@ -102,10 +102,17 @@ export const FORMVALIDATION = {
 } as const
 
 export const ALERT = {
+    Default: "default",   // Neutral state, often gray/muted
     Success : "success",
     Error : "error",
     Warning : "warning",
-    Info : "info"
+    Info : "info",
+    Primary: "primary",   // Matches the brand color (Zuz primary)
+    Secondary: "secondary", 
+    Neutral: "neutral",   // Specifically for "low priority" or "muted" alerts
+    Critical: "critical", // Higher intensity than Error (often used for system-wide failures)
+    Tip: "tip",           // Specifically for onboarding or suggestions (often purple/indigo)
+    Draft: "draft",
 } as const
 
 export const TRANSITION_CURVES = {

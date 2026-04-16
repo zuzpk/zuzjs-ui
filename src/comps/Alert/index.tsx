@@ -1,12 +1,12 @@
 "use client"
 import { forwardRef } from "react";
 import { useBase } from "../../hooks";
+import { BoxProps } from "../../types";
 import { ALERT } from "../../types/enums";
 import Box from "../Box";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
 import { AlertHandler, AlertProps } from "./types";
-import { BoxProps } from "../../types";
 
 /**
  * Alert component.
@@ -29,25 +29,40 @@ import { BoxProps } from "../../types";
  */
 const Alert = forwardRef<AlertHandler, AlertProps>((props, ref) => {
     
-    const { type, icon, title, message, iconSize, ...pops } = props;
+    const { type = ALERT.Info, icon, title, message, iconSize, ...pops } = props;
 
     const {
-        className,
+        className = '',
         style,
         rest
-    } = useBase(pops)
+    } = useBase(pops);
 
-    return <Box className={`--alert --${(type || ALERT.Info)} flex aic ${className}`.trim()} style={style} {...rest as BoxProps}>
-        <Box className={`--icon icon-${icon || `auto-matic`}`} style={iconSize ? { fontSize: iconSize, width: iconSize, height: iconSize } : {}}>
-            {!icon && SVGIcons[type || ALERT.Info]}
+    // Only use valid SVGIcons keys, fallback to 'info'
+    const validIconKeys = Object.keys(SVGIcons) as Array<keyof typeof SVGIcons>;
+    const iconKey = (typeof type === 'string' && validIconKeys.includes(type as keyof typeof SVGIcons))
+        ? (type as keyof typeof SVGIcons)
+        : 'info';
+
+    return (
+        <Box
+            className={`--alert --${type} flex aic ${className}`.trim()}
+            style={style}
+            {...(rest as BoxProps)}
+        >
+            <Box
+                className={`--icon icon-${icon || `auto-matic`}`}
+                style={iconSize ? { fontSize: iconSize, width: iconSize, height: iconSize } : {}}
+            >
+                {!icon && SVGIcons[iconKey]}
+            </Box>
+            <Box className={`--meta flex cols`}>
+                <Text className={`--title ${message ? `--tm` : ``}`}>
+                    {title || `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`}
+                </Text>
+                {message && <Text className={`--message`} h={2}>{message}</Text>}
+            </Box>
         </Box>
-        <Box className={`--meta flex cols`}>
-            <Text className={`--title ${message ? `--tm` : ``}`}>
-                {title || `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`}
-            </Text>
-            {message && <Text className={`--message`} h={2}>{message}</Text>}
-        </Box>
-    </Box>
+    );
 
 
 })
