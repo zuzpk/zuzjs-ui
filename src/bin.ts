@@ -9,6 +9,7 @@ import { fileURLToPath } from "url";
 import builder from "./builder";
 import styleGenerator from "./builder/style-generator";
 import { cssDirect, cssProps } from "./builder/stylesheet";
+import componentSnippets from "./snippets";
 import { dynamic } from "./types/shared";
 
 const options = program.opts();
@@ -103,7 +104,8 @@ program
                 "prefix": "zs",
                 "body": [`as="\${1|${directChoices}|}\$0"`],
                 "description": "Zuz Direct Shortcut"
-            }
+            },
+            ...componentSnippets
         };
 
         // 2. Prepare Settings Content
@@ -130,9 +132,11 @@ program
         fs.writeFileSync(snippetPath, JSON.stringify(snippetContent, null, 2));
         fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
 
+        const componentCount = Object.keys(componentSnippets).length;
         console.log(colors.green('✔ Zuz VS Code configuration initialized!'));
-        console.log(colors.cyan('  - .vscode/zuz.code-snippets (Splitted zp/zs)'));
+        console.log(colors.cyan('  - .vscode/zuz.code-snippets (zp/zs + ' + componentCount + ' component snippets)'));
         console.log(colors.cyan('  - .vscode/settings.json (QuickSuggestions enabled)'));
+        console.log(colors.dim('\n  Usage: type ui-<component> in a .tsx/.jsx file'));
         
     });
 
