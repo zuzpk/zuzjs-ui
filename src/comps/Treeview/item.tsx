@@ -51,13 +51,13 @@ const TreeItem = forwardRef<TreeItemHandler, TreeItemProps>((props, ref) => {
                 className={`--node-meta flex aic`}
                 onClick={(e) => onSelect(tag)}>
                 { 
-                    ( (icons?.nodeOpen && icons?.nodeClose) || (isRoot && icons?.rootOpen && icons?.rootClose) ) && 
+                    (icon || (icons?.nodeOpen && icons?.nodeClose) || (isRoot && icons?.rootOpen && icons?.rootClose)) && 
                     <Icon 
                         skeleton={rest.skeleton}
                         className={`--node-icon ${isRoot ? `--icon-root` : ``}`}
                         name={
                             icon || ( isOpen ? 
-                                    isRoot ? icons?.rootOpen || icons.nodeOpen : icons.nodeOpen 
+                                    isRoot ? icons?.rootOpen || icons?.nodeOpen : icons?.nodeOpen 
                                     : isRoot ? icons?.rootClose || icons?.nodeClose : icons?.nodeClose )
                         } /> }
                 <Text {...{ className: `--node-label ${isRoot ? `--node-label-root` : ``}`.trim()} as TextProps} skeleton={rest.skeleton}>{label}</Text>

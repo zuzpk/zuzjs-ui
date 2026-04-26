@@ -13,6 +13,7 @@
 @use "../comps/Calendar/Calendar.scss";
 @use "../comps/Carousel/Carousel.scss";
 @use "../comps/ChatBubble/Bubble.scss";
+@use "../comps/ChatList/ChatList.scss";
 @use "../comps/Checkbox/Checkbox.scss";
 @use "../comps/CodeBlock/CodeBlock.scss";
 @use "../comps/ColorScheme/ColorScheme.scss";
@@ -347,6 +348,7 @@ body {
 .no-overflow{overflow:hidden;}
 .w-full{width: 100%;}
 .h-full{height: 100%;}
+.dim-0{opacity: 0;}
 .dim-25{opacity: 0.25;}
 .dim-50{opacity: 0.5;}
 .dim-75{opacity: 0.75;}

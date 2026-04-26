@@ -1,9 +1,10 @@
 "use client"
-import { useDebounce } from "@zuzjs/hooks";
+import { useAnchor, useDebounce } from "@zuzjs/hooks";
 import { ChangeEvent, ReactElement, Ref, useEffect, useId, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { useBase, usePosition } from "../../hooks";
+import { createPortal } from "react-dom";
+import { useBase } from "../../hooks";
 import { useTheme } from "../../hooks/useColorScheme";
-import { POSITION, Variant } from "../../types";
+import { Variant } from "../../types";
 import Box from "../Box";
 import Button from "../Button";
 import Flex from "../Flex";
@@ -134,12 +135,12 @@ const Select = (({
     const [ internalValue, setValue ] = useState<Option | Option[] | string | null>(() => getInitialValue())
     const [ choosing, setChoosing ] = useState(false)
     const [ query, setQuery ] = useState<string | null>(null)
+    const [ optionsMinWidth, setOptionsMinWidth ] = useState<number | undefined>(undefined)
     const _container = useRef<HTMLDivElement>(null)
     const _search = useRef<HTMLInputElement>(null)
     const _pop = useRef<HTMLDivElement>(null)
     const _did = useId()
     const _id = useMemo(() => name || _did, [name, _did])
-    const { reposition } = usePosition(_pop as any, { direction: POSITION.Bottom, offset: 2 })
     const { variant: themeVariant } = useTheme(true)!
 
     const crossIcon = closeIcon ?
@@ -287,22 +288,6 @@ const Select = (({
     }, [selected, inForm, options, supportsManualInput, multiple, tokenizer])
 
     useEffect(() => {
-        if (!choosing) return
-
-        const handleScroll = () => {
-            reposition()
-        }
-
-        window.addEventListener("scroll", handleScroll, true)
-        window.addEventListener("resize", reposition)
-
-        return () => {
-            window.removeEventListener("scroll", handleScroll, true)
-            window.removeEventListener("resize", reposition)
-        }
-    }, [choosing, reposition])
-
-    useEffect(() => {
         if (!choosing) {
             if (_search.current) _search.current.value = ""
             setQuery(null)
@@ -310,10 +295,12 @@ const Select = (({
         }
 
         _search.current?.focus()
-        reposition()
 
         const handleOutsideClick = (e: MouseEvent) => {
-            if (_container.current && !_container.current.contains(e.target as Node)) {
+            const target = e.target as Node
+            const clickedInsideTrigger = _container.current?.contains(target)
+            const clickedInsidePop = _pop.current?.contains(target)
+            if (!clickedInsideTrigger && !clickedInsidePop) {
                 setChoosing(false)
             }
         }
@@ -326,19 +313,35 @@ const Select = (({
             clearTimeout(timeout)
             document.removeEventListener("click", handleOutsideClick)
         }
-    }, [choosing, reposition])
+    }, [choosing])
+
+    useEffect(() => {
+        const syncOptionsMinWidth = () => {
+            const displayEl = _container.current?.querySelector(".--select-display") as HTMLElement | null
+            setOptionsMinWidth(displayEl?.offsetWidth)
+        }
+
+        syncOptionsMinWidth()
+
+        if (!choosing) return
+
+        window.addEventListener("resize", syncOptionsMinWidth)
+        return () => {
+            window.removeEventListener("resize", syncOptionsMinWidth)
+        }
+    }, [choosing, value, supportsManualInput, variant, themeVariant, className])
 
     const updateQuery = useDebounce((q: string) => setQuery(q === "" ? null : q), 300)
     const updateManualInput = useDebounce(handleManualInput, 300)
     // const updateManualInput = useDebounce((e: ChangeEvent<HTMLInputElement>) => handleManualInput(e), 300)
 
-    return <Box
+    const trigger = useMemo(() => <Box
         ref={_container}
         data-required={required ? "true" : undefined}
         with={withProp}
         className={[
             `--select ${expanded == true ? `--expanded` : ``}`,
-            `--${variant || themeVariant}`,
+            `--${variant || themeVariant || Variant.Small}`,
             `${name ? `--${name}` : ``}`,
             `${error ? "--has-error" : ""}`,
             `${disabled ? "--disabled" : ""} rel`
@@ -346,11 +349,11 @@ const Select = (({
 
         {supportsManualInput ? <Box
             data-value={currentOption?.value ?? (editableValue || "-1")}
-            className={`--select-display --selected --editable flex aic rel ${className}`.trim()}
+            className={`--select-display --select-anchor --selected --editable flex aic rel ${className}`.trim()}
             style={style}
             onClick={(e) => e.stopPropagation()}
             {...forwardedRest as any}>
-            { currentOption?.icon && <Icon as={`--selected-icon`} name={currentOption.icon} /> }
+            { currentOption?.icon && <Icon as={`--selected-icon`} name={currentOption.icon} color={currentOption.iconColor} /> }
             <Flex aic as="--label-wrapper">
                 <Input
                     aria-expanded={choosing}
@@ -385,7 +388,7 @@ const Select = (({
             disabled={disabled}
             variant={variant || themeVariant}
             data-value={currentOption?.value ?? `-1`}
-            className={`--select-display --selected flex aic rel ${className}`.trim()}
+            className={`--select-display --selected --select-anchor flex aic rel ${className}`.trim()}
             withLabel={false}
             style={style}
             onClick={(e) => {
@@ -393,7 +396,7 @@ const Select = (({
                 if ( !disabled ) setChoosing(prev => !prev)
             }}
             {...forwardedRest as any}>
-            { currentOption?.icon && <Icon as={`--selected-icon`} name={currentOption.icon} /> }
+            { currentOption?.icon && <Icon as={`--selected-icon`} name={currentOption.icon} color={currentOption.iconColor} /> }
             <Flex aic as="--label-wrapper">
                 {tokenizer && Array.isArray(value) && value.length > 0 ? (
                     <Flex as={`--tokens-wrap${wrapTokens === true ? ` --wrap` : ``}`}>
@@ -423,41 +426,61 @@ const Select = (({
                 typeof arrowDownIcon === "string" ? <Icon name={arrowDownIcon} as={`--search-action`} /> : arrowDownIcon}</Box>
         </Button>}
 
-        <Box
-            id={_id}
-            className={`--options-list --allow-scroll -fx flex cols abs zIndex:var(--max-z-index)`}
-            aria-hidden={!choosing}
-            onWheel={handleListWheel}
-            style={{
-                maxHeight: maxHeight || `auto`
-            }}
-            ref={_pop}
-            fx={{
-                from: { y: 5, opacity: 0 },
-                to: { y: 0, opacity: 1 },
-                when: choosing,
-                duration: .05
-            }}>
-            { withSearch && <Box as={`--select-search --no-shrink flex --sticky`}><Search
-                ref={_search}
-                variant={Variant.Small}
-                placeholder={searchPlaceholder || `Search...`}
-                onChange={updateQuery}
-            /></Box>}
-            { label && <OptionGroupHead label={label} /> }
-            {
-                options
-                ?.filter(o => !query || o.label.toLowerCase().includes(query.toLowerCase()))
-                ?.map((o) => <OptionItem
-                    updateValue={updateValue}
-                    checkIcon={checkIcon}
-                    selected={isSelected(o)}
-                    key={`option-${o.label.replace(/\s+/g, `-`)}-${o.value}`}
-                    o={o} />)
-            }
-        </Box>
+    </Box>, [required, withProp, expanded, variant, themeVariant, name, error, disabled, _id,
+        supportsManualInput, currentOption, editableValue, className, style, forwardedRest,
+        updateManualInput, handleEditableKeyDown, editablePlaceholder, label, arrowDownIcon, arrowUpIcon,
+        choosing, tokenizer, value, wrapTokens, options, crossIcon, removeToken])
 
+    const { root, canUseDocument, floatingRef, floatingStyle } = useAnchor(trigger, '--select-anchor', {
+        open: choosing,
+        autoFlip: true,
+        preferredPlacement: 'bottom',
+        margin: 2,
+    })
+
+    const optionsList = <Box
+        id={_id}
+        className={`--select-options-list --options-list --${variant || themeVariant || Variant.Small} --allow-scroll -fx flex cols abs zIndex:var(--max-z-index)`}
+        aria-hidden={!choosing}
+        onWheel={handleListWheel}
+        style={{
+            ...floatingStyle,
+            minWidth: optionsMinWidth ? `${optionsMinWidth}px` : "anchor-size(width)",
+            maxHeight: maxHeight || `auto`
+        }}
+        ref={(node) => {
+            _pop.current = node;
+            floatingRef.current = node;
+        }}
+        fx={{
+            from: { y: 5, opacity: 0 },
+            to: { y: 0, opacity: 1 },
+            when: choosing,
+            duration: .05
+        }}>
+        { withSearch && <Box as={`--select-search --no-shrink flex --sticky`}><Search
+            ref={_search}
+            variant={Variant.Small}
+            placeholder={searchPlaceholder || `Search...`}
+            onChange={updateQuery}
+        /></Box>}
+        { label && <OptionGroupHead label={label} /> }
+        {
+            options
+            ?.filter(o => !query || o.label.toLowerCase().includes(query.toLowerCase()))
+            ?.map((o) => <OptionItem
+                updateValue={updateValue}
+                checkIcon={checkIcon}
+                selected={isSelected(o)}
+                key={`option-${o.label.replace(/\s+/g, `-`)}-${o.value}`}
+                o={o} />)
+        }
     </Box>
+
+    return <>
+        {root}
+        {canUseDocument ? createPortal(optionsList, document.body) : null}
+    </>
 }) as SelectComponent
 
 Select.displayName = `Zuz.Select`

@@ -50,7 +50,7 @@ const Button = ({ ref, ...props} : ButtonProps) => {
     const _alignment = alignment === `start` ? `--jcs` : alignment === `end` ? `--jce` : `--jcc`
 
     const _button = <button
-        className={removeDuplicateWords(`--button ${tooltip ? `--tooltip-anchor` : ``} --${kind} --${variant || themeVariant} --flex --aic ${!reset ? _alignment : ``} ${icon ? `--with-icon` : ``} ${className}`).trim().replace(/\s+/g, ' ')}
+        className={removeDuplicateWords(`--button ${tooltip ? `--tooltip-anchor` : ``} --${kind} --${variant || themeVariant} --flex --aic ${!reset ? _alignment : ``} ${icon ? `--with-icon` : ``} --no-shrink ${className}`).trim().replace(/\s+/g, ' ')}
         style={style}
         ref={ref}
         disabled={state == ButtonState.Loading || props.skeleton?.enabled || disabled}

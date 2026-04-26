@@ -99,6 +99,13 @@ export const FORMVALIDATION = {
     GreaterThan : "GREATER_THAN",
     NotEmpty : "NOT_EMPTY", 
     NotMinusOne : "NOT_MINUS_ONE",
+    // Date Validations
+    /** Ensures date is not in the past (includes today) */
+    MinDateToday: "MIN_DATE_TODAY",
+    /** Ensures date is after a specific threshold */
+    MinDate: "MIN_DATE",
+    /** Ensures date does not exceed today or a specific threshold */
+    MaxDate: "MAX_DATE",
 } as const
 
 export const ALERT = {

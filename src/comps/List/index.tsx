@@ -66,6 +66,13 @@ const List = forwardRef<HTMLUListElement | HTMLOListElement, ListProps>((props, 
             const actualIndex = start + renderIndex;
             const _items = items;
             const _key = `${typeof item == `string` ? `li-${String(item)}` : isValidElement(item) ? `li-${item.key}` || `${actualIndex}-${MD5(item.toString())}` : (item as ListItemObject).label}-${actualIndex}`;
+
+            if (isValidElement(item)) {
+                return <Fragment key={_key}>
+                    <li>{item}</li>
+                    {seperator && _items[actualIndex + 1] ? <li key={`spt-${actualIndex + 1}-${_key}`} className={`--list-seperator`}>{seperator}</li> : null}
+                </Fragment>
+            }
             
             return <Fragment key={_key}>
                 <Item meta={item} />

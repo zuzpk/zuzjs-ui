@@ -3,6 +3,7 @@ import { useDebounce } from '@zuzjs/hooks';
 import { useEffect, useRef } from 'react';
 import { useBase } from '../../hooks';
 import { useTheme } from '../../hooks/useColorScheme';
+import { Variant } from '../../types';
 import { useForm } from '../Form/context';
 import { InputProps } from './types';
 
@@ -87,7 +88,7 @@ const Input = ({ ref, ...props } : InputProps) => {
  
     return <input
         name={name}
-        className={`--input --${variant || themeVariant} ${error ? '--has-error' : ''} --flex ${className}`.trim()}
+        className={`--input --${variant || themeVariant || Variant.Medium} ${error ? '--has-error' : ''} --flex ${className}`.trim()}
         style={style}
         defaultValue={formValue ?? props.defaultValue ?? ""}
         onInput={handleInput}

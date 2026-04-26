@@ -7,6 +7,10 @@ export type FlexProps = BoxProps & {
     gap?: number | string;
     /** Shortcut for align-self: flex-start */
     ass?: boolean;
+    /** Shortcut for align-self: center */
+    asc?: boolean;
+    /** Shortcut for align-self: flex-end */
+    ase?: boolean;
     /** Shortcut for align-items: center */
     ais?: boolean;
     /** Shortcut for align-items: flex-start */

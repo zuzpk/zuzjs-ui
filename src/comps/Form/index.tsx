@@ -146,6 +146,23 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
                             break;
                     }
                     break;
+                case FORMVALIDATION.MinDateToday:
+                    const today = new Date();
+                    const inputDate = new Date(val);
+                    today.setHours(0, 0, 0, 0);
+                    inputDate.setHours(0, 0, 0, 0);
+                    return inputDate >= today;
+                case FORMVALIDATION.MinDate:
+                    const minDate = new Date(withAttr.split('@')[1]);
+                    const inputMinDate = new Date(val);
+                    inputMinDate.setHours(0, 0, 0, 0);
+                    return inputMinDate >= minDate;
+                case FORMVALIDATION.MaxDate:
+                    const maxDate = new Date(withAttr.split('@')[1]);
+                    const inputMaxDate = new Date(val);
+                    inputMaxDate.setHours(0, 0, 0, 0);
+                    return inputMaxDate <= maxDate;
+                
             }
         }
 

@@ -1,0 +1,744 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "_note": "Machine-readable component + prop index for @zuzjs/ui. Generated from source. Agents: use this alongside AI_SKILL.md for accurate code generation.",
+  "version": "1.0.0",
+  "package": "@zuzjs/ui",
+  "importFrom": "@zuzjs/ui",
+
+  "cssHelper": {
+    "function": "css",
+    "signature": "css(strings: string | string[]): string",
+    "description": "Converts `as`-syntax shorthand strings into a resolved className string. Use when you need a className string outside of the `as` prop (e.g. on a third-party element).",
+    "example": "css([`flex aic gap:8 &hover(bg:$surface)`])"
+  },
+
+  "baseTypes": {
+    "ZuzProps": {
+      "description": "Core styling + behaviour props shared by all components",
+      "props": [
+        { "name": "as", "type": "string | string[]", "description": "Space-delimited utility tokens compiled to CSS at build time. See AI_SKILL.md for full grammar." },
+        { "name": "className", "type": "string", "description": "Additional raw className string." },
+        { "name": "skeleton", "type": "Skeleton", "description": "Skeleton placeholder configuration." },
+        { "name": "fx", "type": "animationProps", "description": "Animation configuration (transition, from, to, exit, when, duration, delay, ease)." },
+        { "name": "transition", "type": "TRANSITIONS", "description": "Shorthand transition preset enum value." },
+        { "name": "draggable", "type": "boolean", "description": "Makes the component draggable." },
+        { "name": "dragOptions", "type": "DragOptions", "description": "Options for drag behaviour." },
+        { "name": "busy", "type": "boolean", "description": "Shows a loading/busy overlay on the component." },
+        { "name": "stripes", "type": "'background' | 'overlay'", "description": "Renders animated stripe pattern." }
+      ]
+    },
+    "BoxProps": {
+      "extends": "ZuzProps",
+      "description": "ZuzProps + standard div HTML attributes",
+      "additionalProps": [
+        { "name": "ref", "type": "Ref<HTMLDivElement>", "description": "React ref." },
+        { "name": "name", "type": "string", "description": "Element name (passed through)." },
+        { "name": "cols", "type": "boolean", "description": "Shorthand for flex-direction: column on Box." }
+      ]
+    }
+  },
+
+  "enums": {
+    "Variant": ["xs", "sm", "md", "lg", "xl"],
+    "ButtonKind": ["solid", "subtle", "surface", "outline", "ghost", "plain"],
+    "ButtonState": ["loading", "normal"],
+    "SPINNER": ["SIMPLE", "ROLLER", "Wave"],
+    "ALERT": ["success", "error", "warn", "info"],
+    "AVATAR": ["circle", "square", "rounded"],
+    "DRAWER_SIDE": ["left", "right", "top", "bottom"],
+    "TRANSITIONS": ["slide", "fade", "scale", "slideDown", "slideUp", "slideLeft", "slideRight"],
+    "TextFxVariant": ["bounce", "wave", "slide", "fade", "glitch", "glitch-v2", "typewriter", "fog", "pop", "reveal", "shuffle"],
+    "ToastPosition": ["TopLeft", "TopCenter", "TopRight", "BottomLeft", "BottomCenter", "BottomRight"],
+    "PaginationStyle": ["table", "gooey"],
+    "DIALOG": ["confirm", "alert", "prompt"],
+    "DIALOG_ACTION_POSITION": ["left", "center", "right"]
+  },
+
+  "components": [
+    {
+      "name": "Box",
+      "description": "Primitive div wrapper. Every layout concern lives in the `as` prop.",
+      "import": "Box",
+      "extends": "BoxProps",
+      "example": "<Box as=\"p:16 r:12 bg:$surface\">Content</Box>"
+    },
+    {
+      "name": "Flex",
+      "description": "Flexbox layout primitive. Renders a div with `display:flex`. Boolean props are convenience shortcuts — do NOT duplicate them in `as`.",
+      "import": "Flex",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "cols", "type": "boolean", "description": "flex-direction: column" },
+        { "name": "gap", "type": "number | string", "description": "CSS gap (number → px)" },
+        { "name": "aic", "type": "boolean", "description": "align-items: center" },
+        { "name": "aie", "type": "boolean", "description": "align-items: flex-end" },
+        { "name": "ais", "type": "boolean", "description": "align-items: flex-start" },
+        { "name": "ass", "type": "boolean", "description": "align-self: flex-start" },
+        { "name": "jcc", "type": "boolean", "description": "justify-content: center" },
+        { "name": "jce", "type": "boolean", "description": "justify-content: flex-end" },
+        { "name": "jcs", "type": "boolean", "description": "justify-content: flex-start" }
+      ],
+      "example": "<Flex aic jcb gap={12}>...</Flex>"
+    },
+    {
+      "name": "Grid",
+      "description": "CSS Grid layout primitive.",
+      "import": "Grid",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "columns", "type": "string | number", "description": "grid-template-columns. Number → repeat(n, 1fr)." },
+        { "name": "cols", "type": "string | number", "description": "Alias for `columns` (legacy)." },
+        { "name": "rows", "type": "string | number", "description": "grid-template-rows." },
+        { "name": "gap", "type": "string | number", "description": "CSS gap." },
+        { "name": "columnGap", "type": "string | number", "description": "CSS column-gap." },
+        { "name": "rowGap", "type": "string | number", "description": "CSS row-gap." },
+        { "name": "alignItems", "type": "'start'|'end'|'center'|'stretch'", "description": "CSS align-items." },
+        { "name": "justifyContent", "type": "'start'|'end'|'center'|'stretch'|'between'|'around'", "description": "CSS justify-content." },
+        { "name": "inline", "type": "boolean", "description": "Use inline-grid." },
+        { "name": "autoFlow", "type": "'row'|'column'|'dense'|'row dense'|'column dense'", "description": "CSS grid-auto-flow." },
+        { "name": "autoColumns", "type": "string", "description": "CSS grid-auto-columns." },
+        { "name": "autoRow", "type": "string", "description": "CSS grid-auto-rows." },
+        { "name": "areas", "type": "string", "description": "CSS grid-template-areas." }
+      ],
+      "example": "<Grid columns={3} gap={16}>{items}</Grid>"
+    },
+    {
+      "name": "Text",
+      "description": "Typography component. Renders h1–h6, p, span, div, or label depending on `h` prop.",
+      "import": "Text",
+      "extends": "Props<h1|h2|h3|h4|h5|h6|p|span|div|label>",
+      "props": [
+        { "name": "h", "type": "1|2|3|4|5|6", "description": "Heading level. Omit for <p>." },
+        { "name": "html", "type": "ReactNode | string", "description": "Renders innerHTML (dangerouslySetInnerHTML)." },
+        { "name": "lines", "type": "number", "description": "Clamps text to N lines." },
+        { "name": "tfx", "type": "TextFxVariant", "description": "Text animation effect: bounce|wave|slide|fade|glitch|glitch-v2|typewriter|fog|pop|reveal|shuffle" },
+        { "name": "delay", "type": "number", "description": "Animation start delay (ms)." },
+        { "name": "duration", "type": "number", "description": "Animation duration (ms)." },
+        { "name": "stagger", "type": "number", "description": "Per-character stagger delay (ms)." },
+        { "name": "repeat", "type": "boolean", "description": "Repeat animation on loop." },
+        { "name": "reveal", "type": "boolean", "description": "Animate on scroll into view." },
+        { "name": "hover", "type": "boolean", "description": "Trigger animation on hover." }
+      ],
+      "example": "<Text h={2} as=\"bold s:2xl\">Hello</Text>"
+    },
+    {
+      "name": "Span",
+      "description": "Inline text primitive.",
+      "import": "Span",
+      "extends": "ZuzProps + span HTML attributes",
+      "example": "<Span as=\"bold c:$primary\">highlight</Span>"
+    },
+    {
+      "name": "Icon",
+      "description": "Renders an icon by name. Uses the project's icon system.",
+      "import": "Icon",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "name", "type": "string | ReactNode", "required": true, "description": "Icon identifier string or ReactNode." },
+        { "name": "size", "type": "number", "description": "Icon size in px (overrides `as`)." },
+        { "name": "color", "type": "string", "description": "Icon color." },
+        { "name": "variant", "type": "Variant", "description": "Size variant preset." },
+        { "name": "pathCount", "type": "number", "description": "Number of SVG path elements for multicolor icons." }
+      ],
+      "example": "<Icon name=\"check\" as=\"s:20\" />"
+    },
+    {
+      "name": "Button",
+      "description": "Clickable button. Supports loading state, icons, tooltips, and kind variants.",
+      "import": "Button",
+      "extends": "Props<button>",
+      "props": [
+        { "name": "kind", "type": "ButtonKind", "description": "Visual style: solid|subtle|surface|outline|ghost|plain" },
+        { "name": "icon", "type": "string | null", "description": "Left icon name." },
+        { "name": "iconSize", "type": "Variant", "description": "Icon size variant." },
+        { "name": "withLabel", "type": "boolean", "description": "Show label text alongside icon." },
+        { "name": "variant", "type": "Variant", "description": "Size variant." },
+        { "name": "state", "type": "ButtonState", "description": "loading | normal" },
+        { "name": "spinner", "type": "SPINNER", "description": "Spinner style when loading." },
+        { "name": "reset", "type": "boolean", "description": "type=reset button." },
+        { "name": "tooltip", "type": "string", "description": "Tooltip text." },
+        { "name": "tooltipProps", "type": "Omit<ToolTipProps, 'title'>", "description": "Advanced tooltip configuration." },
+        { "name": "alignment", "type": "'start'|'center'|'end'", "description": "Content alignment inside button." }
+      ],
+      "example": "<Button kind=\"solid\" icon=\"plus\" onClick={save}>Save</Button>"
+    },
+    {
+      "name": "Input",
+      "description": "Text input field. Integrates with Form context for validation.",
+      "import": "Input",
+      "extends": "Props<input>",
+      "props": [
+        { "name": "name", "type": "string", "description": "Field name for form data." },
+        { "name": "numeric", "type": "boolean", "description": "Restricts input to numbers." },
+        { "name": "variant", "type": "Variant", "description": "Size variant." },
+        { "name": "with", "type": "WithFormValidation", "description": "Validation rules object." },
+        { "name": "onConfirm", "type": "(value: string) => void", "description": "Fires on Enter/Return." }
+      ],
+      "example": "<Input name=\"email\" placeholder=\"Email\" variant=\"md\" />"
+    },
+    {
+      "name": "Password",
+      "description": "Password input with show/hide toggle.",
+      "import": "Password",
+      "extends": "Props<input>",
+      "props": [
+        { "name": "name", "type": "string", "description": "Field name." },
+        { "name": "variant", "type": "Variant", "description": "Size variant." }
+      ],
+      "example": "<Password name=\"password\" placeholder=\"Password\" />"
+    },
+    {
+      "name": "Textarea",
+      "description": "Multiline text input.",
+      "import": "Textarea",
+      "extends": "Props<textarea>",
+      "props": [
+        { "name": "name", "type": "string", "description": "Field name." },
+        { "name": "rows", "type": "number", "description": "Visible row count." },
+        { "name": "variant", "type": "Variant", "description": "Size variant." }
+      ],
+      "example": "<Textarea name=\"notes\" rows={5} />"
+    },
+    {
+      "name": "Select",
+      "description": "Dropdown/combobox with optional search and multi-select.",
+      "import": "Select",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "options", "type": "Option[]", "required": true, "description": "Array of {label, value, icon?, iconColor?, disabled?}." },
+        { "name": "name", "type": "string", "description": "Field name." },
+        { "name": "label", "type": "string", "description": "Floating label text." },
+        { "name": "placeholder", "type": "string", "description": "Placeholder text." },
+        { "name": "value", "type": "SelectValue", "description": "Controlled value." },
+        { "name": "onChange", "type": "(option: Option | Option[]) => void", "description": "Change handler." },
+        { "name": "multiple", "type": "boolean", "description": "Allow multi-selection." },
+        { "name": "search", "type": "boolean", "description": "Show search box inside dropdown." },
+        { "name": "searchPlaceholder", "type": "string", "description": "Placeholder for search input." },
+        { "name": "disabled", "type": "boolean", "description": "Disable the select." },
+        { "name": "variant", "type": "Variant", "description": "Size variant." },
+        { "name": "ref", "type": "Ref<SelectHandler>", "description": "Exposes setSelected() and getValue()." }
+      ],
+      "example": "<Select name=\"status\" options={[{label:'Active',value:'active'}]} search />"
+    },
+    {
+      "name": "CheckBox",
+      "description": "Checkbox input control.",
+      "import": "CheckBox",
+      "extends": "Props<input>",
+      "props": [
+        { "name": "name", "type": "string", "description": "Field name." },
+        { "name": "label", "type": "string | ReactNode", "description": "Label text rendered next to checkbox." },
+        { "name": "onSwitch", "type": "(checked: boolean) => void", "description": "Fires when checked state changes." }
+      ],
+      "example": "<CheckBox name=\"agree\" label=\"Accept terms\" onSwitch={setAgree} />"
+    },
+    {
+      "name": "Switch",
+      "description": "Toggle on/off switch.",
+      "import": "Switch",
+      "extends": "Props<input>",
+      "props": [
+        { "name": "name", "type": "string", "description": "Field name." },
+        { "name": "onSwitch", "type": "(checked: boolean) => void", "description": "Fires when toggle state changes." }
+      ],
+      "example": "<Switch name=\"notifications\" onSwitch={setEnabled} />"
+    },
+    {
+      "name": "Radio",
+      "description": "Radio button input.",
+      "import": "Radio",
+      "extends": "Props<input>",
+      "props": [
+        { "name": "name", "type": "string", "description": "Group name." },
+        { "name": "value", "type": "string", "description": "Option value." },
+        { "name": "label", "type": "string | ReactNode", "description": "Label text." }
+      ],
+      "example": "<Radio name=\"plan\" value=\"pro\" label=\"Pro\" />"
+    },
+    {
+      "name": "PinInput",
+      "description": "Multi-cell PIN / OTP input.",
+      "import": "PinInput",
+      "extends": "ZuzProps",
+      "props": [
+        { "name": "length", "type": "number", "description": "Number of cells." },
+        { "name": "onComplete", "type": "(value: string) => void", "description": "Fires when all cells are filled." },
+        { "name": "numeric", "type": "boolean", "description": "Restrict to digits." }
+      ],
+      "example": "<PinInput length={6} onComplete={verifyOtp} />"
+    },
+    {
+      "name": "Search",
+      "description": "Search input with clear action and optional keyboard shortcut.",
+      "import": "Search",
+      "extends": "InputProps",
+      "props": [
+        { "name": "onSubmit", "type": "(value: string) => void", "description": "Fires on submit." },
+        { "name": "onChange", "type": "(value: string) => void", "description": "Fires on value change." },
+        { "name": "onClear", "type": "() => void", "description": "Fires when cleared." },
+        { "name": "shortcut", "type": "KeyCombination", "description": "Keyboard shortcut to focus." },
+        { "name": "reverse", "type": "boolean", "description": "Reverse icon/input order." }
+      ],
+      "example": "<Search onChange={setQuery} shortcut={{ key: 'k', meta: true }} />"
+    },
+    {
+      "name": "Form",
+      "description": "Form state and validation wrapper. POST-by-default with optional schema validation.",
+      "import": "Form",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "action", "type": "string", "description": "URL to POST form data to." },
+        { "name": "schema", "type": "ValidationSchema", "description": "Record<field, (value, all) => string|null|boolean> validators." },
+        { "name": "name", "type": "string", "description": "Appends --form-{name} className." },
+        { "name": "errors", "type": "dynamic", "description": "Field-level error message map." },
+        { "name": "withData", "type": "dynamic", "description": "Extra data merged on submit." },
+        { "name": "beforeSubmit", "type": "(data, result) => void", "description": "Hook before submission." },
+        { "name": "onSubmit", "type": "(data, result) => void", "description": "Custom submit handler." },
+        { "name": "onSuccess", "type": "(data, payload?) => void", "description": "Fires on successful response." },
+        { "name": "onError", "type": "(error, result) => void", "description": "Fires on error response." },
+        { "name": "resetOnSuccess", "type": "boolean", "description": "Auto-reset fields on success." },
+        { "name": "ref", "type": "Ref<FormHandler>", "description": "Exposes setLoading(), hideError(), init(), submit()." }
+      ],
+      "example": "<Form action=\"/api/save\" onSuccess={resp => toast.success(resp.message)} as=\"flex cols gap:12\">"
+    },
+    {
+      "name": "Label",
+      "description": "Form field label.",
+      "import": "Label",
+      "extends": "ZuzProps + label HTML attributes",
+      "props": [
+        { "name": "htmlFor", "type": "string", "description": "Links to an input id." }
+      ],
+      "example": "<Label htmlFor=\"email\">Email</Label>"
+    },
+    {
+      "name": "Fieldset",
+      "description": "Groups related form fields with optional legend.",
+      "import": "Fieldset",
+      "extends": "BoxProps",
+      "example": "<Fieldset><Input name=\"field\" /></Fieldset>"
+    },
+    {
+      "name": "Table",
+      "description": "Data table with sorting, selection, pagination integration, and row context menus.",
+      "import": "Table",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "columns", "type": "Column<T>[]", "required": true, "description": "Column schema array. Each Column has key, label, render?, sortable?, width?." },
+        { "name": "data", "type": "T[]", "description": "Row data array." },
+        { "name": "loading", "type": "boolean", "description": "Show loading state." },
+        { "name": "selectable", "type": "boolean", "description": "Enable row checkboxes." },
+        { "name": "sortBy", "type": "string | null", "description": "Current sort column key." },
+        { "name": "onSort", "type": "TableSortCallback", "description": "Fires on column header click." },
+        { "name": "onSelect", "type": "RowSelectCallback<T>", "description": "Fires on row select/deselect." },
+        { "name": "onContextMenu", "type": "(e, row) => void", "description": "Row right-click handler." },
+        { "name": "ref", "type": "Ref<TableController>", "description": "Exposes setLoading()." }
+      ],
+      "example": "<Table columns={columns} data={rows} loading={loading} selectable onSelect={handleSelect} />"
+    },
+    {
+      "name": "Dialog",
+      "description": "Modal dialog. Use the `useDialog()` hook to show programmatically.",
+      "import": "Dialog",
+      "hook": "useDialog",
+      "extends": "ZuzProps",
+      "props": [
+        { "name": "title", "type": "string | ReactNode", "description": "Dialog title." },
+        { "name": "message", "type": "string | ReactNode", "description": "Dialog body content." },
+        { "name": "content", "type": "string | ReactNode", "description": "Alias for message." },
+        { "name": "description", "type": "string | ReactNode", "description": "Secondary description below title." },
+        { "name": "width", "type": "number | string", "description": "Dialog width." },
+        { "name": "type", "type": "DIALOG", "description": "confirm | alert | prompt" },
+        { "name": "action", "type": "DialogActionHandler[]", "description": "Array of {label, kind?, onClick?} action buttons." },
+        { "name": "actionPosition", "type": "DIALOG_ACTION_POSITION", "description": "left | center | right" },
+        { "name": "variant", "type": "Variant", "description": "Size variant." },
+        { "name": "useForm", "type": "boolean", "description": "Wraps content in a Form." },
+        { "name": "formProps", "type": "FormProps", "description": "Props passed to the inner Form." },
+        { "name": "onConfirm", "type": "(data?, result?) => void", "description": "Confirm callback." },
+        { "name": "onCancel", "type": "() => void", "description": "Cancel callback." },
+        { "name": "onShow", "type": "() => void", "description": "Fires when dialog opens." },
+        { "name": "onHide", "type": "() => void", "description": "Fires when dialog closes." },
+        { "name": "transition", "type": "TRANSITIONS", "description": "Entry animation." },
+        { "name": "speed", "type": "number", "description": "Animation speed (ms)." }
+      ],
+      "hookUsage": "const dialog = useDialog(); dialog.show({ title, message, action }); dialog.success(msg); dialog.error(msg);",
+      "example": "const dl = dialog.show({ title: 'Confirm', message: 'Are you sure?', action: [{ label: 'Delete', onClick: () => { dl.hide() } }] })"
+    },
+    {
+      "name": "Drawer",
+      "description": "Slide-in side panel. Use the `useDrawer()` hook to open/close programmatically.",
+      "import": "Drawer",
+      "hook": "useDrawer",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "from", "type": "DRAWER_SIDE", "description": "Slide direction: left|right|top|bottom" },
+        { "name": "speed", "type": "number", "description": "Animation speed (ms)." },
+        { "name": "margin", "type": "number", "description": "Gap from edge." },
+        { "name": "animation", "type": "TRANSITION_CURVES", "description": "Easing curve." },
+        { "name": "closeBtn", "type": "'left'|'right'", "description": "Position of built-in close button." },
+        { "name": "prerender", "type": "boolean", "description": "Keep children mounted when closed." },
+        { "name": "onClose", "type": "(id: number) => void", "description": "Fires on close." }
+      ],
+      "hookUsage": "const drawer = useDrawer(); drawer.open(<Content />); drawer.close();",
+      "example": "<Drawer ref={drawerRef} from=\"right\"><Form>...</Form></Drawer>"
+    },
+    {
+      "name": "Sheet",
+      "description": "Bottom sheet overlay. Use the `useSheet()` hook or `ref.open()`.",
+      "import": "Sheet",
+      "hook": "useSheet",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "open", "type": "boolean", "description": "Controlled open state." },
+        { "name": "onClose", "type": "() => void", "description": "Fires on close." }
+      ],
+      "hookUsage": "const sheet = useSheet(); sheet.open(<Content />); sheet.close();",
+      "example": "<Sheet ref={sheetRef}>Content</Sheet>"
+    },
+    {
+      "name": "TabView",
+      "description": "Tabbed content container.",
+      "import": "TabView",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "tabs", "type": "Tab[]", "required": true, "description": "Array of {label, body, key?, icon?, tag?, onSelect?, render?}." },
+        { "name": "defaultTab", "type": "number | string", "description": "Index or key of initially active tab." },
+        { "name": "onChange", "type": "(tab: Tab, index: number) => void", "description": "Fires on tab change." },
+        { "name": "variant", "type": "Variant", "description": "Size variant." }
+      ],
+      "example": "<TabView tabs={[{ label: 'Profile', body: <ProfileForm /> }, { label: 'Security', body: <SecurityForm /> }]} />"
+    },
+    {
+      "name": "Accordion",
+      "description": "Collapsible content section.",
+      "import": "Accordion",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "title", "type": "string | ReactNode | ReactNode[]", "required": true, "description": "Accordion header content." },
+        { "name": "message", "type": "string | ReactNode", "description": "Accordion body content." },
+        { "name": "ref", "type": "Ref<AccordionHandler>", "description": "Exposes open() and close()." }
+      ],
+      "example": "<Accordion title=\"FAQ Item\">Answer text</Accordion>"
+    },
+    {
+      "name": "Alert",
+      "description": "Inline feedback alert banner.",
+      "import": "Alert",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "title", "type": "string | ReactNode", "required": true, "description": "Alert heading." },
+        { "name": "message", "type": "string | ReactNode", "description": "Alert body." },
+        { "name": "type", "type": "ALERT", "description": "success | error | warn | info" },
+        { "name": "icon", "type": "string", "description": "Override icon name." },
+        { "name": "iconSize", "type": "number", "description": "Icon size in px." }
+      ],
+      "example": "<Alert type=\"success\" title=\"Saved\" message=\"Changes stored.\" />"
+    },
+    {
+      "name": "Avatar",
+      "description": "User avatar. Renders an image, initials, or placeholder.",
+      "import": "Avatar",
+      "extends": "Props<img>",
+      "props": [
+        { "name": "type", "type": "AVATAR", "description": "circle | square | rounded" },
+        { "name": "size", "type": "number", "description": "Width/height in px." },
+        { "name": "src", "type": "string", "description": "Image URL." },
+        { "name": "color", "type": "string", "description": "Background color for initials fallback." },
+        { "name": "variant", "type": "Variant", "description": "Size variant preset." }
+      ],
+      "example": "<Avatar src={user.avatar} size={40} type={AVATAR.circle} />"
+    },
+    {
+      "name": "Badge",
+      "description": "Compact status/count badge.",
+      "import": "Badge",
+      "extends": "BoxProps",
+      "example": "<Badge>Active</Badge>"
+    },
+    {
+      "name": "Spinner",
+      "description": "Loading spinner.",
+      "import": "Spinner",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "type", "type": "SPINNER", "description": "SIMPLE | ROLLER | Wave" },
+        { "name": "variant", "type": "Variant", "description": "Size variant." }
+      ],
+      "example": "<Spinner type={SPINNER.Simple} />"
+    },
+    {
+      "name": "ProgressBar",
+      "description": "Linear progress indicator.",
+      "import": "ProgressBar",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "progress", "type": "number", "description": "Progress value 0–100." },
+        { "name": "type", "type": "PROGRESS", "description": "Bar style variant." },
+        { "name": "animated", "type": "boolean", "description": "Animate fill on mount." },
+        { "name": "ref", "type": "Ref<ProgressHandler>", "description": "Exposes setProgress() and getProgress()." }
+      ],
+      "example": "<ProgressBar progress={75} animated />"
+    },
+    {
+      "name": "Pagination",
+      "description": "Pagination controls.",
+      "import": "Pagination",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "itemCount", "type": "number", "required": true, "description": "Total number of items." },
+        { "name": "itemsPerPage", "type": "number", "required": true, "description": "Items per page." },
+        { "name": "startPage", "type": "number | string", "description": "Initial page (1-based)." },
+        { "name": "pageRange", "type": "number", "description": "Number of visible page buttons." },
+        { "name": "onPageChange", "type": "PaginationCallback", "description": "Fires on page change. Receives { id, label }." },
+        { "name": "loading", "type": "boolean", "description": "Show loading state." },
+        { "name": "asDots", "type": "boolean", "description": "Render as dot indicators." },
+        { "name": "progressBar", "type": "boolean", "description": "Show progress bar." }
+      ],
+      "example": "<Pagination itemCount={total} itemsPerPage={20} onPageChange={({ id }) => setPage(id)} />"
+    },
+    {
+      "name": "Crumb",
+      "description": "Breadcrumb navigation trail.",
+      "import": "Crumb",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "items", "type": "CrumbItem[] | string", "required": true, "description": "Array of {label, icon?, action?} or a path string." },
+        { "name": "maxItems", "type": "number", "description": "Truncate after N items." },
+        { "name": "basePath", "type": "string", "description": "Base path prefix when items is a string." }
+      ],
+      "example": "<Crumb items={[{ label: 'Dashboard', action: () => router.push('/') }, { label: 'Settings' }]} />"
+    },
+    {
+      "name": "Toast / useToast",
+      "description": "Toast notifications. Use the `useToast()` hook everywhere.",
+      "import": "useToast",
+      "hookUsage": "const toast = useToast(); toast.success('Done'); toast.error('Failed'); toast.warn('Heads up'); toast.ok({ title, message });",
+      "note": "Requires ToastProvider in your app root.",
+      "example": "const toast = useToast(); toast.success('Backup created successfully');"
+    },
+    {
+      "name": "ScrollView",
+      "description": "Scrollable viewport container.",
+      "import": "ScrollView",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "speed", "type": "number", "description": "Scroll speed multiplier." },
+        { "name": "smooth", "type": "boolean", "description": "Enable smooth scrolling." },
+        { "name": "breakpoints", "type": "ScrollBreakpoint", "description": "Responsive overflow control." }
+      ],
+      "example": "<ScrollView as=\"h:400\">{content}</ScrollView>"
+    },
+    {
+      "name": "Cover",
+      "description": "Full-area loading or blocking overlay.",
+      "import": "Cover",
+      "extends": "ZuzProps",
+      "props": [
+        { "name": "show", "type": "boolean", "description": "Toggle cover visibility." },
+        { "name": "message", "type": "string", "description": "Loading message text." }
+      ],
+      "example": "<Cover show={loading} message=\"Processing...\" />"
+    },
+    {
+      "name": "Overlay",
+      "description": "Fullscreen darkened overlay.",
+      "import": "Overlay",
+      "extends": "ZuzProps",
+      "props": [
+        { "name": "show", "type": "boolean", "description": "Toggle visibility." }
+      ],
+      "example": "<Overlay show={isOpen} />"
+    },
+    {
+      "name": "ContextMenu",
+      "description": "Right-click or trigger dropdown menu.",
+      "import": "ContextMenu",
+      "hook": "useContextMenu",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "items", "type": "ContextItem[]", "description": "Array of {label, icon?, iconColor?, onSelect?, enabled?}." },
+        { "name": "event", "type": "ReactMouseEvent", "description": "Mouse/touch event that triggered the menu." },
+        { "name": "parent", "type": "RefObject<HTMLElement>", "description": "Parent element ref for positioning." },
+        { "name": "origin", "type": "ORIGIN", "description": "Anchor point for positioning." },
+        { "name": "offsetX", "type": "number", "description": "Horizontal offset from trigger." },
+        { "name": "offsetY", "type": "number", "description": "Vertical offset from trigger." },
+        { "name": "footer", "type": "ReactNode", "description": "Content to render below menu items." }
+      ],
+      "example": "const ctxMenu = useContextMenu(); <ContextMenu ref={ctxMenu} items={menuItems} />"
+    },
+    {
+      "name": "SelectTabs",
+      "description": "Segmented single-select tab bar.",
+      "import": "SelectTabs",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "options", "type": "Option[]", "required": true, "description": "Tab options array." },
+        { "name": "value", "type": "string | number", "description": "Controlled selected value." },
+        { "name": "onChange", "type": "(option: Option) => void", "description": "Selection change handler." }
+      ],
+      "example": "<SelectTabs options={[{label:'Week',value:'7d'},{label:'Month',value:'30d'}]} onChange={setPeriod} />"
+    },
+    {
+      "name": "Slider",
+      "description": "Numeric range slider.",
+      "import": "Slider",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "min", "type": "number", "description": "Minimum value." },
+        { "name": "max", "type": "number", "description": "Maximum value." },
+        { "name": "step", "type": "number", "description": "Increment step." },
+        { "name": "value", "type": "number", "description": "Controlled value." },
+        { "name": "onChange", "type": "(value: number) => void", "description": "Change handler." }
+      ],
+      "example": "<Slider min={0} max={100} value={retention} onChange={setRetention} />"
+    },
+    {
+      "name": "ColorScheme",
+      "description": "Theme toggle or display (light/dark mode switcher).",
+      "import": "ColorScheme",
+      "extends": "ZuzProps",
+      "example": "<ColorScheme />"
+    },
+    {
+      "name": "List",
+      "description": "Rendered list from items array.",
+      "import": "List",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "items", "type": "ListItem[]", "description": "Array of items to render." },
+        { "name": "renderItem", "type": "(item, index) => ReactNode", "description": "Custom item renderer." }
+      ],
+      "example": "<List items={servers} renderItem={(s) => <Text>{s.name}</Text>} />"
+    },
+    {
+      "name": "Fab",
+      "description": "Floating action button.",
+      "import": "Fab",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "icon", "type": "string", "description": "Icon name." },
+        { "name": "onClick", "type": "() => void", "description": "Click handler." }
+      ],
+      "example": "<Fab icon=\"plus\" onClick={openCreate} />"
+    },
+    {
+      "name": "ToolTip",
+      "description": "Hover tooltip.",
+      "import": "ToolTip",
+      "extends": "ZuzProps",
+      "props": [
+        { "name": "title", "type": "string | ReactNode", "required": true, "description": "Tooltip content." },
+        { "name": "position", "type": "'top'|'bottom'|'left'|'right'", "description": "Tooltip position." }
+      ],
+      "example": "<ToolTip title=\"Delete permanently\"><Button kind=\"ghost\"><Icon name=\"trash\" /></Button></ToolTip>"
+    },
+    {
+      "name": "KeyboardKeys",
+      "description": "Renders keyboard shortcut keycap display.",
+      "import": "KeyboardKeys",
+      "props": [
+        { "name": "keys", "type": "string[]", "required": true, "description": "Key labels to display." }
+      ],
+      "example": "<KeyboardKeys keys={['cmd', 'k']} />"
+    },
+    {
+      "name": "CodeBlock",
+      "description": "Syntax-highlighted code viewer.",
+      "import": "CodeBlock",
+      "props": [
+        { "name": "code", "type": "string", "required": true, "description": "Source code to display." },
+        { "name": "language", "type": "string", "description": "Language for highlighting (ts, js, bash, etc.)." },
+        { "name": "showLineNumbers", "type": "boolean", "description": "Show line number gutter." }
+      ],
+      "example": "<CodeBlock code={script} language=\"bash\" showLineNumbers />"
+    },
+    {
+      "name": "Terminal",
+      "description": "Terminal-like output renderer.",
+      "import": "Terminal",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "lines", "type": "string[]", "description": "Lines to display." }
+      ],
+      "example": "<Terminal lines={logLines} />"
+    },
+    {
+      "name": "NetworkStatus",
+      "description": "Online/offline network indicator.",
+      "import": "NetworkStatus",
+      "example": "<NetworkStatus />"
+    },
+    {
+      "name": "Image",
+      "description": "Next.js-aware image wrapper.",
+      "import": "Image",
+      "extends": "Props<img>",
+      "props": [
+        { "name": "src", "type": "string", "required": true, "description": "Image URL." },
+        { "name": "alt", "type": "string", "description": "Alt text." }
+      ],
+      "example": "<Image src=\"/logo.png\" alt=\"Logo\" as=\"w:120\" />"
+    },
+    {
+      "name": "Carousel",
+      "description": "Horizontal item carousel/slider.",
+      "import": "Carousel",
+      "extends": "BoxProps",
+      "example": "<Carousel>{slides.map(s => <SlideCard key={s.id} {...s} />)}</Carousel>"
+    },
+    {
+      "name": "AutoComplete",
+      "description": "Input with suggestion dropdown.",
+      "import": "AutoComplete",
+      "extends": "InputProps",
+      "props": [
+        { "name": "options", "type": "string[]", "description": "Suggestion list." },
+        { "name": "onSelect", "type": "(value: string) => void", "description": "Fires when a suggestion is chosen." }
+      ],
+      "example": "<AutoComplete options={countries} onSelect={setCountry} />"
+    },
+    {
+      "name": "DatePicker",
+      "description": "Date selection input.",
+      "import": "DatePicker",
+      "extends": "BoxProps",
+      "props": [
+        { "name": "name", "type": "string", "description": "Field name." },
+        { "name": "value", "type": "string | Date", "description": "Controlled value." },
+        { "name": "onChange", "type": "(date: Date) => void", "description": "Change handler." }
+      ],
+      "example": "<DatePicker name=\"startDate\" onChange={setStart} />"
+    },
+    {
+      "name": "LayersProvider",
+      "description": "Context provider required for Dialog, Drawer, Sheet, Toast. Must wrap the app root.",
+      "import": "LayersProvider",
+      "note": "Place at root level in layout.tsx. Also import SnackController for snack/toast positioning.",
+      "example": "<LayersProvider>{children}</LayersProvider>"
+    }
+  ],
+
+  "hooks": [
+    { "name": "useDialog", "import": "@zuzjs/ui", "returns": "DialogHandler", "description": "Programmatic dialog control." },
+    { "name": "useDrawer", "import": "@zuzjs/ui", "returns": "DrawerHandler", "description": "Programmatic drawer control." },
+    { "name": "useSheet", "import": "@zuzjs/ui", "returns": "SheetHandler", "description": "Programmatic sheet control." },
+    { "name": "useToast", "import": "@zuzjs/ui", "returns": "ToastHandler", "description": "Toast notifications." },
+    { "name": "useSnack", "import": "@zuzjs/ui", "returns": "SnackHandler", "description": "Snack bar notifications." },
+    { "name": "useContextMenu", "import": "@zuzjs/ui", "returns": "Ref<ContextMenu>", "description": "Context menu ref helper." }
+  ],
+
+  "cssTokenReference": {
+    "_note": "These are the most common `as` prop tokens. Full list in AI_SKILL.md.",
+    "layout": ["flex", "cols", "rel", "abs", "fix", "sticky", "block", "inline", "hidden", "ovh"],
+    "alignment": ["aic", "aie", "ais", "ass", "jcc", "jce", "jcs", "jcb", "jca", "jce"],
+    "sizing": ["w:{n}", "h:{n}", "minW:{n}", "maxW:{n}", "minH:{n}", "maxH:{n}", "ratio:1/1"],
+    "spacing": ["p:{n}", "pt:{n}", "pb:{n}", "ph:{n}", "pv:{n}", "m:{n}", "mt:{n}", "mb:{n}", "mh:{n}", "mv:{n}", "gap:{n}"],
+    "typography": ["s:{n}", "bold", "italic", "tdn", "tdu", "uppercase", "lowercase", "capitalize", "tac", "tal", "tar"],
+    "color": ["c:{color}", "bg:{color}", "c:${token}", "bg:${token}"],
+    "border": ["r:{n}", "r:half", "border:{w},{color},{style}", "borderTop:...", "borderBottom:...", "shadow:{x},{y},{blur},{color}"],
+    "interactive": ["cursor:pointer", "select:none", "pointer-events:none"],
+    "opacity": ["opacity:{0-1}"],
+    "responsive": ["@ph(...)", "@sm(...)", "@md(...)", "@lg(...)", "@xl(...)"],
+    "pseudo": ["&hover(...)", "&focus(...)", "&active(...)", "&even(...)", "&odd(...)", "&nth(...)", "&before(...)", "&after(...)"]
+  }
+}

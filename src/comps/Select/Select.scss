@@ -1,4 +1,5 @@
 @use "../../scss/variables";
+
 body{
     --select: var(--surface);
     --select-border-color: var(--border-primary);
@@ -57,52 +58,13 @@ body{
 
 }
 
-.--select{
+
+.--select {
 
     &:not(.--expanded){
         width: fit-content;
     }
     
-    @each $size in variables.$sizes {
-        &.--#{$size} {
-            --select-radius: var(--select-radius-custom, var(--radius-#{$size}));
-            
-            .--select-display.--selected {
-                padding: var(--padding-#{$size});
-                border-radius: var(--select-radius-custom, var(--radius-#{$size}));
-                font-size: var(--text-#{$size});
-            }
-            
-            .--options-list{
-                padding: var(--padding-#{$size}-x);
-                border-radius: calc(var(--radius-#{$size})/3);
-                
-                .--select-options-head{
-                    font-size: var(--text-#{$size}) !important;
-                    padding: var(--padding-#{$size}-x);
-                }
-
-                button.--select-option-item {
-                    padding: var(--padding-#{$size}) !important;
-                    border-radius: var(--radius-#{$size}) !important;
-                }
-            }
-
-            .--tokens-wrap{
-                .--token{
-                    padding: var(--select-token-padding-#{$size}) !important;
-                    border-radius: var(--radius-#{$size}) !important;
-                    .--token-label{
-                        font-size: var(--select-token-label-size-#{$size});
-                    }
-                    .--token-remove{
-                        width: var(--select-token-remove-size-#{$size});
-                    }
-                }
-            }
-        }
-    }
-
     .--select-display.--selected{
         width: 100%;
         gap: var(--select-gap);
@@ -231,103 +193,20 @@ body{
 
     }
 
-    .--options-list{
-
-        backdrop-filter: blur(10px) saturate(0);
-        left: 0;
-        top: calc(100% + var(--select-options-top));
-        width: 100%;
-        max-height: var(--select-options-max-height);
-        overflow-x: hidden;
-        overflow-y: auto;
-        touch-action: pan-y;
-        gap: 2px;
-        background: var(--select-options);
-        // border-radius: var(--select-radius);
-        // padding: var(--select-options-padding);
-        box-shadow: var(--select-options-shadow);
-        z-index: var(--max-z-index);
-        scrollbar-color: var(--scrollbar-color);
-        overscroll-behavior-y: contain;
-
-        .--select-search{
-            margin-bottom: var(--select-search-margin-bottom);
-            top: 0px;
-            z-index: 3;
-            .--input{
-                background: var(--select-search);
-                border: var(--select-search-border);
-                padding: var(--select-search-padding);
-                border-radius: var(--select-search-radius);
-                font-size: var(--select-search-font-size);
-                color: var(--select-search-color);
-            }
-        }
-
-        .--select-options-head{
-            opacity: 0.5;
-        }
-        button.--select-option-item{
-            background: transparent;
-            border: 0px;
-            text-align: left;
-            color: var(--select-option-color);
-            font-size: var(--select-text-size);
-            white-space: pre;
-            text-align: left !important;
-            justify-content: flex-start;
-            gap: var(--select-option-gap);
-            width: 100%;
-            overflow: hidden;
-
-            &:disabled{
-                color: var(--text-primary-disabled);
-                &:hover{
-                    background: transparent;
-                }
-                .--select-option-check{
-                    svg{
-                        opacity: 0.5;
-                    }
-                }
-            }
-            &:hover{
-                background: var(--select-option-hover);
-            }
-            &.--selected{
-                background: var(--select-selected);
-                .--select-option-check{
-                    background: var(--select-selected);
-                }
-            }
-            .--option-item-meta{
-                gap: 8px;
-            }
-            .--select-option-check{
-                top: 0px;
-                right: 0px;
-                bottom: 0px;
-                z-index: 1;
-                padding: 10px;
-                aspect-ratio: 1/1;
-                background: var(--select-options);
-                svg {
-                    fill: var(--text-primary);
-                }
-            }
-        }
-
-    }
 }
 
+.--options-list,
 .--select-options-list{
 
     backdrop-filter: blur(10px) saturate(0);
     left: 0;
     top: calc(100% + var(--select-options-top));
-    width: 100%;
+    width: fit-content;
+    min-width: anchor-size(width);
     max-height: var(--select-options-max-height);
     overflow-x: hidden;
+    overflow-y: auto;
+    touch-action: pan-y;
     gap: 2px;
     background: var(--select-options);
     // border-radius: var(--select-radius);
@@ -335,13 +214,15 @@ body{
     box-shadow: var(--select-options-shadow);
     z-index: var(--max-z-index);
     scrollbar-color: var(--scrollbar-color);
+    overscroll-behavior-y: contain;
+    border: var(--select-border);
 
     .--select-search{
         margin-bottom: var(--select-search-margin-bottom);
-        background: var(--select-search);
         top: 0px;
-        .--search-input{
-            background: inherit;
+        z-index: 3;
+        .--input{
+            background: var(--select-search);
             border: var(--select-search-border);
             padding: var(--select-search-padding);
             border-radius: var(--select-search-radius);
@@ -350,6 +231,9 @@ body{
         }
     }
 
+    .--select-options-head{
+        opacity: 0.5;
+    }
     button.--select-option-item{
         background: transparent;
         border: 0px;
@@ -360,12 +244,88 @@ body{
         text-align: left !important;
         justify-content: flex-start;
         gap: var(--select-option-gap);
-        width: 100%;
+        width: auto;
+        overflow: hidden;
+
+        &:disabled{
+            color: var(--text-primary-disabled);
+            &:hover{
+                background: transparent;
+            }
+            .--select-option-check{
+                svg{
+                    opacity: 0.5;
+                }
+            }
+        }
         &:hover{
             background: var(--select-option-hover);
         }
-        &.selected{
+        &.--selected{
             background: var(--select-selected);
+            .--select-option-check{
+                background: var(--select-selected);
+            }
+        }
+        .--option-item-meta{
+            gap: 8px;
+            flex: 1;
+        }
+        .--select-option-check{
+            padding: 4px;
+            aspect-ratio: 1 / 1;
+            background: var(--select-options);
+            min-height: 24px;
+            min-width: 24px;
+            svg {
+                fill: var(--text-primary);
+            }
+        }
+    }
+
+}
+
+@each $size in variables.$sizes {
+
+    .--select.--#{$size} {
+
+        --select-radius: var(--select-radius-custom, var(--radius-#{$size}));
+        
+        .--select-display.--selected {
+            padding: var(--padding-#{$size});
+            border-radius: var(--select-radius-custom, var(--radius-#{$size}));
+            font-size: var(--text-#{$size});
+        }
+
+        .--tokens-wrap{
+            .--token{
+                padding: var(--select-token-padding-#{$size}) !important;
+                border-radius: var(--radius-#{$size}) !important;
+                .--token-label{
+                    font-size: var(--select-token-label-size-#{$size});
+                }
+                .--token-remove{
+                    width: var(--select-token-remove-size-#{$size});
+                }
+            }
+        }
+    }
+
+    .--options-list.--#{$size},
+    .--select-options-list.--#{$size}{
+        
+        padding: var(--padding-#{$size}-x);
+        border-radius: calc(var(--radius-#{$size})/3);
+        
+        .--select-options-head{
+            font-size: var(--text-#{$size}) !important;
+            padding: var(--padding-#{$size}-x);
+        }
+
+        button.--select-option-item {
+            padding: calc(var(--padding-md-x) / 2) !important;
+            padding-left: var(--padding-md-x) !important;
+            border-radius: var(--radius-#{$size}) !important;
         }
     }
 

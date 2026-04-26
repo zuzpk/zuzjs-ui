@@ -48,22 +48,21 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
         };
 
         const handleWheel = (e: WheelEvent) => {
-            const target = e.target as HTMLElement;
-            // Check if the user is scrolling inside a Select list or another scrollable child
-            const isInsideScrollableChild = target.closest('.--allow-scroll');
+            const target = e.target;
+            if (!(target instanceof Element)) return;
 
-            if (isInsideScrollableChild) {
-                const scrollable = target.closest('.--allow-scroll') as HTMLElement;
-                const { scrollTop, scrollHeight, clientHeight } = scrollable;
-                
-                const isScrollingUp = e.deltaY < 0;
-                const isScrollingDown = e.deltaY > 0;
+            // Check if the user is scrolling inside a Select list or another scrollable child.
+            const scrollable = target.closest('.--allow-scroll') as HTMLElement | null;
+            if (!scrollable) return;
 
-                // If the child can still scroll, stop ScrollView from reacting
-                if ((isScrollingUp && scrollTop > 0) || 
-                    (isScrollingDown && scrollTop + clientHeight < scrollHeight)) {
-                    e.stopPropagation();
-                }
+            const { scrollTop, scrollHeight, clientHeight } = scrollable;
+            const isScrollingUp = e.deltaY < 0;
+            const isScrollingDown = e.deltaY > 0;
+
+            // If the child can still scroll, stop ScrollView from reacting.
+            if ((isScrollingUp && scrollTop > 0) ||
+                (isScrollingDown && scrollTop + clientHeight < scrollHeight)) {
+                e.stopPropagation();
             }
         };
 

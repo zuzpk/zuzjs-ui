@@ -39,6 +39,20 @@ The auto CSS generator will handle the styling for you, ensuring a cohesive look
 
 Documention in progress.
 
+## AI Skill Guide
+
+For AI-assisted UI generation with this library (Copilot/Claude), use:
+
+| File | Purpose |
+|---|---|
+| `AI_SKILL.md` | Full `as` prop grammar, responsive/pseudo syntax, authoring rules |
+| `AGENTS.md` | Copilot agent entry — points to AI_SKILL.md |
+| `CLAUDE.md` | Claude entry — aliases AGENTS.md |
+| `component-schema.json` | Machine-readable component + prop index for programmatic agent consumption |
+| `PROMPT_PRESETS.md` | Copy-paste prompt templates for common patterns (tables, forms, drawers) |
+
+These files define component prop resolution rules, `as` syntax, shorthand utility classes, and generation constraints.
+
 ## License
 
 This project is licensed under the MIT License.

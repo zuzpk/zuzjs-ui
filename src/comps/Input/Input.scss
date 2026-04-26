@@ -1,3 +1,5 @@
+@use "../../scss/variables";
+
 body {
     --input: var(--gray-200);
     --input-border: 1px var(--border-primary) solid;
@@ -16,25 +18,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .--input{
 
-    &.--lg{
-        padding: var(--padding-lg);
-        font-size: var(--text-lg);
-        border-radius: var(--radius-lg);
-    }
-    &.--md{
-        padding: var(--padding-md);
-        font-size: var(--text-md);
-        border-radius: var(--radius-md);
-    }
-    &.--sm{
-        padding: var(--padding-sm);
-        font-size: var(--text-sm);
-        border-radius: var(--radius-sm);
-    }
-    &.--xs{
-        padding: var(--padding-xs);
-        font-size: var(--text-xs);
-        border-radius: var(--radius-xs);
+    @each $size in variables.$sizes {
+        &.--#{$size}{
+            padding: var(--padding-#{$size});
+            font-size: var(--text-#{$size});
+            &:not(.--textarea) {   
+                border-radius: var(--radius-#{$size});
+            }
+            &.--textarea {   
+                border-radius: calc(var(--radius-#{$size}) / 4);
+            }
+        }
     }
 
     background: var(--input);    

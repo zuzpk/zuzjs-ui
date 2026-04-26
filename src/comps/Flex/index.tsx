@@ -27,6 +27,8 @@ const Flex: FC<FlexProps> = ({
     cols, 
     gap, 
     ass,
+    asc,
+    ase,
     ais,
     aic,
     aie,
@@ -43,6 +45,8 @@ const Flex: FC<FlexProps> = ({
         "--flex",
         cols ? "--cols" : "", // Matching your 'cols' class for direction
         ass ? "--ass" : "",
+        asc ? "--asc" : "",
+        ase ? "--ase" : "",
         ais ? "--ais" : "",
         aic ? "--aic" : "",
         aie ? "--aie" : "",

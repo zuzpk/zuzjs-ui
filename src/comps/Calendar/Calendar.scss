@@ -1,122 +1,61 @@
-:root{
+@use "../../scss/variables";
+
+body{
     --calendar: var(--gray-200);
     --calendar-selector: #fff;
     --calendar-selected-day-bg: var(--blue-700);
     --calendar-selected-day-color: #fff;
     --calendar-current-day-bg: #fff;
     --calendar-current-day-color: var(--text);
-
-    --calendar-radius-lg: 6px;
-    --calendar-radius-md: 4px;
-    --calendar-radius-sm: 2px;
-
-    --calendar-padding-lg: 16px;
-    --calendar-padding-md: 12px;
-    --calendar-padding-sm: 8px;
-
-    --calendar-font-size-lg: 18px;
-    --calendar-font-size-md: 16px;
-    --calendar-font-size-sm: 15px;
-
 }
+
+[color-scheme="dark"] {
+    body {
+        --calendar: var(--gray-800);
+        --calendar-selector: var(--gray-700);
+        --calendar-current-day-bg: var(--gray-600);
+        --calendar-current-day-color: var(--text);
+    }
+}
+
 .--calendar{
+
     background-color: var(--calendar);
-    corner-shape: squircle;
     overflow: hidden;
-    border: 1px var(--calendar-selector) solid;
-    &.--lg{
-        border-radius: var(--calendar-radius-lg);
-        font-size: var(--calendar-font-size-lg);
-        .--calendar-quick-select{
-            padding: var(--calendar-padding-lg);
-            .--button{
-                border-radius: var(--calendar-radius-lg);
-            }
-        }
-        .--calendar-selector{
-            padding: var(--calendar-padding-lg);
-            .--calendar-head{
-                .--calendar-cm{padding-left: var(--calendar-padding-lg); }
-                .--button{
-                    border-radius: var(--calendar-radius-lg);
-                }
-            }
-        }
-        .--calendar-day{
-            border-radius: var(--calendar-radius-lg);
-        }
-    }
-    &.--md{
-        border-radius: var(--calendar-radius-md);
-        font-size: var(--calendar-font-size-md);
-        .--calendar-quick-select{
-            padding: var(--calendar-padding-md);
-            .--button{
-                border-radius: var(--calendar-radius-md);
-            }
-        }
-        .--calendar-selector{
-            padding: var(--calendar-padding-md);
-            .--calendar-head{
-                .--calendar-cm{padding-left: var(--calendar-padding-md); }
-                .--button{
-                    border-radius: var(--calendar-radius-md);
-                }
-            }
-        }
-        .--calendar-day{
-            border-radius: var(--calendar-radius-md);
-        }
-    }
-    &.--sm{
-        border-radius: var(--calendar-radius-sm);
-        font-size: var(--calendar-font-size-sm);
-        .--calendar-quick-select{
-            padding: var(--calendar-padding-sm);
-            .--button{
-                border-radius: var(--calendar-radius-sm);
-            }
-        }
-        .--calendar-selector{
-            padding: var(--calendar-padding-sm);
-            .--calendar-head{
-                .--calendar-cm{padding-left: var(--calendar-padding-sm); }
-                .--button{
-                    border-radius: var(--calendar-radius-sm);
-                }
-            }
-        }
-        .--calendar-day{
-            border-radius: var(--calendar-radius-sm);
-        }
-    }
+    border: 1px var(--calendar-border, var(--border-primary)) solid;
 
     .--calendar-quick-select{
+
         width: 220px;
+
         .--button{
             background: transparent !important;
-            color: var(--text);
+            color: var(--text-primary);
+            width: 100%;
             text-align: left !important;
-            padding: 8px 12px !important;
+            // padding: 8px 12px !important;
             &:hover{
                 background: var(--calendar-selector) !important;
             }
         }
     }
+
     .--calendar-selector{
+
         width: 275px;
         background: var(--calendar-selector);
         
         .--calendar-head{
             .--button{
                 background: transparent !important;
-                color: var(--text);
+                color: var(--text-primary);
                 padding: 2px !important;
                 &.--calendar-chevron{
                     width: 30px;
                     height: 30px;
                     svg{
                         width: 100%;
+                        fill: var(--text-primary);
                     }
                 }
                 &:hover{
@@ -131,16 +70,21 @@
             padding: 8px 0px;
             align-items: stretch;
             flex: 1;
+            gap: 2px;
             .--calendar-day{
+
                 text-align: center;
-                color: var(--text);
+                color: var(--text-primary);
                 background: transparent !important;
-                color: var(--text);
+                color: var(--text-primary);
                 padding: 2px !important;
-                corner-shape: squircle;
+                width: 100%;
+                height: 100%;
+                
                 &:not(.--calendar-dd){
                     font-weight: 600;
                 }
+                
                 &:is(button){
                     &:hover{
                         background: var(--calendar) !important;
@@ -161,6 +105,14 @@
                         color: var(--calendar-selected-day-color) !important;
                     }
                 }
+                &.--calendar-dd-range{
+                    background: color-mix(in srgb, var(--calendar-selected-day-bg) 16%, transparent) !important;
+                }
+                &.--calendar-dd-range-start,
+                &.--calendar-dd-range-end{
+                    position: relative;
+                    z-index: 2;
+                }
                 &.--calendar-dd-current{
                     &:not(.--calendar-dd-selected){
                         background: var(--calendar-current-day-bg) !important;
@@ -172,5 +124,37 @@
 
     }
 
-    
+    @each $size in variables.$sizes {
+
+        &.--#{$size} {
+
+            border-radius: var(--calendar-radius-#{$size}, var(--radius-#{$size}));
+            font-size: var(--text-#{$size});
+
+            .--calendar-quick-select{
+                padding: var(--padding-#{$size});
+                .--button{
+                    border-radius: var(--radius-#{$size});
+                }
+            }
+
+            .--calendar-selector{
+                padding: var(--padding-#{$size});
+                .--calendar-head{
+                    .--calendar-cm{padding-left: var(--padding-#{$size}); }
+                    .--button{
+                        border-radius: var(--radius-#{$size});
+                    }
+                }
+            }
+            
+            .--calendar-day{
+                border-radius: var(--radius-#{$size});
+            }
+
+        }
+
+    }
+
+
 }

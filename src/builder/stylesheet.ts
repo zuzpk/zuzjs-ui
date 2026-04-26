@@ -385,7 +385,7 @@ export const cssDirect : dynamic = {
     "ratio-monitor": "aspect-ratio: 21 / 9;",
     "ratio-photo": "aspect-ratio: 4 / 3;",
     "ratio-portrait": "aspect-ratio: 3 / 4;",
-    "ratio-tall": "aspect-ratio: 9 / 16;"
+    "ratio-tall": "aspect-ratio: 9 / 16;",
 }
 
 export const cssPropsWithColor = [

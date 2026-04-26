@@ -1,12 +1,12 @@
-import { memo, useMemo, useRef, useEffect, useState, useCallback } from "react";
-import { ChatBubble } from "..";
-import List from "../List";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ChatBubble, Flex } from "..";
 import Box from "../Box";
 import Button from "../Button";
-import Text from "../Text";
+import List from "../List";
+import { ListItem } from "../List/types";
 import ScrollView from "../ScrollView";
 import Span from "../Span";
-import { ListItem } from "../List/types";
+import Text from "../Text";
 import { ChatDateLabels, ChatListProps } from "./types";
 
 const DEFAULT_DATE_LABELS: Required<ChatDateLabels> = {
@@ -158,7 +158,7 @@ const ChatList = memo(({
 
         // Update scrolling state
         isUserScrollingRef.current = !isAtBottom;
-        setShouldShowUnread(!isAtBottom);
+        setShouldShowUnread(prev => (prev === !isAtBottom ? prev : !isAtBottom));
 
         // Reset unread when user scrolls to bottom
         if (isAtBottom) {
@@ -214,10 +214,12 @@ const ChatList = memo(({
         };
     }, []);
 
-    return <Box
+    return <Flex
+        cols
         ref={shellRef}
-        as={`rel flex cols`}
+        as={`rel --chatlist`}
         style={{
+            width: `100%`,
             height: '100%',
             contain: 'layout style paint',
         }}
@@ -231,8 +233,9 @@ const ChatList = memo(({
         
         {/* Unread Messages Indicator */}
         {shouldShowUnread && unreadCount > 0 && (
-            <Box 
-                as={`abs bottom:0 left:0 right:0 flex aic jcc`}
+            <Flex
+                aic jcc
+                as={`abs bottom:0 left:0 right:0`}
                 style={{
                     padding: '12px',
                     background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.1) 100%)',
@@ -248,9 +251,9 @@ const ChatList = memo(({
                 >
                     <Text>{unreadCount} new message{unreadCount !== 1 ? 's' : ''}</Text>
                 </Button>
-            </Box>
+            </Flex>
         )}
-    </Box>
+    </Flex>
 }, (prevProps: ChatListProps, nextProps: ChatListProps) => {
     // Custom comparison for memo: only re-render if message count changes significantly
     // or if props other than messages change

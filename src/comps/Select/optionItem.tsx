@@ -35,20 +35,20 @@ const OptionItem = ({
             updateValue(o)
         }}
         disabled={isDisabled}
-        as={`--select-option-item --no-shrink ${selected ? `--selected` : ``} ${isDisabled ? `--disabled` : ``} rel`.trim()}>
+        as={`--select-option-item minW:max-content --no-shrink ${selected ? `--selected` : ``} ${isDisabled ? `--disabled` : ``} rel`.trim()}>
         {/* // className={value && (`string` == typeof o ? o : o.value) == (`string` == typeof value ? value : value.value) ? `selected` : ``}> */}
             <Flex as={`--option-item-meta --aic`}>
                 { o.icon && <Icon name={o.icon} as={`--select-option-icon --icon-${o.value}`} color={o.iconColor} /> }
                 <Text suppressHydrationWarning>{`string` == typeof o ? o : o.label}</Text>
             </Flex>
-            { selected && <Flex aic jcc as={`--select-option-check --abs`}>
+            <Flex aic jcc as={`--select-option-check ${selected ? `` : `dim-0`}`}>
                 {check}
-            </Flex> }
+            </Flex>
             {/* { o.icon && <Icon name={o.icon} as={`--select-option-icon --icon-${o.value}`} color={o.iconColor || undefined} /> }
             <Text suppressHydrationWarning>{`string` == typeof o ? o : o.label}</Text> */}
         </Button>
 }
 
-OptionItem.displayName = `Option`
+OptionItem.displayName = `Zuz.SelectOption`
 
 export default OptionItem

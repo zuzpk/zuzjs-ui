@@ -1,11 +1,13 @@
-import { addDays, addHours, addWeeks, eachDayOfInterval, endOfMonth, endOfWeek, format, isSameDay, isSameMonth, isToday, startOfMonth, startOfWeek } from "date-fns";
-import { forwardRef, useMemo, useState } from "react";
+import { addDays, addHours, addWeeks, eachDayOfInterval, endOfMonth, endOfWeek, format, isAfter, isBefore, isSameDay, isSameMonth, isToday, isWithinInterval, startOfDay, startOfMonth, startOfWeek } from "date-fns";
+import { forwardRef, useEffect, useMemo, useState } from "react";
 import { useBase } from "../../hooks";
+import { useTheme } from "../../hooks/useColorScheme";
+import { Variant } from "../../types";
 import Box from "../Box";
 import Button from "../Button";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
-import { CalendarProps } from "./types";
+import { CalendarProps, CalendarRangeValue } from "./types";
 
 const _quickDateOptions = [
     { 
@@ -93,15 +95,47 @@ const dedupeByDate = <T extends QuickOption>(options: readonly T[]): T[] => {
  */
 const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
 
-    const { defaultValue, variant, onChange, ...pops } = props
+    const {
+        value,
+        defaultValue,
+        minDate,
+        maxDate,
+        range,
+        rangeValue,
+        defaultRangeValue,
+        variant,
+        onChange,
+        onRangeChange,
+        ...pops
+    } = props
 
     const {
         style,
         className,
         rest
     } = useBase<"div">(pops)
+    const { variant: themeVariant } = useTheme(true)!
+    const isRangeMode = !!range;
+    const [current, setCurrent] = useState(value ?? defaultValue ?? new Date());
+    const [currentRange, setCurrentRange] = useState<CalendarRangeValue>(
+        rangeValue ?? defaultRangeValue ?? { start: null, end: null }
+    );
 
-    const [current, setCurrent] = useState(defaultValue || new Date());
+    useEffect(() => {
+        if (typeof value !== "undefined") {
+            setCurrent(value ?? new Date());
+        }
+    }, [value]);
+
+    useEffect(() => {
+        if (typeof rangeValue !== "undefined") {
+            setCurrentRange(rangeValue);
+        }
+    }, [rangeValue]);
+
+    const minDateDay = useMemo(() => (minDate ? startOfDay(minDate) : null), [minDate]);
+    const maxDateDay = useMemo(() => (maxDate ? startOfDay(maxDate) : null), [maxDate]);
+
     const monthStart = startOfMonth(current);
     const monthEnd = endOfMonth(current);
     const startDate = startOfWeek(monthStart);
@@ -111,7 +145,36 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
         eachDayOfInterval({ start: startDate, end: endDate }),
     [startDate, endDate]);
 
+    const isDateDisabled = (date: Date) => {
+        const day = startOfDay(date);
+        if (minDateDay && isBefore(day, minDateDay)) return true;
+        if (maxDateDay && isAfter(day, maxDateDay)) return true;
+        return false;
+    };
+
     const handleDateClick = (date: Date) => {
+        if (isDateDisabled(date)) return;
+
+        if (isRangeMode) {
+            const { start, end } = currentRange;
+            const selectedDay = startOfDay(date);
+            const startDay = start ? startOfDay(start) : null;
+            let nextRange: CalendarRangeValue;
+
+            if (!start || (start && end)) {
+                nextRange = { start: date, end: null };
+            } else if (startDay && isBefore(selectedDay, startDay)) {
+                nextRange = { start: date, end: start };
+            } else {
+                nextRange = { start, end: date };
+            }
+
+            setCurrentRange(nextRange);
+            onRangeChange?.(nextRange);
+            setCurrent(date);
+            return;
+        }
+
         onChange?.(date);
         setCurrent(date);
     };
@@ -124,21 +187,33 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
         setCurrent(prev => new Date(prev.getFullYear(), prev.getMonth() + 1));
     };
 
+    const prevMonthEnd = endOfMonth(new Date(current.getFullYear(), current.getMonth() - 1, 1));
+    const nextMonthStart = startOfMonth(new Date(current.getFullYear(), current.getMonth() + 1, 1));
+    const disablePrevMonth = !!minDateDay && isBefore(prevMonthEnd, minDateDay);
+    const disableNextMonth = !!maxDateDay && isAfter(nextMonthStart, maxDateDay);
+
+    const rawRangeStart = currentRange.start ? startOfDay(currentRange.start) : null;
+    const rawRangeEnd = currentRange.end ? startOfDay(currentRange.end) : null;
+    const rangeStart = rawRangeStart && rawRangeEnd && isAfter(rawRangeStart, rawRangeEnd) ? rawRangeEnd : rawRangeStart;
+    const rangeEnd = rawRangeStart && rawRangeEnd && isAfter(rawRangeStart, rawRangeEnd) ? rawRangeStart : rawRangeEnd;
+
     return <Box 
-        as={`--calendar flex --${variant || `sm`} ${className}`}
+        as={`--calendar flex --${variant || themeVariant || Variant.Small} ${className}`}
         style={style}>
         <Box as={`--calendar-quick-select flex cols flex:1`}>
             {dedupeByDate(_quickDateOptions)
                 .map((option) => {
                 const date = option.getDate();
+                const disabled = isDateDisabled(date);
                 return <Button 
                     key={`--dtp-option-label-${option.label}`} 
+                    disabled={disabled}
                     onClick={() => handleDateClick(date)}
                     as={[
                         `--calendar-quick-option flex aic gap:5`,
                     ]}>
                     <Text as={`flex:1`}>{option.label}</Text>
-                    <Text as={`tar`}>{option.getDateFormat()}</Text>
+                    <Text as={`tar dim-50`}>{option.getDateFormat()}</Text>
                 </Button>
             })}
         </Box>
@@ -147,9 +222,11 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
             <Box as={`--calendar-head flex aic jcc gap:4`}>
                 <Text as={`flex:1 --calendar-cm bold`}>{format(current, 'MMMM yyyy')}</Text>
                 <Button 
+                    disabled={disablePrevMonth}
                     onClick={gotoPrevMonth}
                     as={`--calendar-chevron`}>{SVGIcons.chevronUpOutline}</Button>
                 <Button 
+                    disabled={disableNextMonth}
                     onClick={gotoNextMonth}
                     as={`--calendar-chevron`}>{SVGIcons.chevronDownOutline}</Button>
             </Box>
@@ -159,13 +236,23 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
                     const isCurrentMonth = isSameMonth(day, current);
                     const isSelected = isSameDay(day, current);
                     const isCurrentDay = isToday(day);
+                    const isDisabled = !isCurrentMonth || isDateDisabled(day);
+                    const isRangeStart = !!rangeStart && isSameDay(day, rangeStart);
+                    const isRangeEnd = !!rangeEnd && isSameDay(day, rangeEnd);
+                    const isRangeDay = !!rangeStart && !!rangeEnd && isWithinInterval(day, { start: rangeStart, end: rangeEnd });
+                    const isMiddleRangeDay = isRangeDay && !isRangeStart && !isRangeEnd;
                     return <Button 
                         key={`--calendar-day-${idx}-${day.getFullYear()}-${day.getMonth()}-${day.getDay()}`}
-                        disabled={!isCurrentMonth}
+                        disabled={isDisabled}
                         onClick={() => handleDateClick(day)}
+                        variant={variant || themeVariant || Variant.Small}
                         as={[
                             `--calendar-day --calendar-dd`,
-                            `${isSelected ? `--calendar-dd-selected` : ``}`,
+                            `${!isRangeMode && isSelected ? `--calendar-dd-selected` : ``}`,
+                            `${isRangeMode && (isRangeStart || isRangeEnd) ? `--calendar-dd-selected` : ``}`,
+                            `${isRangeMode && isRangeStart ? `--calendar-dd-range-start` : ``}`,
+                            `${isRangeMode && isRangeEnd ? `--calendar-dd-range-end` : ``}`,
+                            `${isRangeMode && isMiddleRangeDay ? `--calendar-dd-range` : ``}`,
                             `${isCurrentDay ? `--calendar-dd-current` : ``}`,
                         ]}>{format(day, 'd')}</Button>
                 })}
