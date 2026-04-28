@@ -386,6 +386,14 @@ export const cssDirect : dynamic = {
     "ratio-photo": "aspect-ratio: 4 / 3;",
     "ratio-portrait": "aspect-ratio: 3 / 4;",
     "ratio-tall": "aspect-ratio: 9 / 16;",
+    //
+    "backdrop-blur": "backdrop-filter: blur(10px);",
+    "backdrop-blur-sm": "backdrop-filter: blur(4px);",
+    "backdrop-blur-md": "backdrop-filter: blur(8px);",
+    "backdrop-blur-lg": "backdrop-filter: blur(12px);",
+    "backdrop-blur-xl": "backdrop-filter: blur(16px);",
+    "backdrop-blur-xxl": "backdrop-filter: blur(24px);",
+    "backdrop-blur-2xl": "backdrop-filter: blur(24px);",
 }
 
 export const cssPropsWithColor = [

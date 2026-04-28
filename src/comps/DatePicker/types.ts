@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { CalendarRangeValue } from "../Calendar/types";
 import { InputProps } from "../Input/types";
 
-export type DatePickerProps = InputProps & {
+export type DatePickerProps = Omit<InputProps, "defaultValue" | "value"> & {
     icon?: ReactNode | string;
     defaultValue?: Date | null;
     dateValue?: Date | null;
@@ -14,4 +14,5 @@ export type DatePickerProps = InputProps & {
     onDateChange?: (date: Date | null) => void;
     onRangeChange?: (range: CalendarRangeValue) => void;
     displayFormat?: string;
+    value?: string;
 }

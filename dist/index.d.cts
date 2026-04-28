@@ -5,7 +5,7 @@ import { UseDragSpecFactory, UseDropSpecFactory, LineChartProps, DragType, Media
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import { dynamic as dynamic$1, PubSub } from '@zuzjs/core';
 
-declare const VERSION = "1.0.76";
+declare const VERSION = "1.0.77";
 
 declare const AVATAR: {
     readonly Circle: "CIRCLE";
@@ -1318,7 +1318,7 @@ type CrumbProps = BoxProps & {
  */
 declare const Crumb: react.ForwardRefExoticComponent<Omit<CrumbProps, "ref"> & react.RefAttributes<HTMLOListElement | HTMLUListElement>>;
 
-type DatePickerProps = InputProps & {
+type DatePickerProps = Omit<InputProps, "defaultValue" | "value"> & {
     icon?: ReactNode | string;
     defaultValue?: Date | null;
     dateValue?: Date | null;
@@ -1330,6 +1330,7 @@ type DatePickerProps = InputProps & {
     onDateChange?: (date: Date | null) => void;
     onRangeChange?: (range: CalendarRangeValue) => void;
     displayFormat?: string;
+    value?: string;
 };
 
 /**
