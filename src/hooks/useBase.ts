@@ -1,11 +1,20 @@
-import { ComponentPropsWithRef, CSSProperties, JSX, RefObject } from "react"
+import { useDrag, useDrop } from "@zuzjs/hooks"
+import { ComponentPropsWithRef, CSSProperties, JSX, Ref, RefObject } from "react"
 import { cleanProps } from "../funs"
 import { buildClassString } from "../funs/css"
 import { dynamic, Props, ZuzProps } from "../types"
 import useFx from "./useFx"
 
-let useDrag: any = null;
 type CSSVarStyle = CSSProperties & Record<`--${string}`, string | number>;
+
+const setRef = <T,>(target: Ref<T> | undefined, value: T) => {
+    if (!target) return;
+    if (typeof target === "function") {
+        target(value);
+        return;
+    }
+    (target as { current: T }).current = value;
+}
 
 const toCssSize = (value?: string | number): string | undefined => {
     if (value === undefined || value === null) return undefined;
@@ -32,33 +41,53 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
         propsToRemove,
         draggable,
         dragOptions,
+        droppable,
+        dropOptions,
         style: incomingStyle,
         ...rest
     } = props || {}
 
-    const hasWindow = typeof window !== "undefined";
-    let dragProps : dynamic = {};
-    let dragStyle : dynamic = {};
-    if ( draggable && hasWindow ) {
-        if (!useDrag) {
-            import("@zuzjs/hooks")
-                .then(module => {
-                    useDrag = module.useDrag;
-                })
-                .catch(err => {
-                    console.error("Error loading useDrag:", err);
-                });
-            if ( useDrag ) {
-                const drag = useDrag(dragOptions);
-                dragProps = {
-                    onMouseDown: drag.onMouseDown,
-                }
-                dragStyle = {
-                    transform: `translate(${drag.position.x}px, ${drag.position.y}px)`,
-                }
-            }
+    const [dragCollected, dragRef] = useDrag(() => {
+        if (!draggable || !dragOptions) {
+            return {
+                channel: "__zuz_ui_drag_disabled__",
+                when: false,
+                observe: () => ({})
+            };
         }
-    }
+
+        return dragOptions();
+    }, [draggable, dragOptions]);
+
+    const [dropCollected, dropRef] = useDrop(() => {
+        if (!droppable || !dropOptions) {
+            return {
+                accepts: "__zuz_ui_drop_disabled__",
+                canReceive: () => false,
+                observe: () => ({})
+            };
+        }
+
+        return dropOptions();
+    }, [droppable, dropOptions]);
+
+    const dragStyle = (dragCollected as dynamic)?.style || {};
+    const dropStyle = (dropCollected as dynamic)?.style || {};
+    const dragClassName = (dragCollected as dynamic)?.className || "";
+    const dropClassName = (dropCollected as dynamic)?.className || "";
+
+    const { style: _dragStyle, className: _dragClassName, ...dragRest } = (dragCollected as dynamic) || {};
+    const { style: _dropStyle, className: _dropClassName, ...dropRest } = (dropCollected as dynamic) || {};
+
+    const incomingRef = (rest as ComponentPropsWithRef<T>).ref as Ref<HTMLElement> | undefined;
+    const shouldInjectComposedRef = Boolean(draggable || droppable || incomingRef);
+
+    const composedRef: Ref<HTMLElement> = (node) => {
+        setRef(incomingRef, node as HTMLElement);
+        setRef(ref as Ref<HTMLElement> | undefined, node as HTMLElement);
+        if (draggable) dragRef(node as HTMLElement | null);
+        if (droppable) dropRef(node as HTMLElement | null);
+    };
 
     const zuzClasses = [
         className,
@@ -102,7 +131,8 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
             ...skeletonStyle,
             ...incomingStyle,
             ...transitionStyle,
-            ...dragStyle
+            ...dragStyle,
+            ...dropStyle
         },
         className: [
             zuzClasses, 
@@ -110,13 +140,18 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
             skeleton?.enabled ? `--skeleton` : ``,
             skeleton?.enabled && skeleton?.type === `CIRCLE` ? `--skeleton-circle` : ``,
             draggable ? `--draggable` : ``,
+            droppable ? `--droppable` : ``,
+            dragClassName,
+            dropClassName,
         ].join(` `).trim(),
         rest: {
-            ...dragProps,
+            ...dragRest,
+            ...dropRest,
             ...cleanProps(
                 rest as Omit<ZuzProps, keyof ZuzProps>,
                 propsToRemove ? [...propsToRemove, `skeleton`] : [`skeleton`]
-            )
+            ),
+            ...(shouldInjectComposedRef ? { ref: composedRef } : {}),
         } as ComponentPropsWithRef<T>
     }
 

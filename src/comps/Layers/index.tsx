@@ -10,7 +10,7 @@ import Drawer from "../Drawer";
 import { DrawerProps } from "../Drawer/types";
 import Toast from "../Toast";
 import { ToastPosition, ToastProps } from "../Toast/types";
-import { LayerItem, LayersContextType, LayersController, LayerType } from "./types";
+import { ColorPickerLayerProps, LayerItem, LayersContextType, LayersController, LayerType } from "./types";
 
 export const LayersContext = createContext<LayersContextType | null>(null);
 
@@ -64,8 +64,17 @@ const LayersRenderer = ({
             }));
         },
         remove(id: number) {
-            // setLayers(t => t.filter(layer => layer.id !== id));
-            setLayers(prev => prev.map(l => l.id === id ? { ...l, props: { ...l.props, forceClose: true } } : l));
+            setLayers(prev => {
+                const target = prev.find(layer => layer.id === id);
+                if (!target) return prev;
+
+                // Dialog/Drawer/Toast have close animations driven by forceClose.
+                if (target.type === `dialog` || target.type === `drawer` || target.type === `toast`) {
+                    return prev.map(l => l.id === id ? { ...l, props: { ...l.props, forceClose: true } } : l);
+                }
+
+                return prev.filter(layer => layer.id !== id);
+            });
             if (activeMenu?.id === id) closeMenu();
         },
         loading(id: number, mode: boolean) {
@@ -123,6 +132,11 @@ const LayersRenderer = ({
                     key={`layer-${layer.type}-${layer.id}`} 
                     index={i} 
                     {...{ id: layer.id, ...layer.props, inBackground } as DrawerProps} />
+            }
+            if (layer.type === 'colorpicker') {
+                return <Box as={`--zuz-layer-colorpicker`} key={`layer-${layer.type}-${layer.id}`}>
+                    {(layer.props as ColorPickerLayerProps).node}
+                </Box>
             }
 
             return null

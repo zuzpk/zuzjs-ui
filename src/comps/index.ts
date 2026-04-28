@@ -148,6 +148,16 @@ export * from './CodeBlock/types';
 export { default as ColorScheme } from './ColorScheme';
 
 /**
+ * Color picker input.
+ * @example
+ * ```tsx
+ * <ColorPicker onColorChange={(c) => console.log(c.hex)} />
+ * ```
+ */
+export { default as ColorPicker } from './ColorPicker';
+export * from './ColorPicker/types';
+
+/**
  * Right-click or trigger menu.
  * @example
  * ```tsx

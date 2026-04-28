@@ -1,14 +1,19 @@
+import { ReactNode } from "react";
 import { ContextMenuProps } from "../ContextMenu/types";
 import { DialogProps } from "../Dialog/types";
 import { DrawerProps } from "../Drawer/types";
 import { ToastProps } from "../Toast/types";
 
-export type LayerType = "dialog" | "drawer" | "toast" | "menu"
+export type LayerType = "dialog" | "drawer" | "toast" | "menu" | "colorpicker"
+
+export type ColorPickerLayerProps = {
+  node: ReactNode;
+}
 
 export type LayerItem = {
-    id: number,
-    type: LayerType,
-    props: DialogProps | DrawerProps | ToastProps | ContextMenuProps
+  id: number,
+  type: LayerType,
+  props: DialogProps | DrawerProps | ToastProps | ContextMenuProps | ColorPickerLayerProps
 }
 
 export interface LayersController {

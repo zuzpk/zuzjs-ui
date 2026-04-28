@@ -38,6 +38,7 @@ export interface ThemeConfig {
      */
     spinner?: SpinnerProps,
 
+    /** Toast Default Settings */
     toast?: {
         variant?: ValueOf<typeof Variant>,
         position?: ToastPosition,
@@ -49,10 +50,14 @@ export interface ThemeConfig {
         progress?: boolean
     },
 
+    /** Tooltip Default Settings */
     tooltip?: {
         variant?: ValueOf<typeof Variant>,
         curve: ValueOf<typeof TRANSITION_CURVES>,
-    }
+    },
+
+    /** Enable squircle shapes across app */
+    squircle?: boolean
 }
 
 export type ThemeContextProps = {
@@ -179,6 +184,56 @@ const Theme = ({ children, storageKey, forceTheme, ...config } : ThemeProviderPr
     useEffect(() => {
         applyColorScheme((forceTheme || colorScheme || `system`) as ColorScheme)
     }, [colorScheme])
+
+    useEffect(() => {
+        if ( config.squircle ) {
+
+            const style = document.body.style
+            const supportsNative = CSS.supports('corner-shape', 'squircle');
+
+            if (supportsNative) {
+                style.setProperty('--corner-shape', 'squircle');
+                style.setProperty('--radius-xs', '60px');
+                style.setProperty('--radius-sm', '60px');
+                style.setProperty('--radius-md', '60px');
+                style.setProperty('--radius-lg', '60px');
+                style.setProperty('--radius-xl', '70px');
+                style.setProperty('--radius-xxl', '90px');
+            }
+            // else {
+            //     /** 
+            //      * SVG Mask Fallback (Firefox/Safari)
+            //      * Uses a path that approximates a squircle. 
+            //      * The viewbox is 1x1 to work with mask-size: 100% 
+            //      */
+            //     const svgSquircle = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1' preserveAspectRatio='none'%3E%3Cpath d='M 0,0.5 C 0,0 0,0 0.5,0 S 1,0 1,0.5 1,1 0.5,1 0,1 0,0.5' fill='white'/%3E%3C/svg%3E";
+            //     style.setProperty('--squircle-mask', `url("${svgSquircle}")`);
+            //     // In the fallback, we usually use the SVG mask instead of radius values
+            // }
+
+            // Inject the global "apply to all" rule
+            const styleTag = document.createElement('style');
+            styleTag.id = '--squircle-global-styles';
+
+            styleTag.innerHTML = `
+                *:not(.--round) {
+                    ${supportsNative 
+                        ? 'corner-shape: var(--corner-shape);' 
+                        : 'mask-image: var(--squircle-mask); mask-size: 100% 100%; -webkit-mask-image: var(--squircle-mask); -webkit-mask-size: 100% 100%;'
+                    }
+                }
+            `;
+            
+            document.head.appendChild(styleTag);
+
+            // Cleanup function to remove the style tag if config.squircle is disabled
+            return () => {
+                const existingTag = document.getElementById('--squircle-global-styles');
+                if (existingTag) existingTag.remove();
+            };
+
+        }
+    }, [config.squircle])
 
     return (
         <ThemeContext value={{ 

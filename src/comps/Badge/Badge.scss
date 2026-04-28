@@ -1,82 +1,65 @@
 @use "../../scss/variables";
-body{
+
+body {
     --badge-success: var(--green-500);
     --badge-error: var(--red-500);
     --badge-idle: var(--orange-500);
     --badge-dead: var(--text-primary);
     --badge-opacity: 0.5;
-    --badge-multiplier:  4px;
+    --badge-multiplier: 4px;
 }
 
-// [color-scheme="dark"] {
-//     body{
-//         --badge-dead: var(--surface);
-//     }
-// }
+.--badge {
+    // Single color token — overridden by type classes or inline style (custom color).
+    --badge-color: var(--badge-dead);
+    --badge-dot-opacity: 1;
 
-.--badge{
+    &.--success { --badge-color: var(--badge-success); }
+    &.--error   { --badge-color: var(--badge-error); }
+    &.--idle    { --badge-color: var(--badge-idle); }
+    &.--dead    {
+        --badge-color: var(--badge-dead);
+        --badge-dot-opacity: var(--badge-opacity);
+    }
 
-    @each $size in variables.$sizes{
-        &.--#{$size}{
+    @each $size in variables.$sizes {
+        &.--#{$size} {
             --badge-text-size: var(--text-#{$size});
-            --badge-radius: var(--radius-#{$size});
-            .--label{
-                font-size: var(--text-#{$size});
-                padding: var(--padding-#{$size});
+            --badge-radius: var(--badge-radius-#{$size}, var(--radius-#{$size}));
+            .--label {
+                font-size: var(--badge-text-#{$size}, var(--text-#{$size}));
+                padding: var(--badge-padding-#{$size}, var(--padding-#{$size}));
             }
         }
     }
 
-    &:has(.--dot){
+    &:has(.--dot) {
         min-width: calc(var(--badge-size) * var(--badge-multiplier)) !important;
         min-height: calc(var(--badge-size) * var(--badge-multiplier));
         max-width: calc(var(--badge-size) * var(--badge-multiplier));
         max-height: calc(var(--badge-size) * var(--badge-multiplier));
     }
 
-    &:has(.--label){
+    &:has(.--label) {
         border-radius: var(--badge-radius);
-        &.--success{
-            background: var(--badge-success);
-        }
-        &.--error{
-            background: var(--badge-error);
-        }
-        &.--idle{
-            background: var(--badge-idle);
-        }
-        &.--dead{
-            background: var(--badge-dead);
-        }
+        background: var(--badge-color);
     }
 
-    .--dot{
-        
+    .--dot {
         --badge-corner: round;
         --badge-radius: 50%;
-        corner-shape: var(--badge-corner) !important; 
+        corner-shape: var(--badge-corner) !important;
         border-radius: var(--badge-radius);
-        min-width: calc(var(--badge-size) * 1px)  !important;
+        min-width: calc(var(--badge-size) * 1px) !important;
         min-height: calc(var(--badge-size) * 1px);
         max-width: calc(var(--badge-size) * 1px);
         max-height: calc(var(--badge-size) * 1px);
-
-        &.--success{
-            background: var(--badge-success);
-        }
-        &.--error{
-            background: var(--badge-error);
-        }
-        &.--idle{
-            background: var(--badge-idle);
-        }
-        &.--dead{
-            background: var(--badge-dead);
-            opacity: var(--badge-opacity);
-        }
+        background: var(--badge-color);
+        opacity: var(--badge-dot-opacity);
     }
 
-    .--label{
+    .--label {
         color: #fff;
     }
+
 }

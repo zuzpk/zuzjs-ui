@@ -1,0 +1,168 @@
+@use "../../scss/variables";
+
+body {
+    --colorpicker: var(--input);
+
+    --colorpicker-swatch-xxl: 32px;
+    --colorpicker-swatch-xl:  28px;
+    --colorpicker-swatch-lg:  24px;
+    --colorpicker-swatch-md:  20px;
+    --colorpicker-swatch-sm:  16px;
+    --colorpicker-swatch-xs:  14px;
+}
+
+.--color-picker {
+    background: var(--colorpicker);
+    gap: 10px;
+
+    .--input {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        width: 100% !important;
+        cursor: pointer;
+    }
+
+    .--cp-swatch {
+        border-radius: 4px;
+        flex-shrink: 0;
+        cursor: pointer;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .15);
+    }
+
+    &.--color-picker-square {
+        background: transparent;
+        padding: 0 !important;
+        gap: 0;
+        cursor: pointer;
+        aspect-ratio: 1/1;
+        .--cp-swatch {
+            border-radius: var(--radius-sm);
+            width: 100% !important;
+            height: 100% !important;
+        }
+    }
+
+    @each $size in variables.$sizes {
+        &.--#{$size} {
+            font-size: var(--text-#{$size});
+            padding: var(--colorpicker-padding-#{$size}, var(--padding-#{$size}));
+            border-radius: var(--colorpicker-border-radius-#{$size}, var(--radius-#{$size}));
+
+            .--cp-swatch {
+                width:  var(--colorpicker-swatch-#{$size});
+                height: var(--colorpicker-swatch-#{$size});
+            }
+        }
+    }
+}
+
+.--color-picker-chooser {
+    background: var(--surface);
+    border-radius: var(--radius-md, 10px);
+    box-shadow: var(--shadow-md, 0 4px 24px rgba(0, 0, 0, .18));
+    padding: 12px;
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: var(--max-z-index);
+    user-select: none;
+    pointer-events: auto;
+
+    .--cp-area {
+        position: relative;
+        width: 100%;
+        height: 160px;
+        border-radius: 6px;
+        overflow: hidden;
+        cursor: crosshair;
+        flex-shrink: 0;
+
+        .--cp-area-gradient-s {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, white, transparent);
+        }
+
+        .--cp-area-gradient-v {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent, black);
+        }
+
+        .--cp-cursor {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, .4);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+    }
+
+    .--cp-slider {
+        position: relative;
+        width: 100%;
+        height: 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        flex-shrink: 0;
+
+        &.--cp-hue {
+            background: linear-gradient(
+                to right,
+                #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000
+            );
+        }
+
+        .--cp-thumb {
+            position: absolute;
+            top: 50%;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, .35);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+    }
+
+    .--cp-inputs {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+
+        .--cp-preview {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            flex-shrink: 0;
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .15);
+        }
+
+        .--cp-hex-input {
+            flex: 1;
+            background: var(--input, rgba(0, 0, 0, .06));
+            border: none;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 13px;
+            color: var(--text-primary);
+            font-family: monospace;
+            outline: none;
+            width: 100%;
+            min-width: 0;
+        }
+    }
+
+    &.--color-picker-expanded {
+        position: relative;
+        width: 100%;
+        box-shadow: none;
+        z-index: auto;
+    }
+}

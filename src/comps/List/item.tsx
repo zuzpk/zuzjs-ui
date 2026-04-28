@@ -1,13 +1,21 @@
 import { isValidElement, ReactNode } from "react";
 import { useBase } from "../../hooks";
-import { ListItemObject, type ListItem } from "./types";
+import { ListItemMeta, type ListItem } from "./types";
 import { useDelayed } from "@zuzjs/hooks";
+
+const isItemMeta = (meta: ListItem): meta is ListItemMeta => {
+    if (meta === null || meta === undefined) return false;
+    if (typeof meta !== "object") return false;
+    if (isValidElement(meta)) return false;
+    return true;
+};
 
 const Item = (props : { children?: ReactNode, meta: ListItem }) => {
 
     const { meta, children } = props
     const mounted = useDelayed()
-    const { label, icon, ...pops } = isValidElement(meta) ? {} : meta as ListItemObject;
+    const itemMeta = isItemMeta(meta) ? meta : null;
+    const { label, ...pops } = itemMeta || {};
     
     const {
         className,
@@ -22,7 +30,7 @@ const Item = (props : { children?: ReactNode, meta: ListItem }) => {
     })
 
 
-    if ( isValidElement(meta) ){
+    if (isValidElement(meta)) {
         return <li 
             style={style}
             className={className}>{meta}</li>

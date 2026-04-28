@@ -12,54 +12,45 @@ export type BadgeProps = BoxProps & {
     size?: number,
     type?: ValueOf<typeof Status>,
     variant?: ValueOf<typeof Variant>,
+    /** Text label. Ignored when `count` is provided. */
     label?: string,
+    /** Numeric count to display. Renders a label badge with the count. */
+    count?: number,
+    /** Cap for `count` — values above this render as `{max}+`. Defaults to 99. */
+    max?: number,
+    /** Custom color that overrides the semantic `type` color. Accepts any CSS color value. */
+    color?: string,
     loading?: boolean,
     spinner?: ValueOf<typeof SPINNER>,
 }
 
-/**
- * Badge component.
- *
- * @example
- * // Basic usage
- * ```tsx
- * <Badge>New</Badge>
- * ```
- *
- * @example
- * // Advanced usage with additional props
- * ```tsx
- * <Badge variant="error" size="lg" icon="star">Premium</Badge>
- * ```
- * @param variant - Visual variant or style
- * @param size - Component size
- * @param icon - Icon identifier
- */
-const Badge : React.FC<BadgeProps> = ({ 
-    size = 5, 
+const Badge : React.FC<BadgeProps> = ({
+    size = 5,
     type = `dead`,
     label = ``,
+    count,
+    max = 99,
+    color,
     variant = Variant.Small,
     loading = false,
     spinner,
     ...pops
 }) => {
-    
-    const {
-        style,
-        className,
-        rest
-    } = useBase<"div">(pops)
 
-    return <Box 
+    const { style, className, rest } = useBase<"div">(pops)
+
+    const hasCount = count !== undefined
+    const displayCount = hasCount ? (count > max ? `${max}+` : String(count)) : undefined
+    const isDot = !hasCount && _(label).isEmpty()
+
+    return <Box
         style={{
-            ...(_(label).isEmpty() ? { 
-                "--badge-size": size
-            } : {}),
+            ...(isDot ? { "--badge-size": size } : {}),
+            ...(color ? { "--badge-color": color } : {}),
             ...style
-        }} 
-        as={`--badge --${variant} --${type} rel flex aic jcc ${className}`.trim()}>
-        <Box 
+        }}
+        as={`--badge ${count ? `--as-counter` : ``} --${variant} --${type} rel flex aic jcc ${className}`.trim()}>
+        <Box
             fx={{
                 transition: TRANSITIONS.FadeIn,
                 curve: TRANSITION_CURVES.Liquid,
@@ -67,8 +58,10 @@ const Badge : React.FC<BadgeProps> = ({
                 when: loading
             }}
             as={`abs abc`}><Spinner type={spinner} /></Box>
-        { _(label).isEmpty() ? <Box as={`--dot --${type}`} /> 
-            : <Text as={`--label`}>{label}</Text>}
+        {isDot
+            ? <Box as={`--dot`} />
+            : <Text as={`--label`}>{displayCount ?? label}</Text>
+        }
     </Box>
 }
 

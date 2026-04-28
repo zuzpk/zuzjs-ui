@@ -128,14 +128,14 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
             style={style}
             onFocus={handleFocus}
             onInput={handleInput}
-            autoComplete="new-password"
             placeholder={inputPlaceholder}
             onKeyDown={(e) => {
                 if ( e.key == `Enter` ){
                     onConfirm?.(e.currentTarget.value);
                 }
             }}
-            {...rest} />
+            {...rest}
+            autoComplete="off" />
     </Box>, [className, currentDate, handleFocus, handleInput, icon, inputPlaceholder, inputValue, onConfirm, rest, style, themeVariant, variant])
 
     const { root, canUseDocument, floatingRef, floatingStyle } = useAnchor(trigger, '--date-picker-anchor', {

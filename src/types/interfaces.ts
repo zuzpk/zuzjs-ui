@@ -1,4 +1,4 @@
-import { DragOptions } from "@zuzjs/hooks";
+import { UseDragSpecFactory, UseDropSpecFactory } from "@zuzjs/hooks";
 import { Ref } from "react";
 import { ZuzStyleString } from "./css";
 import { SKELETON, TRANSITION_CURVES, TRANSITIONS } from "./enums";
@@ -26,7 +26,12 @@ export interface ZuzProps {
     /** Makes Component Draggable */
     draggable?: boolean;
 
-    dragOptions?: DragOptions;
+    dragOptions?: UseDragSpecFactory<any, Record<string, unknown>>;
+
+    /** Makes Component Droppable */
+    droppable?: boolean;
+
+    dropOptions?: UseDropSpecFactory<any, Record<string, unknown>>;
 
     busy?: boolean;
 

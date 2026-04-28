@@ -1,10 +1,11 @@
 import * as react from 'react';
 import react__default, { ElementType, ComponentPropsWithoutRef, Ref, ReactNode, MouseEvent as MouseEvent$1, RefObject, FC, CSSProperties, FormEventHandler, ReactElement, JSX, ComponentPropsWithRef } from 'react';
-import { DragOptions, LineChartProps, MediaItem, useMediaPlayer, ScrollBreakpoint, Command } from '@zuzjs/hooks';
+import * as _zuzjs_hooks from '@zuzjs/hooks';
+import { UseDragSpecFactory, UseDropSpecFactory, LineChartProps, DragType, MediaItem, useMediaPlayer, ScrollBreakpoint, Command } from '@zuzjs/hooks';
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import { dynamic as dynamic$1, PubSub } from '@zuzjs/core';
 
-declare const VERSION = "1.0.75";
+declare const VERSION = "1.0.76";
 
 declare const AVATAR: {
     readonly Circle: "CIRCLE";
@@ -255,7 +256,10 @@ interface ZuzProps {
     transition?: ValueOf<typeof TRANSITIONS>;
     /** Makes Component Draggable */
     draggable?: boolean;
-    dragOptions?: DragOptions;
+    dragOptions?: UseDragSpecFactory<any, Record<string, unknown>>;
+    /** Makes Component Droppable */
+    droppable?: boolean;
+    dropOptions?: UseDropSpecFactory<any, Record<string, unknown>>;
     busy?: boolean;
     stripes?: `background` | `overlay`;
 }
@@ -564,28 +568,17 @@ type BadgeProps = BoxProps & {
     size?: number;
     type?: ValueOf<typeof Status>;
     variant?: ValueOf<typeof Variant>;
+    /** Text label. Ignored when `count` is provided. */
     label?: string;
+    /** Numeric count to display. Renders a label badge with the count. */
+    count?: number;
+    /** Cap for `count` — values above this render as `{max}+`. Defaults to 99. */
+    max?: number;
+    /** Custom color that overrides the semantic `type` color. Accepts any CSS color value. */
+    color?: string;
     loading?: boolean;
     spinner?: ValueOf<typeof SPINNER>;
 };
-/**
- * Badge component.
- *
- * @example
- * // Basic usage
- * ```tsx
- * <Badge>New</Badge>
- * ```
- *
- * @example
- * // Advanced usage with additional props
- * ```tsx
- * <Badge variant="error" size="lg" icon="star">Premium</Badge>
- * ```
- * @param variant - Visual variant or style
- * @param size - Component size
- * @param icon - Icon identifier
- */
 declare const Badge: react__default.FC<BadgeProps>;
 
 /**
@@ -1053,6 +1046,52 @@ type ColorSchemeProps = Omit<SegmentProps, `items`> & {
  * @param onChange - Callback function triggered when value changes
  */
 declare const ColorScheme$1: react.ForwardRefExoticComponent<Omit<ColorSchemeProps, "ref"> & react.RefAttributes<HTMLDivElement>>;
+
+type ColorValue = {
+    hex: string;
+    rgb: {
+        r: number;
+        g: number;
+        b: number;
+    };
+    hsv: {
+        h: number;
+        s: number;
+        v: number;
+    };
+    alpha: number;
+};
+type ColorPickerProps = Omit<InputProps, 'onChange'> & {
+    defaultValue?: string;
+    colorValue?: string;
+    alpha?: boolean;
+    format?: 'hex' | 'rgb';
+    onColorChange?: (color: ColorValue) => void;
+    kind?: 'square' | 'expanded';
+};
+
+/**
+ * ColorPicker component.
+ *
+ * @example
+ * // Basic usage
+ * ```tsx
+ * <ColorPicker onColorChange={(color) => console.log(color.hex)} />
+ * ```
+ *
+ * @example
+ * // With alpha and controlled value
+ * ```tsx
+ * <ColorPicker colorValue="#ff5733" alpha onColorChange={(c) => setColor(c)} />
+ * ```
+ *
+ * @param colorValue   - Controlled hex color string
+ * @param defaultValue - Initial hex color string (uncontrolled)
+ * @param alpha        - Show alpha/opacity slider
+ * @param format       - Display format in the trigger input: 'hex' | 'rgb'
+ * @param onColorChange - Callback fired on every color change
+ */
+declare const ColorPicker: react.ForwardRefExoticComponent<Omit<ColorPickerProps, "ref"> & react.RefAttributes<HTMLInputElement>>;
 
 /**
  * Represents a single menu item in the context menu.
@@ -1971,7 +2010,7 @@ interface ToastProps {
     onClick?: (e: any) => void;
 }
 
-type LayerType = "dialog" | "drawer" | "toast" | "menu";
+type LayerType = "dialog" | "drawer" | "toast" | "menu" | "colorpicker";
 
 /**
  * Layers component.
@@ -2002,7 +2041,16 @@ type ListItemObject = {
     animate?: animationProps;
     onClick?: (event: any) => void;
 };
-type ListItem = Props<`li`> & (ReactNode | ListItemObject);
+type ListItemMeta = Props<`li`> & ListItemObject;
+type ListItem = ReactNode | ListItemMeta;
+type ListRenderContext = {
+    index: number;
+    isDragging: boolean;
+    isOver: boolean;
+    canReceive: boolean;
+    highlighted: boolean;
+};
+type ListRender<T = ListItem> = (item: T, context: ListRenderContext) => ReactNode;
 type VirtualScrollOptions = {
     /** Height of each item in pixels */
     itemHeight?: number;
@@ -2012,34 +2060,105 @@ type VirtualScrollOptions = {
     overscan?: number;
 };
 type ListProps = Props<`ul` | `ol`> & {
+    /** Visual variant (size) */
     variant?: ValueOf<typeof Variant>;
+    /** Array of items to render (ReactNode or ListItemMeta) */
     items: ListItem[];
+    /** Layout direction: "cols" (default) or "rows" */
     direction?: "cols" | "rows";
+    /** Separator element between items */
     seperator?: ReactNode;
+    /** Render as <ol> instead of <ul> */
     ol?: boolean;
+    /** Enable sortable drag-and-drop reordering within the list */
+    sortable?: boolean;
+    /** Allow individual items to be dragged */
+    itemDraggable?: boolean;
+    /** Allow individual items to be drop targets */
+    itemDroppable?: boolean;
+    /** DnD channel (default: "__zuz_ui_list_item__"). For cross-list dragging, use the same channel on all lists */
+    dragChannel?: DragType;
+    /** Delay before drag starts in milliseconds (0 = instant) */
+    dragDelay?: number;
+    /** Visual mode while dragging: "self" (move element + show placeholder) or "clone" (fade + show ghost) */
+    ghostMode?: "self" | "clone";
+    /** Duration of drop highlight animation in ms */
+    dropHighlightDuration?: number;
+    /** Drop highlight animation type (ScaleIn, SlideIn*, FadeIn) */
+    dropHighlightTransition?: ValueOf<typeof TRANSITIONS>;
+    /** Drop highlight animation curve (Spring, Ease, Linear, etc.) */
+    dropHighlightCurve?: ValueOf<typeof TRANSITION_CURVES>;
+    /** Custom render function for list items (signature: (item, context) => ReactNode) */
+    render?: ListRender<any>;
+    /** Content to display when list is empty (string, ReactNode, or custom message) */
+    empty?: ReactNode;
+    /** Callback when items are reordered. For cross-list moves, handle items leaving/entering other lists here */
+    onSort?: (items: ListItem[], context: {
+        from: number;
+        to: number;
+        item: ListItem;
+    }) => void;
     /** Virtual scrolling config for large lists */
     virtual?: VirtualScrollOptions;
 };
 
 /**
- * List component with virtualization support.
- * Optimized for large lists with efficient rendering and fast scrolling.
+ * List component with drag-and-drop sorting and virtual scrolling support.
+ *
+ * Features:
+ * - Sortable items with visual feedback (ghost modes: "self" or "clone")
+ * - Custom render callbacks for full control over item appearance
+ * - Cross-list dragging support (share dragChannel across multiple lists)
+ * - Animated drop highlights with configurable transitions
+ * - Virtual scrolling for large lists
  *
  * @example
- * // Basic usage
+ * // Basic sortable list
  * ```tsx
- * <List items={[{ label: "Item 1" }, { label: "Item 2" }]} />
+ * <List
+ *   items={[{ label: "Item 1" }, { label: "Item 2" }]}
+ *   sortable
+ *   onSort={(items, { from, to }) => updateItems(items)}
+ * />
  * ```
  *
  * @example
- * // Large list with virtual scrolling
+ * // Custom render with drag context
  * ```tsx
- * <List items={items} virtual={{ itemHeight: 50 }} onSelect={(item) => {}} />
+ * <List
+ *   items={tasks}
+ *   sortable
+ *   ghostMode="self"
+ *   render={(task, { isDragging, isOver, highlighted }) => (
+ *     <Box className={isDragging ? "opacity:.6" : ""}>
+ *       {task.title}
+ *     </Box>
+ *   )}
+ *   onSort={(items) => setTasks(items)}
+ * />
  * ```
  *
- * @param items - Array of items
- * @param virtual - Virtual scrolling options (itemHeight, overscan)
- * @param seperator - Separator between items
+ * @example
+ * // Cross-list dragging (share dragChannel)
+ * ```tsx
+ * const SHARED_CHANNEL = "KANBAN_CARD";
+ *
+ * <List
+ *   items={todoList}
+ *   sortable
+ *   dragChannel={SHARED_CHANNEL}
+ *   onSort={(items, { from, to, item }) => {
+ *     // Handle reordering and cross-list moves
+ *     setTodoList(items);
+ *   }}
+ * />
+ * <List
+ *   items={doneList}
+ *   sortable
+ *   dragChannel={SHARED_CHANNEL}
+ *   onSort={(items) => setDoneList(items)}
+ * />
+ * ```
  */
 declare const List: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react.DetailedHTMLProps<react.OlHTMLAttributes<HTMLOListElement>, HTMLOListElement>, "ref"> | Omit<react.DetailedHTMLProps<react.HTMLAttributes<HTMLUListElement>, HTMLUListElement>, "ref">, keyof ZuzProps> & {
     variant?: ValueOf<typeof Variant>;
@@ -2047,6 +2166,22 @@ declare const List: react.ForwardRefExoticComponent<ZuzProps & Omit<Omit<react.D
     direction?: "cols" | "rows";
     seperator?: react.ReactNode;
     ol?: boolean;
+    sortable?: boolean;
+    itemDraggable?: boolean;
+    itemDroppable?: boolean;
+    dragChannel?: _zuzjs_hooks.DragType;
+    dragDelay?: number;
+    ghostMode?: "self" | "clone";
+    dropHighlightDuration?: number;
+    dropHighlightTransition?: ValueOf<typeof TRANSITIONS>;
+    dropHighlightCurve?: ValueOf<typeof TRANSITION_CURVES>;
+    render?: ListRender<any>;
+    empty?: react.ReactNode;
+    onSort?: (items: ListItem[], context: {
+        from: number;
+        to: number;
+        item: ListItem;
+    }) => void;
     virtual?: VirtualScrollOptions;
 } & react.RefAttributes<HTMLOListElement | HTMLUListElement>>;
 
@@ -3414,6 +3549,7 @@ interface ThemeConfig {
      * App Level Spinner Conf
      */
     spinner?: SpinnerProps;
+    /** Toast Default Settings */
     toast?: {
         variant?: ValueOf<typeof Variant>;
         position?: ToastPosition;
@@ -3424,10 +3560,13 @@ interface ThemeConfig {
         duration?: number;
         progress?: boolean;
     };
+    /** Tooltip Default Settings */
     tooltip?: {
         variant?: ValueOf<typeof Variant>;
         curve: ValueOf<typeof TRANSITION_CURVES>;
     };
+    /** Enable squircle shapes across app */
+    squircle?: boolean;
 }
 type ThemeProviderProps = {
     children: ReactNode;
@@ -3479,6 +3618,13 @@ declare const useContextMenu: () => {
         footer?: ReactNode | FC;
     }) => void;
     hide: (type: LayerType) => void;
+};
+
+declare const useColorPicker: () => {
+    show: (node: ReactNode) => number;
+    update: (id: number, node: ReactNode) => void;
+    hide: (id: number) => void;
+    clearAll: () => void;
 };
 
 declare const useDialog: () => {
@@ -3593,4 +3739,4 @@ declare const useToast: () => {
     clearAll: () => void;
 };
 
-export { ALERT, AVATAR, Accordion, type AccordionHandler, type AccordionProps, ActionBar, type ActionBarHandler, type ActionBarItem, type ActionBarProps, Alert, type AlertHandler, type AlertProps, type AnimationTransition, AutoComplete, type AutoCompleteProps, Avatar, type AvatarHandler, type AvatarProps, Badge, type BadgeProps, Box, type BoxProps, type BubbleAttachment, BubbleAttachmentType, BubbleMediaType, type BubbleProps, BubbleStatus, type BubbleStylePreset, Button, type ButtonHandler, type ButtonKind, type ButtonProps, ButtonState, CHART, CHECKBOX, COLORTHEME, Calendar, type CalendarProps, type CalendarRangeValue, Carousel, type CarouselEffect, type CarouselProps, Chart, type ChartProps, Bubble as ChatBubble, type ChatDateLabelFormatter, type ChatDateLabels, ChatList, type ChatListProps, type ChatMessage, CheckBox, type CheckBoxProps, type CheckboxHandler, CodeBlock, type CodeBlockProps, ColorScheme$1 as ColorScheme, type Column, type ContextItem, ContextMenu, type ContextMenuHandler, type ContextMenuProps, type CookieConsentProps, CookiesConsent, Cover, type CoverProps, type CropHandler, CropShape, Cropper, type CropperProps, Crumb, type CrumbItem, type CrumbProps, DATATYPE, DIALOG, DIALOG_ACTION_POSITION, DRAWER_SIDE, DatePicker, Dialog, type DialogActionHandler, type DialogController, type DialogHandler, type DialogProps, Drawer, type DrawerController, type DrawerHandler, type DrawerProps, FILTER, FORMVALIDATION, FORMVALIDATION_STYLE, Fab, type FabProps, Fieldset, type FieldsetProps, type FilterProps, Filters, Flex, type FlexProps, Form, type FormHandler, type FormInputs, type FormProps, type FormValidation, Grid, type GridProps, Group, type GroupProps, Icon, type IconProps, Image, type ImageProps, Input, type InputProps, type KeyCombination, type KeyboardKey, type KeyboardKeyProps, KeyBoardKeys as KeyboardKeys, KeysLabelMap, KeysMap, Label, type LabelProps, type LayerHandler, LayersProvider, List, type ListItem, type ListItemObject, type ListProps, type LoopMode, MediaPlayer, type MediaPlayerContextType, type MediaPlayerController, type MediaPlayerIcons, type MediaPlayerProps, type MenuItemProps, type MorphOptions, type NetworkManagerprops, NetworkManager as NetworkStatus, ORIGIN, type Option, type OptionItemProps, OriginType, Overlay, type OverlayProps, PACKAGE_NAME, PLACEMENTS, POSITION, PROGRESS, Pagination, type PaginationCallback, type PaginationController, type PaginationPage, type PaginationPageItem, type PaginationProps, PaginationStyle, Password, type PasswordProps, PinInput, type PinInputProps, type Placement, Position, ProgressBar, type ProgressBarProps, type ProgressHandler, type Props, RADIO, Radio, type RadioHandler, type RadioProps, type Row, type RowSelectCallback, SHEET, SHEET_ACTION_POSITION, SKELETON, SLIDER, SORT, SPINNER, ScrollView, type ScrollViewProps, Search, type SearchHandler, type SearchProps, type Segment, type SegmentController, type SegmentItemProps, type SegmentProps, Select, type SelectEditableChange, type SelectEditableProps, type SelectHandler, type SelectInternalProps, type SelectMultipleChange, type SelectMultipleProps, type SelectPrimitive, type SelectProps, type SelectSingleChange, type SelectSingleProps, type SelectSingleValue, Segmented as SelectTabs, type SelectTokenizerProps, type SelectValue, Sheet, type SheetHandler, type SheetProps, type Skeleton, Slider, type SliderController, type SliderProps, type ToastAction as SnackAction, type SnackController, ToastPosition as SnackPosition, ToastStyle as SnackStyle, ToastType as SnackType, Span, type SpanProps, Spinner, type SpinnerProps, Status, Switch, type CheckboxHandler as SwitchHandler, TRANSITIONS, TRANSITION_CURVES, type Tab, type TabBodyProps, type TabProps, TabView, type TabViewHandler, type TabViewProps, ForwardedTable as Table, type TableController, type TableOfContentItem, TableOfContents, type TableOfContentsProps, type TableProps, type TableSortCallback, Terminal, type TerminalCommandFn, type TerminalCommands, type TerminalHandler, type TerminalLine, type TerminalProps, Text, type TextAreaProps, TextWheel, type TextWheelHandler, type TextWheelProps, TextArea as Textarea, ThemeProvider, type ToastAction, ToastDefaultTitle, ToastPosition, type ToastProps, Toast as ToastProvider, ToastStyle, ToastType, ToolTip, type ToolTipController, type ToolTipProps, type TreeItemHandler, type TreeItemProps, type TreeNode, type TreeNodeIcons, TreeView, type TreeViewHandler, type TreeViewProps, type ValidationResult, type ValidationSchema, type Value, type ValueOf, Variant, type VirtualScrollOptions, type WithFormValidation, type ZuzCommonValues, type ZuzProps, type ZuzStyleString, VERSION as __ZUZJS_UI_VERSION, type animationProps, animationTransition, buildClassString, buildWithStyles, cleanProps, css, type cssShortKey, type cssShortKeys, type dynamic, getAnimationCurve, getAnimationTransition, getZuzMap, isKeyCombination, type parallaxEffectProps, setZuzMap, splitAtoms, useBase, useContextMenu, useDialog, useDrawer, useFx, useMorph, usePosition, useSnack, useToast };
+export { ALERT, AVATAR, Accordion, type AccordionHandler, type AccordionProps, ActionBar, type ActionBarHandler, type ActionBarItem, type ActionBarProps, Alert, type AlertHandler, type AlertProps, type AnimationTransition, AutoComplete, type AutoCompleteProps, Avatar, type AvatarHandler, type AvatarProps, Badge, type BadgeProps, Box, type BoxProps, type BubbleAttachment, BubbleAttachmentType, BubbleMediaType, type BubbleProps, BubbleStatus, type BubbleStylePreset, Button, type ButtonHandler, type ButtonKind, type ButtonProps, ButtonState, CHART, CHECKBOX, COLORTHEME, Calendar, type CalendarProps, type CalendarRangeValue, Carousel, type CarouselEffect, type CarouselProps, Chart, type ChartProps, Bubble as ChatBubble, type ChatDateLabelFormatter, type ChatDateLabels, ChatList, type ChatListProps, type ChatMessage, CheckBox, type CheckBoxProps, type CheckboxHandler, CodeBlock, type CodeBlockProps, ColorPicker, type ColorPickerProps, ColorScheme$1 as ColorScheme, type ColorValue, type Column, type ContextItem, ContextMenu, type ContextMenuHandler, type ContextMenuProps, type CookieConsentProps, CookiesConsent, Cover, type CoverProps, type CropHandler, CropShape, Cropper, type CropperProps, Crumb, type CrumbItem, type CrumbProps, DATATYPE, DIALOG, DIALOG_ACTION_POSITION, DRAWER_SIDE, DatePicker, Dialog, type DialogActionHandler, type DialogController, type DialogHandler, type DialogProps, Drawer, type DrawerController, type DrawerHandler, type DrawerProps, FILTER, FORMVALIDATION, FORMVALIDATION_STYLE, Fab, type FabProps, Fieldset, type FieldsetProps, type FilterProps, Filters, Flex, type FlexProps, Form, type FormHandler, type FormInputs, type FormProps, type FormValidation, Grid, type GridProps, Group, type GroupProps, Icon, type IconProps, Image, type ImageProps, Input, type InputProps, type KeyCombination, type KeyboardKey, type KeyboardKeyProps, KeyBoardKeys as KeyboardKeys, KeysLabelMap, KeysMap, Label, type LabelProps, type LayerHandler, LayersProvider, List, type ListItem, type ListItemMeta, type ListItemObject, type ListProps, type ListRender, type ListRenderContext, type LoopMode, MediaPlayer, type MediaPlayerContextType, type MediaPlayerController, type MediaPlayerIcons, type MediaPlayerProps, type MenuItemProps, type MorphOptions, type NetworkManagerprops, NetworkManager as NetworkStatus, ORIGIN, type Option, type OptionItemProps, OriginType, Overlay, type OverlayProps, PACKAGE_NAME, PLACEMENTS, POSITION, PROGRESS, Pagination, type PaginationCallback, type PaginationController, type PaginationPage, type PaginationPageItem, type PaginationProps, PaginationStyle, Password, type PasswordProps, PinInput, type PinInputProps, type Placement, Position, ProgressBar, type ProgressBarProps, type ProgressHandler, type Props, RADIO, Radio, type RadioHandler, type RadioProps, type Row, type RowSelectCallback, SHEET, SHEET_ACTION_POSITION, SKELETON, SLIDER, SORT, SPINNER, ScrollView, type ScrollViewProps, Search, type SearchHandler, type SearchProps, type Segment, type SegmentController, type SegmentItemProps, type SegmentProps, Select, type SelectEditableChange, type SelectEditableProps, type SelectHandler, type SelectInternalProps, type SelectMultipleChange, type SelectMultipleProps, type SelectPrimitive, type SelectProps, type SelectSingleChange, type SelectSingleProps, type SelectSingleValue, Segmented as SelectTabs, type SelectTokenizerProps, type SelectValue, Sheet, type SheetHandler, type SheetProps, type Skeleton, Slider, type SliderController, type SliderProps, type ToastAction as SnackAction, type SnackController, ToastPosition as SnackPosition, ToastStyle as SnackStyle, ToastType as SnackType, Span, type SpanProps, Spinner, type SpinnerProps, Status, Switch, type CheckboxHandler as SwitchHandler, TRANSITIONS, TRANSITION_CURVES, type Tab, type TabBodyProps, type TabProps, TabView, type TabViewHandler, type TabViewProps, ForwardedTable as Table, type TableController, type TableOfContentItem, TableOfContents, type TableOfContentsProps, type TableProps, type TableSortCallback, Terminal, type TerminalCommandFn, type TerminalCommands, type TerminalHandler, type TerminalLine, type TerminalProps, Text, type TextAreaProps, TextWheel, type TextWheelHandler, type TextWheelProps, TextArea as Textarea, ThemeProvider, type ToastAction, ToastDefaultTitle, ToastPosition, type ToastProps, Toast as ToastProvider, ToastStyle, ToastType, ToolTip, type ToolTipController, type ToolTipProps, type TreeItemHandler, type TreeItemProps, type TreeNode, type TreeNodeIcons, TreeView, type TreeViewHandler, type TreeViewProps, type ValidationResult, type ValidationSchema, type Value, type ValueOf, Variant, type VirtualScrollOptions, type WithFormValidation, type ZuzCommonValues, type ZuzProps, type ZuzStyleString, VERSION as __ZUZJS_UI_VERSION, type animationProps, animationTransition, buildClassString, buildWithStyles, cleanProps, css, type cssShortKey, type cssShortKeys, type dynamic, getAnimationCurve, getAnimationTransition, getZuzMap, isKeyCombination, type parallaxEffectProps, setZuzMap, splitAtoms, useBase, useColorPicker, useContextMenu, useDialog, useDrawer, useFx, useContextMenu as useMenu, useMorph, usePosition, useSnack, useToast };
