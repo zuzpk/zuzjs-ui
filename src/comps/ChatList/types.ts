@@ -18,6 +18,8 @@ export type ChatDateLabelFormatter = (timeStamp: number, context: {
 export interface ChatListProps {
     messages: ChatMessage[];
     autoScroll?: boolean;
+    smoothScroll?: boolean;
+    bottomThreshold?: number;
     onScrollTop?: () => void;
     typing?: boolean | string;
     dateLabels?: ChatDateLabels;

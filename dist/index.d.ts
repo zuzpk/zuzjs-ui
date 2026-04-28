@@ -5,7 +5,7 @@ import { UseDragSpecFactory, UseDropSpecFactory, LineChartProps, DragType, Media
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import { dynamic as dynamic$1, PubSub } from '@zuzjs/core';
 
-declare const VERSION = "1.0.77";
+declare const VERSION = "1.0.78";
 
 declare const AVATAR: {
     readonly Circle: "CIRCLE";
@@ -885,6 +885,8 @@ type ChatDateLabelFormatter = (timeStamp: number, context: {
 interface ChatListProps {
     messages: ChatMessage[];
     autoScroll?: boolean;
+    smoothScroll?: boolean;
+    bottomThreshold?: number;
     onScrollTop?: () => void;
     typing?: boolean | string;
     dateLabels?: ChatDateLabels;
@@ -899,7 +901,7 @@ interface ChatListProps {
  * - Shows unread message count when scrolled up
  * - Memoizes child components for optimal rendering
  */
-declare const ChatList: react.MemoExoticComponent<({ messages, autoScroll, onScrollTop, typing, dateLabels, locale, formatDateLabel, }: ChatListProps) => react_jsx_runtime.JSX.Element>;
+declare const ChatList: react.MemoExoticComponent<({ messages, autoScroll, smoothScroll, bottomThreshold, onScrollTop, typing, dateLabels, locale, formatDateLabel, }: ChatListProps) => react_jsx_runtime.JSX.Element>;
 
 /**
  * Props for the CheckBox component.

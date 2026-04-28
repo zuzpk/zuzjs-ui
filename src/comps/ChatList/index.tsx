@@ -24,6 +24,8 @@ const DEFAULT_DATE_LABELS: Required<ChatDateLabels> = {
 const ChatList = memo(({
     messages,
     autoScroll = true,
+    smoothScroll = false,
+    bottomThreshold = 24,
     onScrollTop,
     typing,
     dateLabels,
@@ -32,8 +34,9 @@ const ChatList = memo(({
 }: ChatListProps) => {
     const shellRef = useRef<HTMLDivElement>(null);
     const listRef = useRef<HTMLUListElement | HTMLOListElement>(null);
-    const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const isUserScrollingRef = useRef(false);
+    const hasMountedRef = useRef(false);
+    const hasInitialAutoScrolledRef = useRef(false);
+    const isAtBottomRef = useRef(true);
     const requestedTopRef = useRef(false);
     
     const [unreadCount, setUnreadCount] = useState(0);
@@ -48,6 +51,23 @@ const ChatList = memo(({
     const getScrollElement = useCallback(() => {
         return shellRef.current?.querySelector(".--scroll-content") as HTMLDivElement | null;
     }, []);
+
+    const isAtBottom = useCallback((container: HTMLDivElement) => {
+        return container.scrollHeight - container.scrollTop - container.clientHeight < bottomThreshold;
+    }, [bottomThreshold]);
+
+    const scrollToBottom = useCallback((container: HTMLDivElement) => {
+        requestAnimationFrame(() => {
+            if (typeof container.scrollTo === "function") {
+                container.scrollTo({
+                    top: container.scrollHeight,
+                    behavior: smoothScroll ? "smooth" : "auto",
+                });
+            } else {
+                container.scrollTop = container.scrollHeight;
+            }
+        });
+    }, [smoothScroll]);
 
     const getDateMeta = useCallback((timeStamp?: number) => {
         const ts = timeStamp || Date.now();
@@ -120,53 +140,80 @@ const ChatList = memo(({
         ];
     }, [renderedMessages, typing]);
 
-    // Auto-scroll to bottom when new messages arrive (unless user scrolled up)
+    // Ensure first loaded messages still scroll to bottom even if the scroll node is mounted late.
+    useEffect(() => {
+        if (!autoScroll || hasInitialAutoScrolledRef.current || messages.length === 0) return;
+
+        let cancelled = false;
+
+        const ensureInitialScroll = () => {
+            if (cancelled) return;
+            const container = getScrollElement();
+            if (!container) {
+                requestAnimationFrame(ensureInitialScroll);
+                return;
+            }
+
+            scrollToBottom(container);
+            isAtBottomRef.current = true;
+            setUnreadCount(0);
+            setShouldShowUnread(false);
+            hasInitialAutoScrolledRef.current = true;
+        };
+
+        ensureInitialScroll();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [autoScroll, messages.length, getScrollElement, scrollToBottom]);
+
+    // Auto-scroll on new messages while pinned to bottom.
     useEffect(() => {
         const container = getScrollElement();
-        if (!container || !autoScroll) return;
+        if (!container) return;
 
-        // Check if new messages arrived
-        const newMessageCount = messages.length - lastMessageCountRef.current;
+        const previousCount = lastMessageCountRef.current;
+        const currentCount = messages.length;
+        const newMessageCount = currentCount - previousCount;
+        const pinnedToBottom = isAtBottomRef.current;
+
+        lastMessageCountRef.current = currentCount;
+
+        if (!hasMountedRef.current) {
+            hasMountedRef.current = true;
+            if (autoScroll) {
+                scrollToBottom(container);
+            }
+            return;
+        }
+
         if (newMessageCount > 0) {
-            lastMessageCountRef.current = messages.length;
-
-            // Auto-scroll only if user wasn't manually scrolling
-            if (!isUserScrollingRef.current) {
-                // Use requestAnimationFrame for smooth scrolling
-                requestAnimationFrame(() => {
-                    container.scrollTop = container.scrollHeight;
-                });
+            if (autoScroll && pinnedToBottom) {
+                scrollToBottom(container);
                 setUnreadCount(0);
                 setShouldShowUnread(false);
             } else {
-                // User is scrolled up, show unread count
                 setUnreadCount(prev => prev + newMessageCount);
                 setShouldShowUnread(true);
             }
         }
-    }, [messages, autoScroll, getScrollElement]);
+    }, [messages, autoScroll, getScrollElement, scrollToBottom]);
 
-    // Track manual scrolling
     const handleScroll = useCallback(() => {
         const container = getScrollElement();
         if (!container) return;
 
-        const isAtBottom = 
-            container.scrollHeight - container.scrollTop - container.clientHeight < 100;
-        
+        const bottom = isAtBottom(container);
         const isAtTop = container.scrollTop < 50;
 
-        // Update scrolling state
-        isUserScrollingRef.current = !isAtBottom;
-        setShouldShowUnread(prev => (prev === !isAtBottom ? prev : !isAtBottom));
+        isAtBottomRef.current = bottom;
+        setShouldShowUnread(!bottom);
 
-        // Reset unread when user scrolls to bottom
-        if (isAtBottom) {
+        if (bottom) {
             setUnreadCount(0);
-            setShouldShowUnread(false);
         }
 
-        // Call scroll top callback if user scrolls to top
         if (isAtTop) {
             if (!requestedTopRef.current) {
                 requestedTopRef.current = true;
@@ -175,44 +222,26 @@ const ChatList = memo(({
         } else {
             requestedTopRef.current = false;
         }
-
-        // Clear previous timeout
-        if (scrollTimeoutRef.current) {
-            clearTimeout(scrollTimeoutRef.current);
-        }
-
-        // Debounce scroll event handling
-        scrollTimeoutRef.current = setTimeout(() => {
-            isUserScrollingRef.current = false;
-        }, 500);
-    }, [onScrollTop, getScrollElement]);
+    }, [onScrollTop, getScrollElement, isAtBottom]);
 
     useEffect(() => {
         const container = getScrollElement();
         if (!container) return;
 
         container.addEventListener("scroll", handleScroll, { passive: true });
+        handleScroll();
         return () => container.removeEventListener("scroll", handleScroll);
     }, [handleScroll, getScrollElement]);
 
-    // Handle scroll to bottom when unread indicator is clicked
     const handleScrollToBottom = useCallback(() => {
         const container = getScrollElement();
         if (container) {
-            container.scrollTop = container.scrollHeight;
+            scrollToBottom(container);
+            isAtBottomRef.current = true;
             setUnreadCount(0);
             setShouldShowUnread(false);
         }
-    }, [getScrollElement]);
-
-    // Cleanup on unmount
-    useEffect(() => {
-        return () => {
-            if (scrollTimeoutRef.current) {
-                clearTimeout(scrollTimeoutRef.current);
-            }
-        };
-    }, []);
+    }, [getScrollElement, scrollToBottom]);
 
     return <Flex
         cols
@@ -231,8 +260,7 @@ const ChatList = memo(({
             />
         </ScrollView>
         
-        {/* Unread Messages Indicator */}
-        {shouldShowUnread && unreadCount > 0 && (
+        {shouldShowUnread && (
             <Flex
                 aic jcc
                 as={`abs bottom:0 left:0 right:0`}
@@ -249,7 +277,9 @@ const ChatList = memo(({
                         fontSize: '12px',
                     }}
                 >
-                    <Text>{unreadCount} new message{unreadCount !== 1 ? 's' : ''}</Text>
+                    <Text>{unreadCount > 0
+                        ? `${unreadCount} new message${unreadCount !== 1 ? 's' : ''}`
+                        : 'Go to bottom'}</Text>
                 </Button>
             </Flex>
         )}
@@ -260,6 +290,8 @@ const ChatList = memo(({
     return (
         prevProps.messages.length === nextProps.messages.length &&
         prevProps.autoScroll === nextProps.autoScroll &&
+        prevProps.smoothScroll === nextProps.smoothScroll &&
+        prevProps.bottomThreshold === nextProps.bottomThreshold &&
         prevProps.onScrollTop === nextProps.onScrollTop &&
         prevProps.typing === nextProps.typing &&
         prevProps.locale === nextProps.locale &&
