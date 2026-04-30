@@ -44,6 +44,7 @@ const ContextMenu = ({
         parent, 
         event,
         arrow,
+        width,
         when: isVisible,
         items: _items, header, footer, 
         origin :  preferredAnchor = ORIGIN.TopRight, 
@@ -124,6 +125,7 @@ const ContextMenu = ({
             visibility: isMeasured ? `visible` : `hidden`,
             // overflow: `hidden`,
             transformOrigin: calculatedAnchor,
+            width,
         }}
         {...rest as BoxProps}>
         {typeof header == `function` ? createElement(header) : header}

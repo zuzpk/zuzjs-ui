@@ -11,13 +11,15 @@ const useContextMenu = () => {
     const showContextMenu = (
         e: ReactMouseEvent<Element, MouseEvent> | TouchEvent, 
         items: ContextItem[],
-        origin?: ValueOf<typeof ORIGIN>
+        origin?: ValueOf<typeof ORIGIN>,
+        width?: number | string
     ) => {
         e.preventDefault();
         ctx.openMenu({ 
             event: e, 
             items,
-            origin
+            origin,
+            width
         });
     };
 
@@ -32,7 +34,8 @@ const useContextMenu = () => {
         arrow,
         duration,
         header,
-        footer
+        footer,
+        width
     } : {
         transition?: ValueOf<typeof TRANSITIONS>,
         curve?: ValueOf<typeof TRANSITION_CURVES>,
@@ -44,6 +47,7 @@ const useContextMenu = () => {
         origin?: ValueOf<typeof ORIGIN>,
         header?: ReactNode | FC,
         footer?: ReactNode | FC,
+        width?: number | string
     }) => {
         ctx.openMenu({ 
             fx: {
@@ -56,7 +60,8 @@ const useContextMenu = () => {
             origin: origin || ORIGIN.TopCenter,
             offsetX, offsetY, arrow,
             header,
-            footer
+            footer,
+            width
         });
     };
 

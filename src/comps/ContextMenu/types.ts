@@ -50,6 +50,8 @@ export type ContextMenuProps = BoxProps & {
     when?: boolean,
     /** Arrow */
     arrow?: boolean,
+    /** Width of the context menu */
+    width?: number | string,
     /** Callback invoked when the context menu is closed with its id */
     onClose?: (id: number) => void
 }

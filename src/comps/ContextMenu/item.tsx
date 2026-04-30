@@ -24,10 +24,10 @@ const MenuItem = (props: MenuItemProps) => {
             onClick={() => onSelect?.(itemConfig)}
             className={`--item ${className || ``}`.trim()}>
             <Box as={`--icon`}>
-                <Icon 
+                {`string` === typeof icon ? <Icon 
                     name={icon}
                     className={`--ico`}
-                    style={iconColor ? { color: iconColor } : {}} />
+                    style={iconColor ? { color: iconColor } : {}} /> : icon}
             </Box>
             <Text
                 className={`--lbl flex aic`}
