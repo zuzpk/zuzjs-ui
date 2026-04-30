@@ -4,13 +4,15 @@ import { BoxProps, ORIGIN, ValueOf } from "../../types";
 /**
  * Represents a single menu item in the context menu.
  */
-export interface ContextItem {
+    
+export type ContextItem = ContextItemConfig | ReactNode | FC;
+export interface ContextItemConfig {
     /** The display text for the menu item */
-    label: string;
+    label: string | ReactNode;
     /** Optional color for the label text */
     labelColor?: string;
     /** Optional icon identifier or class name */
-    icon?: string;
+    icon?: string | ReactNode;
     /** Optional color for the icon */
     iconColor?: string;
     /** Optional CSS class to apply to the menu item */
@@ -18,7 +20,7 @@ export interface ContextItem {
     /** Whether the menu item is enabled and selectable */
     enabled?: boolean;
     /** Callback function invoked when the menu item is selected */
-    onSelect?: (item: ContextItem) => void;
+    onSelect?: (item: ContextItemConfig) => void;
 }
 
 /**
@@ -56,11 +58,10 @@ export type ContextMenuProps = BoxProps & {
  * Props for individual MenuItem components.
  * Extends ContextItem with additional rendering properties.
  */
-export type MenuItemProps = ContextItem & {
+export type MenuItemProps = ContextItemConfig & {
     /** Index position of the menu item in the menu list */
     index: number;
-    /** CSS class name to apply to the menu item element */
-    className: string;
+
 }
 
 /**

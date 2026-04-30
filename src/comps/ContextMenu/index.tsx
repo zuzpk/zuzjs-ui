@@ -1,11 +1,15 @@
 import { useAnchorPosition } from "@zuzjs/hooks";
-import { createElement, Ref, useEffect, useMemo, useState } from "react";
+import { createElement, Fragment, Ref, useEffect, useMemo, useState } from "react";
 import { useFx } from "../../hooks";
 import useBase from "../../hooks/useBase";
 import { BoxProps, ORIGIN, TRANSITION_CURVES, TRANSITIONS } from "../../types";
 import Box from "../Box";
 import MenuItem from "./item";
-import { ContextItem, ContextMenuProps, MenuItemProps } from "./types";
+import { ContextItem, ContextItemConfig, ContextMenuProps } from "./types";
+
+const isContextItemConfig = (item: ContextItem): item is ContextItemConfig => {
+    return !!item && typeof item === `object` && `label` in item;
+};
 
 /**
  * ContextMenu component.
@@ -123,9 +127,20 @@ const ContextMenu = ({
         }}
         {...rest as BoxProps}>
         {typeof header == `function` ? createElement(header) : header}
-        {items.map((item, index) => <MenuItem
-            key={`context-${item.label.toLowerCase()}-${index}`}
-            {...{ ...item, index} as MenuItemProps } />)}
+        {items.map((item, index) => {
+            if (typeof item === `function`) {
+                return createElement(item, { key: `context-fn-${index}` });
+            }
+
+            if (isContextItemConfig(item)) {
+                return <MenuItem
+                    key={`context-${String(item.label).toLowerCase()}-${index}`}
+                    {...item}
+                    index={index} />;
+            }
+
+            return <Fragment key={`context-node-${index}`}>{item}</Fragment>;
+        })}
         {typeof footer == `function` ? createElement(footer) : footer}
     </Box>
 
