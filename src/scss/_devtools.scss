@@ -1,0 +1,159 @@
+.--devtools{
+    
+    --search-border: 0px;
+    --list-item-hover: var(--surface-hover);
+    --list-item-padding-sm: 4px;
+    --list-item-padding-md: 8px;
+    --list-item-radius-sm: 8px;
+    --list-item-radius-md: 12px;
+    --codeblock-border: 1px solid var(--border-primary);
+    --codeblock-radius: var(--radius-sm);
+
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    .--body {
+        padding: 0px !important;
+        .--devtools-box{
+            width: 30vw;
+
+            .--devtools-head{
+                border-bottom: 1px var(--border-primary) solid;
+                .--devtools-search{
+                    width: 100%;
+                }
+            }
+
+            .--devtools-content{
+                height: 60vh;
+                overflow: hidden;
+
+                &.--has-doc{
+                    .--devtools-panels{
+                        transform: translateX(-50%);
+                    }
+                }
+
+                .--devtools-panels{
+                    width: 200%;
+                    height: 100%;
+                    display: flex;
+                    transition: transform .28s ease;
+                }
+
+                .--devtools-panel{
+                    width: 50%;
+                    min-width: 50%;
+                    height: 100%;
+                }
+
+                .--devtools-doc-panel{
+                    border-left: 1px var(--border-primary) solid;
+                }
+
+                .--devtools-scroll{
+                    padding: 5px !important;
+                }
+
+                .--devtools-doc-scroll{
+                    padding: 10px !important;
+                }
+
+                .--devtools-item-section{
+                    opacity: 0.5;
+                    padding: var(--list-item-padding-sm);
+                    font-size: var(--text-sm);
+                    margin-bottom: 5px;
+                }
+
+                .--devtools-item{
+
+                    padding: var(--list-item-padding-sm);
+
+                    .--devtools-icon{
+                        svg{
+                            fill: var(--text-primary);
+                        }
+                    }
+
+                    .--devtools-label{
+                        color: var(--text-primary);
+                    }
+
+                    .--devtools-detail{
+                        color: var(--text-secondary);
+                        opacity: 0.8;
+                        font-size: var(--text-xs);
+                        line-height: 1.3;
+                    }
+
+                    cursor: pointer;
+
+                    &.--active{
+                        background: var(--surface-hover);
+                        border-radius: var(--list-item-radius-sm);
+                    }
+
+                    &.--devtools-item-passive{
+                        cursor: default;
+                    }
+
+                }
+
+                .--devtools-doc-head{
+                    margin-bottom: 6px;
+
+                    .--devtools-back{
+                        color: var(--text-secondary);
+                        font-size: var(--text-sm);
+                        cursor: pointer;
+                        width: fit-content;
+
+                        &:hover{
+                            color: var(--text-primary);
+                        }
+                    }
+
+                    .--devtools-doc-title{
+                        color: var(--text-primary);
+                        font-size: var(--text-lg);
+                        font-weight: 600;
+                    }
+
+                    .--devtools-doc-summary{
+                        color: var(--text-secondary);
+                        font-size: var(--text-sm);
+                        line-height: 1.45;
+                    }
+                }
+
+                .--devtools-doc-caption{
+                    color: var(--text-secondary);
+                    font-size: var(--text-sm);
+                    text-transform: uppercase;
+                    letter-spacing: 0.06em;
+                }
+
+                .--devtools-doc-example{
+                    margin-bottom: 12px;
+
+                    .--devtools-doc-code{
+                        color: var(--text-primary);
+                        background: var(--surface-hover);
+                        border: 1px var(--border-primary) solid;
+                        border-radius: var(--radius-sm);
+                        padding: 10px;
+                        font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+                        font-size: var(--text-xs);
+                        line-height: 1.4;
+                        word-break: break-word;
+                    }
+
+
+                }
+
+            }
+        }
+
+    }
+}

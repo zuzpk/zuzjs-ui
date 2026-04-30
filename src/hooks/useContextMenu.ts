@@ -1,5 +1,5 @@
 import { FC, MouseEvent as ReactMouseEvent, ReactNode, RefObject, useContext } from "react";
-import { ContextItem } from "../comps";
+import { ContextItem } from "../comps/ContextMenu/types";
 import { LayersContext } from "../comps/Layers";
 import { ORIGIN, TRANSITION_CURVES, TRANSITIONS, ValueOf } from "../types";
 

@@ -70,6 +70,8 @@ const Dialog = ({
         forceLoading,
         useForm,
         formProps,
+        noHead,
+        withClass = ``,
         onConfirm,
         onCancel,
         onClose,
@@ -166,7 +168,7 @@ const Dialog = ({
     const baseZIndex = useMemo(() => 10000 + (index * 10), [index]);
 
     const _dialog = <Box
-        as={`--dialog --${(type ?? DIALOG.Default).toLowerCase()} ${visible ? `--visible` : ``} ${className} fixed abc`.trim()}
+        as={`--dialog --${(type ?? DIALOG.Default).toLowerCase()} ${visible ? `--visible` : ``} ${className} ${withClass} fixed abc`.trim()}
         style={{
             ...dialogAnimation.style,
             zIndex: baseZIndex + 1,
@@ -181,11 +183,11 @@ const Dialog = ({
         ref={innerRef}>
             
 
-        <DialogHead
+        {!noHead && <DialogHead
             title={title} 
             description={_description}
             titlePosition={titleAlignment || themeDialog?.titleAlignment || `center`}
-            onClose={closeDialog} />
+            onClose={closeDialog} />}
 
         <DialogBody
             message={msg}

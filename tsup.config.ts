@@ -4,7 +4,8 @@ export default defineConfig({
   // 1. Entry points: index for the lib, bin for the CLI
   entry: {
     index: 'src/index.ts',
-    bin: 'src/bin.ts'
+    bin: 'src/bin.ts',
+    devtools: 'src/dev/index.tsx'
   },
   format: ['cjs', 'esm'],
   dts: true,

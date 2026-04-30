@@ -32,6 +32,11 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./devtools": {
+      "types": "./dist/devtools.d.ts",
+      "import": "./dist/devtools.js",
+      "require": "./dist/devtools.cjs"
+    },
     "./styles": "./dist/css/styles.css"
   },
   "files": [

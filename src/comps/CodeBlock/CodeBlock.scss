@@ -4,8 +4,10 @@ body{
     --codeblock-plain-color: var(--text-primary, "#fff");
 }
 
-[color-theme="dark"]{
-    --codeblock: #1e1e1e;
+[color-scheme="dark"]{
+    body {
+        --codeblock: #1e1e1e;
+    }
 }
 
 pre {
@@ -20,13 +22,15 @@ code {
   font-style: normal;
 }
 .--code-block {
-    background-color: var((--codeblock));
+    background-color: var(--codeblock);
     padding: 0.5rem;
     --line-num-width: 40px;
     white-space: pre;
     line-height: 1.6;
     tab-size: 4;
     color: #fff;
+    border: var(--codeblock-border);
+    border-radius: var(--codeblock-radius);
 
     .--copy-code{
         top: 10px;

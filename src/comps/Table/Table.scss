@@ -16,7 +16,7 @@ body{
     --table-head-arrow-color: #111;
     --table-col-padding: 10px;
     --table-col-selector-size: 40px;
-    --table-border: 1px #eee solid;
+    --table-border: 1px var(--border-primary) solid;
     --table-head-radius: var(--table-radius) var(--table-radius) 0px 0px;
     --table-footer-radius: 0px 0px var(--table-radius) var(--table-radius);
     --table-spinner-top: 100px;

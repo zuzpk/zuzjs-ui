@@ -5,7 +5,7 @@ import { UseDragSpecFactory, UseDropSpecFactory, LineChartProps, DragType, Media
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import { dynamic as dynamic$1, PubSub } from '@zuzjs/core';
 
-declare const VERSION = "1.0.78";
+declare const VERSION = "1.0.79";
 
 declare const AVATAR: {
     readonly Circle: "CIRCLE";
@@ -958,7 +958,7 @@ declare const CheckBox: {
 interface CodeBlockProps extends ZuzProps {
     ref?: Ref<HTMLPreElement>;
     code: string;
-    lang?: `plain` | 'typescript' | 'javascript' | 'tsx' | 'css' | 'json';
+    lang?: `plain` | 'typescript' | 'javascript' | 'jsx' | 'tsx' | 'css' | 'json';
     showLines?: boolean;
     highlight?: string;
     copy?: {
@@ -1472,25 +1472,45 @@ interface FormHandler {
 
 type DialogProps = ZuzProps & {
     id?: number;
+    /** The title of the dialog */
     title?: string | ReactNode;
+    /** The description of the dialog */
     description?: string | ReactNode;
+    /** The alignment of the title */
     titleAlignment?: `left` | `center` | `right`;
+    /** The message of the dialog */
     message?: string | ReactNode;
+    /** The content of the dialog */
     content?: string | ReactNode;
+    /** The width of the dialog */
     width?: number | string;
+    /** The transition of the dialog */
     transition?: ValueOf<typeof TRANSITIONS>;
+    /** The curve of the dialog */
     curve?: ValueOf<typeof TRANSITION_CURVES>;
+    /** The speed of the dialog */
     speed?: number;
+    /** The delay of the dialog */
     delay?: number;
+    /** The type of the dialog */
     type?: ValueOf<typeof DIALOG>;
+    /** The spinner of the dialog */
     spinner?: ValueOf<typeof SPINNER>;
+    /** The loading message of the dialog */
     loadingMessage?: string;
+    /** The actions of the dialog */
     action?: DialogActionHandler[];
+    /** The position of the actions */
     actionPosition?: ValueOf<typeof DIALOG_ACTION_POSITION>;
+    /** The variant of the dialog */
     variant?: ValueOf<typeof Variant>;
     /** WithForm */
     useForm?: boolean;
     formProps?: FormProps;
+    /** Additional CSS classes to apply to the dialog */
+    withClass?: string;
+    /** If true, the dialog will not render a header */
+    noHead?: boolean;
     onConfirm?: (data?: dynamic$1, validateResult?: ValidationResult) => void;
     onCancel?: () => void;
     onShow?: () => void;
