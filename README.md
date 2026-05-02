@@ -35,6 +35,75 @@ function App() {
 
 The auto CSS generator will handle the styling for you, ensuring a cohesive look and feel.
 
+## Animation Examples
+
+### 1) CSS Scroll Scenes (No TimelineProvider Required)
+
+Use `useScrollScenes` for scroll-driven animations that are generated as CSS keyframes.
+
+```tsx
+import { Flex, Text, useScrollScenes } from "@zuzjs/ui";
+
+export default function Landing() {
+    const scenes = useScrollScenes({
+        id: "landing",
+        tracks: {
+            heroHeadline: {
+                keyframes: [
+                    { at: 0, y: "0" },
+                    { at: 0.33, y: "-1lh" }
+                ],
+                easing: "var(--spring)"
+            }
+        },
+        scenes: {
+            hero3: { start: 0.62, inEnd: 0.69, outStart: 0.83, end: 0.90 },
+            hero4: { start: 0.83, inEnd: 0.90, outStart: 1, end: 1, outY: "0", outOpacity: 1 }
+        }
+    });
+
+    return (
+        <Flex cols className={scenes.scopeClass} style={{ height: "600vh" }}>
+            <Flex as="sticky top:0 h:100vh" className={scenes.className("hero3")}>
+                <Text className={scenes.className("heroHeadline")}>Animated with CSS scene track</Text>
+            </Flex>
+            <Flex as="sticky top:0 h:100vh" className={scenes.className("hero4")}>
+                <Text>Second scene</Text>
+            </Flex>
+        </Flex>
+    );
+}
+```
+
+Notes:
+- `TimelineProvider` is not required when a page uses only `useScrollScenes` classes.
+- For build-time CSS extraction into `src/app/css/zuz.scss`, pass a literal object config to `useScrollScenes(...)`.
+
+### 2) TimelineProvider + `timeline` Prop (Existing Engine)
+
+Use this mode when you want layer-based timeline bindings and anchor syntax.
+
+```tsx
+import { Box, TimelineProvider } from "@zuzjs/ui";
+
+export default function Hero() {
+    return (
+        <TimelineProvider timeline={{ mode: "timeline", interpolate: true, lerpFactor: 0.08 }}>
+            <Box timelineRoot as="h:300vh">
+                <Box
+                    timeline={{
+                        id: "hero",
+                        keyframes: [{ start: 0, end: 0.33, y: [0, "-1lh", "$spring"] }]
+                    }}
+                >
+                    Timeline layer animation
+                </Box>
+            </Box>
+        </TimelineProvider>
+    );
+}
+```
+
 ## Documentation
 
 Documention in progress.

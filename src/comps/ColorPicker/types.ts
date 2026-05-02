@@ -12,6 +12,7 @@ export type ColorPickerProps = Omit<InputProps, 'onChange'> & {
     colorValue?: string;
     alpha?: boolean;
     format?: 'hex' | 'rgb';
-    onColorChange?: (color: ColorValue) => void;
     kind?: 'square' | 'expanded';
+    size?: number;
+    onColorChange?: (color: ColorValue) => void;
 };

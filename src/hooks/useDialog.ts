@@ -16,7 +16,7 @@ const useDialog = () => {
 
     const setLoading = (id: number, mode: boolean) => ctx.loading(id, mode)
 
-    const show = (pops : Omit<DialogProps, `id` | `onShow` | `onHide`>) : DialogController => {
+    const show = (pops : Omit<DialogProps, `id`>) : DialogController => {
         const id = ctx.add({ 
             type: `dialog`,
             props: { ...pops, type: DIALOG.Dialog }

@@ -310,6 +310,8 @@ export const cssProps : dynamic = {
     "brightness" : "filter: brightness(__VALUE__);",
     "ratio" : "aspect-ratio: __VALUE__;",
     "extend": "@extend __VALUE__;",
+    "keyframes": "animation: __NAME__ __DURATION__ __CURVE__ __ITERATIONS__;",
+    "play": "animation: __NAME__ __DURATION__ __CURVE__ __ITERATIONS__;",
 }
 
 export const cssDirect : dynamic = {

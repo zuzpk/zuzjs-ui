@@ -12,8 +12,10 @@ body {
 }
 
 .--color-picker {
+
     background: var(--colorpicker);
     gap: 10px;
+    overflow: hidden;
 
     .--input {
         background: transparent !important;
@@ -37,7 +39,6 @@ body {
         cursor: pointer;
         aspect-ratio: 1/1;
         .--cp-swatch {
-            border-radius: var(--radius-sm);
             width: 100% !important;
             height: 100% !important;
         }
@@ -52,6 +53,7 @@ body {
             .--cp-swatch {
                 width:  var(--colorpicker-swatch-#{$size});
                 height: var(--colorpicker-swatch-#{$size});
+                border-radius: var(--colorpicker-swatch-radius-#{$size}, var(--radius-sm));
             }
         }
     }

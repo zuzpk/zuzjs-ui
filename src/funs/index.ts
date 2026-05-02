@@ -1,6 +1,7 @@
 import { cssProps } from "../builder/stylesheet";
 import { dynamic, Skeleton, type ZuzStyleString } from "../types";
 import pkgJson from "../../package.json"
+export * from "./scroll-scenes";
 
 export const PACKAGE_NAME = pkgJson.name
 

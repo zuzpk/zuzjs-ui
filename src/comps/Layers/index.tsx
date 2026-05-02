@@ -39,6 +39,10 @@ const LayersRenderer = ({
 
     useImperativeHandle(ref, () => ({
         add(layer: Omit<LayerItem, 'id'>) {
+            // Opening a new foreground layer should dismiss any active menu.
+            if (activeMenu && layer.type !== `toast`) {
+                closeMenu();
+            }
             const layerId = nextId();
             const fullLayer: LayerItem = { id: layerId, ...layer };
             setLayers(prev => [ ...prev, fullLayer ]);

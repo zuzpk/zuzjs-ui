@@ -1,8 +1,10 @@
-import { UseDragSpecFactory, UseDropSpecFactory } from "@zuzjs/hooks";
+import { TimelineLayer, UseDragSpecFactory, UseDropSpecFactory } from "@zuzjs/hooks";
 import { Ref } from "react";
 import { ZuzStyleString } from "./css";
 import { SKELETON, TRANSITION_CURVES, TRANSITIONS } from "./enums";
 import { dynamic, Props, ValueOf, WithFormValidation } from "./shared";
+
+export type ZuzTimelineProp = TimelineLayer | string;
 
 export interface ZuzProps {
 
@@ -36,6 +38,27 @@ export interface ZuzProps {
     busy?: boolean;
 
     stripes?: `background` | `overlay`;
+
+    /**
+     * Timeline binding for this element.
+     *
+     * Pass a full layer object to register a new layer:
+     * ```tsx
+     * <Box timeline={{ id: "hero", entry: { y: [80, 0, "$spring"] } }}>…</Box>
+     * ```
+     *
+     * Pass a string id to reuse effects from an already-registered layer:
+     * ```tsx
+     * <Text timeline="hero">Repeated animated text</Text>
+     * ```
+     */
+    timeline?: ZuzTimelineProp;
+
+    /**
+     * Marks this element as the timeline measurement root for the nearest `TimelineProvider`.
+     * Use this when your app scrolls inside an inner container (e.g. custom `ScrollView`).
+     */
+    timelineRoot?: boolean;
 
 }
 

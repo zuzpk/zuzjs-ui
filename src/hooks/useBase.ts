@@ -1,5 +1,6 @@
 import { useDrag, useDrop } from "@zuzjs/hooks"
-import { ComponentPropsWithRef, CSSProperties, JSX, Ref, RefObject } from "react"
+import { ComponentPropsWithRef, CSSProperties, JSX, Ref, RefObject, useContext, useLayoutEffect } from "react"
+import { TimelineContext } from "../comps/Timeline"
 import { cleanProps } from "../funs"
 import { buildClassString } from "../funs/css"
 import { dynamic, Props, ZuzProps } from "../types"
@@ -43,9 +44,31 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
         dragOptions,
         droppable,
         dropOptions,
+        timeline,
+        timelineRoot,
         style: incomingStyle,
         ...rest
     } = props || {}
+
+    const timelineLayer = timeline && typeof timeline !== "string" ? timeline : undefined;
+    const timelineLayerId = typeof timeline === "string" ? timeline : timeline?.id;
+
+    // Register/unregister this element as a timeline layer in the nearest provider
+    const timelineCtx = useContext(TimelineContext);
+    const registerLayer = timelineCtx?.registerLayer;
+    const unregisterLayer = timelineCtx?.unregisterLayer;
+    const timelineSignature = timelineLayer ? JSON.stringify(timelineLayer) : ``;
+
+    useLayoutEffect(() => {
+        if (!timelineLayer || !registerLayer || !unregisterLayer) return;
+        registerLayer(timelineLayer);
+        return () => unregisterLayer(timelineLayer.id);
+    }, [registerLayer, timelineLayer, timelineSignature, unregisterLayer]);
+
+    // Resolved timeline effects for this layer (empty when no provider or no id match)
+    const timelineStyle: CSSProperties = (timelineLayerId && timelineCtx?.effects?.[timelineLayerId] && !timelineCtx?.waapi?.enabled)
+        ? timelineCtx.effects[timelineLayerId] as CSSProperties
+        : {};
 
     const [dragCollected, dragRef] = useDrag(() => {
         if (!draggable || !dragOptions) {
@@ -80,11 +103,14 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
     const { style: _dropStyle, className: _dropClassName, ...dropRest } = (dropCollected as dynamic) || {};
 
     const incomingRef = (rest as ComponentPropsWithRef<T>).ref as Ref<HTMLElement> | undefined;
-    const shouldInjectComposedRef = Boolean(draggable || droppable || incomingRef);
+    const shouldInjectComposedRef = Boolean(draggable || droppable || incomingRef || timelineRoot);
 
     const composedRef: Ref<HTMLElement> = (node) => {
         setRef(incomingRef, node as HTMLElement);
         setRef(ref as Ref<HTMLElement> | undefined, node as HTMLElement);
+        if (timelineRoot && timelineCtx?.containerRef) {
+            timelineCtx.containerRef.current = node as HTMLDivElement | null;
+        }
         if (draggable) dragRef(node as HTMLElement | null);
         if (droppable) dropRef(node as HTMLElement | null);
     };
@@ -132,7 +158,8 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
             ...incomingStyle,
             ...transitionStyle,
             ...dragStyle,
-            ...dropStyle
+            ...dropStyle,
+            ...timelineStyle,
         },
         className: [
             zuzClasses, 
@@ -151,6 +178,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
                 rest as Omit<ZuzProps, keyof ZuzProps>,
                 propsToRemove ? [...propsToRemove, `skeleton`] : [`skeleton`]
             ),
+            ...(timelineLayerId ? { "data-zuz-timeline-layer": timelineLayerId } : {}),
             ...(shouldInjectComposedRef ? { ref: composedRef } : {}),
         } as ComponentPropsWithRef<T>
     }

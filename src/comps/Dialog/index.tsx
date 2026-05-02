@@ -122,6 +122,8 @@ const Dialog = ({
     const closeDialog = () => {
         setVisible(false)
         onClose(id!)
+        onCancel?.()
+        onHide?.()
     }
 
 
@@ -143,7 +145,9 @@ const Dialog = ({
         setDescription(description);
         setVisible(true);
 
-        setTimeout(() => onShow ? onShow() : () => {}, 500)
+        setTimeout(() => {
+            onShow?.()
+        }, 500)
     }, [])
 
     useEffect(() => {

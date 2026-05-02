@@ -280,7 +280,10 @@ const ColorPicker = forwardRef<HTMLInputElement, ColorPickerProps>((props, _ref)
             <Box
                 as={`--color-picker --color-picker-square --${variant || themeVariant || Variant.Small} ${className}`}
                 onClick={() => setChoosing(prev => !prev)}
-                style={style}>
+                style={{ 
+                    ...style,
+                    ...(size ? { width: size, height: size } : {})
+                }}>
                 <Box
                     as={`--cp-swatch`}
                     style={{ backgroundColor: displayColor }}

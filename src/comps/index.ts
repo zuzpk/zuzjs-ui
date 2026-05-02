@@ -598,6 +598,17 @@ export type { TextAreaProps } from './TextArea/types';
 export { default as TextWheel } from './TextWheel';
 export * from './TextWheel/types';
 
+/**
+ * Context-based timeline orchestration wrapper.
+ * @example
+ * ```tsx
+ * <TimelineProvider timeline={{ mode: "scroll", layers: [...] }}>
+ *   {children}
+ * </TimelineProvider>
+ * ```
+ */
+export { TimelineProvider, useTimelineContext } from './Timeline';
+export type { TimelineProviderProps } from './Timeline';
 
 /**
  * Toast notifications provider.

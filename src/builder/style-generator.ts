@@ -42,6 +42,7 @@ class StyleGenerator {
     // Stores the hashes we've already created (Key: RuleKey, Value: Hash)
     // RuleKey is "prop-value-pseudo-media"
     private ruleTracker: Map<string, string> = new Map();
+    private rawRuleMap: Map<string, Set<string>> = new Map();
     private dollorToVarRegexp = /\$([a-zA-Z0-9_-]+)/g
 
     constructor() {
@@ -306,6 +307,15 @@ class StyleGenerator {
                 .replace("__CURVE__", curve?.startsWith(`$`) ? curve.replace(this.dollorToVarRegexp, 'var(--$1)') : this.animationCurves[curve] || "ease-in-out")
                 .replace("__DELAY__", this.processValue("transitionDelay", delay || "0s"));
         } 
+
+        if (prop === "keyframes" || prop === "play") {
+            const [name, duration, curve, iteration] = parts;
+            result = result
+                .replace("__NAME__", this.processValue("animationName", name || ""))
+                .replace("__DURATION__", this.processValue("animationDuration", duration || "0s"))
+                .replace("__CURVE__", curve?.startsWith(`$`) ? curve.replace(this.dollorToVarRegexp, 'var(--$1)') : this.animationCurves[curve] || "linear")
+                .replace("__ITERATIONS__", this.processValue("animationIterationCount", iteration || "0s"));
+        } 
         
         else if (prop === "rotate3d") {
             const [x, y, z, a] = parts;
@@ -544,6 +554,18 @@ class StyleGenerator {
         // We don't delete from this.cache immediately (to avoid re-generating common utilities)
         // But we reset what the file is "claiming" as its styles
         this.fileMap.delete(filePath);
+        this.rawRuleMap.delete(filePath);
+    }
+
+    public registerRawRule(filePath: string, cssRule: string) {
+        const rule = (cssRule || "").trim();
+        if (!rule) return;
+
+        if (!this.rawRuleMap.has(filePath)) {
+            this.rawRuleMap.set(filePath, new Set());
+        }
+
+        this.rawRuleMap.get(filePath)!.add(rule);
     }
 
     public writeToDisk(outPath: string) {
@@ -562,8 +584,13 @@ class StyleGenerator {
             }
         });
 
+        const rawRules: string[] = [];
+        this.rawRuleMap.forEach((rules) => {
+            rules.forEach((rule) => rawRules.push(rule));
+        });
+
         // 3. Write to file
-        const output = `/* Zuz Generated CSS */\n\n${activeRules.join("\n")}`;
+        const output = `/* Zuz Generated CSS */\n\n${activeRules.join("\n")}\n\n${rawRules.join("\n\n")}`;
         if ( !fs.existsSync(dirname(outPath)) ){
             fs.mkdirSync((dirname(outPath)))
         }

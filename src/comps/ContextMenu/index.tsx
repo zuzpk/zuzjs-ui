@@ -53,7 +53,7 @@ const ContextMenu = ({
     
     const [visible, setVisible] = useState(false);
     const [ items, setItems ] = useState<ContextItem[]>(_items || [])
-    const { position, targetRef, calculatedAnchor } = useAnchorPosition(
+    const { position, targetRef, calculatedAnchor, isPositioned } = useAnchorPosition(
         parent?.current!, 
         event as any, 
         { offsetX, offsetY, preferredAnchor }
@@ -83,15 +83,13 @@ const ContextMenu = ({
         return '--arrow-center';
     }, [anchorStr]);
 
-    const isMeasured = position.top !== 0 || position.left !== 0;
-
     useEffect(() => {
-        if (isVisible && isMeasured) {
+        if (isVisible && isPositioned) {
             setVisible(true);
         } else if (!isVisible) {
             setVisible(false);
         }
-    }, [isVisible, isMeasured]);
+    }, [isVisible, isPositioned]);
 
     const {
         className,
@@ -109,7 +107,7 @@ const ContextMenu = ({
         }),
         curve: fx?.curve ?? TRANSITION_CURVES.EaseInOut,
         duration: fx?.duration ?? 0.05,
-        when: visible && isMeasured
+        when: visible && isPositioned
     })
 
     
@@ -122,7 +120,7 @@ const ContextMenu = ({
             ...contextAnimation.style,
             top: position.top,
             left: position.left,
-            visibility: isMeasured ? `visible` : `hidden`,
+            visibility: isPositioned ? `visible` : `hidden`,
             // overflow: `hidden`,
             transformOrigin: calculatedAnchor,
             width,

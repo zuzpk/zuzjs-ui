@@ -5,6 +5,7 @@ import {
     ScriptKind,
     SyntaxKind,
 } from "ts-morph";
+import { buildScrollScenesModel, ScrollScenesConfig } from "../funs/scroll-scenes";
 import { splitAtoms } from "../funs";
 import styleGenerator from "./style-generator";
 
@@ -14,6 +15,62 @@ class Builder {
     stylesToGenerate: Set<string>;
     private manifest: Record<string, string> = {};
     private readonly supportedExtensions = ['.tsx', '.jsx', '.mdx', '.md'];
+
+    private readLiteralNode(node: any): any {
+        if (!node) return undefined;
+
+        if (
+            node.asKind(SyntaxKind.StringLiteral) ||
+            node.asKind(SyntaxKind.NoSubstitutionTemplateLiteral)
+        ) {
+            return node.getLiteralValue();
+        }
+
+        if (node.asKind(SyntaxKind.NumericLiteral)) {
+            return Number(node.getText());
+        }
+
+        if (node.getKind() === SyntaxKind.TrueKeyword) return true;
+        if (node.getKind() === SyntaxKind.FalseKeyword) return false;
+
+        if (node.asKind(SyntaxKind.ArrayLiteralExpression)) {
+            return node.getElements().map((el: any) => this.readLiteralNode(el));
+        }
+
+        if (node.asKind(SyntaxKind.ObjectLiteralExpression)) {
+            const out: Record<string, any> = {};
+            node.getProperties().forEach((prop: any) => {
+                if (prop.asKind(SyntaxKind.PropertyAssignment)) {
+                    const nameNode = prop.getNameNode();
+                    const key = nameNode?.getText().replace(/^['"]|['"]$/g, "");
+                    if (!key) return;
+                    out[key] = this.readLiteralNode(prop.getInitializer());
+                }
+            });
+            return out;
+        }
+
+        return undefined;
+    }
+
+    private extractScrollScenes(sourceFile: any, filePath: string) {
+        const calls = sourceFile.getDescendantsOfKind(SyntaxKind.CallExpression)
+            .filter((call: any) => call.getExpression().getText() === "useScrollScenes");
+
+        calls.forEach((call: any) => {
+            const firstArg = call.getArguments()[0];
+            const config = this.readLiteralNode(firstArg) as ScrollScenesConfig | undefined;
+
+            if (!config || !config.id || !config.scenes || typeof config.scenes !== "object") {
+                return;
+            }
+
+            const model = buildScrollScenesModel(config);
+            if (model.cssText.trim()) {
+                styleGenerator.registerRawRule(filePath, model.cssText);
+            }
+        });
+    }
 
     constructor(){
         
@@ -125,6 +182,9 @@ class Builder {
                 this.extractStyles(args[0]);
             }
         });
+
+        // --- Handle useScrollScenes({...}) CSS generation ---
+        this.extractScrollScenes(sourceFile, filePath);
 
         // 2. Generate hashes for everything found (from both as and css)
         this.stylesToGenerate.forEach(rawStyle => {

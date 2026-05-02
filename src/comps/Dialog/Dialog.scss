@@ -45,13 +45,20 @@ body{
     z-index: var(--max-z-index);
     min-width: var(--dialog-min-width) !important;
     pointer-events: auto !important;
+
+    background: var(--dialog-bg);
+    border-radius: var(--dialog-radius);
+    box-shadow: var(--dialog-shadow);
+    transform-origin: center !important;
+
+    border: var(--dialog-border);
     
-    &.--dialog{
-        background: var(--dialog-bg);
-        border-radius: var(--dialog-radius);
-        box-shadow: var(--dialog-shadow);
-        transform-origin: center !important;
-    }
+    // &.--dialog{
+    //     background: var(--dialog-bg);
+    //     border-radius: var(--dialog-radius);
+    //     box-shadow: var(--dialog-shadow);
+    //     transform-origin: center !important;
+    // }
 
     .--cover{
         border-radius: var(--dialog-radius);
@@ -62,7 +69,10 @@ body{
     }
 
     .--head{
+        
         padding: var(--dialog-head-padding-custom, var(--dialog-head-padding));
+        border: var(--dialog-head-border);
+
         .--title{
             flex: 1;
             font-size: var(--dialog-title-size, var(--dialog-title-font-size));
@@ -122,6 +132,7 @@ body{
         background: var(--dialog-footer);
         border-radius: 0px 0px var(--dialog-radius) var(--dialog-radius);
         gap: var(--dialog-footer-gap, 10px);
+        border: var(--dialog-footer-border);
         .--action{
             border-radius: var(--dialog-action-radius);
             padding: var(--dialog-action-padding);

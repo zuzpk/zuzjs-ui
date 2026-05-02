@@ -387,7 +387,11 @@ const Select = (({
         </Box> : <Button
             disabled={disabled}
             variant={variant || themeVariant}
-            data-value={currentOption?.value ?? `-1`}
+            data-value={
+                (tokenizer || multiple) && Array.isArray(value) && value.length > 0
+                    ? value.map(v => v.value).join(",")
+                    : (currentOption?.value ?? `-1`)
+            }
             className={`--select-display --selected --select-anchor flex aic rel ${className}`.trim()}
             withLabel={false}
             style={style}
@@ -431,7 +435,7 @@ const Select = (({
         updateManualInput, handleEditableKeyDown, editablePlaceholder, label, arrowDownIcon, arrowUpIcon,
         choosing, tokenizer, value, wrapTokens, options, crossIcon, removeToken])
 
-    const { root, canUseDocument, floatingRef, floatingStyle } = useAnchor(trigger, '--select-anchor', {
+    const { root, canUseDocument, floatingRef, floatingStyle, isPositioned } = useAnchor(trigger, '--select-anchor', {
         open: choosing,
         autoFlip: true,
         preferredPlacement: 'bottom',
@@ -445,6 +449,8 @@ const Select = (({
         onWheel={handleListWheel}
         style={{
             ...floatingStyle,
+            visibility: choosing && isPositioned ? "visible" : "hidden",
+            pointerEvents: choosing && isPositioned ? "auto" : "none",
             minWidth: optionsMinWidth ? `${optionsMinWidth}px` : "anchor-size(width)",
             maxHeight: maxHeight || `auto`
         }}
@@ -455,7 +461,7 @@ const Select = (({
         fx={{
             from: { y: 5, opacity: 0 },
             to: { y: 0, opacity: 1 },
-            when: choosing,
+            when: choosing && isPositioned,
             duration: .05
         }}>
         { withSearch && <Box as={`--select-search --no-shrink flex --sticky`}><Search
