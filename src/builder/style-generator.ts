@@ -178,7 +178,9 @@ class StyleGenerator {
 
     private pushToken(tokens: UtilityToken[], raw: string, ctx: any) {
 
-        const trimmedRaw = raw.trim();
+        let trimmedRaw = raw.trim();
+        const isImportant = trimmedRaw.endsWith('!');
+        trimmedRaw = isImportant ? trimmedRaw.slice(0, -1) : trimmedRaw;
 
         // Special Case: if we are inside an nth-child context, the 'raw' is the argument (e.g., "3" or "2n+1")
         if (ctx.pseudo === 'nth-child' && !trimmedRaw.includes(':')) {
@@ -204,7 +206,7 @@ class StyleGenerator {
         // 2. if it's a known Direct Shortcut (flex, grid, jcc)
         else if (this.directMap[trimmedRaw]) {
             tokens.push({
-                prop: trimmedRaw,
+                prop: trimmedRaw + (isImportant ? '!' : ''), // Preserve important flag for shortcuts
                 value: undefined, // Directs often don't have a value
                 isCustom: false, // This is a Zuz utility!
                 ...ctx
@@ -224,7 +226,9 @@ class StyleGenerator {
 
         const { prop, value, pseudo, media, selector, isCustom } = token;
 
-        
+        const isImportant = prop.endsWith('!');
+        const cleanProp = isImportant ? prop.slice(0, -1) : prop;
+
         if ( isCustom ){
             return prop
         }
@@ -234,8 +238,11 @@ class StyleGenerator {
         // 1. If it has a value AND is in propMap, it's a Property (e.g., flex:1)
         // 2. If it has NO value AND is in directMap, it's a Shortcut (e.g., flex)
 
-        if (!value && this.directMap[prop]) {
-            cssRuleBody = this.directMap[prop]
+        if (!value && this.directMap[cleanProp]) {
+            cssRuleBody = this.directMap[cleanProp] 
+            if ( isImportant ){
+                cssRuleBody = ( cssRuleBody.endsWith(`;`) ? cssRuleBody.slice(0, -1) : cssRuleBody ) + ' !important;';
+            }
             // console.log(`--ppd`, prop, value)
         } 
         else {
