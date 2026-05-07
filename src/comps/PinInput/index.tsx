@@ -1,5 +1,5 @@
 "use client"
-import { ChangeEventHandler, forwardRef, useEffect, useRef } from 'react';
+import { ChangeEventHandler, ClipboardEventHandler, forwardRef, useEffect, useRef } from 'react';
 import { useBase } from '../../hooks';
 import { useTheme } from '../../hooks/useColorScheme';
 import { Variant } from '../../types';
@@ -36,6 +36,8 @@ const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
 
     const { size, length, mask, ...pops } = props
     const inputs = useRef<(HTMLInputElement | null)[]>([])
+    const externalOnChange = pops.onChange
+    const externalOnPaste = pops.onPaste
     
     let name = `pinput`
     let required = false
@@ -55,6 +57,12 @@ const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
         required = true
         delete pops.required
     }
+    if ( `onChange` in pops ){
+        delete pops.onChange
+    }
+    if ( `onPaste` in pops ){
+        delete pops.onPaste
+    }
 
     const {
         style
@@ -70,6 +78,41 @@ const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
         else if (input.value.length === 0 && prevInput) {
             prevInput.focus();
         }
+
+        externalOnChange?.(event)
+    }
+
+    const handlePaste: ClipboardEventHandler<HTMLInputElement> = (event) => {
+        event.preventDefault()
+
+        const startIndex = parseInt(event.currentTarget.dataset.index || '0')
+        const pasted = event.clipboardData.getData('text').replace(/\D/g, '')
+        const values = pasted.split('')
+
+        if (!values.length) {
+            externalOnPaste?.(event)
+            return
+        }
+
+        let lastFilledIndex = startIndex
+
+        for (let offset = 0; offset < values.length; offset++) {
+            const currentIndex = startIndex + offset
+            const input = inputs.current[currentIndex]
+
+            if (!input) {
+                break
+            }
+
+            input.value = values[offset]
+            lastFilledIndex = currentIndex
+        }
+
+        const firstEmptyIndex = inputs.current.findIndex((input, index) => index >= startIndex && input && !input.value)
+        const focusIndex = firstEmptyIndex >= 0 ? firstEmptyIndex : lastFilledIndex
+        inputs.current[focusIndex]?.focus()
+
+        externalOnPaste?.(event)
     }
 
     const { variant: themeVariant } = useTheme(true)!
@@ -94,6 +137,7 @@ const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
             }}
             numeric={true}
             onChange={handleInput}
+            onPaste={handlePaste}
             maxLength={1}
             placeholder={mask ? `·` : `0`}
             type={mask ? `password` : 'text'}

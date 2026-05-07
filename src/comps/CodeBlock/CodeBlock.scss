@@ -28,7 +28,7 @@ code {
     white-space: pre;
     line-height: 1.6;
     tab-size: 4;
-    color: #fff;
+    color: var(--codeblock-plain-color);
     border: var(--codeblock-border);
     border-radius: var(--codeblock-radius);
 
@@ -92,14 +92,14 @@ code {
 .--token-key     { color: var(--pink-300); font-weight: 600; }  /* Keywords */
 .--token-tag     { color: var(--green-300); font-weight: 500; }  /* <Component /> */
 .--token-var     { color: #db9aff; }
-.--token-str     { color: var(--blue-200); }                 /* Strings */
+.--token-str     { color: var(--blue-400); }                 /* Strings */
 .--token-comm    { color: var(--gray-500); font-style: italic; } /* Comments */
 .--token-fn      { color: var(--blue-600); font-style: italic; } /* Functions */
 .--token-prop    { color: var(--orange-500); }                /* Properties */
 .--token-num     { color: var(--purple-500); }                /* Numbers */
-.--token-paren   { color: var(--yellow-400); font-weight: bold; }   /* ( ) */
-.--token-curly   { color: var(--orange-400); font-weight: bold; }   /* { } */
-.--token-square  { color: var(--green-400); font-weight: bold; }    /* [ ] */
+.--token-paren   { color: var(--green-500); font-weight: bold; }   /* ( ) */
+.--token-curly   { color: var(--orange-500); font-weight: bold; }   /* { } */
+.--token-square  { color: var(--green-500); font-weight: bold; }    /* [ ] */
 
 /* Custom Scrollbar for the code */
 .--code-block::-webkit-scrollbar {
