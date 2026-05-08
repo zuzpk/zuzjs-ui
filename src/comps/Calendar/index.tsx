@@ -1,13 +1,14 @@
-import { addDays, addHours, addWeeks, eachDayOfInterval, endOfMonth, endOfWeek, format, isAfter, isBefore, isSameDay, isSameMonth, isToday, isWithinInterval, startOfDay, startOfMonth, startOfWeek } from "date-fns";
+import { addDays, addHours, addWeeks, eachDayOfInterval, endOfMonth, endOfWeek, format, isAfter, isBefore, isSameDay, isSameMonth, isToday, isValid, isWithinInterval, parse, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import { forwardRef, useEffect, useMemo, useState } from "react";
 import { useBase } from "../../hooks";
 import { useTheme } from "../../hooks/useColorScheme";
 import { Variant } from "../../types";
 import Box from "../Box";
 import Button from "../Button";
+import Flex from "../Flex";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
-import { CalendarProps, CalendarRangeValue } from "./types";
+import { CalendarDisabledDateInput, CalendarProps, CalendarQuickOptionInput, CalendarQuickOptionLabel, CalendarRangeValue } from "./types";
 
 const _quickDateOptions = [
     { 
@@ -74,6 +75,68 @@ const dedupeByDate = <T extends QuickOption>(options: readonly T[]): T[] => {
   });
 }
 
+const normalizeDisabledDateInput = (input: CalendarDisabledDateInput): Date | null => {
+        if (input instanceof Date) {
+            return isValid(input) ? input : null;
+        }
+
+        const nativeDate = new Date(input);
+        if (isValid(nativeDate)) return nativeDate;
+
+        const fallbackFormats = [
+            "yyyy-MM-dd",
+            "MM-dd-yyyy",
+            "MM/dd/yyyy",
+            "dd-MM-yyyy",
+            "dd/MM/yyyy",
+        ];
+
+        for (const dateFormat of fallbackFormats) {
+            const parsedDate = parse(input, dateFormat, new Date());
+            if (isValid(parsedDate)) return parsedDate;
+        }
+
+        return null;
+}
+
+const quickOptionLabelSet = new Set<CalendarQuickOptionLabel>(_quickDateOptions.map((option) => option.label as CalendarQuickOptionLabel));
+
+const normalizeQuickOptionFilters = (
+    input: boolean | CalendarQuickOptionInput | CalendarQuickOptionInput[] | undefined,
+) => {
+    if (input === true) return true;
+    if (!input) return null;
+
+    const hiddenLabels = new Set<string>();
+    const hiddenDates = new Set<string>();
+    const values = Array.isArray(input) ? input : [input];
+
+    values.forEach((value) => {
+        if (value instanceof Date) {
+            const normalizedDate = normalizeDisabledDateInput(value);
+            if (normalizedDate) {
+                hiddenDates.add(startOfDay(normalizedDate).toISOString().split("T")[0]);
+            }
+            return;
+        }
+
+        const normalizedText = String(value).trim();
+        if (!normalizedText) return;
+
+        if (quickOptionLabelSet.has(normalizedText as CalendarQuickOptionLabel)) {
+            hiddenLabels.add(normalizedText.toLowerCase());
+            return;
+        }
+
+        const normalizedDate = normalizeDisabledDateInput(normalizedText);
+        if (normalizedDate) {
+            hiddenDates.add(startOfDay(normalizedDate).toISOString().split("T")[0]);
+        }
+    });
+
+    return { hiddenLabels, hiddenDates };
+}
+
 /**
  * Calendar component.
  *
@@ -100,6 +163,8 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
         defaultValue,
         minDate,
         maxDate,
+        disabledDates,
+        disableQuickOptions,
         range,
         rangeValue,
         defaultRangeValue,
@@ -135,6 +200,24 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
 
     const minDateDay = useMemo(() => (minDate ? startOfDay(minDate) : null), [minDate]);
     const maxDateDay = useMemo(() => (maxDate ? startOfDay(maxDate) : null), [maxDate]);
+    const disabledDateSet = useMemo(() => {
+        const set = new Set<string>();
+        const values = Array.isArray(disabledDates)
+            ? disabledDates
+            : disabledDates != null
+                ? [disabledDates]
+                : [];
+
+        values.forEach((value) => {
+            const date = normalizeDisabledDateInput(value);
+            if (!date) return;
+            set.add(startOfDay(date).toISOString().split('T')[0]);
+        });
+        return set;
+    }, [disabledDates]);
+    const hiddenQuickOptionFilters = useMemo(() => {
+        return normalizeQuickOptionFilters(disableQuickOptions);
+    }, [disableQuickOptions]);
 
     const monthStart = startOfMonth(current);
     const monthEnd = endOfMonth(current);
@@ -147,10 +230,40 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
 
     const isDateDisabled = (date: Date) => {
         const day = startOfDay(date);
+        const dayKey = day.toISOString().split('T')[0];
+        if (disabledDateSet.has(dayKey)) return true;
         if (minDateDay && isBefore(day, minDateDay)) return true;
         if (maxDateDay && isAfter(day, maxDateDay)) return true;
         return false;
     };
+
+    const visibleQuickOptions = useMemo(() => {
+        if (hiddenQuickOptionFilters === true) return [];
+
+        return dedupeByDate(_quickDateOptions).filter((option) => {
+            if (!hiddenQuickOptionFilters) return true;
+
+            const optionDayKey = startOfDay(option.getDate()).toISOString().split("T")[0];
+            if (hiddenQuickOptionFilters.hiddenLabels.has(option.label.trim().toLowerCase())) return false;
+            if (hiddenQuickOptionFilters.hiddenDates.has(optionDayKey)) return false;
+            return true;
+        });
+    }, [hiddenQuickOptionFilters]);
+
+    const showQuickOptions = visibleQuickOptions.length > 0;
+
+    
+    const calendarRootClassName = [
+        `--calendar`,
+        `--${variant || themeVariant || Variant.Small}`,
+        className,
+        !showQuickOptions ? `--calendar-no-quick-options` : ``,
+    ].filter(Boolean).join(` `);
+
+    const shouldDisableMonthNavigationForBoundary = (boundaryDate: Date | null, candidateDate: Date) => {
+        if (!boundaryDate) return false;
+        return isBefore(candidateDate, boundaryDate) || isAfter(candidateDate, boundaryDate);
+    }
 
     const handleDateClick = (date: Date) => {
         if (isDateDisabled(date)) return;
@@ -197,17 +310,14 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
     const rangeStart = rawRangeStart && rawRangeEnd && isAfter(rawRangeStart, rawRangeEnd) ? rawRangeEnd : rawRangeStart;
     const rangeEnd = rawRangeStart && rawRangeEnd && isAfter(rawRangeStart, rawRangeEnd) ? rawRangeStart : rawRangeEnd;
 
-    return <Box 
-        as={`--calendar flex --${variant || themeVariant || Variant.Small} ${className}`}
+    return <Flex
+        as={calendarRootClassName}
         style={style}>
-        <Box as={`--calendar-quick-select flex cols flex:1`}>
-            {dedupeByDate(_quickDateOptions)
-                .map((option) => {
+        {showQuickOptions && <Box as={`--calendar-quick-select flex cols flex:1`}>
+            {visibleQuickOptions.map((option) => {
                 const date = option.getDate();
-                const disabled = isDateDisabled(date);
                 return <Button 
                     key={`--dtp-option-label-${option.label}`} 
-                    disabled={disabled}
                     onClick={() => handleDateClick(date)}
                     as={[
                         `--calendar-quick-option flex aic gap:5`,
@@ -216,7 +326,7 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
                     <Text as={`tar dim-50`}>{option.getDateFormat()}</Text>
                 </Button>
             })}
-        </Box>
+        </Box>}
         {/* `${isSameDay(date, current) && option.label != `Later` ? `--calendar-quick-option-selected` : ``}`, */}
         <Box as={`--calendar-selector flex cols flex:1`}>
             <Box as={`--calendar-head flex aic jcc gap:4`}>
@@ -259,7 +369,7 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
             </Box>
             {/* Calendar dates would go here */}
         </Box>
-    </Box>
+    </Flex>
 })
 
 Calendar.displayName = `Zuz.Calendar`

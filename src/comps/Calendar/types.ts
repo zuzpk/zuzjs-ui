@@ -6,11 +6,25 @@ export type CalendarRangeValue = {
     end: Date | null;
 };
 
+export type CalendarDisabledDateInput = string | Date;
+export type CalendarQuickOptionLabel =
+    | "Today"
+    | "Later"
+    | "Tomorrow"
+    | "This weekend"
+    | "Next week"
+    | "Next weekend"
+    | "2 weeks"
+    | "4 weeks";
+export type CalendarQuickOptionInput = CalendarQuickOptionLabel | CalendarDisabledDateInput;
+
 export type CalendarProps = {
     value?: Date | null;
     defaultValue?: Date | null;
     minDate?: Date;
     maxDate?: Date;
+    disabledDates?: CalendarDisabledDateInput | CalendarDisabledDateInput[];
+    disableQuickOptions?: boolean | CalendarQuickOptionInput | CalendarQuickOptionInput[];
     range?: boolean;
     rangeValue?: CalendarRangeValue;
     defaultRangeValue?: CalendarRangeValue;

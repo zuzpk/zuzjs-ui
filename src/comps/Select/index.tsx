@@ -18,6 +18,8 @@ import OptionGroupHead from "./groupHead";
 import OptionItem from "./optionItem";
 import type { Option, SelectEditableProps, SelectHandler, SelectInternalProps, SelectMultipleProps, SelectPrimitive, SelectSingleProps, SelectTokenizerProps, SelectValue } from "./types";
 
+const SELECT_OPEN_EVENT = "zuz-select-open";
+
 type SelectPublicProps = SelectSingleProps | SelectEditableProps | SelectMultipleProps | SelectTokenizerProps
 
 type SelectComponent = {
@@ -296,7 +298,7 @@ const Select = (({
 
         _search.current?.focus()
 
-        const handleOutsideClick = (e: MouseEvent) => {
+        const handleOutsidePointerDown = (e: MouseEvent) => {
             const target = e.target as Node
             const clickedInsideTrigger = _container.current?.contains(target)
             const clickedInsidePop = _pop.current?.contains(target)
@@ -305,15 +307,31 @@ const Select = (({
             }
         }
 
-        const timeout = setTimeout(() => {
-            document.addEventListener("click", handleOutsideClick)
-        }, 0)
+        document.addEventListener("mousedown", handleOutsidePointerDown, true)
 
         return () => {
-            clearTimeout(timeout)
-            document.removeEventListener("click", handleOutsideClick)
+            document.removeEventListener("mousedown", handleOutsidePointerDown, true)
         }
     }, [choosing])
+
+    useEffect(() => {
+        const onSelectOpen = (e: Event) => {
+            const detail = (e as CustomEvent<{ id?: string }>).detail
+            if (!detail?.id) return
+            if (detail.id === _id) return
+            setChoosing(false)
+        }
+
+        document.addEventListener(SELECT_OPEN_EVENT, onSelectOpen as EventListener)
+        return () => {
+            document.removeEventListener(SELECT_OPEN_EVENT, onSelectOpen as EventListener)
+        }
+    }, [_id])
+
+    useEffect(() => {
+        if (!choosing) return
+        document.dispatchEvent(new CustomEvent(SELECT_OPEN_EVENT, { detail: { id: _id } }))
+    }, [choosing, _id])
 
     useEffect(() => {
         const syncOptionsMinWidth = () => {

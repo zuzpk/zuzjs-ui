@@ -14,6 +14,7 @@ interface UtilityToken {
     prop: string;
     value: string;
     isCustom?: boolean;
+    isImportant?: boolean; // !important flag
     pseudo?: string; // e.g., 'hover', 'active'
     media?: string;  // e.g., 'md', 'lg'
     selector?: string; // for nested children
@@ -200,15 +201,17 @@ class StyleGenerator {
             tokens.push({
                 prop: prop.trim(),
                 value: value.trim(),
+                isImportant: isImportant,
                 ...ctx
             });
         }
         // 2. if it's a known Direct Shortcut (flex, grid, jcc)
         else if (this.directMap[trimmedRaw]) {
             tokens.push({
-                prop: trimmedRaw + (isImportant ? '!' : ''), // Preserve important flag for shortcuts
+                prop: trimmedRaw, // Don't append ! to prop, use isImportant flag instead
                 value: undefined, // Directs often don't have a value
                 isCustom: false, // This is a Zuz utility!
+                isImportant: isImportant,
                 ...ctx
             });
         }
@@ -224,10 +227,7 @@ class StyleGenerator {
 
     private generateAtomicClass(token: UtilityToken): string {
 
-        const { prop, value, pseudo, media, selector, isCustom } = token;
-
-        const isImportant = prop.endsWith('!');
-        const cleanProp = isImportant ? prop.slice(0, -1) : prop;
+        const { prop, value, pseudo, media, selector, isCustom, isImportant } = token;
 
         if ( isCustom ){
             return prop
@@ -238,23 +238,34 @@ class StyleGenerator {
         // 1. If it has a value AND is in propMap, it's a Property (e.g., flex:1)
         // 2. If it has NO value AND is in directMap, it's a Shortcut (e.g., flex)
 
-        if (!value && this.directMap[cleanProp]) {
-            cssRuleBody = this.directMap[cleanProp] 
-            if ( isImportant ){
-                cssRuleBody = ( cssRuleBody.endsWith(`;`) ? cssRuleBody.slice(0, -1) : cssRuleBody ) + ' !important;';
-            }
+        if (!value && this.directMap[prop]) {
+            cssRuleBody = this.directMap[prop];
+            // Add !important if flag is set
+            if (isImportant) {
+                cssRuleBody = (cssRuleBody.endsWith(';') ? cssRuleBody.slice(0, -1) : cssRuleBody) + ' !important;';
+            } 
+            // if ( isImportant ){
+            //     cssRuleBody = ( cssRuleBody.endsWith(`;`) ? cssRuleBody.slice(0, -1) : cssRuleBody ) + ' !important;';
+            // }
             // console.log(`--ppd`, prop, value)
         } 
         else {
             // It's a standard property (w:100, flex:1)
             const cssProp = this.propMap[prop] || prop;
-            cssRuleBody = cssProp.includes("__") 
+            let processedValue = cssProp.includes("__") 
                 ? this.resolveComplexTemplate(prop, value || "", cssProp) 
-                : `${cssProp}: ${this.processValue(prop, value || "")};`;
-
-            // if ( prop == `x`. )
-            // console.log(`--ppp`, prop, value)
+                : this.processValue(prop, value || "");
             
+            // Add !important if flag is set
+            if (isImportant && !processedValue.includes('!important')) {
+                processedValue = processedValue.endsWith(';') 
+                    ? processedValue.slice(0, -1) + ' !important;'
+                    : processedValue + ' !important';
+            }
+            
+            cssRuleBody = cssProp.includes("__") 
+                ? processedValue
+                : `${cssProp}: ${processedValue};`;
         }
         // if (!value && this.directMap[prop]) {
         //     const template = this.directMap[prop];
@@ -379,12 +390,8 @@ class StyleGenerator {
     }
 
     private processValue(prop: string, val: string): string {
-        let isImportant = false;
-        if (val.endsWith('!')) {
-            isImportant = true;
-            val = val.slice(0, -1);
-        }
-
+        // Note: !important flag is now handled in generateAtomicClass,
+        // so we don't need to check for it here anymore
         let result = "";
 
         /** w:full */
@@ -449,7 +456,7 @@ class StyleGenerator {
             result = val.replace(this.dollorToVarRegexp, 'var(--$1)');
         }
 
-        return isImportant ? `${result} !important` : result;
+        return result;
     }
 
     public addUnitsToComplexValue(prop: string, val: string): string {

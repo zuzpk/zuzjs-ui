@@ -37,6 +37,16 @@ body{
             &:hover{
                 background: var(--calendar-selector) !important;
             }
+
+            &:disabled{
+                opacity: 0.35;
+                color: var(--button-disabled-color) !important;
+                cursor: auto !important;
+
+                &:hover{
+                    background: transparent !important;
+                }
+            }
         }
     }
 

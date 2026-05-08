@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { CalendarRangeValue } from "../Calendar/types";
+import { CalendarDisabledDateInput, CalendarQuickOptionInput, CalendarRangeValue } from "../Calendar/types";
 import { InputProps } from "../Input/types";
 
 export type DatePickerProps = Omit<InputProps, "defaultValue" | "value"> & {
@@ -9,6 +9,8 @@ export type DatePickerProps = Omit<InputProps, "defaultValue" | "value"> & {
     minDate?: Date;
     maxDate?: Date;
     range?: boolean;
+    disabledDates?: CalendarDisabledDateInput | CalendarDisabledDateInput[];
+    disableQuickOptions?: boolean | CalendarQuickOptionInput | CalendarQuickOptionInput[];
     defaultRangeValue?: CalendarRangeValue;
     rangeValue?: CalendarRangeValue;
     onDateChange?: (date: Date | null) => void;

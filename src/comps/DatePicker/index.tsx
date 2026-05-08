@@ -44,8 +44,8 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
         range,
         defaultRangeValue,
         rangeValue,
-        onDateChange,
-        onRangeChange,
+        disabledDates,
+        disableQuickOptions,
         displayFormat,
         value,
         size,
@@ -53,6 +53,8 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
         numeric,
         type,
         placeholder,
+        onDateChange,
+        onRangeChange,
         onConfirm,
         ...pops
     } = props
@@ -200,6 +202,8 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
                 minDate={minDate}
                 maxDate={maxDate}
                 range={range}
+                disableQuickOptions={disableQuickOptions}
+                disabledDates={disabledDates}
                 rangeValue={currentRange}
                 defaultRangeValue={defaultRangeValue}
                 variant={variant || themeVariant || Variant.Small}
