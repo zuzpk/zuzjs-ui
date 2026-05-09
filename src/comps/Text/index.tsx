@@ -29,7 +29,8 @@ const Text = ({
 } : TextProps) => {
 
     const { 
-        h, html, children, lines, 
+        kind = 'h1', 
+        html, children, lines, 
         tfx, 
         delay = 0,
         duration = 0.5, 
@@ -74,7 +75,7 @@ const Text = ({
         else (ref as any).current = innerRef.current;
     }, [ref]);
 
-    const Tag = `h${props.h || 1}` as `h1` | `h2` | `h3` | `h4` | `h5` | `h6`
+    const Tag = kind as `h1` | `h2` | `h3` | `h4` | `h5` | `h6` | `p`
 
     const textContent = useMemo(() => {
         if (typeof children === 'string') return children;

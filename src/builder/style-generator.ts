@@ -348,6 +348,123 @@ class StyleGenerator {
         return result.replace(/__VALUE__/g, this.processValue(prop, parts[0] || ""));
     }
 
+    private buildClampValue(prop: string, rawValue: string): { min: string; fluid: string; max: string } {
+        const parts = rawValue
+            .split(this.delimeter)
+            .map(part => part.trim())
+            .filter(Boolean);
+
+        // Auto clamp calculator: clamp:min,max[,minViewport,maxViewport]
+        if (parts.length === 4 || parts.length === 2) {
+            const min = this.normalizeClampBound(prop, parts[0] || "0");
+            const max = this.normalizeClampBound(prop, parts[1] || parts[0] || "0");
+
+            const minPx = this.toPxNumber(min);
+            const maxPx = this.toPxNumber(max);
+
+            if (minPx === null || maxPx === null) {
+                return {
+                    min,
+                    fluid: '1vw',
+                    max,
+                };
+            }
+
+            const minViewport = parts.length === 4
+                ? Number(parts[2])
+                : 390;
+            const maxViewport = parts.length === 4
+                ? Number(parts[3])
+                : 1440;
+
+            const safeMinViewport = Number.isFinite(minViewport) && minViewport > 0 ? minViewport : 390;
+            const safeMaxViewport = Number.isFinite(maxViewport) && maxViewport > safeMinViewport
+                ? maxViewport
+                : 1440;
+
+            const fluid = this.calculateClampFluid(minPx, maxPx, safeMinViewport, safeMaxViewport);
+
+            return { min, fluid, max };
+        }
+
+        // Explicit clamp tuple: clamp:min,fluid,max
+        if (parts.length >= 3) {
+            const min = this.normalizeClampBound(prop, parts[0]);
+            const fluid = this.normalizeClampFluid(parts[1]);
+            const max = this.normalizeClampBound(prop, parts[2]);
+
+            return { min, fluid, max };
+        }
+
+        const bound = this.normalizeClampBound(prop, parts[0] || rawValue || "0");
+        return {
+            min: bound,
+            fluid: this.normalizeClampFluid(parts[1] || '1vw'),
+            max: bound,
+        };
+    }
+
+    private normalizeClampBound(prop: string, value: string): string {
+        const trimmed = (value || "").trim();
+        if (!trimmed) return "0px";
+
+        if (this.isNumberToken(trimmed)) {
+            return this.addUnitsSafely(prop, trimmed);
+        }
+
+        return trimmed.replace(this.dollorToVarRegexp, 'var(--$1)');
+    }
+
+    private normalizeClampFluid(value: string): string {
+        const trimmed = (value || "").trim();
+        if (!trimmed) return "1vw";
+
+        if (this.isNumberToken(trimmed)) {
+            return `${trimmed}vw`;
+        }
+
+        return trimmed.replace(this.dollorToVarRegexp, 'var(--$1)');
+    }
+
+    private toPxNumber(value: string): number | null {
+        const normalized = value.trim();
+        const match = normalized.match(/^(-?\d*\.?\d+)(px)?$/i);
+        if (!match) return null;
+
+        const parsed = Number(match[1]);
+        return Number.isFinite(parsed) ? parsed : null;
+    }
+
+    private calculateClampFluid(minPx: number, maxPx: number, minViewport: number, maxViewport: number): string {
+        const viewportRange = maxViewport - minViewport;
+
+        if (viewportRange <= 0) {
+            return `${this.roundClampNumber(minPx)}px`;
+        }
+
+        const slope = ((maxPx - minPx) / viewportRange) * 100;
+        const intercept = minPx - (slope * minViewport) / 100;
+
+        const slopeText = this.roundClampNumber(slope);
+
+        if (Math.abs(intercept) < 0.0001) {
+            return `${slopeText}vw`;
+        }
+
+        const sign = intercept >= 0 ? '+' : '-';
+        const absIntercept = this.roundClampNumber(Math.abs(intercept));
+        return `calc(${absIntercept}px ${sign} ${slopeText}vw)`;
+    }
+
+    private roundClampNumber(value: number): string {
+        const rounded = Math.round(value * 10000) / 10000;
+        return Number(rounded.toFixed(4)).toString();
+    }
+
+    private isNumberToken(value: string): boolean {
+        return /^-?\d*\.?\d+$/.test(value.trim());
+    }
+
     private transformBrackets(input: string): string {
         return input
             .replace(/\[/g, '(')
@@ -428,6 +545,16 @@ class StyleGenerator {
             if ( [`rgba`,`rgb`].includes(_kw) ){
                 result = transformed
             }
+            else if (_kw === 'clamp') {
+                const start = val.indexOf('[');
+                const end = val.lastIndexOf(']');
+                const inner = start > -1 && end > start
+                    ? val.slice(start + 1, end)
+                    : '';
+
+                const clamp = this.buildClampValue(prop, inner);
+                result = `clamp(${clamp.min}, ${clamp.fluid}, ${clamp.max})`;
+            }
             else
                 // Use a "Smart Unit Fixer" that only touches numbers 
                 // that are not already attached to a unit.
@@ -438,7 +565,7 @@ class StyleGenerator {
             result = val.split(',').map(part => this.processValue(prop, part.trim())).join(' ');
         }
         // Standard Logic (Pure Numbers, Variables, Colors)
-        else if (/^-?\d*\.?\d+$/.test(val)) {
+        else if (this.isNumberToken(val)) {
             result = this.addUnitsSafely(prop, val);
         }
         // COLOR CHECK (Only if it's 3/6 chars and NOT a pure number)

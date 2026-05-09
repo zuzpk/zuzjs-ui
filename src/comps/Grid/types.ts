@@ -1,12 +1,20 @@
 import { BoxProps } from "../../types";
 
+export type GridBreakpoints = {
+  ph?: string | number;
+  sm?: string | number;
+  md?: string | number;
+  lg?: string | number;
+  xl?: string | number;
+};
+
 export interface GridProps extends Omit<BoxProps, 'cols'> {
-  /** Grid column template (legacy shorthand). Prefer `columns` for readability. */
-  cols?: string | number;
-  /** Grid column template. Number values map to `repeat(n, 1fr)`. */
-  columns?: string | number;
-  /** Grid row template. Number values map to `repeat(n, 1fr)`. */
-  rows?: string | number;
+  /** Grid column template (legacy shorthand). Prefer `columns` for readability. Can be a number, string, or breakpoint object. */
+  cols?: string | number | GridBreakpoints;
+  /** Grid column template. Number values map to `repeat(n, 1fr)`. Can be a number, string, or breakpoint object. */
+  columns?: string | number | GridBreakpoints;
+  /** Grid row template. Number values map to `repeat(n, 1fr)`. Can be a number, string, or breakpoint object. */
+  rows?: string | number | GridBreakpoints;
 
   /** CSS `gap`. */
   gap?: string | number;

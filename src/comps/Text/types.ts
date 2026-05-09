@@ -3,9 +3,11 @@ import { Props } from "../../types";
 
 export type TextFxVariant = 'bounce' | 'wave' | 'slide' | 'fade' | 'glitch' | `glitch-v2` | 'typewriter' | `fog` | `pop` | `reveal` | `shuffle`;
 
+export type TextKind = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p';
+
 export type TextProps = Props<`h1` | `h2` | `h3` | `h4` | `h5` | `h6` | `p` | `span` | `div` | `label`> & {
     ref?: Ref<HTMLHeadingElement>;
-    h?: number;
+    kind?: TextKind;
     html?: ReactNode | string;
     lines?: number;
     tfx?: TextFxVariant;

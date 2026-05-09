@@ -28,6 +28,7 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
         speed, 
         smooth = false, 
         breakpoints = {},
+        direction = 'both',
         style: _style, ...pops } = props
     const { 
         rootRef, containerRef, thumbY, thumbX, onScrollY, onScrollX 
@@ -37,6 +38,12 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
         className, 
         rest 
     } = useBase<`div`>(pops)
+
+    const scrollStyle = {
+        ..._style,
+        ...(direction === 'vertical' ? { overflowX: 'hidden' as const } : {}),
+        ...(direction === 'horizontal' ? { overflowY: 'hidden' as const } : {}),
+    }
 
     useEffect(() => {
         const el = containerRef.current;
@@ -78,10 +85,10 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
 
     return <Box 
         ref={rootRef}
-        className={className.trim()}
+        className={`${className.trim()} --direction-${direction}`.trim()}
         as={`--scrollview rel`}>
 
-        <Box as={`--scroll-content ${className}`.trim()} ref={containerRef} style={_style || {}}>
+        <Box as={`--scroll-content ${className}`.trim()} ref={containerRef} style={scrollStyle}>
             {rest.children}
         </Box>
 

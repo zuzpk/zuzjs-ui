@@ -51,6 +51,18 @@ body{
         }
     }
 
+    &.--direction-vertical {
+        .--track-x {
+            display: none;
+        }
+    }
+
+    &.--direction-horizontal {
+        .--track-y {
+            display: none;
+        }
+    }
+
     &.--no-y,
     &.--no-x{
         .--scroll-thumb{

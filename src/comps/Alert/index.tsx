@@ -59,7 +59,7 @@ const Alert = forwardRef<AlertHandler, AlertProps>((props, ref) => {
                 <Text className={`--title ${message ? `--tm` : ``}`}>
                     {title || `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`}
                 </Text>
-                {message && <Text className={`--message`} h={2}>{message}</Text>}
+                {message && <Text className={`--message`} kind="h2">{message}</Text>}
             </Box>
         </Box>
     );

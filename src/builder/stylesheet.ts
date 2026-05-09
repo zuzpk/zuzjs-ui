@@ -162,6 +162,7 @@ export const cssProps : dynamic = {
     "justifyContent": "justify-content",
     "left": "left",
     "letterSpacing": "letter-spacing",
+    "spacing": "letter-spacing",
     "lineHeight": "line-height",
     "lh": "line-height",
     "listStyle": "list-style",
@@ -200,6 +201,7 @@ export const cssProps : dynamic = {
     
     "mixBlendMode": "mix-blend-mode",
     "objectFit": "object-fit",
+    "fit": "object-fit",
     "objectPosition": "object-position",
     "opacity": "opacity",
     "order": "order",
@@ -381,6 +383,7 @@ export const cssDirect : dynamic = {
     "uppercase": "text-transform: uppercase;",
     "lowercase": "text-transform: lowercase;",
     "capitalize": "text-transform: capitalize;",
+    "italic": "font-style: italic;",
     //Ratio
     "ratio-square": "aspect-ratio: 1 / 1;",
     "ratio-video": "aspect-ratio: 16 / 9;",
