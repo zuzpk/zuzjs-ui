@@ -14,6 +14,17 @@ import { ValueOf } from "../types/shared";
 const MATCH_MEDIA = `(prefers-color-scheme: dark)`
 const SSR = typeof window === 'undefined'
 
+const defaultThemeContext: ThemeContextProps = {
+    colorScheme: COLORTHEME.System,
+    resolvedScheme: `light`,
+    setColorScheme: () => {},
+    variant: Variant.Medium,
+    tooltip: {
+        variant: Variant.Small,
+        curve: TRANSITION_CURVES.EaseInOut,
+    },
+}
+
 type ColorScheme = ValueOf<typeof COLORTHEME>
 // type _Variant = ValueOf<typeof Variant>
 export interface ThemeConfig {
@@ -79,7 +90,7 @@ export const useColorScheme = (ignoreContext?: boolean) : ThemeContextProps | un
     const context = useContext(ThemeContext)
 
     if (!context) {
-        if ( ignoreContext === true ) return undefined
+        if ( ignoreContext === true ) return defaultThemeContext
         throw new Error('useColorScheme must be used within a ThemeProvider');
     }
 

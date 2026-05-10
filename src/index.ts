@@ -7,3 +7,6 @@ export * from "./funs";
 export * from "./funs/css";
 export * from "./hooks";
 export * from "./types";
+
+/** Visual Builder */
+export * from "./builder/visual";
