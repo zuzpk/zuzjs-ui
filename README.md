@@ -104,6 +104,78 @@ export default function Hero() {
 }
 ```
 
+## Calendar and DatePicker
+
+Recent behavior updates:
+
+- Month navigation now triggers `Calendar` `onChange` in single-date mode.
+- `onChange` now receives metadata so you can detect whether the change came from day selection or month navigation.
+- When navigating months with `disabledDates`, the component finds the nearest selectable date in that month instead of re-selecting a disabled day.
+- `DatePicker` stays open during month navigation and closes on explicit day selection.
+
+### Calendar Example (Single Date)
+
+```tsx
+import { Calendar } from "@zuzjs/ui";
+import { useState } from "react";
+
+export default function CalendarExample() {
+    const [selected, setSelected] = useState<Date | null>(new Date());
+
+    return (
+        <Calendar
+            value={selected}
+            disabledDates={[
+                "2026-05-15",
+                "2026-05-16",
+                new Date(2026, 4, 20),
+            ]}
+            onChange={(date, meta) => {
+                setSelected(date);
+
+                if (meta?.source === "month") {
+                    console.log("Month changed", date);
+                    return;
+                }
+
+                console.log("Day selected", date);
+            }}
+        />
+    );
+}
+```
+
+### DatePicker Example (Month Navigation + Disabled Dates)
+
+```tsx
+import { DatePicker } from "@zuzjs/ui";
+import { useState } from "react";
+
+export default function DatePickerExample() {
+    const [value, setValue] = useState<Date | null>(new Date());
+
+    return (
+        <DatePicker
+            dateValue={value}
+            disabledDates={[
+                "2026-05-15",
+                "2026-05-16",
+                "2026-05-17",
+            ]}
+            onDateChange={(nextDate) => {
+                setValue(nextDate);
+                console.log("DatePicker changed", nextDate);
+            }}
+        />
+    );
+}
+```
+
+Notes:
+
+- In range mode (`range={true}`), month navigation does not emit `onChange`; range selection continues via `onRangeChange`.
+- `onChange(date, { source: "month" })` can return `date = null` if the target month has no selectable dates after applying min/max and `disabledDates`.
+
 ## Documentation
 
 Documention in progress.

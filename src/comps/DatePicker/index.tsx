@@ -207,10 +207,12 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
                 rangeValue={currentRange}
                 defaultRangeValue={defaultRangeValue}
                 variant={variant || themeVariant || Variant.Small}
-                onChange={dt => {
+                onChange={(dt, meta) => {
                     setCurrentDate(dt)
                     onDateChange?.(dt)
-                    setChoosing(false)
+                    if (meta?.source !== "month") {
+                        setChoosing(false)
+                    }
                 }}
                 onRangeChange={(nextRange) => {
                     setCurrentRange(nextRange)

@@ -1,5 +1,5 @@
 import { ScrollBreakpoint } from "@zuzjs/hooks";
-import { CSSProperties } from "react";
+import { CSSProperties, UIEvent } from "react";
 import { BoxProps } from "../../types/interfaces";
 
 export type ScrollViewDirection = 'both' | 'vertical' | 'horizontal';
@@ -10,4 +10,5 @@ export type ScrollViewProps = BoxProps & {
     smooth?: boolean,
     breakpoints?: ScrollBreakpoint,
     direction?: ScrollViewDirection,
+    onScroll?: (event: UIEvent<HTMLDivElement>) => void,
 }

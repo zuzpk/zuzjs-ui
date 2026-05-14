@@ -6,6 +6,8 @@ export type CalendarRangeValue = {
     end: Date | null;
 };
 
+export type CalendarChangeSource = "day" | "month";
+
 export type CalendarDisabledDateInput = string | Date;
 export type CalendarQuickOptionLabel =
     | "Today"
@@ -29,6 +31,6 @@ export type CalendarProps = {
     rangeValue?: CalendarRangeValue;
     defaultRangeValue?: CalendarRangeValue;
     variant?: ValueOf<typeof Variant>;
-    onChange?: (date: Date | null) => void;
+    onChange?: (date: Date | null, meta?: { source: CalendarChangeSource }) => void;
     onRangeChange?: (range: CalendarRangeValue) => void;
 };

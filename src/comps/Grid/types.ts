@@ -1,4 +1,5 @@
 import { BoxProps } from "../../types";
+import { ScrollViewProps } from "../ScrollView/types";
 
 export type GridBreakpoints = {
   ph?: string | number;
@@ -56,4 +57,24 @@ export interface GridProps extends Omit<BoxProps, 'cols'> {
   template?: string;
   /** CSS `grid-template-areas`. */
   areas?: string;
+
+  /** Wrap grid content with ScrollView internally. */
+  scrollView?: boolean;
+  /** Optional props passed to internal ScrollView wrapper. */
+  scrollViewProps?: Omit<ScrollViewProps, 'children'>;
+
+  /** Enable built-in virtualized rendering. */
+  virtualize?: boolean;
+  /** Total item count for virtualized grid. */
+  virtualCount?: number;
+  /** Fixed row height (px) for virtualization. */
+  virtualRowHeight?: number;
+  /** Viewport height (px) when virtualized. */
+  virtualViewportHeight?: number;
+  /** Overscan rows above and below viewport. */
+  virtualOverscanRows?: number;
+  /** Minimum item width (px) for auto column calculation. */
+  virtualItemMinWidth?: number;
+  /** Virtual item render callback. */
+  virtualRenderItem?: (index: number) => React.ReactNode;
 }

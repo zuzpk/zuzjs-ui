@@ -1,5 +1,5 @@
 import { useScrollbar } from "@zuzjs/hooks";
-import { forwardRef, useEffect } from "react";
+import { forwardRef, UIEvent, useEffect } from "react";
 import { useBase } from "../../hooks";
 import Box from "../Box";
 import { ScrollViewProps } from "./types";
@@ -29,6 +29,7 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
         smooth = false, 
         breakpoints = {},
         direction = 'both',
+        onScroll,
         style: _style, ...pops } = props
     const { 
         rootRef, containerRef, thumbY, thumbX, onScrollY, onScrollX 
@@ -54,6 +55,10 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
             window.dispatchEvent(new Event('resize')); 
         };
 
+        const forwardScroll = (event: Event) => {
+            onScroll?.(event as unknown as UIEvent<HTMLDivElement>);
+        };
+
         const handleWheel = (e: WheelEvent) => {
             const target = e.target;
             if (!(target instanceof Element)) return;
@@ -74,14 +79,16 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
         };
 
         el.addEventListener('scroll', sync);
+        el.addEventListener('scroll', forwardScroll);
         el.addEventListener('wheel', handleWheel, { passive: true });
 
         return () => {
             el.removeEventListener('scroll', sync);
+            el.removeEventListener('scroll', forwardScroll);
             el.removeEventListener('wheel', handleWheel);
         };
 
-    }, [containerRef]);
+    }, [containerRef, onScroll]);
 
     return <Box 
         ref={rootRef}

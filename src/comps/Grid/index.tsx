@@ -1,7 +1,8 @@
-import { CSSProperties } from "react";
+import { CSSProperties, ReactNode, useEffect, useRef, useState } from "react";
 import { useBase } from "../../hooks";
 import { BoxProps } from "../../types";
 import Box from "../Box";
+import ScrollView from "../ScrollView";
 import { GridBreakpoints, GridProps } from "./types";
 
 /**
@@ -66,6 +67,30 @@ const resolveJustify = (value?: GridProps["justify"]) => {
     return value;
 };
 
+const toNumeric = (value: string | number | undefined, fallback: number) => {
+    if (typeof value === "number") return value;
+    if (typeof value === "string") {
+        const parsed = Number.parseFloat(value);
+        return Number.isFinite(parsed) ? parsed : fallback;
+    }
+    return fallback;
+};
+
+const resolveExplicitColumnCount = (value?: string | number) => {
+    if (typeof value === "number" && value > 0) {
+        return value;
+    }
+
+    if (typeof value === "string") {
+        const repeatMatch = value.match(/repeat\(\s*(\d+)\s*,/i);
+        if (repeatMatch) {
+            return Number.parseInt(repeatMatch[1], 10);
+        }
+    }
+
+    return null;
+};
+
 const Grid = (props: GridProps) => {
 
     const {
@@ -91,6 +116,15 @@ const Grid = (props: GridProps) => {
         autoRow,
         template,
         areas,
+        scrollView,
+        scrollViewProps,
+        virtualize = false,
+        virtualCount,
+        virtualRowHeight,
+        virtualViewportHeight,
+        virtualOverscanRows = 2,
+        virtualItemMinWidth,
+        virtualRenderItem,
         ...pops
     } = props;
 
@@ -106,6 +140,12 @@ const Grid = (props: GridProps) => {
     const resolvedAutoCols = autoColumns ?? autoCols;
     const resolvedAutoRows = autoRow ?? autoRows;
     const resolvedTemplate = areas ?? template;
+
+    const viewportRef = useRef<HTMLDivElement>(null);
+    const [virtualWidth, setVirtualWidth] = useState(0);
+    const [measuredViewportHeight, setMeasuredViewportHeight] = useState(0);
+    const [scrollTop, setScrollTop] = useState(0);
+    const browserViewportWidth = typeof window !== "undefined" ? window.innerWidth : 0;
 
     // Determine base values - use 'md' breakpoint as default, or the value itself if not a breakpoint object
     const baseColsValue = isBreakpointObject(resolvedCols) ? (resolvedCols as GridBreakpoints).md : resolvedCols;
@@ -125,6 +165,34 @@ const Grid = (props: GridProps) => {
         gridTemplateAreas: resolvedTemplate,
         ...style,
     };
+
+    useEffect(() => {
+        if (!virtualize) return;
+
+        const updateWidth = () => {
+            const nextWidth = viewportRef.current?.clientWidth ?? browserViewportWidth;
+            setVirtualWidth(nextWidth);
+            const nextHeight = viewportRef.current?.clientHeight ?? 0;
+            setMeasuredViewportHeight(nextHeight);
+        };
+
+        updateWidth();
+
+        const observer = typeof ResizeObserver !== "undefined"
+            ? new ResizeObserver(updateWidth)
+            : null;
+
+        if (observer && viewportRef.current) {
+            observer.observe(viewportRef.current);
+        }
+
+        window.addEventListener("resize", updateWidth);
+
+        return () => {
+            observer?.disconnect();
+            window.removeEventListener("resize", updateWidth);
+        };
+    }, [virtualize]);
 
     // Generate responsive CSS if breakpoints are provided
     let responsiveStyleSheet = '';
@@ -176,6 +244,102 @@ const Grid = (props: GridProps) => {
         } else if (!styleEl.textContent) {
             styleEl.textContent = responsiveStyleSheet;
         }
+    }
+
+    if (virtualize) {
+        const count = typeof virtualCount === "number"
+            ? virtualCount
+            : Array.isArray(rest.children)
+                ? rest.children.length
+                : rest.children
+                    ? 1
+                    : 0;
+
+        const effectiveGapX = toNumeric(resolvedGapX as string | number | undefined, 10);
+        const explicitCols = !isBreakpointObject(resolvedCols)
+            ? resolveExplicitColumnCount(resolvedCols)
+            : null;
+        const resolvedItemMinWidth = virtualItemMinWidth
+            ?? (explicitCols && virtualWidth > 0
+                ? Math.max(1, (virtualWidth - Math.max(0, explicitCols - 1) * effectiveGapX) / explicitCols)
+                : 110);
+        const widthForCalc = Math.max(virtualWidth || browserViewportWidth || resolvedItemMinWidth, resolvedItemMinWidth);
+        const dynamicCols = explicitCols
+            ? explicitCols
+            : Math.max(1, Math.floor((widthForCalc + effectiveGapX) / (resolvedItemMinWidth + effectiveGapX)));
+        const viewportHeightFromProps = toNumeric(scrollViewProps?.style?.height as string | number | undefined, 0);
+        const effectiveViewportHeight = virtualViewportHeight
+            ?? viewportHeightFromProps
+            ?? measuredViewportHeight
+            ?? 620;
+        const effectiveRowHeight = virtualRowHeight ?? resolvedItemMinWidth;
+
+        const totalRows = Math.ceil(count / dynamicCols);
+        const startRow = Math.max(0, Math.floor(scrollTop / effectiveRowHeight) - virtualOverscanRows);
+        const endRow = Math.min(totalRows, Math.ceil((scrollTop + effectiveViewportHeight) / effectiveRowHeight) + virtualOverscanRows);
+
+        const startIndex = startRow * dynamicCols;
+        const endIndex = Math.min(count, endRow * dynamicCols);
+        const topSpacerHeight = startRow * effectiveRowHeight;
+        const bottomSpacerHeight = Math.max(0, (totalRows - endRow) * effectiveRowHeight);
+
+        const visibleChildren: ReactNode[] = [];
+        for (let index = startIndex; index < endIndex; index += 1) {
+            if (virtualRenderItem) {
+                visibleChildren.push(virtualRenderItem(index));
+            } else if (Array.isArray(rest.children)) {
+                visibleChildren.push(rest.children[index]);
+            }
+        }
+
+        const virtualGridStyles: CSSProperties = {
+            ...gridStyles,
+            gridTemplateColumns: `repeat(${dynamicCols}, 1fr)`,
+        };
+
+        const gridNode = <>
+            <Box style={{ height: topSpacerHeight }} />
+            <Box
+                className={["--grid", className].filter(Boolean).join(" ")}
+                style={virtualGridStyles}
+                {...(dataAttrs as any)}>
+                {visibleChildren}
+            </Box>
+            <Box style={{ height: bottomSpacerHeight }} />
+        </>;
+
+        if (scrollView) {
+            return <ScrollView
+                ref={ref as any}
+                {...scrollViewProps}
+                onScroll={(event) => {
+                    setScrollTop(event.currentTarget.scrollTop);
+                    scrollViewProps?.onScroll?.(event);
+                }}
+                style={{
+                    height: effectiveViewportHeight,
+                    ...(scrollViewProps?.style || {}),
+                }}>
+                <Box ref={viewportRef}>
+                    {gridNode}
+                </Box>
+            </ScrollView>
+        }
+
+        return <Box
+            ref={ref}
+            className={[className].filter(Boolean).join(" ")}
+            style={{
+                height: effectiveViewportHeight,
+                overflowY: "auto",
+                overflowX: "hidden",
+            }}
+            onScroll={(event: any) => setScrollTop(event.currentTarget.scrollTop)}
+            {...rest as BoxProps}>
+            <Box ref={viewportRef}>
+                {gridNode}
+            </Box>
+        </Box>
     }
 
     return <Box

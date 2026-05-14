@@ -182,13 +182,16 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
     const { variant: themeVariant } = useTheme(true)!
     const isRangeMode = !!range;
     const [current, setCurrent] = useState(value ?? defaultValue ?? new Date());
+    const [visibleMonth, setVisibleMonth] = useState(startOfMonth(value ?? defaultValue ?? new Date()));
     const [currentRange, setCurrentRange] = useState<CalendarRangeValue>(
         rangeValue ?? defaultRangeValue ?? { start: null, end: null }
     );
 
     useEffect(() => {
         if (typeof value !== "undefined") {
-            setCurrent(value ?? new Date());
+            const nextDate = value ?? new Date();
+            setCurrent(nextDate);
+            setVisibleMonth(startOfMonth(nextDate));
         }
     }, [value]);
 
@@ -219,8 +222,8 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
         return normalizeQuickOptionFilters(disableQuickOptions);
     }, [disableQuickOptions]);
 
-    const monthStart = startOfMonth(current);
-    const monthEnd = endOfMonth(current);
+    const monthStart = startOfMonth(visibleMonth);
+    const monthEnd = endOfMonth(visibleMonth);
     const startDate = startOfWeek(monthStart);
     const endDate = endOfWeek(monthEnd);
 
@@ -235,6 +238,36 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
         if (minDateDay && isBefore(day, minDateDay)) return true;
         if (maxDateDay && isAfter(day, maxDateDay)) return true;
         return false;
+    };
+
+    const findSelectableDateInMonth = (monthDate: Date, preferredDay: number) => {
+        const monthStartDate = startOfMonth(monthDate);
+        const monthEndDate = endOfMonth(monthDate);
+        const maxDay = monthEndDate.getDate();
+        const normalizedPreferredDay = Math.min(Math.max(1, preferredDay || 1), maxDay);
+        const maxOffset = Math.max(normalizedPreferredDay - 1, maxDay - normalizedPreferredDay);
+
+        for (let offset = 0; offset <= maxOffset; offset += 1) {
+            const previousDay = normalizedPreferredDay - offset;
+            if (previousDay >= 1) {
+                const previousCandidate = new Date(monthStartDate.getFullYear(), monthStartDate.getMonth(), previousDay);
+                if (!isDateDisabled(previousCandidate)) {
+                    return previousCandidate;
+                }
+            }
+
+            if (offset === 0) continue;
+
+            const nextDay = normalizedPreferredDay + offset;
+            if (nextDay <= maxDay) {
+                const nextCandidate = new Date(monthStartDate.getFullYear(), monthStartDate.getMonth(), nextDay);
+                if (!isDateDisabled(nextCandidate)) {
+                    return nextCandidate;
+                }
+            }
+        }
+
+        return null;
     };
 
     const visibleQuickOptions = useMemo(() => {
@@ -260,11 +293,6 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
         !showQuickOptions ? `--calendar-no-quick-options` : ``,
     ].filter(Boolean).join(` `);
 
-    const shouldDisableMonthNavigationForBoundary = (boundaryDate: Date | null, candidateDate: Date) => {
-        if (!boundaryDate) return false;
-        return isBefore(candidateDate, boundaryDate) || isAfter(candidateDate, boundaryDate);
-    }
-
     const handleDateClick = (date: Date) => {
         if (isDateDisabled(date)) return;
 
@@ -285,23 +313,57 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
             setCurrentRange(nextRange);
             onRangeChange?.(nextRange);
             setCurrent(date);
+            setVisibleMonth(startOfMonth(date));
             return;
         }
 
-        onChange?.(date);
+        onChange?.(date, { source: "day" });
         setCurrent(date);
+        setVisibleMonth(startOfMonth(date));
     };
 
     const gotoPrevMonth = () => {
-        setCurrent(prev => new Date(prev.getFullYear(), prev.getMonth() - 1));
+        setVisibleMonth((prevVisibleMonth) => {
+            const nextVisibleMonth = startOfMonth(new Date(prevVisibleMonth.getFullYear(), prevVisibleMonth.getMonth() - 1, 1));
+
+            if (!isRangeMode) {
+                const preferredDay = current.getDate();
+                const nextDate = findSelectableDateInMonth(nextVisibleMonth, preferredDay);
+
+                if (nextDate) {
+                    setCurrent(nextDate);
+                    onChange?.(nextDate, { source: "month" });
+                } else {
+                    onChange?.(null, { source: "month" });
+                }
+            }
+
+            return nextVisibleMonth;
+        });
     };
 
     const gotoNextMonth = () => {
-        setCurrent(prev => new Date(prev.getFullYear(), prev.getMonth() + 1));
+        setVisibleMonth((prevVisibleMonth) => {
+            const nextVisibleMonth = startOfMonth(new Date(prevVisibleMonth.getFullYear(), prevVisibleMonth.getMonth() + 1, 1));
+
+            if (!isRangeMode) {
+                const preferredDay = current.getDate();
+                const nextDate = findSelectableDateInMonth(nextVisibleMonth, preferredDay);
+
+                if (nextDate) {
+                    setCurrent(nextDate);
+                    onChange?.(nextDate, { source: "month" });
+                } else {
+                    onChange?.(null, { source: "month" });
+                }
+            }
+
+            return nextVisibleMonth;
+        });
     };
 
-    const prevMonthEnd = endOfMonth(new Date(current.getFullYear(), current.getMonth() - 1, 1));
-    const nextMonthStart = startOfMonth(new Date(current.getFullYear(), current.getMonth() + 1, 1));
+    const prevMonthEnd = endOfMonth(new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() - 1, 1));
+    const nextMonthStart = startOfMonth(new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 1));
     const disablePrevMonth = !!minDateDay && isBefore(prevMonthEnd, minDateDay);
     const disableNextMonth = !!maxDateDay && isAfter(nextMonthStart, maxDateDay);
 
@@ -330,7 +392,7 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
         {/* `${isSameDay(date, current) && option.label != `Later` ? `--calendar-quick-option-selected` : ``}`, */}
         <Box as={`--calendar-selector flex cols flex:1`}>
             <Box as={`--calendar-head flex aic jcc gap:4`}>
-                <Text as={`flex:1 --calendar-cm bold`}>{format(current, 'MMMM yyyy')}</Text>
+                <Text as={`flex:1 --calendar-cm bold`}>{format(visibleMonth, 'MMMM yyyy')}</Text>
                 <Button 
                     disabled={disablePrevMonth}
                     onClick={gotoPrevMonth}
@@ -343,10 +405,10 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
             <Box as={`--calendar-days gap:4`}>
                 {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => <Text key={`--calendar-hd-${day}`} as={`--calendar-day`}>{day}</Text>)}
                 {days.map((day, idx) => {
-                    const isCurrentMonth = isSameMonth(day, current);
-                    const isSelected = isSameDay(day, current);
-                    const isCurrentDay = isToday(day);
+                    const isCurrentMonth = isSameMonth(day, visibleMonth);
                     const isDisabled = !isCurrentMonth || isDateDisabled(day);
+                    const isSelected = !isDisabled && isSameDay(day, current);
+                    const isCurrentDay = isToday(day);
                     const isRangeStart = !!rangeStart && isSameDay(day, rangeStart);
                     const isRangeEnd = !!rangeEnd && isSameDay(day, rangeEnd);
                     const isRangeDay = !!rangeStart && !!rangeEnd && isWithinInterval(day, { start: rangeStart, end: rangeEnd });
