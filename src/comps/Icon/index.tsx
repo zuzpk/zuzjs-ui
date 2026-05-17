@@ -25,7 +25,7 @@ import { IconProps } from "./types";
  */
 const Icon = forwardRef<HTMLDivElement, IconProps>((props, ref) => {
 
-    const { name, pathCount, variant, color, size, ...pops } = props;
+    const { name, pathCount, variant, color, size, prefix, animated, ...pops } = props;
     const { variant: themeVariant } = useTheme(true)!
     const {
         className,
@@ -39,7 +39,7 @@ const Icon = forwardRef<HTMLDivElement, IconProps>((props, ref) => {
             ...style,
             ...(size ? { fontSize: size } : {})
         }}
-        className={`icon-${name} --icon --${variant || themeVariant || Variant.Small} ${className}`.trim()}
+        className={`${prefix ?? `icon`}-${name} --icon --${variant || themeVariant || Variant.Small} ${className}`.trim()}
         ref={ref} 
         {...rest}>
             {Array(pathCount || 0).fill(0).map((p, i) => <Span

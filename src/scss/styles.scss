@@ -199,12 +199,29 @@ body {
     --radius-lg: 12px;
     --radius-xl: 20px;
     --radius-xxl: 32px;
+    --radius-2xl: 32px;
+    --radius-3xl: 48px;
+    --radius-4xl: 64px;
+    --radius-5xl: 64px;
+    --radius-6xl: 96px;
+    --radius-7xl: 128px;
+    --radius-8xl: 128px;
+    --radius-9xl: 256px;
 
     --padding-xs: 2px 4px;
     --padding-sm: 4px 8px;
     --padding-md: 8px 12px;
     --padding-lg: 16px 32px;
     --padding-xl: 24px 48px;
+    --padding-2xl: 32px 64px;
+    --padding-3xl: 48px 96px;
+    --padding-4xl: 64px 128px;
+    --padding-5xl: 64px 128px;
+    --padding-6xl: 96px 256px;
+    --padding-7xl: 128px 256px;
+    --padding-8xl: 128px 256px;
+    --padding-9xl: 256px 512px; 
+
     --padding-xs-x: 2px;
     --padding-sm-x: 4px;
     --padding-md-x: 8px;
@@ -223,6 +240,13 @@ body {
     --gap-md: 16px;
     --gap-lg: 24px;
     --gap-xl: 40px;
+    --gap-2xl: 64px;
+    --gap-3xl: 96px;
+    --gap-4xl: 128px;
+    --gap-5xl: 128px;
+    --gap-6xl: 256px;
+    --gap-7xl: 256px;
+    --gap-8xl: 256px;
 
     /* Typography: Size + Line Height (LH) */
     --text-xs: 12px; --lh-xs: 1.2;
@@ -231,6 +255,14 @@ body {
     --text-lg: 18px; --lh-lg: 1.5;
     --text-xl: 24px; --lh-xl: 1.3;
     --text-xxl: 32px; --lh-xxl: 1.2;
+    --text-2xl: 32px; --lh-2xl: 1.2;
+    --text-3xl: 48px; --lh-3xl: 1.1;
+    --text-4xl: 64px; --lh-4xl: 1.1;
+    --text-5xl: 64px; --lh-5xl: 1.1;
+    --text-6xl: 96px; --lh-6xl: 1.1;
+    --text-7xl: 128px; --lh-7xl: 1.1;
+    --text-8xl: 128px; --lh-8xl: 1.1;
+    --text-9xl: 256px; --lh-9xl: 1.1;
     
     --max-z-index: 2147483647;
     --zuz-shadow: 0px 0px 0px 1px #d4d4d4, 0px 0px 6px #ccc;

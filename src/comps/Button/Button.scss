@@ -30,6 +30,9 @@ body{
     --button-current-disabled-color: var(--button-disabled-color);
     --button-current-disabled-border: var(--button-border);
 
+    --icon-color-1: var(--button-current-color);
+    --icon-color-2: rgb(from var(--icon-color-1) r g b / 0.5);
+    
     width: fit-content;
 
     &.--xs {
