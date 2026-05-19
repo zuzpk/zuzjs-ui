@@ -1,5 +1,5 @@
 import { Ref } from "react"
-import { Props, ValueOf, Variant } from "../../types"
+import { Appearance, Props, ValueOf, Variant } from "../../types"
 import { SPINNER } from "../Spinner/types"
 import { ToolTipProps } from "../Tooltip/types"
 
@@ -14,7 +14,7 @@ export type ButtonProps = Props<`button`> & {
     reset?: boolean,
     tooltip?: string,
     tooltipProps?: Omit<ToolTipProps, `title`>
-    kind?: ButtonKind,
+    kind?: Appearance,
     alignment?: `start` | `center` | `end`
 }
 
@@ -27,7 +27,5 @@ export const ButtonState = {
     Loading : `loading`,
     Normal: `normal`,
 }
-
-export type ButtonKind = `solid` | `subtle` | `surface` | `outline` | `ghost` | `plain`
 
 export type ButtonState = typeof ButtonState[keyof typeof ButtonState]

@@ -62,6 +62,7 @@ const Select = (({
         options,
         label,
         name,
+        kind = "surface",
         variant,
         search: withSearch,
         searchPlaceholder,
@@ -367,7 +368,7 @@ const Select = (({
 
         {supportsManualInput ? <Box
             data-value={currentOption?.value ?? (editableValue || "-1")}
-            className={`--select-display --select-anchor --selected --editable flex aic rel ${className}`.trim()}
+            className={`--select-display --select-anchor --selected --editable --${kind} flex aic rel ${className}`.trim()}
             style={style}
             onClick={(e) => e.stopPropagation()}
             {...forwardedRest as any}>
@@ -392,6 +393,7 @@ const Select = (({
             <Button
                 className={`--select-toggle rel flex aic jcc`}
                 disabled={disabled}
+                kind="plain"
                 onClick={(e) => {
                     e.stopPropagation()
                     if ( !disabled ) setChoosing(prev => !prev)
@@ -404,13 +406,14 @@ const Select = (({
             </Button>
         </Box> : <Button
             disabled={disabled}
+            kind={kind}
             variant={variant || themeVariant}
             data-value={
                 (tokenizer || multiple) && Array.isArray(value) && value.length > 0
                     ? value.map(v => v.value).join(",")
                     : (currentOption?.value ?? `-1`)
             }
-            className={`--select-display --selected --select-anchor flex aic rel ${className}`.trim()}
+            className={`--select-display --selected --select-anchor --${kind} flex aic rel ${className}`.trim()}
             withLabel={false}
             style={style}
             onClick={(e) => {
@@ -462,7 +465,7 @@ const Select = (({
 
     const optionsList = <Box
         id={_id}
-        className={`--select-options-list --options-list --${variant || themeVariant || Variant.Small} --allow-scroll -fx flex cols abs zIndex:var(--max-z-index)`}
+        className={`--select-options-list --options-list --${variant || themeVariant || Variant.Small} --allow-scroll -fx flex cols fixed zIndex:var(--max-z-index)`}
         aria-hidden={!choosing}
         onWheel={handleListWheel}
         style={{

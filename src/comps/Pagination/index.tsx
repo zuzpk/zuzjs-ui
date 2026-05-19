@@ -138,7 +138,7 @@ const Pagination = ({
                 `${Math.min(getPageValue(_currentPage) * itemsPerPage, itemCount)} of ${itemCount} items`
             ].join(` `)}
         </Box>
-        <Box as={`flex aic jce flex:1 --pgt-btns --pgt-nav`}>
+        <Box as={`--flex --aic --jce flex:1 --pgt-btns --pgt-nav`}>
             <Button 
                 disabled={getPageValue(_currentPage) <= 1}
                 onClick={(ev) => handlePage({ id: hash ? _hash(getPageValue(_currentPage) - 1) : getPageValue(_currentPage) - 1, label: getPageValue(_currentPage) - 1})}>{SVGIcons.chevronLeftOutline}</Button>

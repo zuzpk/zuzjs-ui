@@ -522,7 +522,7 @@ class StyleGenerator {
 
         else if (
             this.propMap[prop] && 
-            [`xs`, `sm`, `md`, `lg`, `xl`, `xxl`].includes(val.trim())
+            [`xs`, `sm`, `md`, `lg`, `xl`, `xxl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`, `8xl`, `9xl`].includes(val.trim())
         ){
             const pval = this.propMap[prop]
             const sizeMap : dynamic = {
@@ -533,7 +533,9 @@ class StyleGenerator {
             result = `var(--${
                 pval in sizeMap ? sizeMap[pval]
                     : pval}-${val.trim()})`
-            // console.log(result, pval, sizeMap)
+
+            // console.log(result)
+
         }
 
         // If it's a bracketed value (calc, etc.)

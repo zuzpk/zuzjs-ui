@@ -40,7 +40,7 @@
 
   "enums": {
     "Variant": ["xs", "sm", "md", "lg", "xl"],
-    "ButtonKind": ["solid", "subtle", "surface", "outline", "ghost", "plain"],
+    "Appearance": ["solid", "subtle", "surface", "outline", "ghost", "plain"],
     "ButtonState": ["loading", "normal"],
     "SPINNER": ["SIMPLE", "ROLLER", "Wave"],
     "ALERT": ["success", "error", "warn", "info"],
@@ -148,7 +148,7 @@
       "import": "Button",
       "extends": "Props<button>",
       "props": [
-        { "name": "kind", "type": "ButtonKind", "description": "Visual style: solid|subtle|surface|outline|ghost|plain" },
+        { "name": "kind", "type": "Appearance", "description": "Visual style: solid|subtle|surface|outline|ghost|plain" },
         { "name": "icon", "type": "string | null", "description": "Left icon name." },
         { "name": "iconSize", "type": "Variant", "description": "Icon size variant." },
         { "name": "withLabel", "type": "boolean", "description": "Show label text alongside icon." },

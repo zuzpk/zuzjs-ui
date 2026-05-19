@@ -4,6 +4,13 @@ body{
     --select: var(--surface);
     --select-border-color: var(--border-primary);
     --select-border: 1px var(--select-border-color) solid;
+    --select-current-bg: var(--select);
+    --select-current-hover: var(--select-hover);
+    --select-current-border: var(--select-border);
+    --select-current-color: var(--select-option-color);
+    --select-current-disabled-bg: var(--select);
+    --select-current-disabled-color: var(--select-option-color-disabled);
+    --select-current-disabled-border: var(--select-border);
     --select-z-index: 1;
     --select-gap: 5px;
     --select-arrow-width: 16px;
@@ -68,14 +75,75 @@ body{
     .--select-display.--selected{
         width: 100%;
         gap: var(--select-gap);
-        background: var(--select);
-        border: var(--select-border);
+        background: var(--select-current-bg);
+        border: var(--select-current-border);
         box-shadow: var(--select-shadow);
+        color: var(--select-current-color);
         line-height: 1;
         justify-content: flex-start !important;
+
+        &.--solid{
+            --select-current-bg: var(--button);
+            --select-current-hover: var(--button-hover);
+            --select-current-border: var(--button-border);
+            --select-current-color: var(--button-color);
+            --select-current-disabled-bg: var(--button-disabled);
+            --select-current-disabled-color: var(--button-disabled-color);
+            --select-current-disabled-border: var(--button-border);
+        }
+
+        &.--subtle{
+            --select-current-bg: var(--surface-hover);
+            --select-current-hover: var(--surface);
+            --select-current-border: 1px solid var(--surface-hover);
+            --select-current-color: var(--text-primary);
+            --select-current-disabled-bg: var(--button-disabled);
+            --select-current-disabled-color: var(--button-disabled-color);
+            --select-current-disabled-border: 1px solid var(--button-disabled);
+        }
+
+        &.--surface{
+            --select-current-bg: var(--surface);
+            --select-current-hover: var(--surface-hover);
+            --select-current-border: 1px solid var(--border-primary);
+            --select-current-color: var(--text-primary);
+            --select-current-disabled-bg: var(--button-disabled);
+            --select-current-disabled-color: var(--button-disabled-color);
+            --select-current-disabled-border: 1px solid var(--button-disabled);
+        }
+
+        &.--outline{
+            --select-current-bg: transparent;
+            --select-current-hover: var(--surface-hover);
+            --select-current-border: 1px solid var(--border-primary);
+            --select-current-color: var(--text-primary);
+            --select-current-disabled-bg: transparent;
+            --select-current-disabled-color: var(--button-disabled-color);
+            --select-current-disabled-border: 1px solid var(--button-disabled-color);
+        }
+
+        &.--ghost{
+            --select-current-bg: transparent;
+            --select-current-hover: var(--button-ghost-hover);
+            --select-current-border: 1px solid transparent;
+            --select-current-color: var(--text-primary);
+            --select-current-disabled-bg: transparent;
+            --select-current-disabled-color: var(--button-disabled-color);
+            --select-current-disabled-border: 1px solid transparent;
+        }
+
+        &.--plain{
+            --select-current-bg: transparent;
+            --select-current-hover: transparent;
+            --select-current-border: 0px;
+            --select-current-color: var(--text-primary);
+            --select-current-disabled-bg: transparent;
+            --select-current-disabled-color: var(--button-disabled-color);
+            --select-current-disabled-border: 0px;
+        }
         
         .--svg-arrow{ 
-            color: var(--select-arrow-color); 
+            color: var(--select-current-color); 
             .--icon{
                 font-size: var(--select-arrow-size);
             }
@@ -83,42 +151,44 @@ body{
 
         &:disabled{
             .--label{
-                color: var(--select-option-color-disabled);
+                color: var(--select-current-disabled-color);
             }
             .--selected-icon{
-                color: var(--select-option-color-disabled);
+                color: var(--select-current-disabled-color);
             }
             .--select-input{
-                color: var(--select-option-color-disabled);
+                color: var(--select-current-disabled-color);
             }
             .--svg-arrow{
                 svg {
-                    fill: var(--text-primary-disabled);
+                    fill: var(--select-current-disabled-color);
                 }
             }
             &:hover{
-                background: var(--select);
+                background: var(--select-current-disabled-bg);
             }
+            background: var(--select-current-disabled-bg);
+            border: var(--select-current-disabled-border);
         }
 
         &:hover{
-            background: var(--select-hover);
+            background: var(--select-current-hover);
         }
 
         .--selected-icon{
-            color: var(--select-option-color);
+            color: var(--select-current-color);
         }
 
         .--label-wrapper,
         .--label{
             flex: 1;
             text-align: left;
-            color: var(--select-option-color);
+            color: var(--select-current-color);
         }
         .--svg-arrow{
             width: var(--select-arrow-width);
             svg{
-                fill: var(--select-arrow-color);
+                fill: var(--select-current-color);
             }
         }
 
@@ -141,7 +211,7 @@ body{
                 min-width: 0;
                 background: transparent;
                 border: 0;
-                color: var(--select-option-color);
+                color: var(--select-current-color);
                 font: inherit;
                 outline: none;
                 padding: 0;

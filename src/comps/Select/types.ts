@@ -1,5 +1,5 @@
 import { FormEventHandler, ReactNode, Ref } from "react";
-import { BoxProps, ValueOf, Variant } from "../../types";
+import { Appearance, BoxProps, ValueOf, Variant } from "../../types";
 
 export type SelectPrimitive = string | number
 export type SelectSingleValue = Option | SelectPrimitive
@@ -86,6 +86,13 @@ type SelectCommonProps = Omit<BoxProps, "onChange" | "ref"> & {
      * @default "sm"
      */
     variant?: ValueOf<typeof Variant>,
+
+    /**
+     * Visual style for the select trigger.
+     * Matches Button kind variants.
+     * @default "surface"
+     */
+    kind?: Appearance,
 
     /**
      * Indicates if the select field is required and its validation type.

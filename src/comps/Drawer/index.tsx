@@ -1,4 +1,4 @@
-import { KeyCode, useShortcuts } from "@zuzjs/hooks";
+import { KeyCode, useDevice, useShortcuts } from "@zuzjs/hooks";
 import { Ref, useEffect, useMemo, useState } from "react";
 import { useBase, useFx } from "../../hooks";
 import { useTheme } from "../../hooks/useColorScheme";
@@ -103,8 +103,26 @@ const Drawer = ({
     }, [forceLoading]);
 
     const side = from || themeDrawer?.from || DRAWER_SIDE.Left;
+    const isMobile = useDevice().isMobile;
 
     const _style = useMemo(() => {
+
+        if ( isMobile ){
+            switch (side) {
+                case DRAWER_SIDE.Left:
+                    // translate by the drawer's OWN width + margin, not the viewport
+                    return { from: { x: `calc(-100% - var(--m) - 2px)` }, to: { x: 0 } }
+                case DRAWER_SIDE.Right:
+                    return { from: { x: `calc(100% + var(--m) + 2px)` }, to: { x: 0 } }
+                case DRAWER_SIDE.Top:
+                    return { from: { y: `calc(-100% - var(--m) - 2px)` }, to: { y: 0 } }
+                case DRAWER_SIDE.Bottom:
+                    return { from: { y: `calc(100% + var(--m) + 2px)` }, to: { y: 0 } }
+                default:
+                    return { from: { x: `calc(-100% - var(--m) - 2px)` }, to: { x: 0 } }
+            }
+        }
+
         switch (side) {
             case DRAWER_SIDE.Left:
                 // Use vw for horizontal, vh for vertical
@@ -118,7 +136,7 @@ const Drawer = ({
             default:
                 return { from: { x: `-100vw` }, to: { x: 0 } }
         }
-    }, [from, themeDrawer?.from]);
+    }, [from, themeDrawer?.from, isMobile]);
 
     const drawerAnimation = useFx({
         from: { ..._style.from, opacity: 0 },

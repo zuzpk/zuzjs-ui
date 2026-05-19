@@ -22,8 +22,8 @@ body{
 }
 
 .drawer-h{
-    min-width: 320px !important;
-    max-width: 90vw;
+    min-width: min(320px, calc(100vw - (var(--m) * 2))) !important;
+    max-width: min(90vw, calc(100vw - (var(--m) * 2)));
     top: calc(0px + var(--m));
     bottom: calc(0px + var(--m));
     border-radius: var(--drawer-radius-h, var(--drawer-radius));

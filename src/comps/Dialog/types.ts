@@ -1,9 +1,8 @@
 import { dynamic } from "@zuzjs/core";
 import { ReactNode } from "react";
-import { ValueOf } from "../../types";
+import { Appearance, ValueOf } from "../../types";
 import { DIALOG, DIALOG_ACTION_POSITION, SHEET, TRANSITION_CURVES, TRANSITIONS, Variant } from "../../types/enums";
 import { LayerHandler, ZuzProps } from "../../types/interfaces";
-import { ButtonKind } from "../Button/types";
 import { FormProps, ValidationResult } from "../Form/types";
 import { SPINNER } from "../Spinner/types";
 
@@ -60,7 +59,7 @@ export type DialogProps = ZuzProps & {
 export interface DialogActionHandler {
     key?: string,
     label: string, 
-    kind?: ButtonKind,
+    kind?: Appearance,
     type?: "button" | "reset" | "submit",
     handler?: () => void,
     onClick?: () => void,

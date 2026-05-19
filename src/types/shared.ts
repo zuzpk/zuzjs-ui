@@ -26,3 +26,5 @@ export type WithFormValidation = FormValidation | `${FormValidation}${string}`
 export type AnimationTransition = `back` | `expo` | `sine` | `power` | `circ` | `bounce` | `elastic` | `ease` | `spring` | `liquid`
 
 export type Placement = ValueOf<typeof PLACEMENTS>;
+
+export type Appearance = `solid` | `subtle` | `surface` | `outline` | `ghost` | `plain`
