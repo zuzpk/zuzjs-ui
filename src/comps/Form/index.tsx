@@ -200,8 +200,10 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
 
             if (!isValid) {
                 el.classList.add("--with-error");
-                if (!firstErrorEl) firstErrorEl = el;
-                _errorMsg = errors?.[fieldName];
+                if (!firstErrorEl) {
+                    firstErrorEl = el;
+                    _errorMsg = errors?.[fieldName];
+                }
             } else {
                 el.classList.remove("--with-error");
             }

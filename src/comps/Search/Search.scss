@@ -42,6 +42,13 @@ body{
         }
     }
 
+    .--search-action{
+        --icon-color-1: var(--text-primary);
+        --icon-color-2: rgb(from var(--icon-color-1) r g b / 0.5);
+        color: var(--search-send-color);
+        font-size: 1rem;
+    }
+
     @each $size in variables.$sizes {
 
         &.--#{$size} {

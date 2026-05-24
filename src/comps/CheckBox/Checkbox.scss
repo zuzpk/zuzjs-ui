@@ -1,13 +1,21 @@
-:root{
+@use "../../scss/variables";
+
+body{
     --checkbox-check-color: #fff;
     --checkbox-check-size: 13px;
-    --checkbox-size: 20px;
     --checkbox-radius: 6px;
     --checkbox-checked: rgb(46, 161, 42);
     --checkbox-unchecked: rgb(203, 203, 203);
     --checkbox-thumb: #fff;
     --checkbox-thumb-shadow: #000;
     --checkbox-thumb-shadow-size: 2px;
+
+    --checkbox-size: 20px;
+    --checkbox-size-sm: 18px;
+    --checkbox-size-md: 20px;
+    --checkbox-size-lg: 22px;
+    --checkbox-size-xl: 24px;
+
 }
 .--checkbox{
     height: var(--checkbox-size);
@@ -42,6 +50,12 @@
     }
     svg{
         fill: var(--checkbox-unchecked);
+    }
+
+    @each $size in variables.$sizes {
+        &.--#{$size} {
+            --checkbox-size: var(--checkbox-size-#{$size}, var(--size-#{$size}));
+        }
     }
     
 }

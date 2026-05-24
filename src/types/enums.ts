@@ -160,6 +160,7 @@ export const TRANSITIONS = {
 } as const
 
 export const Status = {
+    None: "none",
     Success: "success",
     Error: "error", 
     Idle: "idle", 

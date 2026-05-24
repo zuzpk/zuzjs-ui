@@ -3,6 +3,7 @@
 @use "./keyframes";
 @use "./transitions";
 @use "./devtools";
+@use "./variables";
 
 @use "../comps/Accordion/Accordion.scss";
 @use "../comps/Actionbar/Actionbar.scss";
@@ -266,6 +267,22 @@ body {
     
     --max-z-index: 2147483647;
     --zuz-shadow: 0px 0px 0px 1px #d4d4d4, 0px 0px 6px #ccc;
+
+    --grid-line-y: rgba(71,85,105,0.22);
+    --grid-line-x: rgba(148,163,184,0.16);
+    --grid-size: 3em;
+    
+    @each $opacity in variables.$opacity {
+        --primary-#{($opacity * 100)}: rgb(from var(--primary) r g b / #{$opacity});
+        --primary#{($opacity * 100)}: rgb(from var(--primary) r g b / #{$opacity});
+        --surface-#{($opacity * 100)}: rgb(from var(--surface) r g b / #{$opacity});
+        --surface#{($opacity * 100)}: rgb(from var(--surface) r g b / #{$opacity});
+        --muted-#{($opacity * 100)}: rgb(from var(--muted) r g b / #{$opacity});
+        --muted#{($opacity * 100)}: rgb(from var(--muted) r g b / #{$opacity});
+        --text-primary-#{($opacity * 100)}: rgb(from var(--text-primary) r g b / #{$opacity});
+        --text-primary-inverted-#{($opacity * 100)}: rgb(from var(--text-primary-inverted) r g b / #{$opacity});
+        --border-primary-#{($opacity * 100)}: rgb(from var(--border-primary) r g b / #{$opacity});
+    }
 }
 
 /* 1. Global listener for any Zuz animation variable */
@@ -572,4 +589,9 @@ body {
         );
     }
 
+}
+
+.--bg-grid {
+    background-image: linear-gradient(var(--grid-line-y) .1em, transparent .1em), linear-gradient(90deg, var(--grid-line-x) .1em, transparent .1em);
+    background-size: var(--grid-size) var(--grid-size);
 }

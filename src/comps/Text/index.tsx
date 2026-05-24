@@ -199,3 +199,5 @@ const Text = ({
 Text.displayName = `Zuz.Text`
 
 export default Text
+
+export const P = (props: Omit<TextProps, 'kind'>) => <Text kind={`p`} {...props} />

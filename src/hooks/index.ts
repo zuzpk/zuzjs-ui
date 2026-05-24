@@ -1,4 +1,6 @@
 export { default as useBase } from "./useBase";
+export { default as useColorPicker } from './useColorPicker';
+export { useTheme } from './useColorScheme';
 export {
     /**
      * @deprecated use useContextMenu instead. Will be removed in v2.0.0
@@ -6,7 +8,6 @@ export {
     default as useContextMenu,
     default as useMenu
 } from "./useContextMenu";
-export { default as useColorPicker } from './useColorPicker';
 export { default as useDialog } from './useDialog';
 export { default as useDrawer } from './useDrawer';
 export { default as useFx } from "./useFx";

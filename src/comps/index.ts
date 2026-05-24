@@ -363,6 +363,8 @@ export { default as LayersProvider } from './Layers';
 export { default as List } from './List';
 export * from './List/types';
 
+export { default as MagneticGrid, type MagneticGridProps } from './MagneticGrid';
+
 /**
  * Media player wrapper.
  * @example
@@ -576,7 +578,7 @@ export * from './Terminal/types';
  * <Text>Hello world</Text>
  * ```
  */
-export { default as Text } from "./Text";
+export { P, default as Text } from "./Text";
 
 /**
  * Multiline textarea input.

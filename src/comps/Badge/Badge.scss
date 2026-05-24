@@ -13,6 +13,9 @@ body {
     // Single color token — overridden by type classes or inline style (custom color).
     --badge-color: var(--badge-dead);
     --badge-dot-opacity: 1;
+    --badge-current-bg: var(--badge-color);
+    --badge-current-border: 0px;
+    --badge-current-color: #fff;
 
     &.--success { --badge-color: var(--badge-success); }
     &.--error   { --badge-color: var(--badge-error); }
@@ -22,6 +25,32 @@ body {
         --badge-dot-opacity: var(--badge-opacity);
     }
 
+    &.--solid {
+        --badge-current-bg: var(--badge-color);
+        --badge-current-color: #fff;
+        --badge-current-border: 1px solid color-mix(in srgb, var(--badge-color) 24%, transparent);
+    }
+
+    &.--subtle,
+    &.--surface {
+        --badge-current-bg: color-mix(in srgb, var(--badge-color) 12%, var(--surface));
+        --badge-current-border: 1px solid color-mix(in srgb, var(--badge-color) 24%, transparent);
+        --badge-current-color: var(--badge-color);
+    }
+
+    &.--outline,
+    &.--ghost {
+        --badge-current-bg: transparent;
+        --badge-current-border: 1px solid color-mix(in srgb, var(--badge-color) 32%, transparent);
+        --badge-current-color: var(--badge-color);
+    }
+
+    &.--plain {
+        --badge-current-bg: transparent;
+        --badge-current-border: 0px;
+        --badge-current-color: var(--badge-color);
+    }
+
     @each $size in variables.$sizes {
         &.--#{$size} {
             --badge-text-size: var(--text-#{$size});
@@ -29,6 +58,9 @@ body {
             .--label {
                 font-size: var(--badge-text-#{$size}, var(--text-#{$size}));
                 padding: var(--badge-padding-#{$size}, var(--padding-#{$size}));
+            }
+            .--icon{
+                padding-left: var(--padding-#{$size}-x);
             }
         }
     }
@@ -42,7 +74,8 @@ body {
 
     &:has(.--label) {
         border-radius: var(--badge-radius);
-        background: var(--badge-color);
+        background: var(--badge-current-bg);
+        border: var(--badge-current-border);
     }
 
     .--dot {
@@ -59,7 +92,10 @@ body {
     }
 
     .--label {
-        color: #fff;
+        color: var(--badge-current-color);
     }
+
+    --icon-color-1: var(--badge-current-color);
+    --icon-color-2: rgb(from var(--icon-color-1) r g b / 0.5);
 
 }

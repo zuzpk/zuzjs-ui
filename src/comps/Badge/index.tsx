@@ -2,16 +2,24 @@
 import { _ } from '@zuzjs/core';
 import React from 'react';
 import { useBase } from '../../hooks';
-import { BoxProps, Status, TRANSITION_CURVES, TRANSITIONS, ValueOf, Variant } from '../../types';
+import { Appearance, BoxProps, Status, TRANSITION_CURVES, TRANSITIONS, ValueOf, Variant } from '../../types';
 import Box from '../Box';
+import Icon from '../Icon';
 import Spinner from '../Spinner';
 import { SPINNER } from '../Spinner/types';
 import Text from '../Text';
 
 export type BadgeProps = BoxProps & {
+    /** Badge size. */
     size?: number,
+    /** Badge type. */
     type?: ValueOf<typeof Status>,
+    /** Badge variant. */
     variant?: ValueOf<typeof Variant>,
+    /** Badge appearance kind. */
+    kind?: Appearance,
+    /** Icon to display inside the badge. */
+    icon?: string | null,
     /** Text label. Ignored when `count` is provided. */
     label?: string,
     /** Numeric count to display. Renders a label badge with the count. */
@@ -20,18 +28,25 @@ export type BadgeProps = BoxProps & {
     max?: number,
     /** Custom color that overrides the semantic `type` color. Accepts any CSS color value. */
     color?: string,
+    /** Custom color for the label text. Accepts any CSS color value. */
+    labelColor?: string,
+    /** Whether the badge is in a loading state. */
     loading?: boolean,
+    /** Spinner type to display when `loading` is true. */
     spinner?: ValueOf<typeof SPINNER>,
 }
 
 const Badge : React.FC<BadgeProps> = ({
     size = 5,
-    type = `dead`,
+    type = `none`,
+    icon,
     label = ``,
+    labelColor,
     count,
     max = 99,
     color,
     variant = Variant.Small,
+    kind = `solid`,
     loading = false,
     spinner,
     ...pops
@@ -47,9 +62,10 @@ const Badge : React.FC<BadgeProps> = ({
         style={{
             ...(isDot ? { "--badge-size": size } : {}),
             ...(color ? { "--badge-color": color } : {}),
+            ...(labelColor ? { "--badge-current-color": labelColor } : {}),
             ...style
         }}
-        as={`--badge ${count ? `--as-counter` : ``} --${variant} --${type} rel flex aic jcc ${className}`.trim()}>
+        as={`--badge ${count ? `--as-counter` : ``} --${kind} --${variant} --${type} rel flex aic jcc ${className}`.trim()}>
         <Box
             fx={{
                 transition: TRANSITIONS.FadeIn,
@@ -58,9 +74,10 @@ const Badge : React.FC<BadgeProps> = ({
                 when: loading
             }}
             as={`abs abc`}><Spinner type={spinner} /></Box>
+        {icon && <Icon name={icon} variant={variant} />}
         {isDot
             ? <Box as={`--dot`} />
-            : <Text as={`--label`}>{displayCount ?? label}</Text>
+            : <Text as={`--label --nous`}>{displayCount ?? label}</Text>
         }
     </Box>
 }
