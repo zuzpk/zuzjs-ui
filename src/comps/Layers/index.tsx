@@ -35,6 +35,9 @@ const LayersRenderer = ({
     const closeMenu = () => {
         setMenuVisible(false); // Trigger exit animation
         setTimeout(() => setActiveMenu(null), 200); // Actually unmount after FX
+        if ( activeMenu ){
+            (activeMenu.props as ContextMenuProps).onClose?.(activeMenu.id);
+        }
     };
 
     useImperativeHandle(ref, () => ({

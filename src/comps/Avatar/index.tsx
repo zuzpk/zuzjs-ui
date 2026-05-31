@@ -1,5 +1,4 @@
 "use client"
-import { useImage } from "@zuzjs/hooks";
 import { forwardRef } from "react";
 import { useBase } from "../../hooks";
 import { AVATAR, BoxProps, Variant } from "../../types";
@@ -37,8 +36,6 @@ const Avatar = forwardRef<AvatarHandler, AvatarProps>((props, ref) => {
         ...pops 
     } = props;
 
-    const [ img, imgStatus, imgError ] = useImage(src ?? "", crossOrigin, referrerPolicy);
-
     const {
         className,
         style: baseStyle,
@@ -54,7 +51,7 @@ const Avatar = forwardRef<AvatarHandler, AvatarProps>((props, ref) => {
             }}
             {...rest as BoxProps}>
         { src ? <Image   
-            src={img}
+            src={src}
             crossOrigin={crossOrigin} 
             referrerPolicy={referrerPolicy}
             {...pops } /> : <Text className={`--avatar-label`}>{(alt ? alt.charAt(0) : `A`).toUpperCase()}</Text>}

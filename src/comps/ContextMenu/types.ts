@@ -6,6 +6,8 @@ import { BoxProps, ORIGIN, ValueOf } from "../../types";
  */
     
 export type ContextItem = ContextItemConfig | ReactNode | FC;
+export type ContextMenuArrowSide = "top" | "left" | "right" | "bottom";
+export type ContextMenuArrowAlign = "left" | "center" | "right" | "top" | "bottom";
 export interface ContextItemConfig {
     /** The display text for the menu item */
     label: string | ReactNode;
@@ -21,6 +23,8 @@ export interface ContextItemConfig {
     enabled?: boolean;
     /** Callback function invoked when the menu item is selected */
     onSelect?: (item: ContextItemConfig) => void;
+    /** Optional nested submenu items */
+    submenu?: ContextItem[];
 }
 
 /**
@@ -50,6 +54,10 @@ export type ContextMenuProps = BoxProps & {
     when?: boolean,
     /** Arrow */
     arrow?: boolean,
+    /** Force arrow side independent of origin/auto placement */
+    arrowSide?: ContextMenuArrowSide,
+    /** Force arrow alignment on the selected side */
+    arrowAlign?: ContextMenuArrowAlign,
     /** Width of the context menu */
     width?: number | string,
     /** Callback invoked when the context menu is closed with its id */
@@ -63,6 +71,12 @@ export type ContextMenuProps = BoxProps & {
 export type MenuItemProps = ContextItemConfig & {
     /** Index position of the menu item in the menu list */
     index: number;
+    /** Whether this item opens a submenu */
+    hasSubmenu?: boolean;
+    /** Mouse enter handler for submenu anchoring */
+    onHover?: () => void;
+    /** Attach ref to the clickable item root */
+    itemRef?: (node: HTMLButtonElement | null) => void;
 
 }
 

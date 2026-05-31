@@ -1,6 +1,6 @@
 @use "../../scss/mixins.scss" as *;
 
-:root{
+body{
     --treenode-root-label-icon-size: var(--treenode-label-icon-size);
     --treenode-root-label-font-weight: normal;
     --treenode-root-margin: 10px;
@@ -22,6 +22,7 @@
     --treenode-label-size: 15px;
     --treenode-label-gap: 6px;
     --treenode-sub-margin: 20px;
+    --treenode-icon-color: #111;
 }
 
 .--treeview{
@@ -71,6 +72,8 @@
                 }
                 .--node-aro-icon{
                     font-size: var(--treenode-arrow-icon-size);
+                    --icon-color-1: var(--treenode-icon-color);
+                    --icon-color-2: rgb(from var(--icon-color-1) r g b / var(--icon-alpha, 0.5));
                     &:not(.--skeleton){
                         color: var(--treenode-arrow-icon-color);
                         svg{
@@ -91,6 +94,8 @@
                 .--node-icon{
                     font-size: var(--treenode-label-icon-size);
                     min-width: var(--treenode-label-icon-size) !important;
+                    --icon-color-1: var(--treenode-icon-color);
+                    --icon-color-2: rgb(from var(--icon-color-1) r g b / var(--icon-alpha, 0.5));
                     &:not(.--skeleton){
                         color: var(--treenode-label-icon-color);
                     }

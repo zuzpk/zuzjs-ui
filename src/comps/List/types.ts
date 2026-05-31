@@ -1,5 +1,5 @@
 import { DragType } from "@zuzjs/hooks";
-import { ReactNode } from "react";
+import { CSSProperties, ReactNode } from "react";
 import { Props, ValueOf } from "../../types";
 import { TRANSITION_CURVES, TRANSITIONS, Variant } from "../../types/enums";
 import { animationProps } from "../../types/interfaces";
@@ -73,4 +73,6 @@ export type ListProps = Props<`ul` | `ol`> & {
     onSort?: (items: ListItem[], context: { from: number, to: number, item: ListItem }) => void,
     /** Virtual scrolling config for large lists */
     virtual?: VirtualScrollOptions,
+    /** CSS list-style property */
+    listStyle?: CSSProperties[`listStyle`] | string,
 }

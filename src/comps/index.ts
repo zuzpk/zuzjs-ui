@@ -215,6 +215,9 @@ export * from './Crumb/types';
  */
 export { default as DatePicker } from './DatePicker';
 
+export { default as DependencyTree } from './DependencyTree';
+export type * from "./DependencyTree/types";
+
 /**
  * Modal dialog component.
  * @example

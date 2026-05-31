@@ -124,14 +124,14 @@ export const ALERT = {
 
 export const TRANSITION_CURVES = {
     Spring : "SPRING",
-    // Ease = "EASE",
-    // EaseIn = "EASEIN",
-    // EaseOut = "EASEOUT",
+    Ease: "EASE",
+    EaseIn: "EASEIN",
+    EaseOut: "EASEOUT",
     Liquid : "LIQUID",
     EaseInOut : "EASEINOUT",
     EaseOutBack: "EASEOUTBACK",
     Bounce : "BOUNCE",
-    // Linear = "LINEAR",
+    Linear: "LINEAR",
     // StepStart = "STEPSTART",
     // StepEnd = "STEPEND",
     // Steps = "STEPS",
@@ -146,17 +146,16 @@ export const TRANSITIONS = {
     SlideInTop : "SLIDE_FROM_TOP",
     SlideInRight : "SLIDE_FROM_RIGHT",
     SlideInBottom : "SLIDE_FROM_BOTTOM",
-    SlideInTopScale : "SLIDE_FROM_BOTTOM_SCALE",
+    SlideInTopScale : "SLIDE_FROM_TOP_SCALE",
     SlideInBottomScale : "SLIDE_FROM_BOTTOM_SCALE",
     SlideInLeft : "SLIDE_FROM_LEFT",
-    
-    
-    // Zoom = "ZOOM",
-    // Bounce = "BOUNCE",
-    // Flip = "FLIP",
-    // Rotate = "ROTATE",
-    // Pulse = "PULSE",
-    // Shake = "SHAKE"
+
+    Zoom: "ZOOM",
+    Bounce: "BOUNCE",
+    Flip: "FLIP",
+    Rotate: "ROTATE",
+    Pulse: "PULSE",
+    Shake: "SHAKE"
 } as const
 
 export const Status = {

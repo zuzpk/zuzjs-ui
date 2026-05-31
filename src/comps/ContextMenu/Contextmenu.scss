@@ -19,6 +19,7 @@ body{
     --context-item-hover: #f1f1f1;
     --context-arrow-size: 10px;
     --context-arrow-x: 20px;
+    --context-arrow-y: 14px;
 }
 
 [color-scheme="dark"]{
@@ -60,30 +61,86 @@ body{
         border-radius: calc(var(--context-arrow-size) / 4);
     }
     
-    /* Shared Arrow Position (assuming arrow is at the TOP of the menu) */
     &.--has-arrow::after {
-        top: calc((var(--context-arrow-size) / 2) * -1); /* Half the height to overlap correctly */
+        top: calc((var(--context-arrow-size) / 2) * -1);
+        left: 50%;
+        margin-left: calc(var(--context-arrow-size) / -2);
     }
-    &.--arrow-bottom::after {
+
+    &.--has-arrow.--arrow-side-top::after {
+        top: calc((var(--context-arrow-size) / 2) * -1);
+        bottom: auto;
+        left: 50%;
+        right: auto;
+        margin-left: calc(var(--context-arrow-size) / -2);
+        margin-top: 0;
+    }
+
+    &.--has-arrow.--arrow-side-bottom::after {
         bottom: calc((var(--context-arrow-size) / 2) * -1);
         top: auto;
-        // border-bottom-right-radius: 0;
-        // border-top-left-radius: 4px; /* Blend the opposite corner */
-    }
-    /* Left Alignment: Arrow sits 15px from the left */
-    &.--arrow-left::after {
-        left: var(--context-arrow-x);
-    }
-
-    /* Right Alignment: Arrow sits 15px from the right */
-    &.--arrow-right::after {
-        right: var(--context-arrow-x);
-    }
-
-    /* Center Alignment: Arrow sits perfectly in the middle */
-    &.--arrow-center::after {
         left: 50%;
-        margin-left: -8px; /* Negative half-width */
+        right: auto;
+        margin-left: calc(var(--context-arrow-size) / -2);
+        margin-top: 0;
+    }
+
+    &.--has-arrow.--arrow-side-left::after {
+        left: calc((var(--context-arrow-size) / 2) * -1);
+        right: auto;
+        top: 50%;
+        bottom: auto;
+        margin-left: 0;
+        margin-top: calc(var(--context-arrow-size) / -2);
+    }
+
+    &.--has-arrow.--arrow-side-right::after {
+        right: calc((var(--context-arrow-size) / 2) * -1);
+        left: auto;
+        top: 50%;
+        bottom: auto;
+        margin-left: 0;
+        margin-top: calc(var(--context-arrow-size) / -2);
+    }
+
+    &.--has-arrow.--arrow-side-top.--arrow-align-left::after,
+    &.--has-arrow.--arrow-side-bottom.--arrow-align-left::after {
+        left: var(--context-arrow-x);
+        margin-left: 0;
+    }
+
+    &.--has-arrow.--arrow-side-top.--arrow-align-right::after,
+    &.--has-arrow.--arrow-side-bottom.--arrow-align-right::after {
+        right: var(--context-arrow-x);
+        left: auto;
+        margin-left: 0;
+    }
+
+    &.--has-arrow.--arrow-side-top.--arrow-align-center::after,
+    &.--has-arrow.--arrow-side-bottom.--arrow-align-center::after {
+        left: 50%;
+        right: auto;
+        margin-left: calc(var(--context-arrow-size) / -2);
+    }
+
+    &.--has-arrow.--arrow-side-left.--arrow-align-top::after,
+    &.--has-arrow.--arrow-side-right.--arrow-align-top::after {
+        top: var(--context-arrow-y);
+        margin-top: 0;
+    }
+
+    &.--has-arrow.--arrow-side-left.--arrow-align-bottom::after,
+    &.--has-arrow.--arrow-side-right.--arrow-align-bottom::after {
+        bottom: var(--context-arrow-y);
+        top: auto;
+        margin-top: 0;
+    }
+
+    &.--has-arrow.--arrow-side-left.--arrow-align-center::after,
+    &.--has-arrow.--arrow-side-right.--arrow-align-center::after {
+        top: 50%;
+        bottom: auto;
+        margin-top: calc(var(--context-arrow-size) / -2);
     }
 
     .--line{
@@ -103,6 +160,10 @@ body{
         background: var(--context-item);
         border: 0px;
         color: var(--context-item-color);
+
+        --icon-color-1: var(--context-item-color);
+        --icon-color-2: rgb(from var(--icon-color-1) r g b / var(--icon-alpha, 0.5));
+
         .--icon{
             width: var(--context-item-icon-size);
             height: var(--context-item-icon-size);
@@ -113,9 +174,26 @@ body{
         .--label{
             color: var(--context-item-color);
         }
+
+        .--submenu-caret {
+            margin-left: auto;
+            opacity: 0.7;
+            font-size: 12px;
+            line-height: 1;
+        }
+
+        &.--disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         &:hover{
             background: var(--context-item-hover);
         }
+    }
+
+    &.--submenu {
+        z-index: calc(var(--max-z-index) + 1);
     }
 
 }

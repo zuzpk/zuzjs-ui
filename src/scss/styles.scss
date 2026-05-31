@@ -25,6 +25,7 @@
 @use "../comps/Cropper/Cropper.scss";
 @use "../comps/Crumb/Crumb.scss";
 @use "../comps/DatePicker/DatePicker.scss";
+@use "../comps/DependencyTree/DependencyTree.scss";
 @use "../comps/Dialog/Dialog.scss";
 @use "../comps/Drawer/Drawer.scss";
 @use "../comps/Fab/Fab.scss";
@@ -349,6 +350,7 @@ body {
     &.--ase{align-self: flex-end;}
     &.--aic{align-items: center;}
     &.--aie{align-items: flex-end;}
+    &.--aib{align-items: baseline;}
     &.--jcc{justify-content: center;}
     &.--jce{justify-content: flex-end;}
     &.--jcs{justify-content: flex-start;}

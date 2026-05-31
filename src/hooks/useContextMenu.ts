@@ -1,5 +1,5 @@
 import { FC, MouseEvent as ReactMouseEvent, ReactNode, RefObject, useContext } from "react";
-import { ContextItem } from "../comps/ContextMenu/types";
+import { ContextItem, ContextMenuArrowAlign, ContextMenuArrowSide } from "../comps/ContextMenu/types";
 import { LayersContext } from "../comps/Layers";
 import { ORIGIN, TRANSITION_CURVES, TRANSITIONS, ValueOf } from "../types";
 
@@ -12,14 +12,16 @@ const useContextMenu = () => {
         e: ReactMouseEvent<Element, MouseEvent> | TouchEvent, 
         items: ContextItem[],
         origin?: ValueOf<typeof ORIGIN>,
-        width?: number | string
+        width?: number | string,
+        onClose?: (id: number) => void
     ) => {
         e.preventDefault();
         ctx.openMenu({ 
             event: e, 
             items,
             origin,
-            width
+            width,
+            onClose
         });
     };
 
@@ -32,14 +34,19 @@ const useContextMenu = () => {
         transition, 
         curve, 
         arrow,
+        arrowSide,
+        arrowAlign,
         duration,
         header,
         footer,
-        width
+        width,
+        onClose,
     } : {
         transition?: ValueOf<typeof TRANSITIONS>,
         curve?: ValueOf<typeof TRANSITION_CURVES>,
         arrow?: boolean,
+        arrowSide?: ContextMenuArrowSide,
+        arrowAlign?: ContextMenuArrowAlign,
         duration?: number,
         offsetX?: number,
         offsetY?: number,
@@ -47,7 +54,8 @@ const useContextMenu = () => {
         origin?: ValueOf<typeof ORIGIN>,
         header?: ReactNode | FC,
         footer?: ReactNode | FC,
-        width?: number | string
+        width?: number | string,
+        onClose?: (id: number) => void
     }) => {
         ctx.openMenu({ 
             fx: {
@@ -58,10 +66,11 @@ const useContextMenu = () => {
             parent: ref, 
             items,
             origin: origin || ORIGIN.TopCenter,
-            offsetX, offsetY, arrow,
+            offsetX, offsetY, arrow, arrowSide, arrowAlign,
             header,
             footer,
-            width
+            width,
+            onClose
         });
     };
 

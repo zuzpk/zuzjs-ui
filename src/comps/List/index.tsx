@@ -300,6 +300,7 @@ const List = forwardRef<HTMLUListElement | HTMLOListElement, ListProps>((props, 
         dropHighlightDuration = 560,
         dropHighlightTransition = TRANSITIONS.ScaleIn,
         dropHighlightCurve = TRANSITION_CURVES.Spring,
+        listStyle,
         render,
         empty,
         onSort,
@@ -435,7 +436,7 @@ const List = forwardRef<HTMLUListElement | HTMLOListElement, ListProps>((props, 
     );
 
     return createElement(Tag, {
-        className: `--list --${variant || Variant.Small} flex ${direction ?? `cols`} ${className}`.trim(),
+        className: `--list ${listStyle ? `--list-style --ls-${listStyle}` : ""} --${variant || Variant.Small} flex ${direction ?? `cols`} ${className}`.trim(),
         style, 
         ...restWithoutRef,
         ref: (node: HTMLUListElement | HTMLOListElement | null) => {

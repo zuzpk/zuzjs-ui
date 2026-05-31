@@ -80,6 +80,11 @@ const useFx = (
         const _curve = getAnimationCurve(curve);
         const transitionList: string[] = [];
         const built = buildWithStyles(activeStyles);
+        const controlsOpacity = (
+            (`opacity` in (_f || {})) ||
+            (`opacity` in (_t || {})) ||
+            (`opacity` in (exit || {}))
+        );
         
         // Track what we are touching for the cleanup logic
         appliedKeys.current = Object.keys(built);
@@ -89,7 +94,10 @@ const useFx = (
         const finalStyles: any = { ...built };
 
         Object.keys(built).forEach((key) => {
-            const transKey = key.startsWith('--') ? 'all' : key;
+            let transKey = key;
+            if (key === '--fx-x' || key === '--fx-y') transKey = 'translate';
+            else if (key === '--fx-rotate') transKey = 'rotate';
+            else if (key.startsWith('--')) transKey = key;
             if (!transitionList.includes(transKey)) {
                 transitionList.push(`${transKey} ${duration}s ${_curve} ${delay}s`);
             }
@@ -110,7 +118,7 @@ const useFx = (
             style: {
                 ...finalStyles,
                 transition: isWaitingForFirstPosition ? 'none' : transitionList.join(`, `),
-                opacity: isWaitingForFirstPosition ? 0 : finalStyles.opacity,
+                opacity: controlsOpacity ? (isWaitingForFirstPosition ? 0 : finalStyles.opacity) : finalStyles.opacity,
                 pointerEvents: isWaitingForFirstPosition ? 'none' : finalStyles.pointerEvents,
             }
         };

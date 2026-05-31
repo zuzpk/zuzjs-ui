@@ -1,0 +1,295 @@
+.--dependency-tree {
+	--dependency-tree-node-width: 172px;
+	--dependency-tree-card-padding: 0.9rem 1rem;
+	--dependency-tree-title-size: 1rem;
+	--dependency-tree-meta-size: 0.82rem;
+	--dependency-tree-badge-size: 0.72rem;
+	--dependency-tree-gap: 0.875rem;
+	--dependency-tree-card-radius: 0.9rem;
+
+	display: flex;
+	flex-direction: column;
+	gap: var(--dependency-tree-gap);
+	width: 100%;
+	max-width: 100%;
+	overflow: hidden;
+}
+
+.--dependency-tree.--variant-xs {
+	--dependency-tree-node-width: 120px;
+	--dependency-tree-card-padding: 0.42rem 0.55rem;
+	--dependency-tree-title-size: 0.72rem;
+	--dependency-tree-meta-size: 0.62rem;
+	--dependency-tree-badge-size: 0.58rem;
+	--dependency-tree-gap: 0.52rem;
+	--dependency-tree-card-radius: 0.55rem;
+}
+
+.--dependency-tree.--variant-sm {
+	--dependency-tree-node-width: 140px;
+	--dependency-tree-card-padding: 0.55rem 0.7rem;
+	--dependency-tree-title-size: 0.82rem;
+	--dependency-tree-meta-size: 0.68rem;
+	--dependency-tree-badge-size: 0.62rem;
+	--dependency-tree-gap: 0.62rem;
+	--dependency-tree-card-radius: 0.65rem;
+}
+
+.--dependency-tree.--variant-md {
+	--dependency-tree-node-width: 172px;
+	--dependency-tree-card-padding: 0.75rem 0.95rem;
+	--dependency-tree-title-size: 0.96rem;
+	--dependency-tree-meta-size: 0.76rem;
+	--dependency-tree-badge-size: 0.69rem;
+	--dependency-tree-gap: 0.82rem;
+	--dependency-tree-card-radius: 0.85rem;
+}
+
+.--dependency-tree.--variant-lg {
+	--dependency-tree-node-width: 212px;
+	--dependency-tree-card-padding: 1rem 1.15rem;
+	--dependency-tree-title-size: 1.08rem;
+	--dependency-tree-meta-size: 0.84rem;
+	--dependency-tree-badge-size: 0.75rem;
+	--dependency-tree-gap: 0.95rem;
+	--dependency-tree-card-radius: 0.98rem;
+}
+
+.--dependency-tree.--variant-xl {
+	--dependency-tree-node-width: 248px;
+	--dependency-tree-card-padding: 1.2rem 1.35rem;
+	--dependency-tree-title-size: 1.2rem;
+	--dependency-tree-meta-size: 0.92rem;
+	--dependency-tree-badge-size: 0.8rem;
+	--dependency-tree-gap: 1.05rem;
+	--dependency-tree-card-radius: 1.1rem;
+}
+
+.--dependency-tree.--mode-pyramid {
+	align-items: center;
+	gap: 0.66rem;
+}
+
+.--dependency-tree-row {
+	--dependency-tree-row-size: 1;
+	position: relative;
+	display: grid;
+	grid-template-columns: repeat(var(--dependency-tree-row-size), minmax(0, 1fr));
+	justify-items: center;
+	column-gap: var(--dependency-tree-gap);
+	width: 100%;
+	max-width: 100%;
+	padding-top: 0.72rem;
+}
+
+.--dependency-tree-row-track {
+	position: absolute;
+	top: 0.24rem;
+	left: calc(50% / var(--dependency-tree-row-size));
+	right: calc(50% / var(--dependency-tree-row-size));
+	height: 1px;
+	background: color-mix(in srgb, var(--dependency-tree-line, #94a3b8) 62%, transparent);
+}
+
+.--dependency-tree-pyramid-node {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-self: center;
+	width: min(100%, var(--dependency-tree-node-width));
+	min-width: 0;
+	--dependency-tree-dot: #64748b;
+}
+
+.--dependency-tree-pyramid-connector {
+	width: 1px;
+	height: 0.48rem;
+	background: color-mix(in srgb, var(--dependency-tree-line, var(--dependency-tree-dot, #64748b)) 72%, transparent);
+	opacity: 0.8;
+}
+
+.--dependency-tree-pyramid-dot {
+	width: 0.55rem;
+	height: 0.55rem;
+	margin-bottom: 0.35rem;
+	border-radius: 999px;
+	background: var(--dependency-tree-dot, #64748b);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--dependency-tree-dot, #64748b) 16%, transparent);
+}
+
+.--dependency-tree.--mode-pyramid .--dependency-tree-card {
+	padding: var(--dependency-tree-card-padding);
+	border-radius: var(--dependency-tree-card-radius);
+	width: 100%;
+	text-align: center;
+	box-shadow: 0 3px 10px color-mix(in srgb, currentColor 9%, transparent);
+}
+
+.--dependency-tree.--mode-pyramid .--dependency-tree-head {
+	justify-content: center;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+
+.--dependency-tree.--mode-pyramid .--dependency-tree-title {
+	font-size: var(--dependency-tree-title-size);
+	font-weight: 600;
+}
+
+.--dependency-tree.--mode-pyramid .--dependency-tree-badge {
+	font-size: var(--dependency-tree-badge-size);
+	padding: 0.25rem 0.45rem;
+}
+
+.--dependency-tree.--mode-pyramid .--dependency-tree-meta {
+	display: none;
+}
+
+@media (max-width: 900px) {
+	.--dependency-tree-row {
+		padding-top: 0.6rem;
+	}
+
+	.--dependency-tree-pyramid-node {
+		width: min(100%, max(88px, calc(100% / var(--dependency-tree-row-size) - 0.35rem)));
+	}
+
+	.--dependency-tree-row-track {
+		display: none;
+	}
+}
+
+.--dependency-tree-node {
+	display: grid;
+	grid-template-columns: 1.25rem minmax(0, 1fr);
+	gap: 0.875rem;
+	align-items: start;
+}
+
+.--dependency-tree-rail {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	min-height: 100%;
+}
+
+.--dependency-tree-dot {
+	width: 0.75rem;
+	height: 0.75rem;
+	margin-top: 0.55rem;
+	border-radius: 999px;
+	background: var(--dependency-tree-dot, #64748b);
+	box-shadow: 0 0 0 4px color-mix(in srgb, var(--dependency-tree-dot, #64748b) 16%, transparent);
+	position: relative;
+	z-index: 1;
+}
+
+.--dependency-tree-line {
+	position: absolute;
+	top: 1.1rem;
+	bottom: -0.5rem;
+	width: 1px;
+	background: linear-gradient(to bottom, color-mix(in srgb, var(--dependency-tree-dot, #64748b) 78%, transparent), transparent);
+}
+
+.--dependency-tree-card {
+	border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+	border-radius: 0.9rem;
+	padding: var(--dependency-tree-card-padding);
+	border-radius: var(--dependency-tree-card-radius);
+	background: var(--dependency-tree-card-bg, color-mix(in srgb, currentColor 3%, transparent));
+	color: var(--dependency-tree-text, inherit);
+	backdrop-filter: blur(6px);
+}
+
+.--dependency-tree-head {
+	gap: 0.75rem;
+}
+
+.--dependency-tree-title {
+	font-weight: 650;
+	line-height: 1.25;
+	font-size: var(--dependency-tree-title-size);
+	word-break: break-word;
+}
+
+.--dependency-tree-badge {
+	flex: 0 0 auto;
+	font-size: var(--dependency-tree-badge-size);
+	line-height: 1;
+	padding: 0.35rem 0.55rem;
+	border-radius: 999px;
+	background: var(--dependency-tree-badge-bg, color-mix(in srgb, currentColor 8%, transparent));
+	color: var(--dependency-tree-badge-text, inherit);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+.--dependency-tree-meta {
+	margin-top: 0.45rem;
+	font-size: var(--dependency-tree-meta-size);
+	opacity: 0.72;
+	word-break: break-word;
+}
+
+.--dependency-tree-node.--is-current {
+	--dependency-tree-dot: #22c55e;
+}
+
+.--dependency-tree-node.--status-root {
+	--dependency-tree-dot: #2563eb;
+	--dependency-tree-line: #2563eb;
+}
+
+.--dependency-tree-node.--status-merged {
+	--dependency-tree-dot: #8b5cf6;
+	--dependency-tree-line: #8b5cf6;
+}
+
+.--dependency-tree-node.--status-active {
+	--dependency-tree-dot: #22c55e;
+	--dependency-tree-line: #22c55e;
+}
+
+.--dependency-tree-node.--status-blocked {
+	--dependency-tree-dot: #ef4444;
+	--dependency-tree-line: #ef4444;
+}
+
+.--dependency-tree-pyramid-node.--status-root {
+	--dependency-tree-dot: #2563eb;
+	--dependency-tree-line: #2563eb;
+}
+
+.--dependency-tree-pyramid-node.--status-merged {
+	--dependency-tree-dot: #8b5cf6;
+	--dependency-tree-line: #8b5cf6;
+}
+
+.--dependency-tree-pyramid-node.--status-active {
+	--dependency-tree-dot: #22c55e;
+	--dependency-tree-line: #22c55e;
+}
+
+.--dependency-tree-pyramid-node.--status-blocked {
+	--dependency-tree-dot: #ef4444;
+	--dependency-tree-line: #ef4444;
+}
+
+.--dependency-tree-node.--is-current .--dependency-tree-card {
+	border-color: color-mix(in srgb, var(--dependency-tree-dot, #22c55e) 42%, transparent);
+	box-shadow: 0 0 0 1px color-mix(in srgb, var(--dependency-tree-dot, #22c55e) 20%, transparent), 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.--dependency-tree-pyramid-node.--is-current .--dependency-tree-card {
+	border-color: color-mix(in srgb, var(--dependency-tree-dot, #22c55e) 42%, transparent);
+	box-shadow: 0 0 0 1px color-mix(in srgb, var(--dependency-tree-dot, #22c55e) 20%, transparent), 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+.--dependency-tree-empty {
+	padding: 1rem 1.1rem;
+	border-radius: 0.9rem;
+	border: 1px dashed color-mix(in srgb, currentColor 18%, transparent);
+	opacity: 0.7;
+}

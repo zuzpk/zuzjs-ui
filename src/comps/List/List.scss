@@ -4,6 +4,25 @@
 
     position: relative;
 
+    &.--list-style {
+
+        padding-inline-start: 1.2rem;
+    
+        > li {
+            display: list-item;
+        }
+
+        @each $style in variables.$list-styles {
+            &.--ls-#{$style} {
+                list-style: #{$style} !important;
+                > li {
+                    list-style: #{$style} !important;
+                }
+            }
+        }
+
+    }
+
     li {
         transition:
             transform var(--list-drop-highlight-duration, 560ms) var(--list-drop-highlight-curve, ease-in-out),

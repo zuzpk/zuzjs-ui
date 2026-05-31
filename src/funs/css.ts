@@ -115,6 +115,14 @@ export const getAnimationCurve = ( curve?: string | ValueOf<typeof TRANSITION_CU
     if ( !curve ) return `linear`
 
     switch(curve.toUpperCase()){
+        case TRANSITION_CURVES.Linear:
+            return `linear`
+        case TRANSITION_CURVES.Ease:
+            return `ease`
+        case TRANSITION_CURVES.EaseIn:
+            return `ease-in`
+        case TRANSITION_CURVES.EaseOut:
+            return `ease-out`
         case TRANSITION_CURVES.Bounce:
             return `var(--bounce)`
         case TRANSITION_CURVES.Liquid:
@@ -126,8 +134,7 @@ export const getAnimationCurve = ( curve?: string | ValueOf<typeof TRANSITION_CU
             // return `cubic-bezier(0.42, 0, 0.58, 1)`
             return `ease-in-out`
         case TRANSITION_CURVES.EaseOutBack:
-            // return `cubic-bezier(0.42, 0, 0.58, 1)`
-            return `ease-out-back`
+            return `cubic-bezier(0.34, 1.56, 0.64, 1)`
         default:
             return `linear`
     }
@@ -187,6 +194,36 @@ export const animationTransition = (transition: ValueOf<typeof TRANSITIONS>, sta
         case TRANSITIONS.FadeIn:
             _from = { opacity: 0 };
             _to = { opacity: 1 };
+            break;
+
+        case TRANSITIONS.Zoom:
+            _from = { scale: 0.92, opacity: 0 };
+            _to = { scale: 1, opacity: 1 };
+            break;
+
+        case TRANSITIONS.Bounce:
+            _from = { y: `${moveAmount}px`, opacity: 0 };
+            _to = { y: `${idleAmount}px`, opacity: 1 };
+            break;
+
+        case TRANSITIONS.Flip:
+            _from = { rotateY: `-90deg`, opacity: 0 };
+            _to = { rotateY: `0deg`, opacity: 1 };
+            break;
+
+        case TRANSITIONS.Rotate:
+            _from = { rotate: `-8deg`, opacity: 0 };
+            _to = { rotate: `0deg`, opacity: 1 };
+            break;
+
+        case TRANSITIONS.Pulse:
+            _from = { scale: 0.98, opacity: 0.9 };
+            _to = { scale: 1, opacity: 1 };
+            break;
+
+        case TRANSITIONS.Shake:
+            _from = { x: `-${Math.max(4, Math.floor(moveAmount / 4))}px`, opacity: 1 };
+            _to = { x: `${idleAmount}px`, opacity: 1 };
             break;
     }
 

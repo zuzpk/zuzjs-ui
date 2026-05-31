@@ -12,14 +12,23 @@ import { cssDirect, cssProps } from "./builder/stylesheet";
 import componentSnippets from "./snippets";
 import { dynamic } from "./types/shared";
 
-const options = program.opts();
 const cwd = process.cwd();
 
 let isReady = false
 
-const cssPath = path.join(cwd, `src`, `app`, `css`)
-const zuzcssPath = path.join(cssPath, `zuz.scss`)
-const zuzmapPath = path.join(cssPath, `zuzmap.ts`)
+const defaultCssPath = path.join(cwd, `src`, `app`, `css`)
+let cssPath = defaultCssPath
+let zuzcssPath = path.join(cssPath, `zuz.scss`)
+let zuzmapPath = path.join(cssPath, `zuzmap.ts`)
+
+const setCssPaths = (customCssPath?: string) => {
+    cssPath = customCssPath
+        ? (path.isAbsolute(customCssPath) ? customCssPath : path.resolve(cwd, customCssPath))
+        : defaultCssPath
+
+    zuzcssPath = path.join(cssPath, `zuz.scss`)
+    zuzmapPath = path.join(cssPath, `zuzmap.ts`)
+}
 
 const writeFiles = () => {
     styleGenerator.writeToDisk(zuzcssPath);
@@ -71,6 +80,8 @@ const checkUpdate = async () => {
 // program
 //     .option(`-d, --debug`)
 //     .option(`-v, --version`)
+program.option('--cssPath <path>', 'Custom CSS output directory')
+
 //     .option(`-r, --root <char>`)
 //     .option(`-f, --file <char>`)
 //     .option(`-l, --lexer`)
@@ -146,6 +157,8 @@ program
     .alias('w')
     .description('Start ZuzJS watcher')
     .action(() => {
+        const options = program.opts<{ cssPath?: string }>()
+        setCssPaths(options.cssPath)
         
         checkUpdate()
 

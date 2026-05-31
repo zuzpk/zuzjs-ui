@@ -17,6 +17,8 @@ export type FlexProps = BoxProps & {
     aic?: boolean;
     /** Shortcut for align-items: flex-end */
     aie?: boolean;
+    /** Shortcut for align-items: baseline */
+    aib?: boolean;
     /** Shortcut for justify-content: center */
     jcc?: boolean;
     /** Shortcut for justify-content: end */
