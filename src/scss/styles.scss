@@ -287,9 +287,9 @@ body {
 }
 
 /* 1. Global listener for any Zuz animation variable */
-[style*="--fx-x"], [style*="--fx-y"] {
+[style*="--fx-x"], [style*="--fx-y"], [style*="--fx-enter-x"], [style*="--fx-enter-y"] {
     /* Only apply this if the property isn't already set by a class */
-    translate: var(--fx-x, 0px) var(--fx-y, 0px);
+    translate: calc(var(--fx-x, 0px) + var(--fx-enter-x, 0px)) calc(var(--fx-y, 0px) + var(--fx-enter-y, 0px));
 }
 .--has-error:not(.--select),
 .--with-error:not(.--select),
@@ -310,20 +310,20 @@ body {
     left: 50%;
     --abc-x: -50%;
     --abc-y: -50%;
-    translate: calc(var(--abc-x) + var(--fx-x, 0px)) 
-             calc(var(--abc-y) + var(--fx-y, 0px));
+    translate: calc(var(--abc-x) + var(--fx-x, 0px) + var(--fx-enter-x, 0px)) 
+             calc(var(--abc-y) + var(--fx-y, 0px) + var(--fx-enter-y, 0px));
 }
 .--center-x,
 .center-h {
     left: 50%;
     --abc-x: -50%;
-    translate: calc(var(--abc-x) + var(--fx-x, 0px)) var(--fx-y, 0px);
+    translate: calc(var(--abc-x) + var(--fx-x, 0px) + var(--fx-enter-x, 0px)) calc(var(--fx-y, 0px) + var(--fx-enter-y, 0px));
 }
 .--center-y,
 .center-v {
     top: 50%;
     --abc-y: -50%;
-    translate: var(--fx-x, 0px) calc(var(--abc-y) + var(--fx-y, 0px));
+    translate: calc(var(--fx-x, 0px) + var(--fx-enter-x, 0px)) calc(var(--abc-y) + var(--fx-y, 0px) + var(--fx-enter-y, 0px));
 }
 .--sticky{position: sticky;}
 .--no-shrink{flex-shrink: 0;}
@@ -344,7 +344,15 @@ body {
 .--flex{
     display: flex;
     min-width: 0;
-    &.--cols{flex-direction: column;}
+    &.--reverse {
+        flex-direction: row-reverse;
+    }
+    &.--cols{
+        flex-direction: column;
+        &.--reverse {
+            flex-direction: column-reverse;
+        }
+    }
     &.--ass{align-self: flex-start;}
     &.--asc{align-self: center;}
     &.--ase{align-self: flex-end;}

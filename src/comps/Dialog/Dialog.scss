@@ -4,7 +4,7 @@ body{
     --dialog-radius: 10px;
     --dialog-min-width: 300px;
     --dialog-head-padding: var(--padding-lg-x);
-    --dialog-title-opacity: 0.75;
+    --dialog-title-opacity: 0.9;
     --dialog-title-font-size: 16px;
     --dialog-description-font-size: 14px;
     --dialog-title-size: 16px;
@@ -73,17 +73,19 @@ body{
         padding: var(--dialog-head-padding-custom, var(--dialog-head-padding));
         border: var(--dialog-head-border);
 
-        .--title{
+        .--dialog-title{
             flex: 1;
             font-size: var(--dialog-title-size, var(--dialog-title-font-size));
+            font-weight: var(--dialog-title-weight, bold);
             opacity: var(--dialog-title-opacity);
             text-align: var(--dialog-title-position);
-            padding: var(--dialog-title-padding, 10px);
+            padding: var(--dialog-title-padding, 5px);
         }
-        .--description{
-            opacity: 0.5;
+        .--dialog-description{
+            opacity: var(--dialog-description-opacity, 0.6);
             font-size: var(--dialog-description-size, var(--dialog-description-font-size));
             text-align: var(--dialog-title-position);
+            padding: var(--dialog-description-padding, 0px 0px 5px 5px);
         }
 
         .--position-left{

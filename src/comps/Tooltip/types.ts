@@ -7,12 +7,15 @@ export interface ToolTipController {
     hide: () => void;
 }
 
-export type ToolTipProps = Omit<BoxProps, `title` | `ref`> & {
+export type ToolTipTransition = `slide` | `scale` | `none`
+
+export type ToolTipProps = Omit<BoxProps, `title` | `ref` | `transition`> & {
     position?: ValueOf<typeof POSITION>;
     margin?: number;
     title?: string | ReactNode;
     show?: boolean;
     variant?: ValueOf<typeof Variant>;
     /** Tooltip will be anchored to this className in children */
-    anchorName?: string
+    anchorName?: string,
+    transition?: ToolTipTransition;
 }

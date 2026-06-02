@@ -6,7 +6,7 @@ import { useTheme } from "../../hooks/useColorScheme";
 import { Position, TRANSITION_CURVES, TRANSITIONS, Variant } from "../../types";
 import Box from "../Box";
 import Text from "../Text";
-import { ToolTipController, ToolTipProps } from "./types";
+import { ToolTipController, ToolTipProps, ToolTipTransition } from "./types";
 
 /**
  * Tooltip component.
@@ -37,7 +37,7 @@ const ToolTip = ({
     const { title, position, 
         margin = 4, 
         anchorName = '--tooltip-anchor',
-        children, show, variant, ...pops } = props;
+        children, show, variant, transition: transitionProp, ...pops } = props;
     const { style, className, rest } = useBase(pops);
     const dx = position || Position.Top;
     const tooltipRef = useRef<HTMLDivElement>(null);
@@ -55,7 +55,20 @@ const ToolTip = ({
 
     const { tooltip: themeTooltip } = useTheme(true)!
 
-    const tooltipAnimation = useFx({
+    const transition: ToolTipTransition = themeTooltip?.transition ?? transitionProp ?? `slide`;
+
+    const tooltipAnimation = useFx(transition === `none` ? {
+        from: {},
+        to: {},
+        when: isVisible,
+        duration: 0
+    } : transition === `scale` ? {
+        from: { scale: 0.82, opacity: 0 },
+        to: { scale: 1, opacity: 1 },
+        when: isVisible,
+        duration: 0.18,
+        curve: themeTooltip?.curve || TRANSITION_CURVES.EaseInOut,
+    } : {
         transition: dx == Position.Top ? TRANSITIONS.SlideInTop :
             dx == Position.Bottom ? TRANSITIONS.SlideInBottom
                 : dx == Position.Left ? TRANSITIONS.SlideInLeft
@@ -66,6 +79,24 @@ const ToolTip = ({
         margin: dx == Position.Top || dx == Position.Left ? -margin : margin,
         curve: themeTooltip?.curve || TRANSITION_CURVES.EaseInOut,
     });
+
+    const scaleOrigin = dx === Position.Top
+        ? `50% 100%`
+        : dx === Position.Bottom
+            ? `50% 0%`
+            : dx === Position.Left
+                ? `100% 50%`
+                : `0% 50%`;
+
+    const staticMarginOffsetStyle = transition === `slide`
+        ? {}
+        : dx === Position.Top
+            ? { "--fx-y": `-${margin}px` }
+            : dx === Position.Bottom
+                ? { "--fx-y": `${margin}px` }
+                : dx === Position.Left
+                    ? { "--fx-x": `-${margin}px` }
+                    : { "--fx-x": `${margin}px` };
 
     useLayoutEffect(() => {
         if (!isVisible || !canUseDocument || supportsCssAnchor) {
@@ -189,6 +220,9 @@ const ToolTip = ({
                 style={{
                     ...(supportsCssAnchor ? { positionAnchor: _anchorName } : (fallbackStyle || {})),
                     ...tooltipAnimation.style,
+                    ...(transition === `scale` ? { transformOrigin: scaleOrigin } : {}),
+                    ...(transition === `none` ? { transition: `none`, opacity: isVisible ? 1 : 0 } : {}),
+                    ...staticMarginOffsetStyle,
                     ...(
                         dx === Position.Top || dx === Position.Bottom  ? 
                             { "--fx-x": "-50%" } : { "--fx-y": "-50%" }

@@ -24,8 +24,8 @@ const DialogHead : React.FC<{
                 `--${title ? `title` : `dot`} rel`,
                 `--position-${titlePosition}`
             ]}>
-            <Text>{title}</Text>
-            {description && <Text as={`--description`}>{description}</Text>}
+            <Text as={`--dialog-title`}>{title}</Text>
+            {description && <Text as={`--dialog-description`}>{description}</Text>}
         </Flex>
         <Button 
             onClick={(e) => onClose()}

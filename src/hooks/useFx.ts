@@ -95,7 +95,7 @@ const useFx = (
 
         Object.keys(built).forEach((key) => {
             let transKey = key;
-            if (key === '--fx-x' || key === '--fx-y') transKey = 'translate';
+            if (key === '--fx-x' || key === '--fx-y' || key === '--fx-enter-x' || key === '--fx-enter-y') transKey = 'translate';
             else if (key === '--fx-rotate') transKey = 'rotate';
             else if (key.startsWith('--')) transKey = key;
             if (!transitionList.includes(transKey)) {

@@ -1,4 +1,5 @@
 import React from "react";
+import Box from "../Box";
 import Button from "../Button";
 import Flex from "../Flex";
 import Icon from "../Icon";
@@ -18,7 +19,13 @@ const OptionItem = ({
     checkIcon, 
     selected,
     updateValue, 
-    o 
+    o,
+    depth = 0,
+    hasSubOptions = false,
+    expanded = false,
+    forceExpanded = false,
+    onToggleExpand,
+    renderOption,
 } : OptionItemProps): React.ReactElement => {
 
     const check = checkIcon ? 
@@ -27,6 +34,13 @@ const OptionItem = ({
                 : SVGIcons.check;
 
     const isDisabled = o.disabled === true;
+    const renderedOption = renderOption?.(o, {
+        selected: selected === true,
+        depth,
+        hasSubOptions,
+        expanded,
+        forceExpanded,
+    });
 
     return <Button
         onClick={(e) => {
@@ -35,11 +49,35 @@ const OptionItem = ({
             updateValue(o)
         }}
         disabled={isDisabled}
-        as={`--select-option-item minW:max-content --no-shrink ${selected ? `--selected` : ``} ${isDisabled ? `--disabled` : ``} rel`.trim()}>
+        style={{ "--select-option-indent": `${depth * 14}px` } as React.CSSProperties}
+        as={`--select-option-item minW:max-content --no-shrink ${selected ? `--selected` : ``} ${isDisabled ? `--disabled` : ``} ${hasSubOptions ? `--has-sub-options` : ``} rel`.trim()}>
         {/* // className={value && (`string` == typeof o ? o : o.value) == (`string` == typeof value ? value : value.value) ? `selected` : ``}> */}
-            <Flex as={`--option-item-meta --aic`}>
-                { o.icon && <Icon name={o.icon} as={`--select-option-icon --icon-${o.value}`} color={o.iconColor} /> }
-                <Text suppressHydrationWarning>{`string` == typeof o ? o : o.label}</Text>
+            <Flex as={`--option-item-meta --aic ${hasSubOptions ? `--is-parent` : ``}`}>
+                {hasSubOptions ? <Box
+                    role="button"
+                    aria-label={expanded || forceExpanded ? "Collapse" : "Expand"}
+                    aria-disabled={forceExpanded ? "true" : undefined}
+                    tabIndex={forceExpanded ? -1 : 0}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (forceExpanded) return;
+                        onToggleExpand?.();
+                    }}
+                    onKeyDown={(e: React.KeyboardEvent) => {
+                        if (forceExpanded) return;
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            onToggleExpand?.();
+                        }
+                    }}
+                    className={`--subtree-toggle --toggle-${expanded || forceExpanded ? `open` : `closed`}`.trim()}>
+                    {expanded || forceExpanded ? SVGIcons.chevronBottom : SVGIcons.chevronRight}
+                </Box> : null}
+                {renderedOption ?? <>
+                    { o.icon && <Icon name={o.icon} as={`--select-option-icon --icon-${o.value}`} color={o.iconColor} /> }
+                    <Text suppressHydrationWarning>{`string` == typeof o ? o : o.label}</Text>
+                </>}
             </Flex>
             <Flex aic jcc as={`--select-option-check ${selected ? `` : `dim-0`}`}>
                 {check}

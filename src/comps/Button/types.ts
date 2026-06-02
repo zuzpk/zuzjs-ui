@@ -15,7 +15,8 @@ export type ButtonProps = Props<`button`> & {
     tooltip?: string,
     tooltipProps?: Omit<ToolTipProps, `title`>
     kind?: Appearance,
-    alignment?: `start` | `center` | `end`
+    alignment?: `start` | `center` | `end`,
+    reverse?: boolean,
 }
 
 export interface ButtonHandler extends HTMLButtonElement {

@@ -61,7 +61,7 @@ body {
 
 .--color-picker-chooser {
     background: var(--surface);
-    border-radius: var(--radius-md, 10px);
+    border-radius: var(--colorpicker-radius, var(--radius-sm));
     box-shadow: var(--shadow-md, 0 4px 24px rgba(0, 0, 0, .18));
     padding: 12px;
     width: 240px;
@@ -71,6 +71,7 @@ body {
     z-index: var(--max-z-index);
     user-select: none;
     pointer-events: auto;
+    border: var(--colorpicker-border);
 
     .--cp-area {
         position: relative;

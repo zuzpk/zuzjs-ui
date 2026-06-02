@@ -76,6 +76,8 @@ const Select = (({
         disabled,
         checkIcon,
         closeIcon,
+        forceExpandSubOptions,
+        render: renderOption,
         editable,
         editablePlaceholder,
         onChange,
@@ -138,6 +140,7 @@ const Select = (({
     const [ internalValue, setValue ] = useState<Option | Option[] | string | null>(() => getInitialValue())
     const [ choosing, setChoosing ] = useState(false)
     const [ query, setQuery ] = useState<string | null>(null)
+    const [ expandedSubtrees, setExpandedSubtrees ] = useState<Set<string>>(new Set())
     const [ optionsMinWidth, setOptionsMinWidth ] = useState<number | undefined>(undefined)
     const _container = useRef<HTMLDivElement>(null)
     const _search = useRef<HTMLInputElement>(null)
@@ -294,6 +297,7 @@ const Select = (({
         if (!choosing) {
             if (_search.current) _search.current.value = ""
             setQuery(null)
+            setExpandedSubtrees(new Set())
             return
         }
 
@@ -353,6 +357,58 @@ const Select = (({
     const updateQuery = useDebounce((q: string) => setQuery(q === "" ? null : q), 300)
     const updateManualInput = useDebounce(handleManualInput, 300)
     // const updateManualInput = useDebounce((e: ChangeEvent<HTMLInputElement>) => handleManualInput(e), 300)
+
+    const filterOptionTree = (items: Option[]): Option[] => {
+        if (!query) return items;
+        const q = query.toLowerCase();
+
+        return items.reduce<Option[]>((acc, option) => {
+            const labelMatch = option.label.toLowerCase().includes(q);
+            const nextSubOptions = option.subOptions ? filterOptionTree(option.subOptions) : [];
+
+            if (labelMatch || nextSubOptions.length > 0) {
+                acc.push({
+                    ...option,
+                    subOptions: nextSubOptions.length > 0 ? nextSubOptions : option.subOptions,
+                });
+            }
+
+            return acc;
+        }, []);
+    };
+
+    const renderOptionTree = (items: Option[], depth = 0, path = "root"): ReactElement[] => {
+        return items.flatMap((option, index) => {
+            const nodeKey = `${path}.${index}.${String(option.value)}`;
+            const hasSubOptions = !!(option.subOptions && option.subOptions.length > 0);
+            const isExpanded = forceExpandSubOptions === true || !!query || expandedSubtrees.has(nodeKey);
+            const node = <OptionItem
+                updateValue={updateValue}
+                checkIcon={checkIcon}
+                selected={isSelected(option)}
+                key={`option-${nodeKey}-${option.label.replace(/\s+/g, `-`)}`}
+                depth={depth}
+                hasSubOptions={hasSubOptions}
+                expanded={isExpanded}
+                forceExpanded={forceExpandSubOptions === true}
+                renderOption={renderOption}
+                onToggleExpand={() => {
+                    setExpandedSubtrees((prev) => {
+                        const next = new Set(prev);
+                        if (next.has(nodeKey)) next.delete(nodeKey);
+                        else next.add(nodeKey);
+                        return next;
+                    });
+                }}
+                o={option} />;
+
+            if (!hasSubOptions) return [node];
+            if (!isExpanded) return [node];
+            return [node, ...renderOptionTree(option.subOptions!, depth + 1, nodeKey)];
+        });
+    };
+
+    const visibleOptions = useMemo(() => filterOptionTree(options || []), [options, query]);
 
     const trigger = useMemo(() => <Box
         ref={_container}
@@ -492,16 +548,7 @@ const Select = (({
             onChange={updateQuery}
         /></Box>}
         { label && <OptionGroupHead label={label} /> }
-        {
-            options
-            ?.filter(o => !query || o.label.toLowerCase().includes(query.toLowerCase()))
-            ?.map((o) => <OptionItem
-                updateValue={updateValue}
-                checkIcon={checkIcon}
-                selected={isSelected(o)}
-                key={`option-${o.label.replace(/\s+/g, `-`)}-${o.value}`}
-                o={o} />)
-        }
+        {renderOptionTree(visibleOptions)}
     </Box>
 
     return <>

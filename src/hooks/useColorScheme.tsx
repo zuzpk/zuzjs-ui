@@ -6,6 +6,7 @@ import { GroupProps } from "../comps/Group";
 import LayersProvider from "../comps/Layers";
 import { SpinnerProps } from "../comps/Spinner/types";
 import { ToastPosition, ToastStyle, ToastType } from "../comps/Toast/types";
+import { ToolTipTransition } from "../comps/Tooltip/types";
 import { setZuzMap } from "../funs/css";
 import { animationProps } from "../types";
 import { COLORTHEME, TRANSITION_CURVES, TRANSITIONS, Variant } from "../types/enums";
@@ -64,7 +65,8 @@ export interface ThemeConfig {
     /** Tooltip Default Settings */
     tooltip?: {
         variant?: ValueOf<typeof Variant>,
-        curve: ValueOf<typeof TRANSITION_CURVES>,
+        transition?: ToolTipTransition,
+        curve?: ValueOf<typeof TRANSITION_CURVES>,
     },
 
     /** Enable squircle shapes across app */

@@ -83,13 +83,13 @@ body{
         justify-content: flex-start !important;
 
         &.--solid{
-            --select-current-bg: var(--button);
-            --select-current-hover: var(--button-hover);
-            --select-current-border: var(--button-border);
-            --select-current-color: var(--button-color);
-            --select-current-disabled-bg: var(--button-disabled);
-            --select-current-disabled-color: var(--button-disabled-color);
-            --select-current-disabled-border: var(--button-border);
+            --select-current-bg: var(--select);
+            --select-current-hover: var(--select-hover);
+            --select-current-border: var(--select-border);
+            --select-current-color: var(--text-primary);
+            --select-current-disabled-bg: var(--select-current-disabled-bg);
+            --select-current-disabled-color: var(--select-current-disabled-color);
+            --select-current-disabled-border: var(--select-border);
         }
 
         &.--subtle{
@@ -305,6 +305,7 @@ body{
         opacity: 0.5;
     }
     button.--select-option-item{
+        --select-option-indent: 0px;
         background: transparent;
         border: 0px;
         text-align: left;
@@ -316,6 +317,7 @@ body{
         gap: var(--select-option-gap);
         width: auto;
         overflow: hidden;
+        padding-inline-start: calc(var(--padding-md-x) + var(--select-option-indent)) !important;
 
         &:disabled{
             color: var(--text-primary-disabled);
@@ -340,6 +342,43 @@ body{
         .--option-item-meta{
             gap: 8px;
             flex: 1;
+
+            &.--is-parent {
+                font-weight: 600;
+            }
+
+            .--subtree-toggle {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 18px !important;
+                min-height: 18px !important;
+                padding: 0 !important;
+                border: 0 !important;
+                background: transparent !important;
+                opacity: 0.8;
+                cursor: pointer;
+
+                svg {
+                    fill: currentColor;
+                    width: 14px;
+                    height: 14px;
+                }
+
+                &:hover {
+                    opacity: 1;
+                }
+
+                &:disabled {
+                    opacity: 0.5;
+                    cursor: default;
+                }
+
+                &[aria-disabled="true"] {
+                    opacity: 0.5;
+                    cursor: default;
+                }
+            }
         }
         .--select-option-check{
             padding: 4px;
@@ -394,7 +433,7 @@ body{
 
         button.--select-option-item {
             padding: calc(var(--padding-md-x) / 2) !important;
-            padding-left: var(--padding-md-x) !important;
+            padding-left: calc(var(--padding-md-x) + var(--select-option-indent)) !important;
             border-radius: var(--radius-#{$size}) !important;
         }
     }

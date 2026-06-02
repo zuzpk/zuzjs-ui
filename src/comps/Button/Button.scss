@@ -106,7 +106,7 @@ body{
     &.--surface{
         --button-current-bg: var(--surface);
         --button-current-hover: var(--surface-hover);
-        --button-current-border: 1px solid var(--border-primary);
+        --button-current-border: 1px solid var(--button-border-primary, var(--border-primary));
         --button-current-color: var(--text-primary);
         --button-current-disabled-bg: var(--button-disabled);
         --button-current-disabled-color: var(--button-disabled-color);
@@ -116,7 +116,7 @@ body{
     &.--outline{
         --button-current-bg: transparent;
         --button-current-hover: var(--surface-hover);
-        --button-current-border: 1px solid var(--border-primary);
+        --button-current-border: 1px solid var(--button-border-primary, var(--border-primary));
         --button-current-color: var(--text-primary);
         --button-current-disabled-bg: transparent;
         --button-current-disabled-color: var(--button-disabled-color);

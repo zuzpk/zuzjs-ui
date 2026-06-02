@@ -61,6 +61,8 @@ export type Option = {
     disabled?: boolean,
     /** Special value parameter for categorization or grouping or passing additional metadata. */
     tag?: string;
+    /** Nested sub-options for hierarchical or grouped selections. */
+    subOptions?: Option[],
 }
 
 /**
@@ -74,6 +76,18 @@ export interface OptionItemProps {
     // value: Option,
     selected?: boolean,
     checkIcon?: string | ReactNode,
+    depth?: number,
+    hasSubOptions?: boolean,
+    expanded?: boolean,
+    forceExpanded?: boolean,
+    onToggleExpand?: () => void,
+    renderOption?: (option: Option, meta: {
+        selected: boolean,
+        depth: number,
+        hasSubOptions: boolean,
+        expanded: boolean,
+        forceExpanded: boolean,
+    }) => ReactNode,
 }
 
 type SelectCommonProps = Omit<BoxProps, "onChange" | "ref"> & {
@@ -156,6 +170,18 @@ type SelectCommonProps = Omit<BoxProps, "onChange" | "ref"> & {
     checkIcon?: string | ReactNode,
 
     closeIcon?: string | ReactNode,
+
+    /** Force all sub-option branches expanded (overrides collapse state). */
+    forceExpandSubOptions?: boolean,
+
+    /** Custom option renderer for dropdown rows. */
+    render?: (option: Option, meta: {
+        selected: boolean,
+        depth: number,
+        hasSubOptions: boolean,
+        expanded: boolean,
+        forceExpanded: boolean,
+    }) => ReactNode,
 }
 
 type SelectChangeValue<
