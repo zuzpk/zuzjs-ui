@@ -1,6 +1,7 @@
 import { RefObject, useEffect, useMemo, useRef } from "react";
 import { animationTransition, buildWithStyles, getAnimationCurve } from "../funs/css";
 import { animationProps, dynamic } from "../types";
+import useReducedMotion from "./useReducedMotion";
 
 const useFx = (
     fx?: animationProps & {
@@ -15,6 +16,7 @@ const useFx = (
     // Track keys we've applied so we can clean them up
     const appliedKeys = useRef<string[]>([]);
     const hasMounted = useRef(false);
+    const reducedMotion = useReducedMotion();
 
     useEffect(() => {
         if (!fx?.when) hasMounted.current = false;
@@ -56,7 +58,8 @@ const useFx = (
             el.style.translate = `var(--fx-x, 0px) var(--fx-y, 0px)`;
             el.style.transition = `translate 0.1s ${fx.curve ? getAnimationCurve(fx.curve) : 'var(--spring)'}`;
         }
-    }, [fx, ref]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [!!fx?.scroll, !!fx?.mouse, fx?.curve]);
 
     return useMemo(() => {
 
@@ -65,9 +68,19 @@ const useFx = (
         const { transition, from, to, exit, when, duration = 0.3, delay = 0, curve, margin = 0, offset = 20, watch = [] } = fx;
 
         const isWaitingForFirstPosition = when === false && !hasMounted.current;
-        // const isExiting = when === false && hasMounted.current;
         
         if (when === true) hasMounted.current = true;
+
+        // Honour OS accessibility preference — cross-fade only, no motion
+        if (reducedMotion) {
+            return {
+                style: {
+                    opacity: when === false ? 0 : 1,
+                    transition: 'opacity 0.15s linear',
+                    pointerEvents: when === false ? 'none' : undefined,
+                }
+            };
+        }
 
         let activeStyles: dynamic = {};
         const { from: _f, to: _t } = transition 
@@ -122,7 +135,8 @@ const useFx = (
                 pointerEvents: isWaitingForFirstPosition ? 'none' : finalStyles.pointerEvents,
             }
         };
-    }, [fx, fx?.when, fx?.watch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [fx, JSON.stringify(fx?.watch), reducedMotion]);
 };
 
 export default useFx

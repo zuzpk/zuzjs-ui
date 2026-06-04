@@ -37,7 +37,13 @@ const Accordion = forwardRef<AccordionHandler, AccordionProps>((props, ref) => {
             <Text className={`--label flex`}>{title}</Text>
             <Box className={`--arrow flex`}>{visible ? SVGIcons.arrowUp : SVGIcons.arrowDown}</Box>
         </Button>
-        {visible && <Box className={`--detail`}>{message}</Box>}
+        <Box style={{
+            display: 'grid',
+            gridTemplateRows: visible ? '1fr' : '0fr',
+            transition: 'grid-template-rows 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+        }}>
+            <Box style={{ overflow: 'hidden' }} className={`--detail`}>{message}</Box>
+        </Box>
     </Box>
 
 

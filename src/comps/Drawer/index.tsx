@@ -184,7 +184,7 @@ const Drawer = ({
         when: visible,
         curve: animation || themeDrawer?.animation || TRANSITION_CURVES.EaseInOut,
         duration: speed || themeDrawer?.speed || .5,
-        watch: [`scale`, `filter`]
+        watch: [`scale`]
     })
 
     const baseZIndex = useMemo(() => 10000 + ((index || 1) * 10), [index]);

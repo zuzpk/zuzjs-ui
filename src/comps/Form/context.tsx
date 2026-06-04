@@ -15,6 +15,7 @@ interface FormContextValue {
     setFieldValue: (name: string, value: any) => void;
     deleteFieldValue: (name: string) => void;
     setFieldError: (name: string, error: string | null) => void;
+    setFieldErrors: (updates: Record<string, string | null>) => void;
     reset: () => void;
 }
 
@@ -33,6 +34,15 @@ export const useFormStore = () => {
 export const useFormActions = () => useContext(FormContext);
 
 const _noopSubscribe = () => () => {}
+
+export const useFormIsDirty = () => {
+    const context = useContext(FormContext);
+    return useSyncExternalStore(
+        context?.subscribe ?? _noopSubscribe,
+        () => context?.getSnapshot().isDirty ?? false,
+        () => false
+    );
+};
 
 export const useFormFieldValue = (name?: string) => {
     const context = useContext(FormContext)
@@ -87,6 +97,7 @@ export const FormProvider = ({ children, initialValues = {} }: { children: React
     });
     const baselineValues = useRef<dynamic>({ ...initialValues })
     const prevInitialKeys = useRef<Set<string>>(new Set(Object.keys(initialValues)));
+    const initialValuesRef = useRef(initialValues);
     const subscribers = useRef(new Set<() => void>());
     const getSnapshot = useCallback(() => store.current, []);
     const subscribe = useCallback((cb: () => void) => {
@@ -100,6 +111,9 @@ export const FormProvider = ({ children, initialValues = {} }: { children: React
     };
 
     useEffect(() => {
+        if (initialValues === initialValuesRef.current) return;
+        initialValuesRef.current = initialValues;
+
         if (!initialValues || Object.keys(initialValues).length === 0) return
 
         const newKeys = new Set(Object.keys(initialValues));
@@ -165,6 +179,13 @@ export const FormProvider = ({ children, initialValues = {} }: { children: React
                     ...store.current.errors, 
                     [name]: error 
                 }
+            };
+            notify();
+        },
+        setFieldErrors: (updates: Record<string, string | null>) => {
+            store.current = {
+                ...store.current,
+                errors: { ...store.current.errors, ...updates }
             };
             notify();
         },

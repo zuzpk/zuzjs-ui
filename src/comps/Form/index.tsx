@@ -12,7 +12,7 @@ import Cover from "../Cover";
 import { useDialogDirty } from "../Dialog";
 import { useDrawerDirty } from "../Drawer";
 import { isSheetHandler } from "../Sheet";
-import { FormProvider, useFormActions, useFormStore } from "./context";
+import { FormProvider, useFormActions, useFormIsDirty } from "./context";
 import { FormHandler, FormProps, ValidationResult } from "./types";
 
 const unflatten = (data: any) => {
@@ -44,13 +44,13 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
     const innerRef = useRef<HTMLDivElement>(null);
     const toast = useToast();
     const actions = useFormActions();
-    const state = useFormStore();
+    const isDirty = useFormIsDirty();
     const dialogDirty = useDialogDirty()
     const drawerDirty = useDrawerDirty()
     const submit = useRef<ButtonHandler>(null)
 
     const _nodes = useCallback((query: string) => 
-        innerRef.current ? innerRef.current.querySelectorAll(query) : [], [innerRef.current]);
+        innerRef.current ? innerRef.current.querySelectorAll(query) : [], []);
 
     const _getFields = (el: any) => {
         return {
@@ -125,7 +125,7 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
                 case FORMVALIDATION.Uri: try { new URL(val); return true; } catch { return false; }
                 case FORMVALIDATION.MatchField:
                     const [ __, field, condition ] = withAttr.split(`@`)
-                    const _el = document.querySelector<FormInputs>(`[name=${field.trim()}]`)
+                    const _el = innerRef.current?.querySelector<FormInputs>(`[name="${field.trim()}"]`)
                     if ( !_el ) return false
 
                     switch( condition || `direct-match` ){
@@ -183,6 +183,7 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
 
         const data : ValidationResult = {}
         const flatPayload: dynamic = { ...(actions?.getSnapshot().values || {}) };
+        const errorBatch: Record<string, string | null> = {};
         let firstErrorEl: HTMLElement | null = null;
         let _errorMsg: HTMLElement | string | null = null
 
@@ -200,7 +201,7 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
 
             data[fieldName] = { valid : isValid, value }
             flatPayload[fieldName] = value;
-            actions?.setFieldError(fieldName, isValid ? null : (errors?.[fieldName] || "Invalid"));
+            errorBatch[fieldName] = isValid ? null : (errors?.[fieldName] || "Invalid");
 
             if (!isValid) {
                 el.classList.add("--with-error");
@@ -213,6 +214,8 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
             }
 
         });
+
+        actions?.setFieldErrors(errorBatch);
 
         if ( firstErrorEl ){
             const _nxt = (firstErrorEl as HTMLElement)
@@ -238,7 +241,7 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
             payload: nestedPayload
         }
 
-    }, [innerRef.current, actions])
+    }, [actions, errors, schema, _nodes, _validate])
 
     const _onSubmit = useCallback((more: dynamic = {}) => {
         
@@ -298,8 +301,6 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
         hideError: () => toast.clearAll()
     }), [_onSubmit, _init]);
 
-    useEffect(_init, [])
-
     useEffect(() => {
         onSubmitRef.current = _onSubmit;
     }, [_onSubmit]);
@@ -316,16 +317,13 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
     }, [_onSubmit, _nodes]);
 
     useEffect(() => {
-        if (!dialogDirty) return
-        dialogDirty.setDirty(state?.isDirty == true)
-        return () => dialogDirty.setDirty(false)
-    }, [dialogDirty, state?.isDirty])
-
-    useEffect(() => {
-        if (!drawerDirty) return
-        drawerDirty.setDirty(state?.isDirty == true)
-        return () => drawerDirty.setDirty(false)
-    }, [drawerDirty, state?.isDirty])
+        dialogDirty?.setDirty(isDirty);
+        drawerDirty?.setDirty(isDirty);
+        return () => {
+            dialogDirty?.setDirty(false);
+            drawerDirty?.setDirty(false);
+        };
+    }, [isDirty, dialogDirty, drawerDirty])
 
     return (
         <Box ref={innerRef} style={style} className={`--form flex rel ${className}`}>

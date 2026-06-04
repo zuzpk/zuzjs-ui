@@ -51,7 +51,6 @@ const TabView = ({
     const tabview = useRef<HTMLDivElement>(null)
     const size = useResizeObserver(tabview)
     const tabViewID = useMemo(() => uuid(8), [])
-    const [contentHeight, setContentHeight] = useState<number | string>('auto');
     const hasMeasured = useMemo(() => size.width > 0, [size.width]);
 
     useImperativeHandle(ref, () => ({
@@ -74,8 +73,6 @@ const TabView = ({
 
     const getTrackStyle = () => {
 
-        if (!hasMeasured) return { opacity: 0 };
-
         switch (transitionType) {
             case "fade":
             case "scale":
@@ -86,7 +83,7 @@ const TabView = ({
                     alignItems: 'flex-start',
                     display: 'flex', 
                     transform: `translate3d(-${activeTab * size.width}px, 0, 0)`,
-                    transition: `transform ${speed}s cubic-bezier(0.4, 0, 0.2, 1)`
+                    transition: hasMeasured ? `transform ${speed}s cubic-bezier(0.4, 0, 0.2, 1)` : 'none'
                 };
         }
     };
@@ -120,12 +117,13 @@ const TabView = ({
 
         <Box 
             className={`--tabview-body`} 
-            as={`rel no-overflow w-full`}
             style={{ 
-                height: contentHeight,
-                transition:  hasMeasured ? `height ${speed}s cubic-bezier(0.4, 0, 0.2, 1)` : `none`,
-                opacity: hasMeasured ? 1 : 0,
+                display: 'grid',
+                gridTemplateRows: hasMeasured ? '1fr' : '0fr',
+                transition: hasMeasured ? `grid-template-rows ${speed}s cubic-bezier(0.4, 0, 0.2, 1)` : 'none',
+                overflow: 'hidden',
             }}>
+            <Box style={{ overflow: 'hidden', position: 'relative' }}>
             <Box 
                 className={`--track`}
                 style={{
@@ -138,9 +136,9 @@ const TabView = ({
                         speed={speed}
                         width={size.width}
                         render={prerender || index === activeTab}
-                        onHeightChange={(h) => index === activeTab && setContentHeight(h)}
                         content={tab.body}
                     />)}
+            </Box>
             </Box>
         </Box>
 

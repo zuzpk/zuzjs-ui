@@ -1,6 +1,5 @@
 "use client"
-import { useResizeObserver } from '@zuzjs/hooks';
-import { CSSProperties, useEffect, useMemo, useRef } from 'react';
+import { CSSProperties, useMemo } from 'react';
 import Box from '../Box';
 import { TabBodyProps } from './types';
 
@@ -11,18 +10,7 @@ const TabBody = ({
     width, 
     render, 
     content,
-    onHeightChange
 } : TabBodyProps) => {
-
-    const contentRef = useRef<HTMLDivElement>(null);
-    const contentSize = useResizeObserver(contentRef);
-    const isSlide = transitionType === "slide" || !transitionType;
-    
-    useEffect(() => {
-        if (isActive && contentSize.height > 0) {
-            onHeightChange(contentSize.height);
-        }
-    }, [isActive, contentSize.height]);
 
     const animationStyle = useMemo(() => {
 
@@ -59,7 +47,6 @@ const TabBody = ({
     }, [isActive, transitionType, width, speed]);
 
     return <Box 
-        ref={contentRef}
         style={{
             ...(animationStyle as CSSProperties)
         }} className="--content">

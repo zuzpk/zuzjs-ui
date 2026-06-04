@@ -10,18 +10,20 @@ const Token = (props : TokenProps) => {
 
     const {
         id, label, icon, color, 
-        removable = true, 
+        removable = true, render, subLabel,
         onRemove, onClick,
         ref, variant
     } = props
 
     return <Flex aic gap={4} as={`--token --no-shrink --${variant ?? Variant.Small}`} ref={ref}>
-        <Flex aic gap={4} onClick={() => onClick?.(props)} as={`--token-content`}>
-            { icon && <Icon name={icon} /> }
-            <Flex as={`--token-value`}>
-                <Text as={`--value`}>{label}</Text>
-            </Flex>
-        </Flex>
+        { render ? render(props) :
+            <Flex aic gap={4} onClick={() => onClick?.(props)} as={`--token-content`}>
+                { icon && <Icon name={icon} /> }
+                <Flex cols as={`--token-value`}>
+                    <Text as={`--value`}>{label}</Text>
+                    { subLabel && <Text as={`--sub-value`}>{subLabel}</Text> }
+                </Flex>
+            </Flex> }
         {removable && <Button 
             as={`--remove-btn`} 
             variant={variant ?? Variant.Small}

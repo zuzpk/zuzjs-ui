@@ -40,15 +40,27 @@ const ProgressBar = forwardRef<ProgressHandler, ProgressBarProps>((props, ref) =
         }
     }), [])
 
+    const mountedRef = useRef(false);
+
     useEffect(() => {
-        if ( progress && bar.current ) {
-            if ( animated ){
-                setTimeout(() => bar.current!.style.width = `${progress * 100}%`, 500)
-            }
-            else bar.current!.style.width = `${progress * 100}%`;
-            bar.current!.setAttribute(`data-value`, progress + "")
+        if (!progress || !bar.current) return;
+        const el = bar.current;
+
+        if (animated && !mountedRef.current) {
+            // Double-rAF: first frame paints initial 0% state (from CSS),
+            // second frame triggers the CSS transition to the target value.
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    el.style.width = `${progress * 100}%`;
+                });
+            });
+        } else {
+            el.style.width = `${progress * 100}%`;
         }
-    }, [progress, bar.current])
+
+        mountedRef.current = true;
+        el.setAttribute(`data-value`, String(progress));
+    }, [progress, animated])
 
     const { className, style, rest } = useBase(pops)
 

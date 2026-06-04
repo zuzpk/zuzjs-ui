@@ -137,7 +137,10 @@ body {
                 background: var(--pagination-dot-color);
                 color: transparent; // Hide the numbers
                 border: none;
-                transition: all 0.3s ease;
+                transition:
+                    background-color 0.2s ease,
+                    color 0.2s ease,
+                    opacity 0.2s ease;
 
                 &.--current-page {
                     background: transparent !important;

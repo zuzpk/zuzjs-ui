@@ -174,12 +174,12 @@ export const animationTransition = (transition: ValueOf<typeof TRANSITIONS>, sta
             const _isTop = transition === TRANSITIONS.SlideInTopScale;
             _from = { 
                 '--fx-y': _isTop ? `-${moveAmount}px` : `${moveAmount}px`, 
-                transform: `scale(0.8)`,
+                scale: 0.8,
                 opacity: 0.78
             };
             _to = { 
                 '--fx-y': `${idleAmount}px`, 
-                transform: `scale(1)`,
+                scale: 1,
                 opacity: 1 
             };
             break;

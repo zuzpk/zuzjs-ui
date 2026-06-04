@@ -13,6 +13,7 @@ export { default as useDrawer } from './useDrawer';
 export { default as useFx } from "./useFx";
 export { default as useMorph, type MorphOptions } from "./useMorph";
 export { default as usePosition } from "./usePosition";
+export { default as useReducedMotion } from "./useReducedMotion";
 export { default as useScrollScenes, type UseScrollScenesReturn } from "./useScrollScenes";
 export {
     default as useSnack,

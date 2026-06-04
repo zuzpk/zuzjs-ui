@@ -82,6 +82,19 @@ const bindTimelineToScrollContainer = (
 const useScrollScenes = (config: ScrollScenesConfig): UseScrollScenesReturn => {
     const serialized = React.useMemo(() => JSON.stringify(config), [config]);
 
+    if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const configRef = React.useRef(config);
+        if (configRef.current !== config) {
+            console.warn(
+                '[zuz] useScrollScenes: config object is not stable. ' +
+                'Define it outside the component or wrap in useMemo() ' +
+                'to avoid re-generating CSS keyframes on every render.'
+            );
+            configRef.current = config;
+        }
+    }
+
     const model = React.useMemo(() => buildScrollScenesModel(config), [serialized]);
 
     const [supportsScrollTimeline, setSupportsScrollTimeline] = React.useState(false);

@@ -125,7 +125,7 @@ const Dialog = ({
         delay: themeDialog?.delay || 0.1,
         transition: transition || themeDialog?.transition || TRANSITIONS.SlideInBottom,
         curve: curve || themeDialog?.curve || TRANSITION_CURVES.EaseInOut,
-        watch: [`scale`, `filter`, `transform`]
+        watch: [`scale`]
     })
 
     const markDirty = (d: boolean) => {

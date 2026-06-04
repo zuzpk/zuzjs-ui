@@ -13,9 +13,7 @@ export interface TabBodyProps {
 
     render: boolean,
 
-    content: string | ReactNode | ReactNode[],
-
-    onHeightChange: (h: string | number) => void
+    content: string | ReactNode | ReactNode[]
 
 }
 

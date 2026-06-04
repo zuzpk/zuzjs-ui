@@ -56,7 +56,10 @@ body{
     .--snack {
         // min-width: 280px;
         background: var(--snack-bg);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s ease;
+        transition:
+            opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+            translate 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+            scale 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         color: var(--snack-text-color);
         pointer-events: auto;
         max-width: 90vw;
