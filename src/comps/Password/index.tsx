@@ -1,6 +1,8 @@
 "use client"
 import { forwardRef, useEffect, useMemo, useState } from 'react';
 import { useBase } from '../../hooks';
+import { useTheme } from '../../hooks/useColorScheme';
+import { Variant } from '../../types';
 import Box from '../Box';
 import Button from '../Button';
 import Input from '../Input';
@@ -36,6 +38,7 @@ export type PasswordProps = Omit<InputProps, `type` | `numeric`> & {
 const Password = forwardRef<HTMLInputElement, PasswordProps>((props, ref) => {
 
     const { strenthMeter, onChange, ...pops } = props
+    const { variant: themeVariant } = useTheme(true)!
 
     if ( `type` in pops ){
         delete pops[`type`]
@@ -62,7 +65,7 @@ const Password = forwardRef<HTMLInputElement, PasswordProps>((props, ref) => {
     return <Box as={`w:100% flex cols`}>
         <Box 
             style={style}
-            className={`--password flex aic rel`}>
+            className={`--password --${props.variant || themeVariant || Variant.Medium} flex aic rel`}>
             <Input 
                 ref={ref}
                 type={visible ? 'text' : 'password'}

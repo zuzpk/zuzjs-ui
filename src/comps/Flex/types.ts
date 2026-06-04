@@ -25,4 +25,6 @@ export type FlexProps = BoxProps & {
     jce?: boolean;
     /** Shortcut for justify-content: start */
     jcs?: boolean;
+    /** Shortcut for flex-wrap: wrap */
+    wrap?: boolean;
 };

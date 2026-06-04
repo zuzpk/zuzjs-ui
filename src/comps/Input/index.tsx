@@ -1,10 +1,9 @@
 "use client"
-import { useDebounce } from '@zuzjs/hooks';
 import { useEffect, useRef } from 'react';
 import { useBase } from '../../hooks';
 import { useTheme } from '../../hooks/useColorScheme';
 import { Variant } from '../../types';
-import { useForm } from '../Form/context';
+import { useFormActions, useFormFieldError, useFormFieldValue } from '../Form/context';
 import { InputProps } from './types';
 
 /**
@@ -45,27 +44,23 @@ const Input = ({ ref, ...props } : InputProps) => {
 
     const { variant: themeVariant } = useTheme(true)!
     const inputRef = useRef<HTMLInputElement>(null);
-    const form = useForm()
-    const error = name ? form.errors?.[name] : null
-    const inForm = name && form.values && form.setFieldValue
-    const formValue = inForm ? form.values?.[name] : undefined;
-
-    const updateFieldValue = useDebounce((val) => {
-        if (inForm) {
-            form.setFieldValue?.(name, val);
-        }
-    }, 500)
+    const form = useFormActions()
+    const error = useFormFieldError(name)
+    const formValue = useFormFieldValue(name)
+    const setFieldValue = form?.setFieldValue
+    const deleteFieldValue = form?.deleteFieldValue
+    const inForm = Boolean(name && setFieldValue)
 
     const handleInput = (event: React.InputEvent<HTMLInputElement>) => {
 
         let val = event.currentTarget.value;
         
         if (numeric) {
-            val = val.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+            val = val.replace(/[^0-9.]/g, '').replace(/(\..{0,}?)\..*/, '$1');
             event.currentTarget.value = val; // Reflect clean value back to DOM immediately
         }
 
-        updateFieldValue(val)
+        if (inForm && name) setFieldValue?.(name, val);
 
         props.onInput?.(event);
 
@@ -82,9 +77,9 @@ const Input = ({ ref, ...props } : InputProps) => {
 
     useEffect(() => {
         return () => {
-            if (inForm) form.deleteFieldValue?.(name);
+            if (inForm && name) deleteFieldValue?.(name);
         };
-    }, []);
+    }, [deleteFieldValue, inForm, name]);
  
     return <input
         name={name}

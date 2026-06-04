@@ -225,7 +225,7 @@ export type * from "./DependencyTree/types";
  * <Dialog open title="Confirm" />
  * ```
  */
-export { default as Dialog } from "./Dialog";
+export { default as Dialog, DialogContext, useDialogDirty } from "./Dialog";
 export type * from "./Dialog/types";
 
 /**
@@ -235,7 +235,7 @@ export type * from "./Dialog/types";
  * <Drawer open>Content</Drawer>
  * ```
  */
-export { default as Drawer } from './Drawer';
+export { default as Drawer, DrawerContext, useDrawerDirty } from './Drawer';
 export * from './Drawer/types';
 
 /**
@@ -624,6 +624,16 @@ export type { TimelineProviderProps } from './Timeline';
  */
 export { default as ToastProvider } from './Toast';
 export * from './Toast/types';
+
+/**
+ * Hover/click tooltip helper.
+ * @example
+ * ```tsx
+ * <ToolTip content="Info">Hover me</ToolTip>
+ * ```
+ */
+export { default as Token } from './Token';
+export * from './Token/types';
 
 /**
  * Hover/click tooltip helper.

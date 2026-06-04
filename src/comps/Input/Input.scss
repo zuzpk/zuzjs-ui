@@ -22,11 +22,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         &.--#{$size}{
             padding: var(--padding-#{$size});
             font-size: var(--text-#{$size});
+            line-height: var(--lh-#{$size}, 1.4);
+            &:not(.--textarea):not(.--otp) {
+                min-height: var(--input-control-height-#{$size}, var(--control-height-#{$size}));
+                height: var(--input-control-height-#{$size}, var(--control-height-#{$size}));
+            }
             &:not(.--textarea) {   
                 border-radius: var(--radius-#{$size});
             }
             &.--textarea {   
-                border-radius: var(--textarea-radius, calc(var(--radius-#{$size}) / 4));
+                border-radius: var(--textarea-radius, var(--radius-#{$size}));
             }
         }
     }

@@ -1,10 +1,10 @@
-import { useCommandActions, useDebounce } from '@zuzjs/hooks';
+import { useCommandActions } from '@zuzjs/hooks';
 import { Ref, useCallback, useEffect, useRef } from 'react';
 import { useBase } from '../../hooks';
 import { useTheme } from '../../hooks/useColorScheme';
 import { Variant } from '../../types/enums';
 import Box from '../Box';
-import { useForm } from '../Form/context';
+import { useFormActions, useFormFieldError, useFormFieldValue } from '../Form/context';
 import CommandBox from "./commands";
 import { TextAreaProps } from "./types";
 
@@ -54,16 +54,16 @@ const TextArea = ({
   const { variant: themeVariant } = useTheme(true)!
   const { style, className, rest } = useBase<"textarea">(pops);
 
-  const form = useForm()
-  const error = name ? form.errors?.[name] : null
-  const inForm = name && form.values && form.setFieldValue
-  const formValue = inForm ? form.values?.[name] : undefined;
+    const form = useFormActions()
+    const error = useFormFieldError(name)
+    const formValue = useFormFieldValue(name)
+    const setFieldValue = form?.setFieldValue
+    const deleteFieldValue = form?.deleteFieldValue
+    const inForm = Boolean(name && setFieldValue)
 
-  const updateFieldValue = useDebounce((val) => {
-        if (inForm) {
-            form.setFieldValue?.(name, val);
-        }
-    }, 500)
+  const updateFieldValue = (val: string) => {
+      if (inForm && name) setFieldValue?.(name, val);
+    }
 
   const {
     showDropdown,
@@ -144,9 +144,9 @@ const TextArea = ({
 
   useEffect(() => {
     return () => {
-        if (inForm) form.deleteFieldValue?.(name);
+        if (inForm && name) deleteFieldValue?.(name);
     };
-  }, []);
+  }, [deleteFieldValue, inForm, name]);
 
   return (
     <Box as="rel --flex w-full">

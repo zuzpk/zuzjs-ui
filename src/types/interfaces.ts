@@ -172,15 +172,19 @@ export interface LayerHandler {
     inBackground?: boolean,
     forceClose?: boolean,
     forceLoading?: boolean,
+    /** Soft-close request token: routes through the component's tryClose (respects dirty guard). */
+    requestClose?: number,
 }
 
 export interface DialogController {
     id: number;
     setLoading: (mod: boolean) => void,
+    setDirty: (dirty: boolean) => void,
     hide: () => void
 }
 export interface DrawerController {
     id: number;
     setLoading: (mod: boolean) => void,
+    setDirty: (dirty: boolean) => void,
     close: () => void
 }

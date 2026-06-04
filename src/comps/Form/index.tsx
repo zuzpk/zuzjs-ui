@@ -9,6 +9,8 @@ import { FORMVALIDATION } from "../../types/enums";
 import Box from "../Box";
 import { ButtonHandler } from "../Button/types";
 import Cover from "../Cover";
+import { useDialogDirty } from "../Dialog";
+import { useDrawerDirty } from "../Drawer";
 import { isSheetHandler } from "../Sheet";
 import { FormProvider, useFormActions, useFormStore } from "./context";
 import { FormHandler, FormProps, ValidationResult } from "./types";
@@ -43,6 +45,8 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
     const toast = useToast();
     const actions = useFormActions();
     const state = useFormStore();
+    const dialogDirty = useDialogDirty()
+    const drawerDirty = useDrawerDirty()
     const submit = useRef<ButtonHandler>(null)
 
     const _nodes = useCallback((query: string) => 
@@ -310,6 +314,18 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
 
         return () => handlers.forEach(cleanup => cleanup());
     }, [_onSubmit, _nodes]);
+
+    useEffect(() => {
+        if (!dialogDirty) return
+        dialogDirty.setDirty(state?.isDirty == true)
+        return () => dialogDirty.setDirty(false)
+    }, [dialogDirty, state?.isDirty])
+
+    useEffect(() => {
+        if (!drawerDirty) return
+        drawerDirty.setDirty(state?.isDirty == true)
+        return () => drawerDirty.setDirty(false)
+    }, [drawerDirty, state?.isDirty])
 
     return (
         <Box ref={innerRef} style={style} className={`--form flex rel ${className}`}>

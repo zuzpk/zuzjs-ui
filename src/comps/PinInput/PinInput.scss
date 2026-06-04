@@ -4,7 +4,7 @@ body{
     --pin-radius: 6px;
     --pin-gap: 4px;
     --pin-shadow: inset 0px 0px 0px 2px #111;
-    --pin-padding: 5px;
+    --pin-padding: var(--padding-md-x);
 }
 .--otp{
 
@@ -15,6 +15,7 @@ body{
     @each $size in variables.$sizes {
         &.--#{$size}{
             --pin-radius: var(--radius-#{$size});
+            --pin-padding: var(--pin-padding-#{$size}, var(--padding-#{$size}-x, var(--padding-md-x)));
         }
     }
 

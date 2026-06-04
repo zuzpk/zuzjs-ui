@@ -30,6 +30,8 @@ const LayersRenderer = ({
     const [layers, setLayers] = useState<LayerItem[]>([]);
     const mounted = useDelayed()
     const id = useRef(0)
+    const closeRequestId = useRef(0)
+    const pendingConfirmTargets = useRef(new Set<number>())
     const nextId = () => ++id.current;
 
     const closeMenu = () => {
@@ -75,8 +77,12 @@ const LayersRenderer = ({
                 const target = prev.find(layer => layer.id === id);
                 if (!target) return prev;
 
-                // Dialog/Drawer/Toast have close animations driven by forceClose.
-                if (target.type === `dialog` || target.type === `drawer` || target.type === `toast`) {
+                // Dialog/Drawer use requestClose so tryClose() runs (respects dirty guard).
+                // Toast uses forceClose for immediate removal.
+                if (target.type === `dialog` || target.type === `drawer`) {
+                    return prev.map(l => l.id === id ? { ...l, props: { ...l.props, requestClose: ++closeRequestId.current } } : l);
+                }
+                if (target.type === `toast`) {
                     return prev.map(l => l.id === id ? { ...l, props: { ...l.props, forceClose: true } } : l);
                 }
 
@@ -110,6 +116,48 @@ const LayersRenderer = ({
         }, 250)
     }
 
+    const openConfirmClose = (targetId: number, confirmClose: DrawerProps['confirmClose'] | DialogProps['confirmClose'], proceed: () => void) => {
+        if (pendingConfirmTargets.current.has(targetId)) return
+        pendingConfirmTargets.current.add(targetId)
+
+        const title         = typeof confirmClose === 'object' ? (confirmClose.title        ?? 'Discard changes?') : 'Discard changes?'
+        const message       = typeof confirmClose === 'object' ? (confirmClose.message      ?? 'You have unsaved changes. They will be lost if you close.') : 'You have unsaved changes. They will be lost if you close.'
+        const confirmLabel  = typeof confirmClose === 'object' ? (confirmClose.confirmLabel ?? 'Discard') : 'Discard'
+        const cancelLabel   = typeof confirmClose === 'object' ? (confirmClose.cancelLabel  ?? 'Keep editing') : 'Keep editing'
+
+        const confirmId = nextId()
+        const closeConfirmDialog = () => {
+            pendingConfirmTargets.current.delete(targetId)
+            setLayers(p => p.map(l => l.id === confirmId ? { ...l, props: { ...l.props, forceClose: true } } : l))
+        }
+
+        setLayers(prev => [...prev, {
+            id: confirmId,
+            type: 'dialog',
+            props: {
+                title,
+                message,
+                onHide: () => {
+                    pendingConfirmTargets.current.delete(targetId)
+                },
+                action: [
+                    {
+                        label: cancelLabel,
+                        kind: 'ghost',
+                        onClick: closeConfirmDialog
+                    },
+                    {
+                        label: confirmLabel,
+                        onClick: () => {
+                            proceed()
+                            closeConfirmDialog()
+                        }
+                    }
+                ]
+            }
+        } as LayerItem])
+    }
+
     const sortedLayers = useMemo(() => [...layers.filter(l => l.type != `toast`)], [layers]); // Newest is at the end
     
     if ( !mounted ) return null
@@ -127,18 +175,26 @@ const LayersRenderer = ({
             const inBackground = i < sortedLayers.length - 1;
 
             if (layer.type === 'dialog') {
+                const confirmClose = (layer.props as DialogProps).confirmClose
+                const extraProps = confirmClose
+                    ? { onBeforeClose: (proceed: () => void) => openConfirmClose(layer.id, confirmClose, proceed) }
+                    : {}
                 return <Dialog 
                     onClose={onClose}
                     key={`layer-${layer.type}-${layer.id}`} 
                     index={i} 
-                    {...{ id: layer.id, ...layer.props, inBackground } as DialogProps} />
+                    {...{ id: layer.id, ...layer.props, inBackground, ...extraProps } as DialogProps} />
             }
             if (layer.type === 'drawer') {
+                const confirmClose = (layer.props as DrawerProps).confirmClose
+                const extraProps = confirmClose
+                    ? { onBeforeClose: (proceed: () => void) => openConfirmClose(layer.id, confirmClose, proceed) }
+                    : {}
                 return <Drawer
                     onClose={onClose}
                     key={`layer-${layer.type}-${layer.id}`} 
                     index={i} 
-                    {...{ id: layer.id, ...layer.props, inBackground } as DrawerProps} />
+                    {...{ id: layer.id, ...layer.props, inBackground, ...extraProps } as DrawerProps} />
             }
             if (layer.type === 'colorpicker') {
                 return <Box as={`--zuz-layer-colorpicker`} key={`layer-${layer.type}-${layer.id}`}>

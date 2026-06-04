@@ -416,7 +416,7 @@ const Select = (({
         with={withProp}
         className={[
             `--select ${expanded == true ? `--expanded` : ``}`,
-            `--${variant || themeVariant || Variant.Small}`,
+            `--${variant || themeVariant || Variant.Medium}`,
             `${name ? `--${name}` : ``}`,
             `${error ? "--has-error" : ""}`,
             `${disabled ? "--disabled" : ""} rel`
@@ -463,7 +463,7 @@ const Select = (({
         </Box> : <Button
             disabled={disabled}
             kind={kind}
-            variant={variant || themeVariant}
+            variant={variant || themeVariant || Variant.Medium}
             data-value={
                 (tokenizer || multiple) && Array.isArray(value) && value.length > 0
                     ? value.map(v => v.value).join(",")
@@ -521,7 +521,7 @@ const Select = (({
 
     const optionsList = <Box
         id={_id}
-        className={`--select-options-list --options-list --${variant || themeVariant || Variant.Small} --allow-scroll -fx flex cols fixed zIndex:var(--max-z-index)`}
+        className={`--select-options-list --options-list --${variant || themeVariant || Variant.Medium} --allow-scroll -fx flex cols fixed zIndex:var(--max-z-index)`}
         aria-hidden={!choosing}
         onWheel={handleListWheel}
         style={{
@@ -543,7 +543,7 @@ const Select = (({
         }}>
         { withSearch && <Box as={`--select-search --no-shrink flex --sticky`}><Search
             ref={_search}
-            variant={Variant.Small}
+            variant={variant || themeVariant || Variant.Medium}
             placeholder={searchPlaceholder || `Search...`}
             onChange={updateQuery}
         /></Box>}

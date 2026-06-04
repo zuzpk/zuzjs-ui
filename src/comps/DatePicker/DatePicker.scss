@@ -1,7 +1,9 @@
 @use "../../scss/variables";
 
 body{
+
     --datepicker: var(--input);
+    --datepicker-border: var(--input-border);
 
     --datepicker-icon-xxl: 48px;
     --datepicker-icon-xl: 36px;
@@ -15,6 +17,7 @@ body{
 .--date-picker{
     
     background: var(--datepicker);
+    border: var(--datepicker-border);
     gap: 10px;
     
     .--input{
@@ -37,8 +40,11 @@ body{
     @each $size in variables.$sizes {
         &.--#{$size} {
             font-size: var(--text-#{$size});
+            line-height: var(--lh-#{$size}, 1.4);
             padding: var(--datepicker-padding-#{$size}, var(--padding-#{$size}));
             border-radius: var(--datepicker-border-radius-#{$size}, var(--radius-#{$size}));
+            min-height: var(--datepicker-control-height-#{$size}, var(--control-height-#{$size}));
+            height: var(--datepicker-control-height-#{$size}, var(--control-height-#{$size}));
 
             .--date-picker-icon{
                 width: var(--datepicker-icon-#{$size});
@@ -47,4 +53,8 @@ body{
         }
     }
 
+}
+
+.--date-picker-chooser {
+    z-index: 9999999999;
 }

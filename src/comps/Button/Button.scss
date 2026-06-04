@@ -123,6 +123,16 @@ body{
         --button-current-disabled-border: 1px solid var(--button-disabled-color);
     }
 
+    &.--outline-reverse {
+        --button-current-bg: var(--surface-hover);
+        --button-current-hover: transparent;
+        --button-current-border: 1px solid var(--button-border-primary, var(--border-primary));
+        --button-current-color: var(--button);
+        --button-current-disabled-bg: transparent;
+        --button-current-disabled-color: var(--button-disabled-color);
+        --button-current-disabled-border: 1px solid var(--button-disabled-color);
+    }
+
     &.--plain{
         --button-current-bg: transparent;
         --button-current-hover: transparent;

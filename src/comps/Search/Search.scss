@@ -47,6 +47,10 @@ body{
         --icon-color-2: rgb(from var(--icon-color-1) r g b / var(--icon-alpha, 0.5));
         color: var(--search-send-color);
         font-size: 1rem;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 
     @each $size in variables.$sizes {
@@ -54,22 +58,16 @@ body{
         &.--#{$size} {
             
             --search-radius: var(--search-radius-custom, var(--radius-#{$size}));
-            
-            .--input {
-                padding: var(--padding-#{$size}-x) calc(var(--padding-#{$size}-x) * 1.5) !important;
-                font-size: calc(var(--text-#{$size}) * 1.2) !important;
-            }
 
             .--send {
                 flex-shrink: 0;
-                width: calc(var(--search-send-size-#{$size}) * 1.5);
-                height: 100%; // Force it to fill the height of the search bar
-                // aspect-ratio: 1 / 1; // Ensure it stays a consistent shape
+                width: calc(var(--search-send-size-#{$size}, var(--search-send-size-md)) + (var(--padding-#{$size}-x, var(--padding-md-x)) * 2));
+                height: 100%;
                 background: transparent;
                 svg {
-                    width: var(--search-send-size-#{$size});
-                    height: var(--search-send-size-#{$size});
-                    display: block; // Removes whitespace issues
+                    width: var(--search-send-size-#{$size}, var(--search-send-size-md));
+                    height: var(--search-send-size-#{$size}, var(--search-send-size-md));
+                    display: block;
                 }
             }
 

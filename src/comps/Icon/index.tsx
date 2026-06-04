@@ -36,6 +36,11 @@ const Icon = forwardRef<HTMLDivElement, IconProps>((props, ref) => {
     return <div
         style={{
             color,
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            lineHeight: 1,
+            flexShrink: 0,
             ...style,
             ...(size ? { fontSize: size } : {})
         }}

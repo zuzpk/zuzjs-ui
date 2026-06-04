@@ -15,6 +15,7 @@ const useDialog = () => {
     const hide = (id: number) => ctx.remove(id)
 
     const setLoading = (id: number, mode: boolean) => ctx.loading(id, mode)
+    const setDirty = (id: number, dirty: boolean) => ctx.update(id, { dirty })
 
     const show = (pops : Omit<DialogProps, `id`>) : DialogController => {
         const id = ctx.add({ 
@@ -24,6 +25,7 @@ const useDialog = () => {
         return {
             id,
             setLoading: (mod) => setLoading(id, mod),
+            setDirty: (dirty) => setDirty(id, dirty),
             hide: () => hide(id)
         }
     }
@@ -61,6 +63,7 @@ const useDialog = () => {
         return {
             id,
             setLoading: (mod) => setLoading(id, mod),
+            setDirty: (dirty) => setDirty(id, dirty),
             hide: () => hide(id)
         }
     }

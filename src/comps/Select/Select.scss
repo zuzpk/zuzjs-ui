@@ -404,6 +404,9 @@ body{
             padding: var(--padding-#{$size});
             border-radius: var(--select-radius-custom, var(--radius-#{$size}));
             font-size: var(--text-#{$size});
+            line-height: var(--lh-#{$size}, 1.4);
+            min-height: var(--select-control-height-#{$size}, var(--control-height-#{$size}));
+            height: var(--select-control-height-#{$size}, var(--control-height-#{$size}));
         }
 
         .--tokens-wrap{

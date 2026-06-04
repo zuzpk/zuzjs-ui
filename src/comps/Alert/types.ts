@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { ALERT } from "../../types/enums";
-import { BoxProps, ValueOf } from "../../types";
+import { Appearance, BoxProps, ValueOf } from "../../types";
+import { ALERT, Variant } from "../../types/enums";
 
 export type AlertProps = BoxProps &{
     type?: ValueOf<typeof ALERT>,
@@ -8,6 +8,13 @@ export type AlertProps = BoxProps &{
     iconSize?: number,
     message?: string | ReactNode,
     title: string | ReactNode,
+    variant?: ValueOf<typeof Variant>,
+    actions?: ReactNode | {
+        label: string;
+        icon?: string | null;
+        kind?: Appearance,
+        onClick: () => void;
+    }[]
     
 }
 

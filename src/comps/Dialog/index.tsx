@@ -1,6 +1,6 @@
 import { dynamic, uuid } from "@zuzjs/core"
 import { KeyCode, useShortcuts } from "@zuzjs/hooks"
-import { ReactNode, Ref, useEffect, useMemo, useRef, useState } from "react"
+import { createContext, ReactNode, Ref, useContext, useEffect, useMemo, useRef, useState } from "react"
 import { useFx } from "../../hooks"
 import useBase from "../../hooks/useBase"
 import { useTheme } from "../../hooks/useColorScheme"
@@ -16,7 +16,10 @@ import { SPINNER } from "../Spinner/types"
 import DialogBody from "./body"
 import DialogFooter from "./footer"
 import DialogHead from "./head"
-import { DialogActionHandler, DialogHandler, DialogProps } from "./types"
+import { DialogActionHandler, DialogContextType, DialogHandler, DialogProps } from "./types"
+
+export const DialogContext = createContext<DialogContextType | null>(null)
+export const useDialogDirty = () => useContext(DialogContext)
 
 /**
  * Dialog component.
@@ -77,6 +80,10 @@ const Dialog = ({
         onClose,
         onShow,
         onHide,
+        confirmClose,
+        dirty,
+        onBeforeClose,
+        requestClose,
         ...pops
     } = props
 
@@ -95,6 +102,8 @@ const Dialog = ({
         }));
     })
     const [ loading, setLoading ] = useState(false)
+    const [ isDirty, setIsDirty ] = useState(false)
+    const isDirtyRef = useRef(false)
     const { 
         variant: themeVariant,
         spinner: themeSpinner,
@@ -119,11 +128,35 @@ const Dialog = ({
         watch: [`scale`, `filter`, `transform`]
     })
 
+    const markDirty = (d: boolean) => {
+        isDirtyRef.current = d
+        setIsDirty(d)
+    }
+
+    useEffect(() => {
+        if (dirty !== undefined) markDirty(dirty)
+    }, [dirty])
+
+    const contextValue = useMemo<DialogContextType>(() => ({
+        setDirty: markDirty,
+        isDirty,
+    }), [isDirty])
+
     const closeDialog = () => {
         setVisible(false)
+        isDirtyRef.current = false
+        setIsDirty(false)
         onClose(id!)
         onCancel?.()
         onHide?.()
+    }
+
+    const tryClose = () => {
+        if (confirmClose && isDirtyRef.current && onBeforeClose) {
+            onBeforeClose(closeDialog)
+        } else {
+            closeDialog()
+        }
     }
 
 
@@ -131,7 +164,7 @@ const Dialog = ({
         { 
             keys: [KeyCode.Escape], 
             callback: () => {
-                if (layerManager.isTop(closeDialog)) closeDialog();
+                if (layerManager.isTop(closeDialog)) tryClose();
             }
         }
     ], [visible]);
@@ -155,6 +188,10 @@ const Dialog = ({
             closeDialog();
         }
     }, [forceClose]);
+
+    useEffect(() => {
+        if (requestClose !== undefined) tryClose();
+    }, [requestClose]);
 
     useEffect(() => {
         if ( undefined != forceLoading ) setLoading(forceLoading)
@@ -191,7 +228,7 @@ const Dialog = ({
             title={title} 
             description={_description}
             titlePosition={titleAlignment || themeDialog?.titleAlignment || `center`}
-            onClose={closeDialog} />}
+            onClose={tryClose} />}
 
         <DialogBody
             message={msg}
@@ -209,8 +246,11 @@ const Dialog = ({
 
     </Box>
 
-    return <>
+    return <DialogContext.Provider value={contextValue}><>
         <Overlay 
+            onClick={() => {
+                if (visible) tryClose()
+            }}
             style={{ zIndex: baseZIndex }}
             when={visible} />
         
@@ -219,7 +259,7 @@ const Dialog = ({
                 onConfirm?.(data, result);
             }) as any}
             {...formProps}>{_dialog}</Form> : _dialog}
-    </>
+    </></DialogContext.Provider>
 
 }
 

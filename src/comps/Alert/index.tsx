@@ -1,9 +1,11 @@
 "use client"
-import { forwardRef } from "react";
+import { forwardRef, useId } from "react";
 import { useBase } from "../../hooks";
 import { BoxProps } from "../../types";
-import { ALERT } from "../../types/enums";
+import { ALERT, Variant } from "../../types/enums";
 import Box from "../Box";
+import Button from "../Button";
+import Flex from "../Flex";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
 import { AlertHandler, AlertProps } from "./types";
@@ -29,13 +31,15 @@ import { AlertHandler, AlertProps } from "./types";
  */
 const Alert = forwardRef<AlertHandler, AlertProps>((props, ref) => {
     
-    const { type = ALERT.Info, icon, title, message, iconSize, ...pops } = props;
+    const { type = ALERT.Info, icon, title, message, iconSize, variant, actions, ...pops } = props;
 
     const {
         className = '',
         style,
         rest
     } = useBase(pops);
+
+    const keyId = useId();
 
     // Only use valid SVGIcons keys, fallback to 'info'
     const validIconKeys = Object.keys(SVGIcons) as Array<keyof typeof SVGIcons>;
@@ -44,8 +48,9 @@ const Alert = forwardRef<AlertHandler, AlertProps>((props, ref) => {
         : 'info';
 
     return (
-        <Box
-            className={`--alert --${type} flex aic ${className}`.trim()}
+        <Flex
+            aic
+            className={`--alert --${variant ?? Variant.Medium} --${type} ${className}`.trim()}
             style={style}
             {...(rest as BoxProps)}
         >
@@ -61,7 +66,16 @@ const Alert = forwardRef<AlertHandler, AlertProps>((props, ref) => {
                 </Text>
                 {message && <Text className={`--message`} kind="h2">{message}</Text>}
             </Box>
-        </Box>
+            { actions && <Flex aic gap={5}>{Array.isArray(actions) ?  actions.map((action, index) => (
+                <Button 
+                    key={`alert-action-${keyId}-${index}`} 
+                    icon={action.icon}
+                    kind={action.kind}
+                    onClick={action.onClick}>
+                    {action.label}
+                </Button>
+            )) : actions }</Flex>}
+        </Flex>
     );
 
 

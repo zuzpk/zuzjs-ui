@@ -1,5 +1,5 @@
 import { KeyCode, useDevice, useShortcuts } from "@zuzjs/hooks";
-import { Ref, useEffect, useMemo, useState } from "react";
+import { createContext, Ref, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useBase, useFx } from "../../hooks";
 import { useTheme } from "../../hooks/useColorScheme";
 import { BoxProps, DRAWER_SIDE, TRANSITION_CURVES } from "../../types";
@@ -10,7 +10,12 @@ import { layerManager } from "../layer_manager";
 import Overlay from "../Overlay";
 import ScrollView from "../ScrollView";
 import SVGIcons from "../svgicons";
-import { DrawerProps } from "./types";
+import { DrawerContextType, DrawerProps } from "./types";
+
+export const DrawerContext = createContext<DrawerContextType | null>(null)
+
+/** Use inside any component rendered inside a Drawer to mark it as having unsaved changes. */
+export const useDrawerDirty = () => useContext(DrawerContext)
 
 /**
  * Drawer component.
@@ -45,17 +50,48 @@ const Drawer = ({
         forceClose, 
         forceLoading,
         closeBtn,
-        onClose, 
+        onClose,
+        confirmClose,
+        dirty,
+        onBeforeClose,
+        requestClose,
         ...pops } = props;
     const { drawer: themeDrawer } = useTheme(true)!
     const [ content, setContent ] = useState(children)
     const [ visible, setVisible ] = useState(false)
     const [ render, setRender ] = useState(undefined == prerender ? themeDrawer?.prerender || true : prerender)   
     const [ loading, setLoading ] = useState(false)
+    const [ isDirty, setIsDirty ] = useState(false)
+    const isDirtyRef = useRef(false)
+
+    const markDirty = (d: boolean) => {
+        isDirtyRef.current = d
+        setIsDirty(d)
+    }
+
+    // Sync externally-controlled dirty prop
+    useEffect(() => {
+        if (dirty !== undefined) markDirty(dirty)
+    }, [dirty])
+
+    const contextValue = useMemo<DrawerContextType>(() => ({
+        setDirty: markDirty,
+        isDirty,
+    }), [isDirty])
 
     const closeDrawer = () => {
         setVisible(false)
+        isDirtyRef.current = false
+        setIsDirty(false)
         onClose?.(id ?? -1)
+    }
+
+    const tryClose = () => {
+        if (confirmClose && isDirtyRef.current && onBeforeClose) {
+            onBeforeClose(closeDrawer)
+        } else {
+            closeDrawer()
+        }
     }
 
     const {
@@ -68,7 +104,7 @@ const Drawer = ({
         { 
             keys: [KeyCode.Escape], 
             callback: () => {
-                if (layerManager.isTop(closeDrawer)) closeDrawer();
+                if (layerManager.isTop(closeDrawer)) tryClose();
             }
         }
     ], [visible]);
@@ -97,6 +133,10 @@ const Drawer = ({
             closeDrawer();
         }
     }, [forceClose]);
+
+    useEffect(() => {
+        if (requestClose !== undefined) tryClose();
+    }, [requestClose]);
 
     useEffect(() => {
         if ( undefined != forceLoading ) setLoading(forceLoading)
@@ -149,40 +189,40 @@ const Drawer = ({
 
     const baseZIndex = useMemo(() => 10000 + ((index || 1) * 10), [index]);
 
-    return <>
-        <Overlay
-            onClick={(e) => {
-                if ( visible ){ 
-                    closeDrawer()
-                }
-            }}
-            when={visible} 
-            style={{ zIndex: baseZIndex }} />
+    return <DrawerContext.Provider value={contextValue}>
+        <>
+            <Overlay
+                onClick={() => {
+                    if ( visible ) tryClose()
+                }}
+                when={visible} 
+                style={{ zIndex: baseZIndex }} />
 
-        <Box
-            ref={ref}
-            aria-hidden={!visible}
-            className={`--drawer flex cols ${className}  --${side.toLowerCase()} fixed`}
-            style={{
-                ...style,
-                ...drawerAnimation.style,
-                ...{"--m" : `${margin || themeDrawer?.margin || 0}px`},
-                zIndex: baseZIndex + 1,
-                pointerEvents: inBackground == true ? 'none' : 'auto',
-                ...(inBackground == true ? {
-                    scale: `0.92`,
-                    filter: `blur(2px)`
-                } : {})
-            }}
-            {...rest as BoxProps}>
-            {from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? <Box className={`--handle`} /> : null}
-            { closeBtn && <Button as={`--close-drawer --close-${closeBtn} --abs --round`} onClick={closeDrawer}>{SVGIcons.close}</Button> }
-            <ScrollView as={`rel`}>
-                {render ? content : visible ? content : null}
-                <Cover when={loading} />
-            </ScrollView>
-        </Box>
-    </>
+            <Box
+                ref={ref}
+                aria-hidden={!visible}
+                className={`--drawer flex cols ${className}  --${side.toLowerCase()} fixed`}
+                style={{
+                    ...style,
+                    ...drawerAnimation.style,
+                    ...{"--m" : `${margin || themeDrawer?.margin || 0}px`},
+                    zIndex: baseZIndex + 1,
+                    pointerEvents: inBackground == true ? 'none' : 'auto',
+                    ...(inBackground == true ? {
+                        scale: `0.92`,
+                        filter: `blur(2px)`
+                    } : {})
+                }}
+                {...rest as BoxProps}>
+                {from == DRAWER_SIDE.Top || from == DRAWER_SIDE.Bottom ? <Box className={`--handle`} /> : null}
+                { closeBtn && <Button as={`--close-drawer --close-${closeBtn} --abs --round`} onClick={tryClose}>{SVGIcons.close}</Button> }
+                <ScrollView as={`rel`}>
+                    {render ? content : visible ? content : null}
+                    <Cover when={loading} />
+                </ScrollView>
+            </Box>
+        </>
+    </DrawerContext.Provider>
 
 }
 

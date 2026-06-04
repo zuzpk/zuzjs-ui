@@ -1,45 +1,98 @@
+@use "../../scss/variables";
+@use "sass:map";
+
+$alert-types: (
+    critical: (
+        bg: #7f1d1d,
+        color: #fff,
+    ),
+    default: (
+        bg: var(--surface),
+        color: var(--text-primary),
+        border: 1px var(--border-primary),
+    ),
+    draft: (
+        bg: color-mix(in srgb, #94a3b8 14%, var(--surface)),
+        color: color-mix(in srgb, #334155 88%, var(--text-primary)),
+        border: color-mix(in srgb, #94a3b8 32%, var(--border-primary)),
+    ),
+    error: (
+        bg: color-mix(in srgb, #ef4444 14%, var(--surface)),
+        color: #b91c1c,
+        border: color-mix(in srgb, #ef4444 38%, var(--border-primary)),
+    ),
+    info: (
+        bg: color-mix(in srgb, #0ea5e9 14%, var(--surface)),
+        color: #0369a1,
+        border: color-mix(in srgb, #0ea5e9 36%, var(--border-primary)),
+    ),
+    neutral: (
+        bg: color-mix(in srgb, #64748b 12%, var(--surface)),
+        color: var(--text-primary),
+        border: color-mix(in srgb, #64748b 28%, var(--border-primary)),
+    ),
+    primary: (
+        bg: color-mix(in srgb, var(--primary) 14%, var(--surface)),
+        color: color-mix(in srgb, var(--primary) 82%, var(--text-primary)),
+        border: color-mix(in srgb, var(--primary) 34%, var(--border-primary)),
+    ),
+    secondary: (
+        bg: color-mix(in srgb, var(--text-secondary) 10%, var(--surface)),
+        color: var(--text-secondary),
+        border: color-mix(in srgb, var(--text-secondary) 24%, var(--border-primary)),
+    ),
+    success: (
+        bg: color-mix(in srgb, #22c55e 14%, var(--surface)),
+        color: #15803d,
+        border: color-mix(in srgb, #22c55e 34%, var(--border-primary)),
+    ),
+    tip: (
+        bg: color-mix(in srgb, #8b5cf6 14%, var(--surface)),
+        color: #6d28d9,
+        border: color-mix(in srgb, #8b5cf6 34%, var(--border-primary)),
+    ),
+    warning: (
+        bg: color-mix(in srgb, #f59e0b 16%, var(--surface)),
+        color: #b45309,
+        border: color-mix(in srgb, #f59e0b 36%, var(--border-primary)),
+    ),
+);
+
 body {
-    
-    --alert-error: #ffd4d4;
-    --alert-error-color: #ae1313;
-    --alert-info: #bee3f8;
-    --alert-info-color: #2b6cb0;
-    --alert-warning: #feebc8;
-    --alert-warning-color: #c05621;
-    --alert-success: #c6f6d5;
-    --alert-success-color: #2f855a;
 
-    --alert-primary: #e0e7ff;       /* Light Indigo/Zuz Blue */
-    --alert-primary-color: #4338ca;
-    --alert-neutral: #f3f4f6;       /* Soft Gray */
-    --alert-neutral-color: #374151;
-    --alert-critical: #7f1d1d;      /* Deep Red for high-priority system errors */
-    --alert-critical-color: #ffffff;
-    --alert-tip: #faf5ff;           /* Soft Purple */
-    --alert-tip-color: #6b21a8;
-    --alert-debug: #111827;         /* Dark Terminal Style */
-    --alert-debug-color: #10b981;   /* "Matrix" Green */
-
-    --alert-padding: 12px;
-    --alert-radius: 10px;
     --alert-gap: 10px;
-}
 
-/* Helper mixin to reduce repetition */
-@mixin alert-variant($bg, $color) {
-    background: $bg;
-    color: $color;
-    path {
-        fill: $color;
+    @each $type, $tag in $alert-types {
+        @each $shade, $value in $tag {
+            --#{$type}-#{$shade}: #{$value};
+        }
+        @if not map.has-key($tag, border) {
+            --#{$type}-border: #{map.get($tag, bg)};
+        }
     }
+
 }
 
-.--alert {
-    padding: var(--alert-padding);
-    border-radius: var(--alert-radius);
+
+
+.--alert{
+
+    border: 1px var(--alert-border) solid;
+    background-color: var(--alert-bg);
+    color: var(--alert-color);
     gap: var(--alert-gap);
-    display: flex; /* Added to ensure gap works */
-    align-items: flex-start;
+
+    path {
+        fill: var(--alert-color);
+    }
+
+    @each $size in variables.$sizes {
+        &.--#{$size} {
+            font-size: var(--text-#{$size});
+            padding: var(--padding-#{$size});
+            border-radius: var(--radius-#{$size});
+        }
+    }    
 
     .--icon {
         width: 20px;
@@ -51,6 +104,7 @@ body {
         display: flex;
         flex-direction: column;
         gap: 2px;
+        flex: 1;
         .--title {
             &.--tm {
                 font-weight: bold;
@@ -58,28 +112,12 @@ body {
         }
     }
 
-    /* Standard Variants */
-    &.--info    { @include alert-variant(var(--alert-info), var(--alert-info-color)); }
-    &.--warning { @include alert-variant(var(--alert-warning), var(--alert-warning-color)); }
-    &.--error   { @include alert-variant(var(--alert-error), var(--alert-error-color)); }
-    &.--success { @include alert-variant(var(--alert-success), var(--alert-success-color)); }
-
-    /* New Suggested Variants */
-    &.--primary  { @include alert-variant(var(--alert-primary), var(--alert-primary-color)); }
-    &.--neutral  { @include alert-variant(var(--alert-neutral), var(--alert-neutral-color)); }
-    &.--tip      { @include alert-variant(var(--alert-tip), var(--alert-tip-color)); }
-    
-    /* High Intensity System Alerts */
-    &.--critical { 
-        @include alert-variant(var(--alert-critical), var(--alert-critical-color));
-        box-shadow: 0 0 15px rgba(127, 29, 29, 0.4); /* Glow effect for zPanel emergencies */
+    @each $type, $tag in $alert-types {
+        &.--#{$type} {
+            --alert-border: var(--#{$type}-border);
+            --alert-bg: var(--#{$type}-bg);
+            --alert-color: var(--#{$type}-color);
+        }
     }
-
-    /* Developer Mode Alert */
-    &.--debug {
-        @include alert-variant(var(--alert-debug), var(--alert-debug-color));
-        font-family: 'Courier New', Courier, monospace;
-        border: 1px solid var(--alert-debug-color);
-        opacity: 0.9;
-    }
+   
 }

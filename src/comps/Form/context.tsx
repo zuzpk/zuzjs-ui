@@ -6,6 +6,7 @@ interface FormStore {
     values: dynamic;
     errors: dynamic;
     touched: Record<string, boolean>;
+    isDirty: boolean;
 }
 
 interface FormContextValue {
@@ -69,11 +70,22 @@ export const useForm = () => {
 // Internal Provider Component used by Form
 export const FormProvider = ({ children, initialValues = {} }: { children: React.ReactNode, initialValues?: dynamic }) => {
 
+    const areValuesEqual = (a: dynamic = {}, b: dynamic = {}) => {
+        const aKeys = Object.keys(a || {})
+        const bKeys = Object.keys(b || {})
+        if (aKeys.length !== bKeys.length) return false
+        return aKeys.every((k) => Object.is(a?.[k], b?.[k]))
+    }
+
+    const getDirtyState = (values: dynamic, baseline: dynamic) => !areValuesEqual(values, baseline)
+
     const store = useRef<FormStore>({ 
         values: initialValues, 
         errors: {}, 
-        touched: {} 
+        touched: {},
+        isDirty: false,
     });
+    const baselineValues = useRef<dynamic>({ ...initialValues })
     const prevInitialKeys = useRef<Set<string>>(new Set(Object.keys(initialValues)));
     const subscribers = useRef(new Set<() => void>());
     const getSnapshot = useCallback(() => store.current, []);
@@ -111,9 +123,11 @@ export const FormProvider = ({ children, initialValues = {} }: { children: React
         prevInitialKeys.current = newKeys;
         if (!hasChanged) return
 
+        baselineValues.current = { ...nextValues }
         store.current = {
             ...store.current,
             values: nextValues,
+            isDirty: getDirtyState(nextValues, baselineValues.current),
         }
         notify();
     }, [initialValues]);
@@ -123,19 +137,25 @@ export const FormProvider = ({ children, initialValues = {} }: { children: React
         getSnapshot,
         setFieldValue: (name: string, value: any) => {
             if (store.current.values[name] === value) return;
+            const nextValues = {
+                ...store.current.values,
+                [name]: value
+            }
             store.current = {
                 ...store.current,
-                values: {
-                    ...store.current.values,
-                    [name]: value
-                }
+                values: nextValues,
+                isDirty: getDirtyState(nextValues, baselineValues.current),
             }
             notify();
         },
         deleteFieldValue: (name: string) => {
             if (!(name in store.current.values)) return;
             const { [name]: _, ...rest } = store.current.values;
-            store.current = { ...store.current, values: rest };
+            store.current = { 
+                ...store.current,
+                values: rest,
+                isDirty: getDirtyState(rest, baselineValues.current),
+            };
             notify();
         },
         setFieldError: (name: string, error: string | null) => {
@@ -149,7 +169,12 @@ export const FormProvider = ({ children, initialValues = {} }: { children: React
             notify();
         },
         reset: () => {
-             store.current = { values: {}, errors: {}, touched: {} };
+             store.current = { 
+                values: { ...baselineValues.current }, 
+                errors: {}, 
+                touched: {},
+                isDirty: false,
+            };
              notify();
         }
     }), []);

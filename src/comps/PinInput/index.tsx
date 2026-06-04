@@ -4,6 +4,7 @@ import { useBase } from '../../hooks';
 import { useTheme } from '../../hooks/useColorScheme';
 import { Variant } from '../../types';
 import Box from '../Box';
+import { useFormActions } from '../Form/context';
 import Input from '../Input';
 import { InputProps } from '../Input/types';
 
@@ -38,6 +39,9 @@ const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
     const inputs = useRef<(HTMLInputElement | null)[]>([])
     const externalOnChange = pops.onChange
     const externalOnPaste = pops.onPaste
+    const form = useFormActions()
+    const setFieldValue = form?.setFieldValue
+    const deleteFieldValue = form?.deleteFieldValue
     
     let name = `pinput`
     let required = false
@@ -68,6 +72,12 @@ const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
         style
     } = useBase(pops)
 
+    const syncFormValue = () => {
+        if (!name || !setFieldValue) return
+        const nextValue = inputs.current.map(input => input?.value ?? '').join('')
+        setFieldValue(name, nextValue)
+    }
+
     const handleInput: ChangeEventHandler<HTMLInputElement> = (event) => {
         const input = event.currentTarget
         const nextInput = inputs.current[ parseInt(input.dataset.index!) + 1 ]
@@ -79,6 +89,7 @@ const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
             prevInput.focus();
         }
 
+        syncFormValue()
         externalOnChange?.(event)
     }
 
@@ -112,6 +123,7 @@ const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
         const focusIndex = firstEmptyIndex >= 0 ? firstEmptyIndex : lastFilledIndex
         inputs.current[focusIndex]?.focus()
 
+        syncFormValue()
         externalOnPaste?.(event)
     }
 
@@ -120,6 +132,12 @@ const PinInput = forwardRef<HTMLInputElement, PinInputProps>((props, ref) => {
     useEffect(() => {
         inputs.current = inputs.current.slice(0, size || length);
     }, [size || length]);
+
+    useEffect(() => {
+        return () => {
+            if (name) deleteFieldValue?.(name)
+        }
+    }, [deleteFieldValue, name]);
  
     return <Box 
         name={name}

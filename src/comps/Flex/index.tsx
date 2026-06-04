@@ -36,6 +36,7 @@ const Flex: FC<FlexProps> = ({
     jcs, 
     jcc,
     jce, 
+    wrap,
     className = "", 
     style, 
     ...props 
@@ -55,6 +56,7 @@ const Flex: FC<FlexProps> = ({
         jcs ? "--jcs" : "",
         jcc ? "--jcc" : "",
         jce ? "--jce" : "",
+        wrap ? "--wrap" : "",
         className
     ].filter(Boolean).join(" ");
 

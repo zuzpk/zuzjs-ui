@@ -2,7 +2,7 @@
 import { ChangeEvent, Ref, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useTheme } from "../../hooks/useColorScheme";
 import { CHECKBOX, Variant } from "../../types/enums";
-import { useForm } from "../Form/context";
+import { useFormActions, useFormFieldError, useFormFieldValue } from "../Form/context";
 import Input from "../Input";
 import { InputProps } from "../Input/types";
 import Label, { LabelProps } from "../Label";
@@ -37,10 +37,11 @@ const CheckBox = ({
     
     const { name, required, type, value, size, variant, checked: defaultCheck, disabled, onSwitch, ...pops } = props;
 
-    const form = useForm()
-    const inForm = !!(name && form.values)
-    const error = inForm ? form.errors?.[name] : null
-    const formValue = inForm ? form.values?.[name] : undefined;
+        const form = useFormActions()
+        const setFieldValue = form?.setFieldValue
+        const inForm = Boolean(name && setFieldValue)
+        const error = useFormFieldError(name)
+        const formValue = useFormFieldValue(name)
 
     const [ _checked, _setChecked ] = useState( defaultCheck || false )
     const bRef = useRef<HTMLInputElement>(null)
@@ -77,8 +78,8 @@ const CheckBox = ({
 
     const handleChange = (bool: boolean) => {
         const cleanBool = !!bool;
-        if (inForm) {
-            form.setFieldValue?.(name,cleanBool)
+        if (inForm && name) {
+            setFieldValue?.(name, cleanBool)
         }
         _setChecked(cleanBool);
         onSwitch?.(cleanBool, value || `cb`);

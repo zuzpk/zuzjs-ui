@@ -118,6 +118,7 @@ export const ALERT = {
     Secondary: "secondary", 
     Neutral: "neutral",   // Specifically for "low priority" or "muted" alerts
     Critical: "critical", // Higher intensity than Error (often used for system-wide failures)
+    CriticalOutline: "critical-outline", // Higher intensity than Error (often used for system-wide failures)
     Tip: "tip",           // Specifically for onboarding or suggestions (often purple/indigo)
     Draft: "draft",
 } as const

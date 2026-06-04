@@ -1,0 +1,51 @@
+@use "../../scss/variables";
+
+body {
+    --token: var(--surface);
+    --token-border: 1px var(--border-primary) solid;
+    --token-color: var(--text-primary);
+}
+
+.--token {
+
+    @each $size in variables.$sizes {
+        &.--#{$size}{
+            font-size: var(--text-#{$size});
+            line-height: var(--lh-#{$size}, 1.4);
+            border-radius: var(--radius-#{$size});
+            .--icon{
+                margin-left: var(--padding-#{$size}-x);
+            }
+            // .--token-value {
+            //     padding: calc(var(--padding-#{$size}-x) / 2);
+            // }
+        }
+    }
+
+    background: var(--token);    
+    border: var(--token-border);
+    color: var(--token-color);
+
+    --icon-color-1: var(--token-color);
+    --icon-color-2: rgb(from var(--icon-color-1) r g b / var(--icon-alpha, 0.5));
+
+    .--token-value {
+        white-space: pre;
+        flex: 1;
+        .--value {
+            white-space: pre;
+        }
+    }
+
+    .--button{
+        aspect-ratio: 1 / 1;
+        width: 20px;
+        padding: 0px 3px;
+        svg {
+            path {
+                fill: var(--token-color);
+            }
+        }
+    }
+
+}

@@ -6,6 +6,21 @@ import { LayerHandler, ZuzProps } from "../../types/interfaces";
 import { FormProps, ValidationResult } from "../Form/types";
 import { SPINNER } from "../Spinner/types";
 
+export type DialogConfirmOptions = {
+    title?: string
+    message?: string
+    confirmLabel?: string
+    cancelLabel?: string
+}
+
+/** Pass `true` for default confirm text, or options to customize it. */
+export type DialogConfirmClose = boolean | DialogConfirmOptions
+
+export type DialogContextType = {
+    setDirty: (dirty: boolean) => void
+    isDirty: boolean
+}
+
 export type DialogProps = ZuzProps & {
 
     id?: number,
@@ -55,6 +70,12 @@ export type DialogProps = ZuzProps & {
     onCancel?: () => void,
     onShow?: () => void,
     onHide?: () => void,
+    /** When truthy, close attempts (overlay/ESC/close button) ask before discarding dirty form changes. */
+    confirmClose?: DialogConfirmClose,
+    /** Externally controlled dirty state. */
+    dirty?: boolean,
+    /** @internal Injected by LayersRenderer to open the confirm dialog as a proper layer. */
+    onBeforeClose?: (proceed: () => void) => void,
 } & LayerHandler
 export interface DialogActionHandler {
     key?: string,

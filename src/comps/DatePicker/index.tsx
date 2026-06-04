@@ -120,13 +120,13 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
     }, [currentDate, placeholder, range]);
 
     const trigger = useMemo(() => <Box 
-        as={`--date-picker --${variant || themeVariant || Variant.Small} rel flex aic ${className}`} 
+        as={`--date-picker --${variant || themeVariant || Variant.Medium} rel flex aic ${className}`} 
         data-value={currentDate ? currentDate.toISOString() : ``} >
         { icon ? `string` === typeof icon ? <Icon as={`mr:10 c:#666`} name={icon} /> : icon : <Span as={`--date-picker-icon flex aic jcc`}>{SVGIcons.calendar}</Span> }
         <input
             ref={_input}
             value={inputValue}
-            className={`--input ${variant ? `--${variant}` : ``} flex`.trim()}
+            className={`--input --${variant || themeVariant || Variant.Medium} flex`.trim()}
             style={style}
             onFocus={handleFocus}
             onInput={handleInput}
@@ -206,7 +206,7 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
                 disabledDates={disabledDates}
                 rangeValue={currentRange}
                 defaultRangeValue={defaultRangeValue}
-                variant={variant || themeVariant || Variant.Small}
+                variant={variant || themeVariant || Variant.Medium}
                 onChange={(dt, meta) => {
                     setCurrentDate(dt)
                     onDateChange?.(dt)

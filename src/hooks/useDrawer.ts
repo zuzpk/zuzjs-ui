@@ -4,6 +4,8 @@ import { LayersContext } from "../comps/Layers";
 import { DrawerController } from "../types";
 import { DRAWER_SIDE } from "../types/enums";
 
+type DrawerOptions = Omit<DrawerProps, 'id' | 'onShow' | 'onHide' | 'from' | 'children'>
+
 const useDrawer = () => {
 
     const ctx = useContext(LayersContext);
@@ -16,6 +18,8 @@ const useDrawer = () => {
 
     const setLoading = (id: number, mode: boolean) => ctx.loading(id, mode)
 
+    const setDirty = (id: number, dirty: boolean) => ctx.update(id, { dirty })
+
     const show = (pops : Omit<DrawerProps, `id` | `onShow` | `onHide`>) : DrawerController => {
         const id = ctx.add({ 
             type: `drawer`,
@@ -24,6 +28,7 @@ const useDrawer = () => {
         return {
             id,
             setLoading: (mod) => setLoading(id, mod),
+            setDirty: (dirty) => setDirty(id, dirty),
             close: () => hide(id)
         }
     }
@@ -31,33 +36,43 @@ const useDrawer = () => {
     return {
         clearAll,
         open: (
-            child?: string | ReactNode | ReactNode[]
+            child?: string | ReactNode | ReactNode[],
+            options?: DrawerOptions
         ) => show({
-            children: child
+            children: child,
+            ...options
         }),
         right: (
-            child?: string | ReactNode | ReactNode[]
+            child?: string | ReactNode | ReactNode[],
+            options?: DrawerOptions
         ) => show({
             children: child,
-            from: DRAWER_SIDE.Right
+            from: DRAWER_SIDE.Right,
+            ...options
         }),
         left: (
-            child?: string | ReactNode | ReactNode[]
+            child?: string | ReactNode | ReactNode[],
+            options?: DrawerOptions
         ) => show({
             children: child,
-            from: DRAWER_SIDE.Left
+            from: DRAWER_SIDE.Left,
+            ...options
         }),
         top: (
-            child?: string | ReactNode | ReactNode[]
+            child?: string | ReactNode | ReactNode[],
+            options?: DrawerOptions
         ) => show({
             children: child,
-            from: DRAWER_SIDE.Top
+            from: DRAWER_SIDE.Top,
+            ...options
         }),
         bottom: (
-            child?: string | ReactNode | ReactNode[]
+            child?: string | ReactNode | ReactNode[],
+            options?: DrawerOptions
         ) => show({
             children: child,
-            from: DRAWER_SIDE.Bottom
+            from: DRAWER_SIDE.Bottom,
+            ...options
         }),
         close: hide
     }

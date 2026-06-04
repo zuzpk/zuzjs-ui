@@ -57,6 +57,7 @@
 @use "../comps/TextArea/Textarea.scss";
 @use "../comps/TextWheel/Textwheel.scss";
 @use "../comps/Toast/Toast.scss";
+@use "../comps/Token/Token.scss";
 @use "../comps/Tooltip/Tooltip.scss";
 @use "../comps/Treeview/Treeview.scss";
 
@@ -265,6 +266,22 @@ body {
     --text-7xl: 128px; --lh-7xl: 1.1;
     --text-8xl: 128px; --lh-8xl: 1.1;
     --text-9xl: 256px; --lh-9xl: 1.1;
+
+    /* Single-line control heights (input/select/date-picker) */
+    --control-height-xs: calc((var(--text-xs) * var(--lh-xs)) + (var(--padding-xs-x) * 2) + 2px);
+    --control-height-sm: calc((var(--text-sm) * var(--lh-sm)) + (var(--padding-sm-x) * 2) + 2px);
+    --control-height-md: calc((var(--text-md) * var(--lh-md)) + (var(--padding-md-x) * 2) + 2px);
+    --control-height-lg: calc((var(--text-lg) * var(--lh-lg)) + (var(--padding-lg-x) * 2) + 2px);
+    --control-height-xl: calc((var(--text-xl) * var(--lh-xl)) + (var(--padding-xl-x) * 2) + 2px);
+    --control-height-xxl: calc((var(--text-xxl) * var(--lh-xxl)) + (var(--padding-xl-x) * 2) + 2px);
+    --control-height-2xl: calc((var(--text-2xl) * var(--lh-2xl)) + (var(--padding-xl-x) * 2) + 2px);
+    --control-height-3xl: calc((var(--text-3xl) * var(--lh-3xl)) + (var(--padding-xl-x) * 2) + 2px);
+    --control-height-4xl: calc((var(--text-4xl) * var(--lh-4xl)) + (var(--padding-xl-x) * 2) + 2px);
+    --control-height-5xl: calc((var(--text-5xl) * var(--lh-5xl)) + (var(--padding-xl-x) * 2) + 2px);
+    --control-height-6xl: calc((var(--text-6xl) * var(--lh-6xl)) + (var(--padding-xl-x) * 2) + 2px);
+    --control-height-7xl: calc((var(--text-7xl) * var(--lh-7xl)) + (var(--padding-xl-x) * 2) + 2px);
+    --control-height-8xl: calc((var(--text-8xl) * var(--lh-8xl)) + (var(--padding-xl-x) * 2) + 2px);
+    --control-height-9xl: calc((var(--text-9xl) * var(--lh-9xl)) + (var(--padding-xl-x) * 2) + 2px);
     
     --max-z-index: 2147483647;
     --zuz-shadow: 0px 0px 0px 1px #d4d4d4, 0px 0px 6px #ccc;
