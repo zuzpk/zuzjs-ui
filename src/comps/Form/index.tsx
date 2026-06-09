@@ -166,6 +166,17 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
                     const inputMaxDate = new Date(val);
                     inputMaxDate.setHours(0, 0, 0, 0);
                     return inputMaxDate <= maxDate;
+                case FORMVALIDATION.GreaterThan:
+                    const gtField = withAttr.split('@')[1];
+                    const gtEl = innerRef.current?.querySelector<FormInputs>(`[name="${gtField.trim()}"]`);
+                    if (gtEl) {
+                        const gtVal = +gtEl.value;
+                        const numVal = +val;
+                        if (isNaN(numVal) || isNaN(gtVal) || numVal <= gtVal) {
+                            return false;
+                        }
+                    }
+                    break;
                 
             }
         }
