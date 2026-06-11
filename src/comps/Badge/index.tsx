@@ -4,6 +4,7 @@ import React from 'react';
 import { useBase } from '../../hooks';
 import { Appearance, BoxProps, Status, TRANSITION_CURVES, TRANSITIONS, ValueOf, Variant } from '../../types';
 import Box from '../Box';
+import Flex from '../Flex';
 import Icon from '../Icon';
 import Spinner from '../Spinner';
 import { SPINNER } from '../Spinner/types';
@@ -34,6 +35,8 @@ export type BadgeProps = BoxProps & {
     loading?: boolean,
     /** Spinner type to display when `loading` is true. */
     spinner?: ValueOf<typeof SPINNER>,
+    /** Whether the badge content should be reversed. */
+    reverse?: boolean 
 }
 
 const Badge : React.FC<BadgeProps> = ({
@@ -49,6 +52,7 @@ const Badge : React.FC<BadgeProps> = ({
     kind = `solid`,
     loading = false,
     spinner,
+    reverse = false,
     ...pops
 }) => {
 
@@ -58,14 +62,15 @@ const Badge : React.FC<BadgeProps> = ({
     const displayCount = hasCount ? (count > max ? `${max}+` : String(count)) : undefined
     const isDot = !hasCount && _(label).isEmpty()
 
-    return <Box
+    return <Flex
+        aic jcc
         style={{
             ...(isDot ? { "--badge-size": size } : {}),
             ...(color ? { "--badge-color": color } : {}),
             ...(labelColor ? { "--badge-current-color": labelColor } : {}),
             ...style
         }}
-        as={`--badge ${count ? `--as-counter` : ``} --${kind} --${variant} --${type} rel flex aic jcc ${className}`.trim()}>
+        as={`--badge ${reverse ? `--reverse` : ``} ${count ? `--as-counter` : ``} --${kind} --${variant} --${type} rel ${className}`.trim()}>
         <Box
             fx={{
                 transition: TRANSITIONS.FadeIn,
@@ -79,7 +84,7 @@ const Badge : React.FC<BadgeProps> = ({
             ? <Box as={`--dot`} />
             : <Text as={`--label --nous`}>{displayCount ?? label}</Text>
         }
-    </Box>
+    </Flex>
 }
 
 export default Badge;

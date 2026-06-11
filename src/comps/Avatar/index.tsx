@@ -50,11 +50,11 @@ const Avatar = forwardRef<AvatarHandler, AvatarProps>((props, ref) => {
                 ...baseStyle,
             }}
             {...rest as BoxProps}>
-        { src ? <Image   
+        { src && !(props.skeleton?.enabled ?? false) ? <Image   
             src={src}
             crossOrigin={crossOrigin} 
             referrerPolicy={referrerPolicy}
-            {...pops } /> : <Text className={`--avatar-label`}>{(alt ? alt.charAt(0) : `A`).toUpperCase()}</Text>}
+            {...pops } /> : <Text skeleton={props.skeleton} className={`--avatar-label`}>{(alt ? alt.charAt(0) : `A`).toUpperCase()}</Text>}
     </Box>
 })
 

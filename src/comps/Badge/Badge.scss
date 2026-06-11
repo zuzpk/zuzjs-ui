@@ -91,6 +91,10 @@ body {
         opacity: var(--badge-dot-opacity);
     }
 
+    .--icon {
+        color: var(--badge-current-color);
+    }
+
     .--label {
         color: var(--badge-current-color);
     }
