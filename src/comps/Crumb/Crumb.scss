@@ -1,3 +1,5 @@
+@use "../../scss//variables";
+
 body{
     --crumb-padding: 6px 2px;
     --crumb-item-gap: 5px;
@@ -13,20 +15,38 @@ body{
     }
 }
 .--crumb{
+    
     gap: var(--crumb-gap);
+    
     li{
         padding: var(--crumb-padding) !important;
     }
+
+    // @each $size in variables.$sizes{
+    //     &.--size-#{$size}{
+    //         .--crumb-item {
+    //             font-size: var(--text-#{$size});
+    //         }
+    //     }
+    // }
+
     .--crumb-item{
         background: transparent;
         color: var(--crumb-item-color);
         gap: var(--crumb-item-gap);
         padding: var(--crumb-item-padding);
         border-radius: var(--crumb-item-radius);
+
         .--crumb-icon{}
         .--crumb-label{}
 
-        --button-disabled-color: var(--gray-500) !important;
+        &:first-child:disabled{
+            --button-disabled-color: var(--text-primary) !important;
+        }
+
+        &:not(:first-child):disabled{
+            --button-disabled-color: var(--gray-500) !important;
+        }
 
         &:hover{
             background: var(--crumb-item-hover);

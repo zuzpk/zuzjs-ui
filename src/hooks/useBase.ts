@@ -46,6 +46,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
         dropOptions,
         timeline,
         timelineRoot,
+        textSize,
         style: incomingStyle,
         ...rest
     } = props || {}
@@ -152,6 +153,8 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
 
     const manifestClasses = buildClassString(as ?? ``)
 
+    const customFontSize = textSize ? { "--text-size-custom": typeof textSize === "number" ? `${textSize}px` : textSize } as React.CSSProperties : {}
+
     return {
         style: {
             ...skeletonStyle,
@@ -160,6 +163,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
             ...dragStyle,
             ...dropStyle,
             ...timelineStyle,
+            ...customFontSize,
         },
         className: [
             zuzClasses, 

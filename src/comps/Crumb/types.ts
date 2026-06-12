@@ -1,5 +1,5 @@
 import { ReactNode } from "react"
-import { BoxProps } from "../../types"
+import { BoxProps, ValueOf, Variant } from "../../types"
 
 export type CrumbItem = {
     ID?: string,
@@ -12,5 +12,6 @@ export type CrumbProps = BoxProps & {
     items: CrumbItem[] | string,
     maxItems?: number,
     /** Base Path to be included when items is string */
-    basePath?: string
+    basePath?: string,
+    variant?: ValueOf<typeof Variant>,
 }

@@ -1,3 +1,5 @@
+@use "../../scss//variables";
+
 body{
     --button: var(--primary, var(--red-700));
     --button-hover: var(--primary-hover, var(--red-800));
@@ -35,36 +37,14 @@ body{
     
     width: fit-content;
 
-    &.--xs {
-        padding: var(--padding-xs);
-        font-size: var(--text-xs);
-        border-radius: var(--radius-xs);
-        gap: var(--button-gap-xs);
-    }
-    &.--sm {
-        padding: var(--padding-sm);
-        font-size: var(--text-sm);
-        border-radius: var(--radius-sm);
-        gap: var(--button-gap-sm);
-    }
-    &.--md {
-        padding: var(--padding-md);
-        font-size: var(--text-md);
-        border-radius: var(--radius-md);
-        gap: var(--button-gap-md);
-    }
-    &.--lg {
-        padding: var(--padding-lg);
-        font-size: var(--text-lg);
-        border-radius: var(--radius-lg);
-        gap: var(--button-gap-lg);
-    }
-    &.--xl {
-        padding: var(--padding-xl);
-        font-size: var(--text-xl);
-        border-radius: var(--radius-xl);
-        gap: var(--button-gap-xl);
-    }
+    @each $size in variables.$sizes{
+        &.--#{$size}{
+            padding: var(--padding-#{$size});
+            font-size: var(--text-size-custom, var(--text-#{$size}));
+            border-radius: var(--radius-#{$size});
+            gap: var(--button-gap-#{$size});
+        }
+     }
 
     border: var(--button-current-border);
     background: var(--button-current-bg);

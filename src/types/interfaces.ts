@@ -60,13 +60,15 @@ export interface ZuzProps {
      */
     timelineRoot?: boolean;
 
+    textSize?: string | number;
+
 }
 
 export interface BoxProps extends Partial<Props<`div`>> {
     name?: string;
     ref?: Ref<HTMLDivElement>;
     cols?: boolean;
-    with?: WithFormValidation,
+    with?: WithFormValidation;
 }
 
 export interface parallaxEffectProps {

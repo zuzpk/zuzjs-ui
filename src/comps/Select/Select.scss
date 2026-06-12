@@ -319,6 +319,9 @@ body{
         overflow: hidden;
         padding-inline-start: calc(var(--padding-md-x) + var(--select-option-indent)) !important;
 
+        --icon-color-1: var(--select-option-color);
+        --icon-color-2: rgb(from var(--icon-color-1) r g b / var(--icon-alpha, 0.5));
+
         &:disabled{
             color: var(--text-primary-disabled);
             &:hover{

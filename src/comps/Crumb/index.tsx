@@ -27,7 +27,7 @@ import { CrumbItem, CrumbProps } from "./types";
  */
 const Crumb = forwardRef<HTMLUListElement | HTMLOListElement, CrumbProps>((props, ref) => {
 
-    const { items : _crumbItems, maxItems } = props
+    const { items : _crumbItems, variant, textSize, maxItems } = props
     
     const crumbItems = useMemo(() => {
         const isString = `string` == typeof _crumbItems
@@ -57,9 +57,11 @@ const Crumb = forwardRef<HTMLUListElement | HTMLOListElement, CrumbProps>((props
         className={`--crumb flex aic`}
         direction={`rows`}
         seperator={<Box as={`--crumb-chevron`}>{SVGIcons.chevronRightOutline}</Box>}
+        style={textSize ? { "--text-size-custom": textSize } as React.CSSProperties : undefined}
         items={items.map((item, index, _items) => item.ID == `.` ? 
             <Box as={`flex aic gap:3`}>{Array(3).fill(null).map(() => <Box key={`--crumb-placeholder-${index}`} as={`w:4 h:4 bg:$text r:10`} />)}</Box>
             : <Button 
+                variant={variant}
                 onClick={() => item.action?.()}
                 key={`${item.label.replace(/\s+/g, `-`).toLowerCase()}-${index}`}
                 className={`--crumb-item`} disabled={!_items[index+1]}>
