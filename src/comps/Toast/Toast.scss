@@ -92,10 +92,17 @@ body{
         }
 
         .--snack-btn {
-            background: var(--snack-btn);
+
             border: none;
-            color: white;
-            &:hover { background: var(--snack-btn-hover); }
+            background: var(--snack-btn);
+
+            &:not(:disabled) {
+                color: white;
+                &:hover { background: var(--snack-btn-hover); }
+            }
+            &:disabled {
+                opacity: 0.5;
+            }
         }
 
 

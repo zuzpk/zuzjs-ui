@@ -196,8 +196,10 @@ const Toast : FC<ToastProps & {
                     {actions.map((action, i) => (
                         <Button 
                             key={i} 
-                            as="--snack-btn bold" 
+                            disabled={busy === true}
+                            as={`--snack-btn --snack-action-${action.tag} bold`} 
                             variant={Variant.XSmall}
+                            {...action.buttonProps}
                             onClick={(e) => { e.stopPropagation(); action.onClick(e); }}>
                             {action.label}
                         </Button>

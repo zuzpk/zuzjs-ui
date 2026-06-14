@@ -14,4 +14,5 @@ export type CrumbProps = BoxProps & {
     /** Base Path to be included when items is string */
     basePath?: string,
     variant?: ValueOf<typeof Variant>,
+    separator?: "arrow" | "slash" | "dot" | ReactNode,
 }

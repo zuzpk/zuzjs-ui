@@ -1,6 +1,7 @@
 "use client"
 import { useContext } from "react";
 // import { ToastContext } from "../comps/Toast";
+import { ButtonProps } from "../comps/Button/types";
 import { LayersContext } from "../comps/Layers";
 import { SnackAction, SnackPosition, SnackStyle, SnackType, ToastProps } from "../comps/Toast/types";
 
@@ -21,6 +22,8 @@ interface SnackProps {
 interface SnackBtn {
     label?: string;
     hide?: boolean;
+    tag?: string;
+    buttonProps?: Omit<ButtonProps, 'onClick' | 'children'>;
     onClick?: (e: any) => void;
 }
 
@@ -111,14 +114,16 @@ const useSnack = () => {
             sticky: true,
             actions: [
                 {
-                    label: ok?.label || "Ok",
+                    label: ok?.label ?? "Ok",
+                    tag: ok?.tag ?? `ok`,
                     onClick: (e: any) => {
                         ok?.onClick?.(e);
                         if ( ( ok?.hide ?? false ) === true ) hide(id);
                     }
                 },
                 {
-                    label: cancel?.label || "Cancel",
+                    label: cancel?.label ?? "Cancel",
+                    tag: cancel?.tag ?? `cancel`,
                     onClick: (e: any) => {
                         cancel?.onClick?.(e);
                         if ( (cancel?.hide ?? true) === true ) hide(id);

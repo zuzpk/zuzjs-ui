@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Variant } from "../../types";
 import { dynamic, ValueOf } from "../../types/shared";
+import { ButtonProps } from "../Button/types";
 
 export enum ToastType {
     Default = 'default', 
@@ -21,6 +22,8 @@ export enum ToastStyle {
 }
 export interface ToastAction {
     label: string;
+    tag?: string;
+    buttonProps?: Omit<ButtonProps, 'onClick' | 'children'>;
     onClick: (e: any) => void;
     variant?: 'primary' | 'secondary';
 }

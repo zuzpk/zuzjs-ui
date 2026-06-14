@@ -61,6 +61,8 @@ body{
         color: var(--button-current-disabled-color);
         border: var(--button-current-disabled-border);
         cursor: auto !important;
+        --icon-color-1: rgb(from var(--button-current-color) r g b / 0.3);
+        --icon-color-2: rgb(from var(--icon-color-1) r g b / var(--icon-alpha, 0.5));
     }
 
     &.--solid{
