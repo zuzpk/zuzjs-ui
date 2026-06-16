@@ -1,10 +1,10 @@
-import { forwardRef, useImperativeHandle } from "react";
-import Box from "../Box";
-import { CropHandler, CropperProps } from "./types";
-import useBase from "../../hooks/useBase";
 import { CropShape, useImageCropper } from "@zuzjs/hooks";
+import { forwardRef, useImperativeHandle } from "react";
+import useBase from "../../hooks/useBase";
 import { BoxProps } from "../../types";
+import Box from "../Box";
 import Slider from "../Slider";
+import { CropHandler, CropperProps } from "./types";
 
 /**
  * Cropper component.
@@ -27,7 +27,7 @@ import Slider from "../Slider";
  */
 const Cropper = forwardRef<CropHandler, CropperProps>((props, ref) => {
 
-    const { src, shape, size, ...pops } = props
+    const { src, shape, size, value, ...pops } = props
     const {
         style,
         className,
@@ -44,7 +44,8 @@ const Cropper = forwardRef<CropHandler, CropperProps>((props, ref) => {
     } = useImageCropper(
         src, 
         size || 200,
-        shape || CropShape.Circle
+        shape || CropShape.Circle,
+        value || 1
     );
 
     useImperativeHandle(ref, () => ({
@@ -72,7 +73,10 @@ const Cropper = forwardRef<CropHandler, CropperProps>((props, ref) => {
         <Box as={`--cropper-slider`}>
             <Slider
                 onChange={num => setScale(num as number)}
-                min={0} max={1} step={0.01} value={1} />
+                min={1} 
+                max={3} 
+                step={0.01} 
+                value={value || 1} />
         </Box>
     </Box>
     

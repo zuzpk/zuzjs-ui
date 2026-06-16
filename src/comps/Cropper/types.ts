@@ -8,7 +8,8 @@ export enum CropShape {
 export type CropperProps = BoxProps & {
     src: string,
     shape?: CropShape,
-    size?: number
+    size?: number,
+    value?: number
 }
 
 export interface CropHandler {
