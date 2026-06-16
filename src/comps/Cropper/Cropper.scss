@@ -1,11 +1,12 @@
-:root{
-    --cropper-border: 3px #333 solid;
+body{
+    --cropper-border: 3px var(--border-primary) solid;
 }
 .--cropper{
     canvas{
         cursor: move;
         border: var(--cropper-border);
         margin-bottom: 10px;
+        border-radius: var(--cropper-radius);
     }
     &.--circle{
         canvas{
