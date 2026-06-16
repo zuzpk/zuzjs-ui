@@ -9,6 +9,8 @@ import Icon from '../Icon';
 import Spinner from '../Spinner';
 import { SPINNER } from '../Spinner/types';
 import Text from '../Text';
+import ToolTip from '../Tooltip';
+import { ToolTipProps } from '../Tooltip/types';
 
 export type BadgeProps = BoxProps & {
     /** Badge size. */
@@ -36,7 +38,9 @@ export type BadgeProps = BoxProps & {
     /** Spinner type to display when `loading` is true. */
     spinner?: ValueOf<typeof SPINNER>,
     /** Whether the badge content should be reversed. */
-    reverse?: boolean 
+    reverse?: boolean,
+    tooltip?: string,
+    tooltipProps?: Omit<ToolTipProps, `title`>
 }
 
 const Badge : React.FC<BadgeProps> = ({
@@ -53,6 +57,8 @@ const Badge : React.FC<BadgeProps> = ({
     loading = false,
     spinner,
     reverse = false,
+    tooltip,
+    tooltipProps,
     ...pops
 }) => {
 
@@ -62,7 +68,7 @@ const Badge : React.FC<BadgeProps> = ({
     const displayCount = hasCount ? (count > max ? `${max}+` : String(count)) : undefined
     const isDot = !hasCount && _(label).isEmpty()
 
-    return <Flex
+    const _Badge = <Flex
         aic jcc
         style={{
             ...(isDot ? { "--badge-size": size } : {}),
@@ -70,7 +76,7 @@ const Badge : React.FC<BadgeProps> = ({
             ...(labelColor ? { "--badge-current-color": labelColor } : {}),
             ...style
         }}
-        as={`--badge ${reverse ? `--reverse` : ``} ${count ? `--as-counter` : ``} --${kind} --${variant} --${type} rel ${className}`.trim()}>
+        as={`--badge ${reverse ? `--reverse` : ``} ${tooltip ? `--tooltip-anchor` : ``} ${count ? `--as-counter` : ``} --${kind} --${variant} --${type} rel ${className}`.trim()}>
         <Box
             fx={{
                 transition: TRANSITIONS.FadeIn,
@@ -85,6 +91,8 @@ const Badge : React.FC<BadgeProps> = ({
             : <Text as={`--label --nous`}>{displayCount ?? label}</Text>
         }
     </Flex>
+
+    return tooltip ? <ToolTip title={tooltip} {...tooltipProps}>{_Badge}</ToolTip> : _Badge;
 }
 
 export default Badge;
