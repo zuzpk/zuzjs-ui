@@ -100,6 +100,12 @@ type SelectCommonProps = Omit<BoxProps, "onChange" | "ref"> & {
      * @default "sm"
      */
     variant?: ValueOf<typeof Variant>,
+    
+    /**
+     * Size of the select field.
+     * @default "sm"
+     */
+    searchVariant?: ValueOf<typeof Variant>,
 
     /**
      * Visual style for the select trigger.

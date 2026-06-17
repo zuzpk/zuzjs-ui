@@ -64,6 +64,7 @@ const Select = (({
         name,
         kind = "surface",
         variant,
+        searchVariant,
         search: withSearch,
         searchPlaceholder,
         maxHeight,
@@ -543,7 +544,8 @@ const Select = (({
         }}>
         { withSearch && <Box as={`--select-search --no-shrink flex --sticky`}><Search
             ref={_search}
-            variant={variant || themeVariant || Variant.Medium}
+            autoFocus
+            variant={searchVariant || Variant.Small}
             placeholder={searchPlaceholder || `Search...`}
             onChange={updateQuery}
         /></Box>}

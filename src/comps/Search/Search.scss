@@ -28,10 +28,17 @@ body{
     border-radius: var(--search-radius);
     border: var(--search-border);
 
+    &:focus-within {
+        box-shadow: 0px 0px 0px 1px var(--input-border-focus);
+    }
+
     .--input{
         background: transparent !important;
         color: var(--search-send-color);
         border: 0px !important;
+        &:focus {
+            box-shadow: none !important;
+        }
     }
 
     .--send{
