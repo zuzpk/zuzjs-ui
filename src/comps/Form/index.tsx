@@ -13,7 +13,7 @@ import { useDialogDirty } from "../Dialog";
 import { useDrawerDirty } from "../Drawer";
 import { isSheetHandler } from "../Sheet";
 import { FormProvider, useFormActions, useFormIsDirty } from "./context";
-import { FormHandler, FormProps, ValidationResult } from "./types";
+import { FormDataResult, FormHandler, FormProps, ValidationResult } from "./types";
 
 const unflatten = (data: any) => {
     const result: any = {};
@@ -185,12 +185,7 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
 
     }, [schema, actions]);
 
-    const _buildFormData = useCallback(() : {
-        error: boolean,
-        errorMsg: string,
-        data: ValidationResult,
-        payload: FormData | dynamic,
-    } => {
+    const _buildFormData = useCallback(() : FormDataResult => {
 
         const data : ValidationResult = {}
         const flatPayload: dynamic = { ...(actions?.getSnapshot().values || {}) };
@@ -309,7 +304,8 @@ const FormInternal = ({ ref, ...props }: FormProps & { ref?: Ref<FormHandler> })
         setLoading: (m) => setLoading(m),
         submit: (more?: dynamic) => onSubmitRef.current(more),
         init: _init,
-        hideError: () => toast.clearAll()
+        hideError: () => toast.clearAll(),
+        getFormData: _buildFormData
     }), [_onSubmit, _init]);
 
     useEffect(() => {

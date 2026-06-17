@@ -46,6 +46,13 @@ export type FormProps = Omit<BoxProps, `ref`> & {
     resetOnSuccess?: boolean;
 }
 
+export type FormDataResult = {
+    error: boolean,
+    errorMsg: string,
+    data: ValidationResult,
+    payload: FormData | dynamic,
+}
+
 /**
  * Exposes control methods for the Form component, such as setting loading states or hiding errors.
  */
@@ -56,6 +63,8 @@ export interface FormHandler {
     hideError: () => void;
     /** Resets the form to its initial state */
     init: () => void;
-
+    /** Retrieves the current form data */
+    getFormData: () => FormDataResult;
+    /** Submits the form with optional additional data */
     submit: (more?: dynamic) => void;
 }

@@ -1,8 +1,8 @@
 "use client"
 import { forwardRef, useEffect, useState } from "react";
-import { Position, TRANSITION_CURVES } from "../../types/enums";
-import Box from "../Box";
+import { Position, TRANSITION_CURVES, Variant } from "../../types/enums";
 import Button from "../Button";
+import Flex from "../Flex";
 import Text from "../Text";
 import { CookieConsentProps } from "./types";
 
@@ -29,11 +29,13 @@ import { CookieConsentProps } from "./types";
 const CookiesConsent = forwardRef<HTMLDivElement, CookieConsentProps>((props, ref) => {
 
     const [ accepted, setAccepted ] = useState<`pending` | `accepted` | `rejected` | `wait`>(`wait`)
-    const { title, message, acceptLabel, rejectLabel, position } = props
+    const { title, message, acceptLabel, rejectLabel, position, variant, onAccept, onReject } = props
 
     const handleAction = async (action: 1 | 0) => {
         setAccepted(action == 1 ? `accepted` : `rejected`)
         localStorage.setItem('--ccnt', String(action))
+        if ( action == 0 ) onReject?.()
+        if ( action == 1 ) onAccept?.()
     }
 
     useEffect(() => {
@@ -41,7 +43,8 @@ const CookiesConsent = forwardRef<HTMLDivElement, CookieConsentProps>((props, re
         setAccepted(action ? action == `1` ? `accepted` : `rejected` : `pending`)                    
     }, [])
 
-    return <Box 
+    return <Flex
+        cols
         fx={{
             from: { x: -1000 },
             to: { x: 0 },
@@ -50,18 +53,21 @@ const CookiesConsent = forwardRef<HTMLDivElement, CookieConsentProps>((props, re
             duration: 0.5,
             delay: accepted == `accepted` ? 0 : 3
         }}
-        as={`--cookie-consent --${accepted} --${position || Position.Left} flex cols`}>
+        as={`--cookie-consent --${variant ?? Variant.Medium} --${accepted} --${position || Position.Left}`}>
         <Text as={`--title`}>{title || `This site uses cookies`}</Text>
         <Text as={`--message`}>{message || `We and selected third parties use cookies (or similar technologies) for technical purposes, to enhance and analyze site usage, to support our marketing efforts`}</Text>
-        <Box as={`--footer flex aic`}>
+        <Flex aic as={`--footer flex aic`}>
             <Button 
+                variant={variant}
                 onClick={e => handleAction(1)}
                 as={`--accept`}>{acceptLabel || `Accept All`}</Button>
             <Button 
+                kind={`outline`}
+                variant={variant}
                 onClick={e => handleAction(0)}
                 as={`--reject`}>{rejectLabel || `Cancel`}</Button>
-        </Box>
-    </Box>
+        </Flex>
+    </Flex>
 
 })
 

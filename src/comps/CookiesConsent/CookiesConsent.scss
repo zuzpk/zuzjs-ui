@@ -1,0 +1,64 @@
+@use "../../scss/variables";
+
+body {
+    --cookie-consent: var(--surface);
+    --cookie-consent-padding: 20px;
+    --cookie-consent-width: 320px;
+}
+
+.--cookie-consent{
+
+    z-index: var(--max-z-index);
+    background: var(--cookie-consent);
+    gap: 15px;
+    position: fixed;
+    bottom: 20px;
+    width: var(--cookie-consent-width);
+
+    @each $size in variables.$sizes {
+        &.--#{$size}{
+            border-radius: var(--cookie-consent-radius, var(--radius-#{$size}));
+            padding: var(--cookie-consent-padding, var(--padding-#{$size}));        
+        }
+    }
+
+    &.--left{
+        left: 20px;
+    }
+    &.--right{
+        right: 20px;
+    }
+
+    .--title{
+        font-weight: bold;
+    }
+    .--message{
+        font-size: calc(var(--cookie-consent-font-size) * 0.8);
+    }
+    .--footer{
+        margin-top: 20px;
+        gap: 10px;
+    }
+    // button{
+    //     flex: 1;
+    //     border: 0px;
+    //     border-radius: var(--cookie-consent-radius);
+    //     padding: 10px;
+    //     font-weight: bold;
+    //     &.--accept{
+    //         color: #fff;
+    //         background: var(--cookie-consent-action);
+    //         &:hover{
+    //             opacity: 0.9;
+    //         }
+    //     }
+    //     &.--reject{
+    //         color: var(--cookie-consent-action);
+    //         background: transparent;
+    //         &:hover{
+    //             background: var(--cookie-consent-action);
+    //             color: #fff;
+    //         }
+    //     }
+    // }
+}
