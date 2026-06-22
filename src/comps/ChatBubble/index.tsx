@@ -31,6 +31,9 @@ const Bubble = memo(({
         replyTo,
         reactions,
         forwarded,
+        hideAvatar = false,
+        hideName = false,
+        avatarType,
         ...pops 
     } = props;
 
@@ -45,10 +48,11 @@ const Bubble = memo(({
         as={`--bubble-wrapper --bw-${side}`.trim()}
         ref={ref}>
 
-        { sender && <Avatar 
+        { sender && !hideAvatar && <Avatar 
+            type={avatarType}
             alt={sender.name} 
             src={sender.picture}
-            style={{ backgroundColor: sender.color }}
+            style={ sender.color ? { backgroundColor: sender.color } : undefined }
         /> }
         
         <Flex
@@ -65,12 +69,12 @@ const Bubble = memo(({
             ].filter(Boolean).join(" ").trim()}
             style={{
                 ...style,
-                contain: "layout style paint",
+                contain: "layout style",
             }}
             {...rest as BoxProps}>
             
             {/* Name */}
-            { sender && <Text className={`--bubble-name`}>{sender.name}</Text> }
+            { sender && !hideName && <Text className={`--bubble-name`}>{sender.name}</Text> }
 
             {/* Text Message */}
             { text && <Text className={`--bubble-text`}>{text}</Text> }

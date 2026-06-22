@@ -1,0 +1,28 @@
+.--lightbox-overlay {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0,0,0,0.75);
+	z-index: 10000;
+	padding: 24px;
+}
+
+.--lightbox-close {
+	position: absolute;
+	right: 18px;
+	top: 18px;
+	color: #fff;
+	font-size: 28px;
+	cursor: pointer;
+	z-index: 10100;
+}
+
+.--lightbox-img {
+	max-width: 90vw;
+	max-height: 80vh;
+	object-fit: contain;
+	border-radius: 6px;
+	box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+}

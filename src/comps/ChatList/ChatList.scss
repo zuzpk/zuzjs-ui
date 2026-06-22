@@ -1,5 +1,12 @@
+body {
+    --chat-date-padding: 10px;
+}
 .--chatlist{
     .--list{
         padding: var(--chatlist-padding, 0px);
+
+        .--chat-date{
+            padding: var(--chat-date-padding-custom, var(--chat-date-padding));
+        }
     }
 }

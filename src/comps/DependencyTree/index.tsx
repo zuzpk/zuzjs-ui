@@ -75,9 +75,9 @@ const DependencyTree = ({
         </Box>
     </Box>
 
-    const renderCard = (node: DependencyTreeNode, context: DependencyTreeRenderContext) => {
+    const renderCard = (node: DependencyTreeNode, context: DependencyTreeRenderContext, index: number) => {
         if (renderNode) {
-            return renderNode(node, context)
+            return renderNode(node, context, index)
         }
 
         return renderDefaultCard(node)
@@ -96,7 +96,7 @@ const DependencyTree = ({
                     role="group"
                     style={{ "--dependency-tree-row-size": row.length } as CSSProperties}>
                     {!isTopRow && <Box className={`--dependency-tree-row-track`} aria-hidden="true" />}
-                    {row.map((node) => {
+                    {row.map((node, index) => {
                         const isCurrent = currentId === node.id
                         const context: DependencyTreeRenderContext = {
                             isCurrent,
@@ -115,7 +115,7 @@ const DependencyTree = ({
                             className={`--dependency-tree-pyramid-node --status-${node.status} ${isCurrent ? `--is-current` : ``}`.trim()}>
                             {!isTopRow && <Box className={`--dependency-tree-pyramid-connector`} aria-hidden="true" />}
                             <Box className={`--dependency-tree-pyramid-dot`} aria-hidden="true" />
-                            {renderCard(node, context)}
+                            {renderCard(node, context, index)}
                         </Box>
                     })}
                 </Box>
@@ -148,7 +148,7 @@ const DependencyTree = ({
                     {!isLast && <Box className={`--dependency-tree-line`} />}
                 </Box>
 
-                {renderCard(node, context)}
+                {renderCard(node, context, index)}
             </Box>
         }) : <Box className={`--dependency-tree-empty`}>
             No dependencies to display.

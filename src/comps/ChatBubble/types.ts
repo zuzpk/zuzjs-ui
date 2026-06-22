@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 import { BoxProps } from "../../types";
+import { AVATAR } from "../../types/enums";
+import { ValueOf } from "../../types/shared";
 
 export enum BubbleStatus {
     Sending = 0,
@@ -54,6 +56,9 @@ export type BubbleProps = BoxProps & {
         color?: string;
     },
     text?: string,
+    hideAvatar?: boolean,
+    avatarType?: ValueOf<typeof AVATAR>,
+    hideName?: boolean,
     media?: {
         type: BubbleMediaType,
         source: string,

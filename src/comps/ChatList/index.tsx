@@ -2,6 +2,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChatBubble, Flex } from "..";
 import Box from "../Box";
 import Button from "../Button";
+import { BubbleProps } from "../ChatBubble/types";
 import List from "../List";
 import { ListItem } from "../List/types";
 import ScrollView from "../ScrollView";
@@ -31,7 +32,11 @@ const ChatList = memo(({
     dateLabels,
     locale,
     formatDateLabel,
-}: ChatListProps) => {
+    hideAvatar = false,
+    hideName = false,
+    arrow,
+    avatarType
+}: ChatListProps & BubbleProps) => {
     const shellRef = useRef<HTMLDivElement>(null);
     const listRef = useRef<HTMLUListElement | HTMLOListElement>(null);
     const hasMountedRef = useRef(false);
@@ -105,7 +110,7 @@ const ChatList = memo(({
             const rows: ListItem[] = [];
             if (showDate) {
                 rows.push(
-                    <Box key={`date-${currentDateMeta.key}-${i}`} as={`flex aic jcc p:8,0`}>
+                    <Box key={`date-${currentDateMeta.key}-${i}`} as={`--chat-date flex aic jcc p:8,0`}>
                         <Text as={`s:xs dim-50`}>{currentDateMeta.label}</Text>
                     </Box>
                 );
@@ -115,7 +120,10 @@ const ChatList = memo(({
                 <ChatBubble
                     key={m.id || i}
                     {...m}
-                    arrow={m.arrow ?? showArrow}
+                    arrow={m.arrow ?? arrow ?? showArrow}
+                    avatarType={avatarType}
+                    hideAvatar={hideAvatar}
+                    hideName={hideName}
                 />
             );
 

@@ -14,6 +14,7 @@ body {
     position: fixed;
     bottom: 20px;
     width: var(--cookie-consent-width);
+    border: var(--cookie-consent-border, 1px var(--border-primary) solid);
 
     @each $size in variables.$sizes {
         &.--#{$size}{

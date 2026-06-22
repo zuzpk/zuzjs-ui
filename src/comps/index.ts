@@ -356,6 +356,9 @@ export { default as Label, type LabelProps } from './Label';
  */
 export { default as LayersProvider } from './Layers';
 
+export { default as Lightbox } from "./Lightbox";
+export * from "./Lightbox/types";
+
 /**
  * List container with items.
  * @example

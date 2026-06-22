@@ -1,4 +1,6 @@
 import { ReactNode } from "react";
+import { AVATAR } from "../../types/enums";
+import { ValueOf } from "../../types/shared";
 import { BubbleProps } from "../ChatBubble/types";
 
 export type ChatMessage = BubbleProps;
@@ -25,4 +27,7 @@ export interface ChatListProps {
     dateLabels?: ChatDateLabels;
     locale?: string;
     formatDateLabel?: ChatDateLabelFormatter;
+    hideAvatar?: boolean;
+    avatarType?: ValueOf<typeof AVATAR>;
+    hideName?: boolean;
 }

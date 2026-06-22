@@ -7,15 +7,16 @@
     --bubble-padding: 4px 10px;
     --bubble-audio-padding: var(--bubble-padding);
     --bubble-image-padding: 4px;
-    --bubble-radius: 10px;
+    --bubble-radius-default: 10px;
     --bubble-text-size: 14px;
     --bubble-stamp-size: 11px;
-    --bubble-arrow-size: 8px;
+    --bubble-arrow-size: 1em;
     --bubble-tick-size: 16px;
     --bubble-tick-color: rgba(255, 255, 255, 0.5);
     --bubble-tick-read-color: #77ff4a;
     --bubble-duration-text-size: var(--bubble-stamp-size);
     --bubble-max-size: 200px;
+    --bubble-name-margin: 0px 0px 3px 0px;
 }
 
 .--bubble-wrapper{
@@ -24,8 +25,18 @@
     &.--bw-me{
         align-items: flex-end;
         justify-content: flex-end;
+        .--avatar {
+            --avatar-bg: var(--bubble-avatar-bg, var(--bubble-avatar-bg-me));
+        }
+        --bubble-radius: var(--bubble-radius-me, var(--bubble-radius-default));
+        --bubble-stamp-color: var(--bubble-stamp-color-me, var(--text-primary-inverted));
     }
     &.--bw-you{
+        --bubble-radius: var(--bubble-radius-you, var(--bubble-radius-default));
+        --bubble-stamp-color: var(--bubble-stamp-color-me, var(--text-primary));
+        .--avatar {
+            --avatar-bg: var(--bubble-avatar-bg, var(--bubble-avatar-bg-you));
+        }
     }
 
     .--bubble{
@@ -33,7 +44,9 @@
         transform-origin: bottom;
         
         width: fit-content;
+        max-width: 80%;
         border-radius: var(--bubble-radius);
+
 
         &:not(.--with-media){
             padding: var(--bubble-padding);
@@ -60,8 +73,10 @@
             background: var(--bubble-me);
             &.--b-arrow{
                 &:before{
-                    border-top-color: var(--bubble-me);
-                    right: calc(var(--bubble-arrow-size) * -1);
+                    --bubble-arrow-color: var(--bubble-me);
+                    right: calc(var(--bubble-arrow-size) * -0.5);
+                    border-bottom-left-radius: 100%;
+                    border-left: var(--bubble-arrow-size) solid var(--bubble-arrow-color);                
                 }
             }
             .--bubble-text{
@@ -73,8 +88,10 @@
             background: var(--bubble-you);
             &.--b-arrow{
                 &:before{
-                    border-top-color: var(--bubble-you);
-                    left: calc(var(--bubble-arrow-size) * -1);
+                    --bubble-arrow-color: var(--bubble-you);
+                    left: calc(var(--bubble-arrow-size) * -0.5);
+                    border-bottom-right-radius: 100%;
+                    border-right: var(--bubble-arrow-size) solid var(--bubble-arrow-color);                
                 }
             }
             .--bubble-text{
@@ -89,20 +106,26 @@
 
         .--bubble-stamp{
             font-size: var(--bubble-stamp-size);
+            opacity: 0.75;
+            color: var(--bubble-stamp-color);
+        }
+
+        .--bubble-name {
+            font-weight: bold;
+            color: var(--bubble-name-color);
+            margin: var(--bubble-name-margin);
         }
 
         /*Arrow*/
         &.--b-arrow{
             &:before{
-                content: '';
-                width: 0px;
-                height: 0px;
-                border-width: var(--bubble-arrow-size);
-                border-color: transparent;
-                border-style: solid;
+                content: "";
+                width: 1.5em;
+                height: 2em;
                 position: absolute;
-                z-index: 1;
-                top: 0px;
+                z-index: -1;
+                bottom: 0px;
+                display: block;                
             }
         }
 

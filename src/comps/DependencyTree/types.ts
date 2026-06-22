@@ -26,7 +26,8 @@ export interface DependencyTreeRenderContext {
 
 export type DependencyTreeRenderNode = (
   node: DependencyTreeNode,
-  context: DependencyTreeRenderContext
+  context: DependencyTreeRenderContext,
+  index: number,
 ) => ReactNode;
 
 export interface DependencyTreeProps {

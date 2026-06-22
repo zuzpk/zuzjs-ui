@@ -2,6 +2,7 @@ import { useCarousel, useTimer } from "@zuzjs/hooks";
 import { forwardRef, useRef } from "react";
 import { useBase } from "../../hooks";
 import Box from "../Box";
+import Flex from "../Flex";
 import Pagination from "../Pagination";
 import { PaginationController, PaginationStyle } from "../Pagination/types";
 import { CarouselProps } from "./types";
@@ -63,8 +64,8 @@ function CarouselInner<T>(props: CarouselProps<T>, ref: React.ForwardedRef<HTMLD
     } as React.CSSProperties;
 
     return (
-        <Box ref={ref} className={`--carousel --effect-${effect} --loop-${loopMode} flex cols aic jcc ${className}`.trim()} style={dynamicStyle}>
-            <Box className="--carousel-stage rel fill flex aic jcc">
+        <Flex cols aic jcc ref={ref} className={`--carousel --effect-${effect} --loop-${loopMode} ${className}`.trim()} style={dynamicStyle}>
+            <Flex aic jcc className="--carousel-stage rel fill">
                 {items.map((item, i) => {
                     let offset = i - controller.index;
 
@@ -96,7 +97,7 @@ function CarouselInner<T>(props: CarouselProps<T>, ref: React.ForwardedRef<HTMLD
                         </Box>
                     );
                 })}
-            </Box>
+            </Flex>
 
             {showDots && (
                 <Pagination 
@@ -111,7 +112,7 @@ function CarouselInner<T>(props: CarouselProps<T>, ref: React.ForwardedRef<HTMLD
                     progressBar={true}
                 />
             )}
-        </Box>
+        </Flex>
     );
 }
 

@@ -74,11 +74,11 @@ body{
     
     .--select-display.--selected{
         width: 100%;
-        gap: var(--select-gap);
-        background: var(--select-current-bg);
-        border: var(--select-current-border);
-        box-shadow: var(--select-shadow);
-        color: var(--select-current-color);
+        gap: var(--select-gap-custom, var(--select-gap));
+        background: var(--select-current-bg-custom, var(--select-current-bg));
+        border: var(--select-current-border-custom, var(--select-current-border));
+        box-shadow: var(--select-shadow-custom, var(--select-shadow));
+        color: var(--select-current-color-custom, var(--select-current-color));
         line-height: 1;
         justify-content: flex-start !important;
 

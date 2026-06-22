@@ -126,6 +126,23 @@ body{
 
         padding: 0px !important;
     }
+    
+    &.--link{
+        --button-current-bg: transparent;
+        --button-current-hover: transparent;
+        --button-current-border: 0px;
+        --button-current-color: var(--link-color, var(--text-primary));
+        --button-current-disabled-bg: transparent;
+        --button-current-disabled-color: var(--button-disabled-color);
+        --button-current-disabled-border: 0px;
+
+        padding: 0px !important;
+
+        &:hover{
+            text-decoration: underline;
+        }
+        
+    }
 
     &.--ghost{
         --button-current-bg: transparent;
