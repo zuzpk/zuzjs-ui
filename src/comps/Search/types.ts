@@ -1,6 +1,6 @@
-import { ReactNode } from "react"
-import { InputProps } from "../Input/types"
-import { KeyCombination } from "../KeyboardKeys/types"
+import { ReactNode } from "react";
+import { InputProps } from "../Input/types";
+import { KeyCombination } from "../KeyboardKeys/types";
 
 export type SearchProps = Omit<InputProps, `onChange`> & {
     onSubmit?: (value: string) => void,
@@ -13,8 +13,10 @@ export type SearchProps = Omit<InputProps, `onChange`> & {
     hideSearchIcon?: boolean,
     clearIcon?: string | ReactNode,
     hideClearIcon?: boolean,
+    clearOnSubmit?: boolean,
 }
 
 export interface SearchHandler {
-    focus: () => void
+    focus: () => void,
+    setValue: (q: string) => void
 }

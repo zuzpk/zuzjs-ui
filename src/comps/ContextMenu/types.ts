@@ -1,4 +1,4 @@
-import { FC, MouseEvent as ReactMouseEvent, ReactNode, RefObject } from "react";
+import React, { FC, MouseEvent as ReactMouseEvent, ReactNode, RefObject } from "react";
 import { BoxProps, ORIGIN, ValueOf } from "../../types";
 
 /**
@@ -25,6 +25,8 @@ export interface ContextItemConfig {
     onSelect?: (item: ContextItemConfig) => void;
     /** Optional nested submenu items */
     submenu?: ContextItem[];
+    /** Action */
+    action?: React.ReactNode;
 }
 
 /**

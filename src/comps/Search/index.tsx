@@ -1,5 +1,5 @@
 "use client"
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { useBase } from '../../hooks';
 import { useTheme } from '../../hooks/useColorScheme';
 import { Variant } from '../../types/enums';
@@ -32,84 +32,107 @@ import { SearchHandler, SearchProps } from './types';
  */
 const Search = forwardRef<SearchHandler, SearchProps>((props, ref) => {
 
-    const { 
+    const {
         fx,
-        withStyle, 
-        as, 
-        reverse = false, 
-        searchIcon = SVGIcons.search, 
+        withStyle,
+        as,
+        reverse = false,
+        searchIcon = SVGIcons.search,
         hideSearchIcon = false,
-        clearIcon = SVGIcons.close, 
+        clearIcon = SVGIcons.close,
         hideClearIcon = false,
-        onChange, onClear, ...pops 
+        clearOnSubmit = false,
+        onChange,
+        onClear,
+        onSubmit,
+        onKeyDown,
+        variant,
+        shortcut,
+        type,
+        ...pops
     } = props
-    const { style, className } = useBase({ as: props.as })
-    // const { className : searchStyle } = useBase({ as: withStyle || `` } as Props<`div`>)
-    const [ query, setQuery ] = useState<string>(``)
+    const { style, className } = useBase({ as })
+    const [query, setQuery] = useState<string>(``)
     const { variant: themeVariant } = useTheme(true)!
     const innerRef = useRef<HTMLInputElement>(null)
 
-    // const actionBtn = useMemo(() => <Button
-    //     tabIndex={-1}
-    //     onClick={e => handleSubmit()}
-    //     className={`--send flex aic jcc`}
-    //     variant={props.variant || Variant.Medium}>
-    //     {query !== `` ? 
-    //         !hideClearIcon && (`string` === typeof clearIcon ? <Icon name={clearIcon} as={`--search-action`} /> : clearIcon) : 
-    //         !hideSearchIcon && (`string` === typeof searchIcon ? <Icon name={searchIcon} as={`--search-action`} /> : searchIcon )}</Button>, 
-    //         [reverse, searchIcon, hideClearIcon, clearIcon, hideSearchIcon])
+    // Single source of truth for clearing. Resets state + the underlying
+    // input, fires onChange(``) so controlled consumers stay in sync, and
+    // notifies onClear so consumers can distinguish "cleared" from "changed".
+    const clearSearchInput = useCallback(() => {
+        setQuery(``)
+        onChange?.(``)
+        onClear?.()
+        if (innerRef.current) {
+            innerRef.current.value = ``
+        }
+    }, [onChange, onClear])
 
-    if ( `type` in props ){
-        delete props[`type`]
-    }
+    // Single source of truth for submitting. Both the action button and
+    // the Enter key route through this so behavior (trimming, clearOnSubmit,
+    // guarding empty queries) can never drift between the two entry points.
+    const handleSubmit = useCallback(() => {
+        const trimmed = query.trim()
+        if (trimmed === ``) return
+        onSubmit?.(trimmed)
+        if (clearOnSubmit) clearSearchInput()
+    }, [query, onSubmit, clearOnSubmit, clearSearchInput])
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+        onKeyDown?.(e)
+        if (e.key === 'Enter') {
+            e.preventDefault()
+            handleSubmit()
+        }
+    }, [onKeyDown, handleSubmit])
+
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(e.target.value)
         onChange?.(e.target.value)
-    }
+    }, [onChange])
 
-    const handleSubmit = (e?: React.FormEvent<HTMLFormElement>) => {
-        e?.preventDefault()
-        if (query.trim()!== ``)  {
-            setQuery(``)
-            onChange?.(``);
-            if ( innerRef.current ){
-                innerRef.current.value = ``
-                props.onConfirm?.(``)
-            }
+    // Action button is "clear" when there's a query, "search/submit" when empty.
+    const handleActionClick = useCallback(() => {
+        if (query !== ``){
+            clearSearchInput()
+            onClear?.()
         }
-        // onSubmit?.(query)
-    }
+        else handleSubmit()
+    }, [query, clearSearchInput, handleSubmit])
 
     useImperativeHandle(ref, () => ({
         focus: () => innerRef.current?.focus(),
-        value: () => innerRef.current?.value
-    }))
+        value: () => innerRef.current?.value,
+        setValue: (q: string) => {
+            if ( innerRef.current ) innerRef.current.value = q
+        }
+    }), [])
 
-    useEffect(() => {}, [])
- 
     const actionButton = <Button
         tabIndex={-1}
-        onClick={e => handleSubmit()}
+        onClick={handleActionClick}
         className={`--send flex aic jcc`}
-        variant={props.variant || Variant.Medium}>
+        variant={variant || Variant.Medium}>
         {query !== `` ?
             !hideClearIcon && (`string` === typeof clearIcon ? <Icon name={clearIcon} as={`--search-action`} /> : clearIcon) :
             !hideSearchIcon && (`string` === typeof searchIcon ? <Icon name={searchIcon} as={`--search-action`} /> : searchIcon)}
     </Button>
 
-    return <Box 
+    return <Box
         style={style}
-        className={`--search --${props.variant || themeVariant || Variant.Medium} flex aic ${typeof props.as === 'string' && props.as.includes(`abs`) ? `` : `rel`} ${className}`.trim()}>
+        className={`--search --${variant || themeVariant || Variant.Medium} flex aic ${typeof as === 'string' && as.includes(`abs`) ? `` : `rel`} ${className}`.trim()}>
         {reverse && actionButton}
-        <Input 
+        <Input
             ref={innerRef}
+            value={query}
             onChange={handleChange}
-            {...pops} />
-        {props.shortcut && <KeyBoardKeys keys={props.shortcut} as={`--abs`} />}
+            {...pops}
+            onKeyDown={handleKeyDown}
+            variant={props.variant} />
+        {shortcut && <KeyBoardKeys keys={shortcut} as={`--abs`} />}
         {!reverse && actionButton}
     </Box>
-        
+
 })
 
 Search.displayName = `Zuz.Search`

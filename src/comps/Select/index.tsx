@@ -12,6 +12,7 @@ import { useFormActions, useFormFieldError, useFormFieldValue } from "../Form/co
 import Icon from "../Icon";
 import Input from "../Input";
 import Search from "../Search";
+import { SearchHandler } from "../Search/types";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
 import OptionGroupHead from "./groupHead";
@@ -144,7 +145,7 @@ const Select = (({
     const [ expandedSubtrees, setExpandedSubtrees ] = useState<Set<string>>(new Set())
     const [ optionsMinWidth, setOptionsMinWidth ] = useState<number | undefined>(undefined)
     const _container = useRef<HTMLDivElement>(null)
-    const _search = useRef<HTMLInputElement>(null)
+    const _search = useRef<SearchHandler>(null)
     const _pop = useRef<HTMLDivElement>(null)
     const _did = useId()
     const _id = useMemo(() => name || _did, [name, _did])
@@ -296,7 +297,7 @@ const Select = (({
 
     useEffect(() => {
         if (!choosing) {
-            if (_search.current) _search.current.value = ""
+            if (_search.current) _search.current?.setValue("")
             setQuery(null)
             setExpandedSubtrees(new Set())
             return
