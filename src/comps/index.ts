@@ -419,6 +419,9 @@ export * from './Pagination/types';
  */
 export { default as Password, type PasswordProps } from './Password';
 
+export { default as PhoneInput } from "./PhoneInput";
+export type * from "./PhoneInput/types";
+
 /**
  * Multi-cell pin/otp input.
  * @example

@@ -1,0 +1,24 @@
+@use "../../scss//variables";
+
+body{
+    --phoneinput: var(--surface);
+    --phoneinput-border-color: var(--border-primary);
+    --phoneinput-border: 1px var(--phoneinput-border-color) solid;
+}
+
+.--phone-input{
+
+    border: var(--phoneinput-border);
+    --select-current-border-custom: 0px !important;
+    .--input {
+        border: 0px !important;
+    }
+
+    @each $size in variables.$sizes {
+        &.--#{$size} {
+            border-radius: var(--radius-#{$size});
+            --select-radius-custom: var(--radius-#{$size}) 0px 0px var(--radius-#{$size});
+        }
+    }
+
+}

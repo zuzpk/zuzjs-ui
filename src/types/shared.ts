@@ -28,3 +28,8 @@ export type AnimationTransition = `back` | `expo` | `sine` | `power` | `circ` | 
 export type Placement = ValueOf<typeof PLACEMENTS>;
 
 export type Appearance = `solid` | `subtle` | `surface` | `outline` | `ghost` | `plain` | `link`
+export type Country = {
+    name: string;
+    code: string;
+    dialCode: string;
+}

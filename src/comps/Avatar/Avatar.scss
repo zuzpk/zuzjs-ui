@@ -49,7 +49,7 @@ body{
     }
 
     .--avatar-label{
-        color: var(--text-primary);
+        color: var(--avatar-label-color, var(--text-primary));
         font-size: var(--avatar-text-size);
         font-weight: 700;
     }
