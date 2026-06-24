@@ -8,7 +8,8 @@ export type PhoneInputValue = {
   metaFormat: string;       // Pure clean digits for Meta API (e.g. "923001234567")
 };
 
-export type PhoneInputProps = Omit<InputProps, 'onChange' | 'value'> & {
+export type PhoneInputProps = Omit<InputProps, 'type' | 'onChange' | 'value'> & {
   value?: { countryCode: CountryCode; rawInput: string };
+  hideCountryName?: boolean;
   onChange?: (value: PhoneInputValue) => void;
 };

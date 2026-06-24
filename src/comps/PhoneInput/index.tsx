@@ -13,6 +13,8 @@ const PhoneInput = ({
     value,
     variant,
     as,
+    hideCountryName = false,
+    placeholder,
     onChange,
     ...props
 } : PhoneInputProps) => {
@@ -55,7 +57,7 @@ const PhoneInput = ({
                 selected={country.toLowerCase()}
                 onChange={handleCountryChange as any}
                 options={Countries.map((c) => ({ 
-                    label: `${c.name} (${c.dialCode})`, 
+                    label: hideCountryName === true ? c.dialCode : `${c.name} (${c.dialCode})`, 
                     value: c.code.toLowerCase() 
                 }))} 
                 variant={variant}
@@ -65,9 +67,10 @@ const PhoneInput = ({
                 {...props}
                 variant={variant}
                 ref={ref}
+                type={`number`}
                 value={phoneNumber}
                 onChange={handleNumberChange}
-                placeholder={activeCountryData ? `e.g. ${activeCountryData.dialCode} 300 1234567` : "0300 1234567"} 
+                placeholder={ placeholder ? placeholder : activeCountryData ? `e.g. ${activeCountryData.dialCode} 300 1234567` : "0300 1234567"} 
             />
         </Flex>
     );

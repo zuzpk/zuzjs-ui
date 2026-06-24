@@ -12,6 +12,15 @@ body{
     --select-current-border-custom: 0px !important;
     .--input {
         border: 0px !important;
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        appearance: textfield;
+
     }
 
     @each $size in variables.$sizes {
