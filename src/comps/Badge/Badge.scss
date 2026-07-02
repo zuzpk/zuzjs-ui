@@ -97,6 +97,7 @@ body {
 
     .--label {
         color: var(--badge-current-color);
+        white-space: pre;
     }
 
     --icon-color-1: var(--badge-current-color);

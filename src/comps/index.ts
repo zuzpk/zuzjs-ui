@@ -531,6 +531,9 @@ export type * from "./Span/types";
 export { default as Spinner } from "./Spinner";
 export { SPINNER, type SpinnerProps } from "./Spinner/types";
 
+export { default as Stack } from "./Stack";
+export type * from "./Stack/types";
+
 /**
  * On/off switch control.
  * @example

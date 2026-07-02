@@ -4,7 +4,7 @@
     --bubble-text-color: #fff;
     --bubble-me-text-color: var(--bubble-text-color);
     --bubble-you-text-color: var(--bubble-text-color);
-    --bubble-padding: 4px 10px;
+    --bubble-padding: 6px 10px;
     --bubble-audio-padding: var(--bubble-padding);
     --bubble-image-padding: 4px;
     --bubble-radius-default: 10px;
@@ -48,6 +48,7 @@
         border-radius: var(--bubble-radius);
 
 
+        &.--bma-text,
         &:not(.--with-media){
             padding: var(--bubble-padding);
         }
@@ -82,6 +83,9 @@
             .--bubble-text{
                 color: var(--bubble-me-text-color);
             }
+            .--bubble-attachments{
+                background: var(--bubble-attachment-bg, var(--bubble-attachment-bg-me));
+            }
         }
         
         &.--bubble-you{
@@ -97,11 +101,20 @@
             .--bubble-text{
                 color: var(--bubble-you-text-color);
             }
+            .--bubble-attachments{
+                background: var(--bubble-attachment-bg, var(--bubble-attachment-bg-you));
+            }
         }
         
         .--bubble-text{
             font-size: var(--bubble-text-size);
             color: var(--bubble-text-color);
+        }
+
+        .--bubble-attachments{
+            padding: var(--bubble-attachment-padding, 2px);
+            margin: var(--bubble-attachment-margin, 4px 0px);
+            border-radius: var(--bubble-attachment-radius, var(--bubble-radius));
         }
 
         .--bubble-stamp{

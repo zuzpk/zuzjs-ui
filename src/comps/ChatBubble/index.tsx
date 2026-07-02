@@ -1,5 +1,5 @@
 import { timeSince } from "@zuzjs/core";
-import { memo, Ref } from "react";
+import React, { memo, Ref, useId, useMemo } from "react";
 import { useBase } from "../../hooks";
 import { BoxProps } from "../../types";
 import Avatar from "../Avatar";
@@ -7,7 +7,19 @@ import Flex from "../Flex";
 import Span from "../Span";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
-import { BubbleProps, BubbleStatus } from "./types";
+import { BubbleAttachment, BubbleAttachmentType, BubbleProps, BubbleStatus } from "./types";
+
+const TAttachment : React.FC<BubbleAttachment> = ({
+    id, type, content, name, url, size, preview
+}) => {
+
+    if ( type == BubbleAttachmentType.ReactNode ){
+        return content
+    }
+
+    
+
+}
 
 const Bubble = memo(({
     ref,
@@ -43,6 +55,20 @@ const Bubble = memo(({
         rest
     } = useBase(pops);
 
+    const _id = useId()
+    const _attachments = useMemo(() => attachments ?? [], [attachments])
+
+    const attachment = useMemo(() => {
+        if ( media || _attachments.length ){
+            return <Flex as={`--bubble-attachments`}>
+                { _attachments.map((a, i) => <TAttachment 
+                    {...a}
+                    key={`attachment-${i}-${_id}`} />)}
+            </Flex>
+        }
+        return null
+    }, [attachments])
+
     return <Flex
         gap={8}
         as={`--bubble-wrapper --bw-${side}`.trim()}
@@ -60,7 +86,8 @@ const Bubble = memo(({
             ref={ref}
             className={[
                 `--bubble --bubble-enter rel`, 
-                media ? `--with-media --bma-${media.type}` : ``,
+                media || (attachments && attachments.length > 0) ? `--with-media` : ``, 
+                `--bma-${media ? media?.type : `text`}`,
                 `--bubble-${side}`, 
                 `--bubble-style-${stylePreset}`, 
                 arrow ? `` : `--bubble-grouped`,
@@ -78,6 +105,8 @@ const Bubble = memo(({
 
             {/* Text Message */}
             { text && <Text className={`--bubble-text`}>{text}</Text> }
+
+            {attachment}
 
             {/* Bubble Stats */}
             <Flex aie jce as={`--bubble-stats`}>

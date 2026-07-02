@@ -23,6 +23,8 @@ export enum BubbleMediaType {
 }
 
 export enum BubbleAttachmentType {
+    ReactNode = "custom",
+    Text = "text",
     File = "file",
     Image = "image",
     Video = "video",
@@ -38,14 +40,25 @@ export type BubbleStylePreset =
     | "glass"
     | "minimal";
 
-export type BubbleAttachment = {
-    id?: string | number,
-    type?: BubbleAttachmentType,
-    name: string,
-    url: string,
-    size?: string,
-    preview?: string,
-};
+export type BubbleAttachment = 
+    | {
+        id?: string | number,
+        type: BubbleAttachmentType.ReactNode,
+        content: ReactNode,
+        name?: string,
+        url?: string,
+        size?: string,
+        preview?: string,
+    }
+    | {
+        id?: string | number,
+        type?: BubbleAttachmentType,
+        content?: never,
+        name: string,
+        url: string,
+        size?: string,
+        preview?: string,
+    };
 
 export type BubbleProps = BoxProps & {
     id?: string | number,

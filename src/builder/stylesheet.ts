@@ -1,4 +1,4 @@
-import { cssShortKeys, dynamic } from "../types"
+import { cssShortKeys, dynamic } from "../types";
 
 export const cssProps : dynamic = {  
             
@@ -321,6 +321,9 @@ export const cssDirect : dynamic = {
     "bold": "font-weight: bold;",
     "grid": "display:grid;",
     "flex": "display:flex;",
+    "flex-1": "flex:1;",
+    "flex-2": "flex:2;",
+    "flex-3": "flex:3;",
     "wrap": "flex-wrap:wrap;",
     "cols": "flex-direction:column;",
     "cols-reverse": "flex-direction:column-reverse;",
