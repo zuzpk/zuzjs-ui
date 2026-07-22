@@ -474,34 +474,70 @@ class StyleGenerator {
 
     public addUnitsSafely(prop: string, val: string): string {
 
+        // Props whose numeric values must stay unitless (or %, which the author supplies).
+        // CSS filter multipliers (brightness/contrast/…) accept number | % — never px.
         const unitlessProps = [
-            "opacity", "zIndex", "flex", "b", "font-weight", "fontWeight", "lineHeight", "scale", "ratio", "aspectRatio", "aspect-ratio",
-            "shrink", "flex-shrink", "flexShrink", "line-height", "lh", "lineHeight"
+            "opacity", "zIndex", "z-index", "flex", "b", "font-weight", "fontWeight",
+            "lineHeight", "line-height", "lh",
+            "scale", "scaleX", "scaleY", "scaleZ",
+            "ratio", "aspectRatio", "aspect-ratio",
+            "shrink", "flex-shrink", "flexShrink", "grow", "flex-grow", "flexGrow", "order",
+            // filter / backdrop multipliers
+            "brightness", "contrast", "saturate", "grayscale", "invert", "sepia",
         ];
-        // console.log(`--ppop`, prop, val)
+
+        // Angle props — bare numbers become deg
+        const angleProps = [
+            "rotate", "rotateX", "rotateY", "rotateZ",
+            "skew", "skewX", "skewY",
+            "hue-rotate", "hueRotate",
+        ];
+
         if (unitlessProps.includes(prop)) return val;
 
-        // console.log(`addUnitsSafely`, prop, val)
-
-        // 1. If it's a pure number, just append px
-        if (/^-?\d*\.?\d+$/.test(val)) return `${val}${prop == `rotate` ? `deg` : `px`}`;
+        // 1. Pure number → unit by prop kind
+        if (/^-?\d*\.?\d+$/.test(val)) {
+            if (angleProps.includes(prop)) return `${val}deg`;
+            return `${val}px`;
+        }
 
         /**
-         * 2. Advanced Regex for complex strings (calc, repeat, etc.)
-         * We want to match numbers but EXCLUDE:
-         * - Numbers followed by a unit (100vh)
-         * - The first argument in repeat(n, ...) 
+         * 2. Advanced Regex for complex strings (calc, filter(...), repeat, etc.)
+         * Match bare numbers but EXCLUDE:
+         * - Numbers already followed by a unit (100vh) — handled by the lookahead
+         * - First arg of repeat(n, …)
+         * - Args of unitless CSS functions (brightness, scale, …)
+         * - Args of angle functions (use deg instead)
+         * - Color channel args in rgb/hsl
          */
-        return val.replace(/(?<=^|[\s\+\-\*\/\(\,])(-?\d*\.?\d+)(?=$|[\s\+\-\*\/\)\,])/g, (match, number, offset, fullString) => {
-            
-            // Look backwards to see if we are inside a repeat() function as the first argument
+        const unitlessFnBefore = /(?:brightness|contrast|saturate|grayscale|invert|sepia|opacity|scale(?:X|Y|Z)?)\s*\(\s*$/i;
+        const angleFnBefore = /(?:hue-rotate|rotate(?:X|Y|Z|3d)?|skew(?:X|Y)?)\s*\(\s*$/i;
+        const colorFnBefore = /(?:rgba?|hsla?)\s*\([^)]*$/i;
+
+        return val.replace(/(?<=^|[\s\+\-\*\/\(\,])(-?\d*\.?\d+)(?=$|[\s\+\-\*\/\)\,])/g, (match, _number, offset, fullString) => {
             const beforeMatch = fullString.substring(0, offset);
-            // console.log(`beforeMatch`, beforeMatch.trim())
-            if (beforeMatch.trim().endsWith('repeat(')) {
-                return match; // Return "5" without "px"
+            const beforeTrim = beforeMatch.trim();
+
+            // repeat(5, 1fr) — first arg is unitless count
+            if (beforeTrim.endsWith('repeat(')) {
+                return match;
             }
 
-            // Otherwise, add px
+            // brightness(1.2), saturate(0.5), scale(1.05), …
+            if (unitlessFnBefore.test(beforeMatch)) {
+                return match;
+            }
+
+            // hue-rotate(90), rotate(45), …
+            if (angleFnBefore.test(beforeMatch)) {
+                return `${match}deg`;
+            }
+
+            // rgb(255, 0, 0) / hsl(…) — never append length units
+            if (colorFnBefore.test(beforeMatch)) {
+                return match;
+            }
+
             return `${match}px`;
         });
     }
@@ -589,23 +625,13 @@ class StyleGenerator {
     }
 
     public addUnitsToComplexValue(prop: string, val: string): string {
-        // Avoid adding px to things like rgba alphas or z-index
-        const unitlessProps = [
-            "opacity", "zIndex", "flex", "b", "fontWeight", "lineHeight", 
-            "shrink", "flex-shrink", "flexShrink",
-        ];
-        if (unitlessProps.includes(prop)) return val;
-
-        // Regex looks for numbers that aren't already followed by a unit (%, px, vh, etc.)
-        // and aren't part of a variable name
-        try{
-            return String(val).replace(/(\d+)(?![%a-zA-Z!])/g, '$1px');
+        // Delegate to addUnitsSafely so unitless props (brightness, opacity, …)
+        // and function contexts stay consistent.
+        try {
+            return this.addUnitsSafely(prop, String(val));
+        } catch (e) {
+            return val;
         }
-        catch(e) {
-            // console.log(`addUnitsToComplexValueError`, prop, val, typeof val, e)
-            return val
-        }
-        // return val;
     }
 
     private makeColor(v: string){

@@ -95,8 +95,17 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
         className={`${className.trim()} --direction-${direction}`.trim()}
         as={`--scrollview rel`}>
 
+        {/*
+          Structure:
+          - .--scroll-content  = scrollport (overflow + measurements)
+          - .--scroll-inner    = in-flow sizing box + containing block for abs children
+            so abs/fixed descendants scroll with content but do NOT inflate
+            scrollWidth/scrollHeight used by the scrollbar.
+        */}
         <Box as={`--scroll-content ${className}`.trim()} ref={containerRef} style={scrollStyle}>
-            {rest.children}
+            <Box as={`--scroll-inner rel`}>
+                {rest.children}
+            </Box>
         </Box>
 
         <Box as={`--scroll-track --track-y --abs`}>

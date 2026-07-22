@@ -328,6 +328,7 @@ export const cssDirect : dynamic = {
     "cols": "flex-direction:column;",
     "cols-reverse": "flex-direction:column-reverse;",
     "cols-rev": "flex-direction:column-reverse;",
+    "ase": "align-self:flex-end;",
     "ass": "align-self:flex-start;",
     "ais": "align-items:flex-start;",
     "aib": "align-items:baseline;",

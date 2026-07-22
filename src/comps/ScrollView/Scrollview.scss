@@ -23,6 +23,9 @@ body{
     min-height: 0;
     
     .--scroll-content{
+        // Scrollport only — size is fixed to the viewport of ScrollView.
+        // Do NOT put position:relative here: abs children would use this
+        // viewport-sized box and inflate scrollWidth/scrollHeight.
         width: 100%;
         height: 100%;
         padding: var(--scrollbar-content-padding);
@@ -40,6 +43,25 @@ body{
             display: none; /* Chrome/Safari */
         }
 
+    }
+
+    // In-flow content box. Grows with normal-flow children only.
+    // Absolute children use this as their containing block (so they scroll
+    // with content) but cannot expand the scrollport's overflow size.
+    .--scroll-inner{
+        position: relative;
+        display: flow-root;
+        box-sizing: border-box;
+        // Grow with in-flow content in both axes; never shrink below the
+        // scrollport so percentage / stretch layouts still work.
+        width: fit-content;
+        min-width: 100%;
+        height: fit-content;
+        min-height: 100%;
+        // clip (not hidden): exclude overflow of abs descendants from the
+        // ancestor scrollable overflow region, without creating a scroll
+        // container that would break position:sticky.
+        overflow: clip;
     }
     
     &.--scrolling{
