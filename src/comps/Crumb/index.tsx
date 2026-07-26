@@ -4,6 +4,7 @@ import Box from "../Box";
 import Button from "../Button";
 import Icon from "../Icon";
 import List from "../List";
+import { ListHandler } from "../List/types";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
 import { CrumbItem, CrumbProps } from "./types";
@@ -57,7 +58,13 @@ const Crumb = forwardRef<HTMLUListElement | HTMLOListElement, CrumbProps>((props
     ] : crumbItems
 
     return <List 
-        ref={ref}
+        ref={(handle: ListHandler | null) => {
+            if (typeof ref === 'function') {
+                ref(handle?.element ?? null);
+            } else if (ref) {
+                (ref as React.MutableRefObject<HTMLUListElement | HTMLOListElement | null>).current = handle?.element ?? null;
+            }
+        }}
         className={`--crumb flex aic`}
         direction={`rows`}
         seperator={<Box as={`--crumb-chevron --spr-${typeof separator === "string" ? separator : "custom"}`}>{

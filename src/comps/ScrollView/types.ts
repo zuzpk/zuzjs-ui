@@ -11,4 +11,10 @@ export type ScrollViewProps = BoxProps & {
     breakpoints?: ScrollBreakpoint,
     direction?: ScrollViewDirection,
     onScroll?: (event: UIEvent<HTMLDivElement>) => void,
+    /**
+     * Auto-scroll to bottom when content changes.
+     * Set to 'smooth' for smooth scrolling, or true for instant scrolling.
+     * @default false
+     */
+    autoScrollToBottom?: boolean | 'smooth',
 }

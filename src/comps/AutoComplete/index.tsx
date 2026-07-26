@@ -1,15 +1,16 @@
 "use client"
 import { _, clamp, uuid, withPost } from "@zuzjs/core";
+import { useDebounce } from "@zuzjs/hooks";
 import { forwardRef, KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
 import useBase from "../../hooks/useBase";
 import { Props } from "../../types";
-import { Variant, TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
+import { TRANSITION_CURVES, TRANSITIONS, Variant } from "../../types/enums";
 import Box from "../Box";
 import Input from "../Input";
 import List from "../List";
+import { ListHandler } from "../List/types";
 import SVGIcons from "../svgicons";
 import { AutoCompleteProps } from "./types";
-import { useDebounce } from "@zuzjs/hooks";
 
 /**
  * AutoComplete component.
@@ -39,7 +40,7 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
     const [ items, setItems ] = useState<string[]>(data || [])
     const innerRef = useRef<HTMLInputElement>(null)
     const autoRef = useRef<HTMLDivElement>(null)
-    const suggestionRef = useRef<HTMLUListElement | HTMLOListElement>(null)
+    const suggestionRef = useRef<ListHandler>(null)
     const _id = useMemo(() => pops.name || uuid(12), [])
     const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
     const [lastQuery, setLastQuery] = useState<string | null>(null);
@@ -81,8 +82,8 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
             const spaceBelow = window.innerHeight - boundingBox.bottom;
             const spaceAbove = boundingBox.top;
 
-            if (suggestionRef.current) {
-                const suggestionList = suggestionRef.current;
+            if (suggestionRef.current?.element) {
+                const suggestionList = suggestionRef.current.element;
                 if (spaceBelow < suggestionList.offsetHeight && spaceAbove > spaceBelow) {
                     suggestionList.style.top = 'auto';
                     suggestionList.style.bottom = `${boundingBox.height}px`;
@@ -149,8 +150,8 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
             innerRef.current.setSelectionRange(selectedItem.length, selectedItem.length);
         }
         // Auto-scroll the suggestion list to the selected index
-        if (suggestionRef.current) {
-            const suggestionList = suggestionRef.current;
+        if (suggestionRef.current?.element) {
+            const suggestionList = suggestionRef.current.element;
             const selectedItemElement = suggestionList.children[index] as HTMLElement;
             if (selectedItemElement) {
                 selectedItemElement.scrollIntoView({ block: 'nearest' });

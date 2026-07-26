@@ -4,7 +4,7 @@ import Box from "../Box";
 import Button from "../Button";
 import { BubbleProps } from "../ChatBubble/types";
 import List from "../List";
-import { ListItem } from "../List/types";
+import { ListHandler, ListItem } from "../List/types";
 import ScrollView from "../ScrollView";
 import Span from "../Span";
 import Text from "../Text";
@@ -38,7 +38,7 @@ const ChatList = memo(({
     avatarType
 }: ChatListProps & BubbleProps) => {
     const shellRef = useRef<HTMLDivElement>(null);
-    const listRef = useRef<HTMLUListElement | HTMLOListElement>(null);
+    const listRef = useRef<ListHandler>(null);
     const hasMountedRef = useRef(false);
     const hasInitialAutoScrolledRef = useRef(false);
     const isAtBottomRef = useRef(true);

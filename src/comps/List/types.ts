@@ -23,9 +23,23 @@ export type ListRenderContext = {
     isOver: boolean,
     canReceive: boolean,
     highlighted: boolean,
+    /** True when this item is the active keyboard-navigation selection */
+    selected: boolean,
 }
 
 export type ListRender<T = ListItem> = (item: T, context: ListRenderContext) => ReactNode
+
+/** Imperative handle exposed via `ref` for programmatic selection control */
+export type ListHandler = {
+    /** Move the selection to the previous (lower-index) item, clamped to 0 */
+    setPrev: () => void;
+    /** Move the selection to the next (higher-index) item, clamped to the last index */
+    setNext: () => void;
+    /** Index of the currently selected item, or null when nothing is selected */
+    getSelected: () => number | null;
+    /** The underlying <ul>/<ol> DOM element */
+    readonly element: HTMLUListElement | HTMLOListElement | null;
+}
 
 export type VirtualScrollOptions = {
     /** Height of each item in pixels */
@@ -36,7 +50,7 @@ export type VirtualScrollOptions = {
     overscan?: number;
 }
 
-export type ListProps = Props<`ul` | `ol`> & {
+export type ListProps = Omit<Props<`ul` | `ol`>, "onSelect"> & {
     /** Visual variant (size) */
     variant?: ValueOf<typeof Variant>,
     /** Array of items to render (ReactNode or ListItemMeta) */
@@ -75,4 +89,13 @@ export type ListProps = Props<`ul` | `ol`> & {
     virtual?: VirtualScrollOptions,
     /** CSS list-style property */
     listStyle?: CSSProperties[`listStyle`] | string,
+    hoverable?: boolean,
+    /** Enable arrow-key (up/down) navigation to move a selection across items */
+    keyboardNavigation?: boolean,
+    /** Index selected by default when keyboardNavigation is enabled (defaults to 0) */
+    defaultSelected?: number,
+    /** Fired when Enter is pressed on the keyboard-selected item (signature: (item, index) => void). Note: overrides the native DOM onSelect handler */
+    onSelect?: (item: ListItem, index: number) => void,
+    /** Fired when any item is clicked (signature: (item, index, event) => void). Works with both object-meta items and custom `render`. The per-item `onClick` in item meta still runs first. */
+    onItemClick?: (item: ListItem, index: number, event: any) => void,
 }

@@ -1,112 +1,77 @@
-body{
-    --codeblock: #fff;
-    --codeblock-font: monospace;
-    --codeblock-plain-color: var(--text-primary, "#fff");
+body {
+    --shiki-bg: #0d1117;
+    --shiki-fg: #c9d1d9;
+    --shiki-line-highlight: #2d333b;
 }
 
-[color-scheme="dark"]{
+[color-scheme="dark"] {
     body {
-        --codeblock: #1e1e1e;
+        --shiki-bg: #0d1117;
+        --shiki-fg: #c9d1d9;
     }
-}
-
-pre {
-//   border-radius: 0.5rem;
-  overflow-x: auto;
-  margin: 15px 0px;
 }
 
 code {
-  font-family: var(--codeblock-font, monospace) !important;
-  font-optical-sizing: auto;
-  font-style: normal;
+    font-family: var(--codeblock-font, 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Fira Mono', 'Droid Sans Mono', monospace) !important;
+    font-optical-sizing: auto;
+    font-style: normal;
 }
+
 .--code-block {
-    background-color: var(--codeblock);
+
+    background-color: var(--shade-1, #1e1e1e);
     padding: 0.5rem;
     --line-num-width: 40px;
     white-space: pre;
-    line-height: 1.6;
     tab-size: 4;
-    color: var(--codeblock-plain-color);
-    border: var(--codeblock-border);
-    border-radius: var(--codeblock-radius);
+    position: relative;
+    border-radius: var(--codeblock-radius) !important;
+    overflow: auto;
 
-    .--copy-code{
-        top: 10px;
-        right: 10px;
-        z-index: 3;
-    }
-    
-    code.--code{
-        font-size: inherit;
-        letter-spacing: inherit;
-        border-radius: inherit;
-        border-width: inherit;
-        background: inherit;
-        // color: inherit;
-        white-space: inherit;
-        padding: inherit;
-        &.--lang-plain{
-            color: var(--codeblock-plain-color);
+    pre{
+        font-family: var(--codeblock-font, monospace) !important;
+        font-size: var(--codeblock-font-size, inherit) !important;
+        &.--shiki-pre {
+            background-color: transparent !important;
+            margin: 0;
+            padding: 0;
+            font-family: var(--codeblock-font, 'SF Mono', 'Monaco', 'Inconsolata', monospace) !important;
+            font-size: inherit;
+            letter-spacing: inherit;
+            border-radius: inherit;
+            border-width: inherit;
+            white-space: inherit;
+            
+            // Override Shiki's inline styles to use CSS variables
+            background: transparent !important;
+            
+            code {
+                font-family: inherit !important;
+                background: transparent !important;
+                line-height: var(--codeblock-lineheight);
+                // Shiki tokens
+                .shiki {
+                    background-color: transparent !important;
+                }
+            }
+            
+            // Handle line highlighting from Shiki
+            .line {
+                display: flex;
+                width: 100%;
+                padding: 0 4px;
+                border-left: 3px solid transparent;
+            }
+
+            span {
+                font-family: var(--codeblock-font, monospace) !important;
+                font-size: var(--codeblock-font-size, inherit) !important;
+            }
         }
     }
-}
 
-.--code-line {
-    display: flex;
-    width: 100%;
-    padding: 0 4px;
-    border-left: 3px solid transparent;
-    font-family: var(--codeblock-font, monospace) !important;
-    &.--with-ln{
-        &:hover{
-            background-color: #2a2a2a;
-        }
+    .--code-line {
+        font-family: var(--codeblock-font, monospace) !important;
     }
-}
 
-.--code-line.--is-highlighted {
-    background: var(--shade-2); /* Slightly lighter/darker than bg */
-    border-left-color: var(--primary);
-    width: fit-content;
-    min-width: 100% !important;
-}
-
-.--line-number {
-    width: var(--line-num-width);
-    flex-shrink: 0;
-    opacity: 0.3;
-    user-select: none;
-    font-size: 0.85em;
-}
-
-.--line-content {
-    white-space: pre;
-    font-family: var(--codeblock-font, monospace) !important;
-}
-
-/* Syntax Highlighting Tokens */
-
-/* Syntax Highlighting Tokens */
-.--token-key     { color: var(--pink-300); font-weight: 600; }  /* Keywords */
-.--token-tag     { color: var(--green-300); font-weight: 500; }  /* <Component /> */
-.--token-var     { color: #db9aff; }
-.--token-str     { color: var(--blue-400); }                 /* Strings */
-.--token-comm    { color: var(--gray-500); font-style: italic; } /* Comments */
-.--token-fn      { color: var(--blue-600); font-style: italic; } /* Functions */
-.--token-prop    { color: var(--orange-500); }                /* Properties */
-.--token-num     { color: var(--purple-500); }                /* Numbers */
-.--token-paren   { color: var(--green-500); font-weight: bold; }   /* ( ) */
-.--token-curly   { color: var(--orange-500); font-weight: bold; }   /* { } */
-.--token-square  { color: var(--green-500); font-weight: bold; }    /* [ ] */
-
-/* Custom Scrollbar for the code */
-.--code-block::-webkit-scrollbar {
-    height: 4px;
-    width: 4px;
-}
-.--code-block::-webkit-scrollbar-thumb {
-    background: var(--shade-3);
-    border-radius: 10px;
 }

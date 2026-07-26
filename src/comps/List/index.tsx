@@ -1,10 +1,10 @@
 import { MD5 } from "@zuzjs/core";
 import { useSortable } from "@zuzjs/hooks";
-import { createElement, CSSProperties, forwardRef, Fragment, isValidElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createElement, CSSProperties, forwardRef, Fragment, isValidElement, KeyboardEvent, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { getAnimationCurve } from "../../funs/css";
 import { useBase } from "../../hooks";
 import { TRANSITION_CURVES, TRANSITIONS, Variant } from "../../types/enums";
-import { ListItemObject, ListProps } from "./types";
+import { ListHandler, ListItemObject, ListProps } from "./types";
 
 const DEFAULT_DRAG_CHANNEL = "__zuz_ui_list_item__";
 
@@ -63,13 +63,21 @@ type SortableRowProps = {
     dragChannel: NonNullable<ListProps["dragChannel"]>;
     dragDelay: number;
     ghostMode: NonNullable<ListProps["ghostMode"]>;
+    hoverable?: boolean;
     highlighted: boolean;
     dropHighlightDuration: number;
     dropHighlightTransition: NonNullable<ListProps["dropHighlightTransition"]>;
     dropHighlightCurve: NonNullable<ListProps["dropHighlightCurve"]>;
     render?: ListProps["render"];
+    onItemClick?: ListProps["onItemClick"];
     onMove: (from: number, to: number, item: ListProps["items"][number]) => void;
     onDrop: (to: number) => void;
+    /** Whether this row is the active keyboard-navigation selection */
+    selected: boolean;
+    /** Called when this row is clicked (used to keep keyboard selection in sync) */
+    onSelectIndex?: (index: number) => void;
+    /** Called when the pointer enters this row (used to update the selected element on hover) */
+    onHoverIndex?: (index: number) => void;
 };
 
 const SortableRow = (props: SortableRowProps) => {
@@ -88,9 +96,14 @@ const SortableRow = (props: SortableRowProps) => {
         dropHighlightDuration,
         dropHighlightTransition,
         dropHighlightCurve,
+        hoverable,
         render,
+        onItemClick,
         onMove,
         onDrop,
+        selected,
+        onSelectIndex,
+        onHoverIndex,
     } = props;
 
     const currentIndexRef = useRef(index);
@@ -142,7 +155,7 @@ const SortableRow = (props: SortableRowProps) => {
             dragOffset: state.dragOffset,
             pointer: state.pointer,
         }),
-    }), [item, index, itemDraggable, itemDroppable, sortable, dragChannel, dragDelay, onMove, onDrop]);
+    }), [item, index, itemDraggable, itemDroppable, sortable, dragChannel, dragDelay, onMove, onDrop, onHoverIndex]);
 
     const objectMeta = isObjectMeta(item) ? item : null;
     const transitionCurve = getAnimationCurve(dropHighlightCurve);
@@ -178,6 +191,7 @@ const SortableRow = (props: SortableRowProps) => {
         dropHighlightTransition === TRANSITIONS.SlideInTop ? "--drop-tx-slide-top" : "",
         dropHighlightTransition === TRANSITIONS.SlideInBottom ? "--drop-tx-slide-bottom" : "",
         dropHighlightTransition === TRANSITIONS.FadeIn ? "--drop-tx-fade" : "",
+        selected ? "--selected" : "",
     ].filter(Boolean).join(" ");
 
     const renderContext = {
@@ -186,6 +200,7 @@ const SortableRow = (props: SortableRowProps) => {
         isOver,
         canReceive,
         highlighted,
+        selected,
     };
 
     const rowContent = render
@@ -197,7 +212,12 @@ const SortableRow = (props: SortableRowProps) => {
             ref={sortableRef}
             className={itemClassName}
             style={itemStyle}
-            onClick={objectMeta?.onClick}
+            onMouseEnter={() => onHoverIndex?.(index)}
+            onClick={(e) => {
+                objectMeta?.onClick?.(e);
+                onItemClick?.(item, index, e);
+                onSelectIndex?.(index);
+            }}
         >
             {rowContent}
         </li>
@@ -282,7 +302,7 @@ const SortableRow = (props: SortableRowProps) => {
  * />
  * ```
  */
-const List = forwardRef<HTMLUListElement | HTMLOListElement, ListProps>((props, ref) => {
+const List = forwardRef<ListHandler, ListProps>((props, ref) => {
 
     const {
         items,
@@ -302,8 +322,13 @@ const List = forwardRef<HTMLUListElement | HTMLOListElement, ListProps>((props, 
         dropHighlightCurve = TRANSITION_CURVES.Spring,
         listStyle,
         render,
+        hoverable = false,
         empty,
         onSort,
+        keyboardNavigation,
+        onSelect,
+        onItemClick,
+        defaultSelected = 0,
         ...pops
     } = props;
 
@@ -312,6 +337,7 @@ const List = forwardRef<HTMLUListElement | HTMLOListElement, ListProps>((props, 
     const dropHighlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [sortedItems, setSortedItems] = useState(items);
     const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
+    const [selectedIndex, setSelectedIndex] = useState<number | null>(keyboardNavigation ? defaultSelected : null);
     
     const {
         className,
@@ -326,6 +352,31 @@ const List = forwardRef<HTMLUListElement | HTMLOListElement, ListProps>((props, 
     useEffect(() => {
         setSortedItems(items);
     }, [items]);
+
+    const setPrev = useCallback(() => {
+        setSelectedIndex((prev) => {
+            if (sortedItems.length === 0) return prev;
+            return Math.max(0, (prev ?? 0) - 1);
+        });
+    }, [sortedItems.length]);
+
+    const setNext = useCallback(() => {
+        setSelectedIndex((prev) => {
+            if (sortedItems.length === 0) return prev;
+            return Math.min(sortedItems.length - 1, (prev ?? -1) + 1);
+        });
+    }, [sortedItems.length]);
+
+    const getSelected = useCallback(() => selectedIndex, [selectedIndex]);
+
+    useImperativeHandle(ref, () => ({
+        setPrev,
+        setNext,
+        getSelected,
+        get element() {
+            return containerRef.current;
+        },
+    }), [setPrev, setNext, getSelected]);
     
     // Simple virtual scrolling implementation
     const {
@@ -365,6 +416,26 @@ const List = forwardRef<HTMLUListElement | HTMLOListElement, ListProps>((props, 
         }, dropHighlightDuration);
     }, [dropHighlightDuration]);
 
+    const handleKeyDown = useCallback((e: KeyboardEvent) => {
+        if (!keyboardNavigation || sortedItems.length === 0) return;
+
+        if (e.key === "ArrowDown") {
+            e.preventDefault();
+            setSelectedIndex((prev) => Math.min(sortedItems.length - 1, (prev ?? -1) + 1));
+        } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            setSelectedIndex((prev) => Math.max(0, (prev ?? sortedItems.length) - 1));
+        } else if (e.key === "Enter") {
+            e.preventDefault();
+            if (selectedIndex !== null) {
+                const item = sortedItems[selectedIndex];
+                if (item !== undefined) {
+                    onSelect?.(item, selectedIndex);
+                }
+            }
+        }
+    }, [keyboardNavigation, sortedItems, selectedIndex, onSelect]);
+
     const renderItems = useCallback(() => {
         const { start, end } = visibleRange;
         const itemsToRender = sortedItems.slice(start, end);
@@ -386,15 +457,20 @@ const List = forwardRef<HTMLUListElement | HTMLOListElement, ListProps>((props, 
                 dragDelay={dragDelay}
                 ghostMode={ghostMode}
                 highlighted={highlightedIndex === actualIndex}
+                selected={selectedIndex === actualIndex}
                 dropHighlightDuration={dropHighlightDuration}
                 dropHighlightTransition={dropHighlightTransition}
                 dropHighlightCurve={dropHighlightCurve}
                 render={render}
+                onItemClick={onItemClick}
                 onMove={moveItem}
+                hoverable={hoverable}
                 onDrop={highlightDrop}
+                onSelectIndex={keyboardNavigation ? setSelectedIndex : undefined}
+                onHoverIndex={keyboardNavigation ? setSelectedIndex : undefined}
             />
         });
-    }, [visibleRange, sortedItems, seperator, sortable, dragEnabled, dropEnabled, dragChannel, dragDelay, ghostMode, highlightedIndex, dropHighlightDuration, dropHighlightTransition, dropHighlightCurve, render, moveItem, highlightDrop]);
+    }, [visibleRange, sortedItems, seperator, sortable, dragEnabled, dropEnabled, dragChannel, dragDelay, ghostMode, highlightedIndex, selectedIndex, dropHighlightDuration, dropHighlightTransition, dropHighlightCurve, render, onItemClick, moveItem, highlightDrop, keyboardNavigation]);
 
     // Handle scroll optimization for fast scrolling
     useEffect(() => {
@@ -436,8 +512,10 @@ const List = forwardRef<HTMLUListElement | HTMLOListElement, ListProps>((props, 
     );
 
     return createElement(Tag, {
-        className: `--list ${listStyle ? `--list-style --ls-${listStyle}` : ""} --${variant || Variant.Small} flex ${direction ?? `cols`} ${className}`.trim(),
+        className: `--list ${hoverable ? `--hoverable` : ``} ${listStyle ? `--list-style --ls-${listStyle}` : ""} --${variant || Variant.Small} flex ${direction ?? `cols`} ${className}`.trim(),
         style, 
+        tabIndex: keyboardNavigation ? 0 : undefined,
+        onKeyDown: keyboardNavigation ? handleKeyDown : undefined,
         ...restWithoutRef,
         ref: (node: HTMLUListElement | HTMLOListElement | null) => {
             containerRef.current = node;
@@ -446,8 +524,6 @@ const List = forwardRef<HTMLUListElement | HTMLOListElement, ListProps>((props, 
             } else if (restRef && typeof restRef === 'object') {
                 (restRef as { current: HTMLUListElement | HTMLOListElement | null }).current = node;
             }
-            if (typeof ref === 'function') ref(node);
-            else if (ref) ref.current = node;
         },
         children: isEmpty ? (empty !== undefined ? empty : defaultEmpty) : renderItems()
     });

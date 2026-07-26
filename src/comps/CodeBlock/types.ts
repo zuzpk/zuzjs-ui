@@ -1,10 +1,13 @@
 import { Ref } from "react";
+import { BundledLanguage } from "shiki";
 import { ZuzProps } from "../../types";
+
+export type CodeLanguage = BundledLanguage | 'plain';
 
 export interface CodeBlockProps extends ZuzProps {
     ref?: Ref<HTMLPreElement>,
     code: string;
-    lang?: `plain` | 'typescript' | 'javascript' | 'jsx' | 'tsx' | 'css' | 'json';
+    lang?: CodeLanguage;
     showLines?: boolean;
     highlight?: string;
     copy?: {

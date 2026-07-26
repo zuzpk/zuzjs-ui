@@ -1,7 +1,5 @@
 import { dynamic, isColor } from "@zuzjs/core";
-import fs from "fs";
 import Hashids from "hashids";
-import { dirname } from "path";
 import {
     cssAnimationCurves,
     cssDirect,
@@ -737,10 +735,15 @@ class StyleGenerator {
         this.rawRuleMap.get(filePath)!.add(rule);
     }
 
-    public writeToDisk(outPath: string) {
+    /**
+     * Builds the generated CSS as an in-memory string. Pure computation only —
+     * no filesystem access — so this stays safe to import from browser bundles.
+     * CLI/build tooling that needs to persist this to disk should use
+     * `writeStylesToDisk` from `./write-styles` instead of touching fs here.
+     */
+    public getOutput(): string {
         // 1. Identify all hashes currently in use across all files
         const activeHashes = new Set<string>();
-        // console.log(`fileMap`, this.fileMap)
         this.fileMap.forEach(hashes => {
             hashes.forEach(h => activeHashes.add(h));
         });
@@ -758,13 +761,7 @@ class StyleGenerator {
             rules.forEach((rule) => rawRules.push(rule));
         });
 
-        // 3. Write to file
-        const output = `/* Zuz Generated CSS */\n\n${activeRules.join("\n")}\n\n${rawRules.join("\n\n")}`;
-        if ( !fs.existsSync(dirname(outPath)) ){
-            fs.mkdirSync((dirname(outPath)))
-        }
-        fs.writeFileSync(outPath, output);
-
+        return `/* Zuz Generated CSS */\n\n${activeRules.join("\n")}\n\n${rawRules.join("\n\n")}`;
     }
 
 }

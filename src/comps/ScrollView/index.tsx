@@ -30,6 +30,7 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
         breakpoints = {},
         direction = 'both',
         onScroll,
+        autoScrollToBottom = false,
         style: _style, ...pops } = props
     const { 
         rootRef, containerRef, thumbY, thumbX, onScrollY, onScrollX 
@@ -89,6 +90,32 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
         };
 
     }, [containerRef, onScroll]);
+
+    // Auto-scroll to bottom when content changes
+    useEffect(() => {
+        if (!autoScrollToBottom) return;
+        
+        const el = containerRef.current;
+        if (!el) return;
+
+        const scrollToBottom = () => {
+            const scrollOptions: ScrollToOptions = {
+                top: el.scrollHeight,
+                left: 0,
+            };
+            
+            if (autoScrollToBottom === 'smooth') {
+                scrollOptions.behavior = 'smooth';
+            }
+            
+            el.scrollTo(scrollOptions);
+        };
+
+        // Scroll on mount and when children change
+        scrollToBottom();
+        
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [autoScrollToBottom, rest.children]);
 
     return <Box 
         ref={rootRef}
