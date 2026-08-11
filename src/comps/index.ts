@@ -18,6 +18,10 @@ export * from './Accordion/types';
 export { default as ActionBar } from './Actionbar';
 export * from './Actionbar/types';
 
+export {
+    default as AgentChat
+} from "./AgentChat"
+
 /**
  * Inline alert feedback.
  * @example

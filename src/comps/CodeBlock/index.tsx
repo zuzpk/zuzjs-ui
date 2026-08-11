@@ -1,6 +1,6 @@
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { codeToHtml } from 'shiki';
-import { useBase } from '../../hooks';
+import { useBase, useTheme } from '../../hooks';
 import Box from '../Box';
 import { CodeBlockProps } from './types';
 
@@ -9,6 +9,8 @@ const CodeBlock = ({
     ...props
 } : CodeBlockProps) => {
 
+    const { resolvedScheme } = useTheme(true)!;
+
     const { 
         code: rawCode,
         copy,
@@ -16,9 +18,15 @@ const CodeBlock = ({
         showLines = false, 
         highlight = "",
         as, 
-        fx, 
+        fx,
+        theme,
+        themeDark,
+        themeLight,
         ...pops 
     } = props;
+    const shikiTheme = resolvedScheme === 'light'
+        ? themeLight ?? theme ?? 'github-light'
+        : themeDark ?? theme ?? 'github-dark';
     const innerRef = useRef<HTMLPreElement>(null);
     const [highlightedHtml, setHighlightedHtml] = useState<string>('');
     
@@ -45,7 +53,7 @@ const CodeBlock = ({
                 
                 const html = await codeToHtml(rawCode, {
                     lang: language as any,
-                    theme: 'github-dark',
+                    theme: shikiTheme,
                     transformers: [
                         {
                             code(node) {
@@ -108,7 +116,7 @@ const CodeBlock = ({
         highlightCode();
         return () => { cancelled = true; };
 
-    }, [rawCode, lang, showLines])
+    }, [rawCode, lang, showLines, shikiTheme])
 
     return <Box
         as={`--code-block rel ${className}`} 

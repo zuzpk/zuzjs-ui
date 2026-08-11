@@ -19,8 +19,8 @@ code {
 
 .--code-block {
 
-    background-color: var(--shade-1, #1e1e1e);
-    padding: 0.5rem;
+    background-color: var(--codeblock-background);
+    border: var(--codeblock-border);
     --line-num-width: 40px;
     white-space: pre;
     tab-size: 4;
@@ -34,7 +34,6 @@ code {
         &.--shiki-pre {
             background-color: transparent !important;
             margin: 0;
-            padding: 0;
             font-family: var(--codeblock-font, 'SF Mono', 'Monaco', 'Inconsolata', monospace) !important;
             font-size: inherit;
             letter-spacing: inherit;
@@ -45,6 +44,11 @@ code {
             // Override Shiki's inline styles to use CSS variables
             background: transparent !important;
             
+            .shiki{
+                padding: 1rem;
+                background-color: transparent !important;
+            }
+
             code {
                 font-family: inherit !important;
                 background: transparent !important;

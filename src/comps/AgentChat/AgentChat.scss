@@ -1,0 +1,127 @@
+@use "../../scss/variables";
+
+body{
+  --za-composer: var(--surface);
+  --za-border: 1px var(--border-primary) solid;
+  --za-padding: 0px 0px 10px 0px;
+}
+
+*:has(> .zuz-agent) {
+  display: flex;
+  align-items: stretch;
+}
+
+.--zuz-agent {
+
+  width: 100%;
+  height: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
+
+
+  @each $size in variables.$sizes {
+    &.--#{$size} {
+      --za-radius: var(--radius-#{$size});
+      --za-text-size: var(--text-#{$size});
+    }
+  }
+
+  .--za-chat{
+    
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    min-height: 0;
+    padding:  var(--za-padding);
+
+    .--za-bottom-ref{
+      height: 75px;
+      min-height: 75px;
+    }
+
+    .--za-messages{
+      flex: 1;
+      min-height: 0;
+      width: var(--za-width, 100%);
+      margin: 0 auto;
+      padding: var(--za-messages-padding, 15px);
+      font-size: var(--za-chat-text-size, 16px);
+      --bubble-stamp-size: var(--za-chat-text-size, 16px);
+      --za-bubble-margin
+
+      
+
+      .--za-chat-empty{
+        .--za-ce-title{
+          font-size: var(--za-empty-title-size, 18px);
+          opacity: 0.75;
+        }
+        .--za-ce-msg{
+          opacity: 0.5;
+        }
+      }
+
+      .--za-msg{
+
+        .--za-code-head{
+          background: var(--za-code-head-background);
+          border: var(--za-code-head-border);
+          padding: 6px 10px;
+          border-radius: var(--za-code-head-radius);
+        }
+        
+        &.--za-msg-user{
+          
+          max-width: 90%;
+          margin: var(--za-bubble-margin, 20px 0px);
+          align-self: end;
+
+          .--za-bubble{
+            background: var(--za-bubble, var(--surface));
+            padding: var(--za-bubble-padding, 10px);
+            border-radius: var(--za-radius, 30px);
+          }
+  
+  
+        }
+
+      }
+
+
+    }
+
+    .--za-composer{
+      background: var(--za-composer);
+      width: var(--za-width, 100%);
+      border: var(--za-border);
+      border-radius: calc( var(--za-radius) / 2);
+      margin: 0 auto;
+      overflow: hidden;
+      // bg:$background no-overflow zIndex:$max-z-index w:calc[100vw - 20px] m:0,auto
+      textarea {
+        min-height: 75px !important;
+      }
+      .--za-composer-input{
+        flex: 1;
+        font-size: var(--za-text-size);
+        background: transparent !important;
+        border: 0px !important;
+      }
+
+      .--za-composer-actions{
+        padding: 2px 5px;
+        border-top: var(--za-border);
+        .--za-ca-l{
+          flex: 1;
+          gap: 8px;
+        }
+        .za-ca-r{
+          
+        }
+      }
+
+    }
+
+  }
+
+}
