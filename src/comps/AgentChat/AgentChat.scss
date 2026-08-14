@@ -4,6 +4,10 @@ body{
   --za-composer: var(--surface);
   --za-border: 1px var(--border-primary) solid;
   --za-padding: 0px 0px 10px 0px;
+  --za-active-color-1: #5ea1ff;
+  --za-active-color-2: #b183ff;
+  --za-active-speed: 2s;
+  --za-active-blur: 50px;
 }
 
 *:has(> .zuz-agent) {
@@ -61,15 +65,273 @@ body{
         }
       }
 
+      .--za-activity {
+
+        margin: 4px 0 14px;
+        max-width: var(--za-activity-width, 560px);
+
+        .--za-activity-summary {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          width: fit-content;
+          padding: 2px 0;
+          color: inherit;
+          background: transparent;
+          border: 0;
+          cursor: pointer;
+          text-align: left;
+          opacity: .55;
+          margin-bottom: 5px;
+          &:hover {
+            opacity: 1;
+          }
+        }
+
+        .--za-activity-summary-text,
+        .--za-activity-title,
+        .--za-activity-detail {
+          font-size: var(--za-activity-font-size, 15px);
+        }
+
+        .--za-activity-toggle {
+          width: 12px;
+          height: 12px;
+        }
+
+        .--za-activity-steps {
+          gap: 0;
+        }
+
+        .--za-activity-step {
+          gap: 8px;
+          min-height: 24px;
+        }
+
+        .--za-activity-rail {
+          width: 16px;
+          flex: 0 0 16px;
+        }
+
+        .--za-activity-marker {
+          width: 16px;
+          height: 16px;
+          color: currentColor;
+          opacity: .6;
+
+          .--spinner {
+            width: 12px;
+            height: 12px;
+          }
+        }
+
+        .--za-activity-line {
+          width: 1px;
+          min-height: 8px;
+          flex: 1;
+          margin: 2px 0;
+          background: currentColor;
+          opacity: .2;
+        }
+
+        .--za-activity-copy {
+          min-width: 0;
+          padding: 0 0 9px;
+        }
+
+        .--za-activity-title {
+          opacity: .6;
+        }
+
+        .--za-activity-active {
+          font-weight: 600;
+          opacity: 1;
+        }
+
+        .--za-activity-detail {
+          margin-top: 2px;
+          overflow: hidden;
+          color: inherit;
+          opacity: .45;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .--za-activity-failed {
+          color: var(--danger, #d63c3c);
+          opacity: 1;
+        }
+
+        &.--za-activity-compact-live {
+          margin: 4px 0;
+
+          .--za-activity-step {
+            min-height: 20px;
+          }
+
+          .--za-activity-rail {
+            display: none;
+          }
+
+          .--za-activity-copy {
+            flex-direction: row;
+            align-items: baseline;
+            gap: 6px;
+            min-width: 0;
+            padding: 0;
+          }
+
+          .--za-activity-title {
+            overflow: hidden;
+            font-size: 12px;
+            line-height: 20px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .--za-activity-detail {
+            min-width: 0;
+            max-width: 360px;
+            margin: 0;
+            overflow: hidden;
+            font-size: 11px;
+            line-height: 20px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            opacity: .65;
+          }
+        }
+
+      }
+
       .--za-msg{
+
+        .--za-tools {
+          width: 100%;
+          margin: 8px 0;
+        }
+
+        .--za-tool {
+          overflow: hidden;
+          border: 1px solid var(--border-primary);
+          border-radius: 8px;
+          background: var(--surface);
+
+          &.--failed { border-color: var(--danger, #d63c3c); }
+        }
+
+        .--za-tool-summary {
+          display: flex;
+          align-items: center;
+          width: 100%;
+          gap: 7px;
+          padding: 8px 10px;
+          border: 0;
+          color: inherit;
+          background: transparent;
+          cursor: pointer;
+          text-align: left;
+
+          &:disabled { cursor: default; }
+
+          .--icon {
+            width: 14px;
+            height: 14px;
+            opacity: .65;
+          }
+        }
+
+        .--za-tool-name {
+          flex: 1;
+          min-width: 0;
+          overflow: hidden;
+          font-family: var(--font-mono, monospace);
+          font-size: 12px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .--za-tool-state,
+        .--za-tool-value-label {
+          font-size: 11px;
+          opacity: .55;
+        }
+
+        .--za-tool-details {
+          padding: 0 10px 10px;
+        }
+
+        .--za-tool-value pre {
+          max-height: 260px;
+          margin: 0;
+          padding: 8px 10px;
+          overflow: auto;
+          border: 1px solid var(--border-primary);
+          border-radius: 6px;
+          background: color-mix(in srgb, var(--surface) 80%, #000);
+          font-family: var(--font-mono, monospace);
+          font-size: 12px;
+          white-space: pre-wrap;
+        }
+
+        .--za-agent-execution {
+          width: 100%;
+          margin: 8px 0 14px;
+        }
+
+        .--za-agent-terminal {
+          overflow: hidden;
+          border: 1px solid var(--border-primary);
+          border-radius: 8px;
+          background: var(--surface);
+        }
+
+        .--za-agent-terminal-command,
+        .--za-agent-terminal-result {
+          padding: 7px 10px;
+          font-family: var(--font-mono, monospace);
+          font-size: 12px;
+          opacity: .72;
+        }
+
+        .--za-agent-terminal-output {
+          max-height: 260px;
+          margin: 0;
+          padding: 8px 10px;
+          overflow: auto;
+          background: color-mix(in srgb, var(--surface) 80%, #000);
+          font-family: var(--font-mono, monospace);
+          font-size: 12px;
+          white-space: pre-wrap;
+        }
+
+        .--za-agent-terminal.--failed { border-color: var(--danger, #d63c3c); }
+
+        .--za-agent-stats {
+          font-size: 11px;
+          opacity: .55;
+        }
+
+        .--zuz-code-pre{
+          width: 100%;
+          min-width: 0px;
+          margin: 5px 0px 20px 0px;
+          flex-basis: 100%;
+          overflow: hidden;
+        }
 
         .--za-code-head{
           background: var(--za-code-head-background);
           border: var(--za-code-head-border);
-          padding: 6px 10px;
+          padding: 0px 10px 0px 15px;
           border-radius: var(--za-code-head-radius);
+          .--za-ch-head{
+            font-size: 10px;
+            opacity: 0.75;
+            font-weight: bold;
+          }
         }
-        
+
         &.--za-msg-user{
           
           max-width: 90%;
@@ -90,13 +352,105 @@ body{
 
     }
 
+    .--za-connection-banner {
+      margin: 8px 10px 0;
+      padding: 7px 10px;
+      border: 1px solid var(--warning, #c18b00);
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--warning, #c18b00) 12%, var(--surface));
+      color: inherit;
+      font-size: 12px;
+    }
+
+    .--za-approval {
+      width: var(--za-width, 100%);
+      margin: 0 auto;
+      padding: 12px;
+      border: var(--za-border);
+      border-radius: calc(var(--za-radius) / 2);
+      background: var(--za-composer);
+
+      .--za-approval-title {
+        font-weight: 600;
+      }
+
+      .--za-approval-description,
+      .--za-approval-risk,
+      .--za-approval-prompt {
+        font-size: 13px;
+        opacity: .7;
+      }
+
+      .--za-approval-command {
+        overflow: hidden;
+        border: 1px solid var(--border-primary);
+        border-radius: 8px;
+        background: var(--surface);
+
+        .--za-approval-tool {
+          padding: 6px 9px;
+          border-bottom: 1px solid var(--border-primary);
+          font-family: var(--font-mono, monospace);
+          font-size: 12px;
+          opacity: .7;
+        }
+
+        pre {
+          max-height: 150px;
+          margin: 0;
+          padding: 8px 9px;
+          overflow: auto;
+          font-family: var(--font-mono, monospace);
+          font-size: 12px;
+          white-space: pre-wrap;
+        }
+      }
+
+      .--za-approval-actions {
+        justify-content: flex-end;
+      }
+    }
+
     .--za-composer{
+
       background: var(--za-composer);
       width: var(--za-width, 100%);
       border: var(--za-border);
       border-radius: calc( var(--za-radius) / 2);
       margin: 0 auto;
       overflow: hidden;
+
+      .--za-composer-header {
+        padding: 8px 10px 0;
+        position: relative;
+        z-index: 3;
+      }
+
+      .--za-border{
+        inset: 0;
+        z-index: 0;
+        border-radius: 30px;
+        background: conic-gradient(
+            from 0deg,
+            transparent 0deg 55deg,
+            var(--vscode-focusBorder, var(--za-active-color-1)) 105deg,
+            var(--za-active-color-2) 160deg,
+            transparent 230deg 360deg
+        );
+        animation: spin var(--za-active-speed) linear infinite;
+        filter: blur(var(--za-active-blur, 50px));
+        opacity: 0;
+        &.--agent-running {
+          opacity: 1;
+        }
+      }
+
+      .--za-shell {
+        padding: 2px;
+        border-radius: calc( var(--za-radius) / 2);
+        z-index: 2;
+      }
+
       // bg:$background no-overflow zIndex:$max-z-index w:calc[100vw - 20px] m:0,auto
       .--za-composer-input{
         min-height: 75px !important;

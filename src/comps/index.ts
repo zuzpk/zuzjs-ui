@@ -21,6 +21,16 @@ export * from './Actionbar/types';
 export {
     default as AgentChat
 } from "./AgentChat"
+export type {
+    AgentActivityBlock,
+    AgentActivityOptions,
+    AgentApprovalOptions,
+    AgentChatBrand,
+    AgentToolInvocation,
+    AgentChatProps,
+    AgentComposerControls,
+    AgentComposerModel,
+} from "./AgentChat"
 
 /**
  * Inline alert feedback.

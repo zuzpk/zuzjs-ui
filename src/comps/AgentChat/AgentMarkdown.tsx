@@ -854,11 +854,11 @@ const comps: Record<string, React.FC<any>> = {
     
     return (
       <Flex cols
-        as={`--pre w:full minW:0 mv:20`} 
+        as={`--zuz-code-pre`}
         {...rest}>
         <Flex as={`--za-code-head`} aic>
           <Flex as={`flex:1`}>
-            <Text as={`s:9! dim-75 bold c:white`}>{displayName}</Text>
+            <Text as={`--za-ch-title`}>{displayName}</Text>
           </Flex>
           <Flex aic gap={10}>
             <Button

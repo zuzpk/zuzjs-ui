@@ -61,21 +61,21 @@ const CodeBlock = ({
                                 node.properties = node.properties || {};
                                 node.properties.class = 'shiki-code';
                             },
-                            line(node, line) {
-                                // Add line highlighting classes
-                                const lineNum = line + 1;
-                                // const isHighlighted = highlightedLines.has(lineNum);
+                            // line(node, line) {
+                            //     // Add line highlighting classes
+                            //     const lineNum = line + 1;
+                            //     // const isHighlighted = highlightedLines.has(lineNum);
                                 
-                                node.properties = node.properties || {};
-                                const existingClass = node.properties.class || '';
-                                node.properties.class = [
-                                    '--code-line',
-                                    showLines ? '--with-ln' : '',
-                                    // isHighlighted ? '--is-highlighted' : ''
-                                ].filter(Boolean).join(' ') + ' ' + existingClass;
+                            //     node.properties = node.properties || {};
+                            //     const existingClass = node.properties.class || '';
+                            //     node.properties.class = [
+                            //         '--code-line',
+                            //         showLines ? '--with-ln' : '',
+                            //         // isHighlighted ? '--is-highlighted' : ''
+                            //     ].filter(Boolean).join(' ') + ' ' + existingClass;
                                 
-                                node.properties['data-line'] = lineNum;
-                            }
+                            //     node.properties['data-line'] = lineNum;
+                            // }
                         }
                     ]
                 });

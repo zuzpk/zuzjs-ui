@@ -52,7 +52,9 @@ code {
             code {
                 font-family: inherit !important;
                 background: transparent !important;
-                line-height: var(--codeblock-lineheight);
+                height: fit-content;
+                display: flex;
+                // line-height: var(--codeblock-lineheight);
                 // Shiki tokens
                 .shiki {
                     background-color: transparent !important;
