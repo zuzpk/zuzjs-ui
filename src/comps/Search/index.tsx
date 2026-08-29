@@ -113,9 +113,11 @@ const Search = forwardRef<SearchHandler, SearchProps>((props, ref) => {
         onClick={handleActionClick}
         className={`--send flex aic jcc`}
         variant={variant || Variant.Medium}>
+        {/* <Box as={`--send-wrap`}> */}
         {query !== `` ?
             !hideClearIcon && (`string` === typeof clearIcon ? <Icon name={clearIcon} as={`--search-action`} /> : clearIcon) :
             !hideSearchIcon && (`string` === typeof searchIcon ? <Icon name={searchIcon} as={`--search-action`} /> : searchIcon)}
+        {/* </Box> */}
     </Button>
 
     return <Box

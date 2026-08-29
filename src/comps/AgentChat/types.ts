@@ -64,6 +64,25 @@ export type AgentActivityBlock = {
   done?: boolean;
 };
 
+export type AgentIcons = {
+  send?: string;
+  stop?: string;
+  model?: string;
+  thinking?: string;
+  add?: string;
+  list?: string;
+  todo?: string;
+  document?: string;
+  search?: string;
+  terminal?: string;
+  write?: string;
+  read?: string;
+  magic?: string;
+  copy?: string;
+  branch?: string;
+  done?: string;
+}
+
 export type AgentChatProps = {
   /** Controls the component density and maps to Zuz's standard size tokens. */
   variant?: ValueOf<typeof Variant>;
@@ -97,4 +116,5 @@ export type AgentChatProps = {
   scrollToLatestIcon?: string;
   /** Optional icon displayed by that button while an assistant message is streaming. */
   scrollToLatestBusyIcon?: string;
+  icons?: AgentIcons
 };

@@ -466,6 +466,18 @@ body{
         .--za-ca-l{
           flex: 1;
           gap: 8px;
+
+          .--za-action-add{
+            width: 24px;
+            aspect-ratio: 1 / 1;
+            font-size: var(--text-sm);
+            border-radius: var(--radius-md);
+            background: var(--za-action);
+            &:hover{
+              background: var(--za-action-hover);
+            }
+          }
+
         }
         .za-ca-r{
           

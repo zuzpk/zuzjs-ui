@@ -1,5 +1,5 @@
 "use client"
-import { CSSProperties, useMemo } from 'react';
+import { CSSProperties, useEffect, useMemo, useRef } from 'react';
 import Box from '../Box';
 import { TabBodyProps } from './types';
 
@@ -8,9 +8,24 @@ const TabBody = ({
     transitionType, 
     speed, 
     width, 
-    render, 
+    render,
+    index,
+    onHeightChange,
     content,
 } : TabBodyProps) => {
+
+    const body = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const element = body.current;
+        if (!element || !onHeightChange) return;
+
+        const updateHeight = () => onHeightChange(index, Math.ceil(element.getBoundingClientRect().height));
+        updateHeight();
+        const observer = new ResizeObserver(updateHeight);
+        observer.observe(element);
+        return () => observer.disconnect();
+    }, [index, onHeightChange]);
 
     const animationStyle = useMemo(() => {
 
@@ -46,7 +61,8 @@ const TabBody = ({
         // return { width, minWidth: width }; // Slide mode
     }, [isActive, transitionType, width, speed]);
 
-    return <Box 
+    return <Box
+        ref={body}
         style={{
             ...(animationStyle as CSSProperties)
         }} className="--content">

@@ -8,12 +8,12 @@ body{
     --search-send-bg: transparent;
     --search-send-border: 0px;
     
-    --search-send-size-xs: 18px;
-    --search-send-size-sm: 24px;
-    --search-send-size-md: 30px;
-    --search-send-size-lg: 36px;
-    --search-send-size-xl: 42px;
-    --search-send-size-xxl: 48px;
+    --search-send-size-xs: 14px;
+    --search-send-size-sm: 16px;
+    --search-send-size-md: 20px;
+    --search-send-size-lg: 24px;
+    --search-send-size-xl: 30px;
+    --search-send-size-xxl: 36px;
 
     --search-border-color: var(--border-primary);
     --search-border: 1px var(--search-border-color) solid;
@@ -47,6 +47,9 @@ body{
         svg{
             fill: var(--search-send-color) !important;
         }
+        .--send-wrap{
+            padding: var(--search-send-wrapper);
+        }
     }
 
     .--search-action{
@@ -71,6 +74,7 @@ body{
                 width: calc(var(--search-send-size-#{$size}, var(--search-send-size-md)) + (var(--padding-#{$size}-x, var(--padding-md-x)) * 2));
                 height: 100%;
                 background: transparent;
+                padding: 0px !important;
                 svg {
                     width: var(--search-send-size-#{$size}, var(--search-send-size-md));
                     height: var(--search-send-size-#{$size}, var(--search-send-size-md));

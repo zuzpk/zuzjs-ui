@@ -26,6 +26,7 @@ const Chat = ({
   renderComposerHeader,
   scrollToLatestBusyIcon,
   scrollToLatestIcon,
+  icons,
 }: Required<
   Pick<
     AgentChatProps,
@@ -47,6 +48,7 @@ const Chat = ({
     | "renderComposerHeader"
     | "scrollToLatestIcon"
     | "scrollToLatestBusyIcon"
+    | "icons"
   >) => {
   const previousConnectionState = useRef(connection?.state);
   useEffect(() => {
@@ -85,6 +87,7 @@ const Chat = ({
           onAdd={onAdd}
           addButtonTitle={addButtonTitle}
           header={renderComposerHeader}
+          icons={icons}
         />}
       </Flex>
     </Flex>
@@ -110,10 +113,11 @@ const AgentChat = ({
   renderComposerHeader,
   scrollToLatestIcon,
   scrollToLatestBusyIcon,
+  icons,
 }: AgentChatProps) => {
-  const pendingApproval = approval ?? (agent.permission ? {
+  const pendingApproval = approval ?? (agent.permission && agent.respondToPermission ? {
     request: agent.permission,
-    onRespond: ({ request, approved, response }) => agent.respondToPermission({
+    onRespond: ({ request, approved, response }) => agent.respondToPermission?.({
       permissionId: request.id,
       approved,
       response,
@@ -147,6 +151,7 @@ const AgentChat = ({
         renderComposerHeader={renderComposerHeader}
         scrollToLatestIcon={scrollToLatestIcon}
         scrollToLatestBusyIcon={scrollToLatestBusyIcon}
+        icons={icons}
       />
     </AgentChatProvider>
   );

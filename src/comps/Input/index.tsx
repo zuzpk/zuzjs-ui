@@ -32,7 +32,9 @@ const Input = ({ ref, ...props } : InputProps) => {
         variant, 
         numeric, 
         name,
-        onConfirm, 
+        onConfirm,
+        defaultValue,
+        value,
         ...pops 
     } = props
 
@@ -85,7 +87,7 @@ const Input = ({ ref, ...props } : InputProps) => {
         name={name}
         className={`--input --${variant || themeVariant || Variant.Medium} ${error ? '--has-error' : ''} --flex ${className}`.trim()}
         style={style}
-        defaultValue={formValue ?? props.defaultValue ?? ""}
+        {...(value === undefined ? { defaultValue: formValue ?? defaultValue ?? "" } : { value })}
         onInput={handleInput}
         onKeyDown={(e) => {
             if ( e.key == `Enter` ){

@@ -13,6 +13,10 @@ export interface TabBodyProps {
 
     render: boolean,
 
+    index: number,
+
+    onHeightChange?: (index: number, height: number) => void,
+
     content: string | ReactNode | ReactNode[]
 
 }
@@ -76,7 +80,7 @@ export type TabProps = {
 /**
  * Props for the TabView component.
  */
-export type TabViewProps = Omit<BoxProps, "onChange"> & {
+export type TabViewProps = Omit<BoxProps, "onChange" | "height"> & {
     /** Callback fired when the active tab changes. */
     onChange?: (tab: Tab, index: number) => void,
     /** 
@@ -98,6 +102,12 @@ export type TabViewProps = Omit<BoxProps, "onChange"> & {
     transitionType?: "slide" | "fade" | "scale",
 
     /** 
+     * Controls the tab body height.
+     * `fit-content` measures and animates to the active tab body's height.
+     * `max-content` grows to the tallest rendered tab body.
+     */
+    height?: "fit-content" | "max-content",
+    /**
      * Array of tab objects to render. 
      * @example tabs={[{ label: 'Tab 1', body: 'Content 1' }]}
      */

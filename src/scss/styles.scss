@@ -384,6 +384,7 @@ body {
     &.--jcc{justify-content: center;}
     &.--jce{justify-content: flex-end;}
     &.--jcs{justify-content: flex-start;}
+    &.--jcb{justify-content: space-between;}
     &.--wrap{flex-wrap: wrap;}
 }  
 .flex-inline{

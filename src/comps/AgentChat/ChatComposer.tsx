@@ -3,7 +3,7 @@ import Flex from "../Flex";
 import Grid from "../Grid";
 import TextArea from "../TextArea";
 import { AgentThinkingLevel } from "@zuzjs/hooks";
-import { AgentComposerControls } from "./types";
+import { AgentComposerControls, AgentIcons } from "./types";
 import { Option } from "../Select/types";
 import { ValueOf, Variant } from "../../types";
 import Button from "../Button";
@@ -11,6 +11,7 @@ import Select from "../Select";
 import SVGIcons from "../svgicons";
 import Box from "../Box";
 import type { ReactNode } from "react";
+import { Agent } from "http";
 
 const defaultModels: Option[] = [
   { value: "auto", label: "Auto", icon: "3dcube" },
@@ -31,6 +32,7 @@ const ChatComposer = ({
   addButtonTitle = "Add context",
   header,
   variant = Variant.Medium,
+  icons
 }: {
   busy: boolean;
   canCancel: boolean;
@@ -44,6 +46,7 @@ const ChatComposer = ({
   addButtonTitle?: string;
   header?: ReactNode;
   variant?: ValueOf<typeof Variant>;
+  icons?: AgentIcons;
 }) => {
   const models = useMemo<Option[]>(() => {
     const configured = controls?.models ?? [];
@@ -120,14 +123,15 @@ const ChatComposer = ({
               <Flex aic as="--za-ca-l">
                 {onAdd && (
                   <Button
-                    as="w:20! maxW:20! h:25! maxH:20! s:sm!"
+                    as="--za-action --za-action-add"
                     kind="ghost"
-                    icon="add"
+                    icon={icons?.add}
                     variant={variant}
                     disabled={busy}
                     onClick={() => void onAdd()}
-                    title={addButtonTitle}
-                  />
+                    title={addButtonTitle}>
+                    {(!icons || !icons.add) && SVGIcons.add}
+                  </Button>
                 )}
                 <Select
                   label="Model"

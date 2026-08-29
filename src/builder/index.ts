@@ -142,15 +142,24 @@ class Builder {
         const isMdx = filePath.endsWith('.mdx') || filePath.endsWith('.md');
         let sourceFile;
 
-        if ( isMdx ){
-            const fileContent = fs.readFileSync(filePath, "utf-8");
-            sourceFile = this.project.createSourceFile(filePath, fileContent, {
-                overwrite: true,
-                scriptKind: ScriptKind.TSX 
-            });
-        }else{
-            sourceFile = this.project.addSourceFileAtPath(filePath);
-            sourceFile.refreshFromFileSystemSync();
+        try {
+            if (isMdx) {
+                const fileContent = fs.readFileSync(filePath, "utf-8");
+                sourceFile = this.project.createSourceFile(filePath, fileContent, {
+                    overwrite: true,
+                    scriptKind: ScriptKind.TSX
+                });
+            } else {
+                sourceFile = this.project.addSourceFileAtPath(filePath);
+                sourceFile.refreshFromFileSystemSync();
+            }
+        } catch (error: any) {
+            // A watcher can observe inaccessible documentation or transient editor
+            // files. Skip that file without taking down CSS generation for the app.
+            if (error?.code === "EACCES" || error?.code === "ENOENT") {
+                return;
+            }
+            throw error;
         }
 
         // Use a broader filter to catch BOTH <Box>...</Box> and <Box />
@@ -278,10 +287,16 @@ class Builder {
         const activeCache = styleGenerator.getCache();
         const cleanManifest: Record<string, string> = {};
 
-        for (const [token, hash] of Object.entries(this.manifest)) {
-            // Only keep if the hash produced is currently in the active CSS generator
-            if (activeCache.has(hash)) {
-                cleanManifest[token] = hash;
+        for (const [token, hashes] of Object.entries(this.manifest)) {
+            // A grouped utility can map to multiple atomic hashes. Retain it only
+            // when every generated rule is still available in the active cache.
+            const isActive = hashes
+                .split(/\s+/)
+                .filter(Boolean)
+                .every(hash => activeCache.has(hash));
+
+            if (isActive) {
+                cleanManifest[token] = hashes;
             }
         }
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { AgentToolInvocation } from '@zuzjs/hooks';
+import type { AgentToolInvocation } from './types';
 import Flex from '../Flex';
 import Icon from '../Icon';
 import Text from '../Text';

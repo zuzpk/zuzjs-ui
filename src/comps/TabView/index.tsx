@@ -1,7 +1,7 @@
 "use client"
 import { uuid } from "@zuzjs/core";
 import { useResizeObserver } from "@zuzjs/hooks";
-import { Ref, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { Ref, useCallback, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useBase } from "../../hooks";
 import Box from "../Box";
 import Segmented from "../Segmented";
@@ -43,11 +43,13 @@ const TabView = ({
         variant,
         tabStyle = `fixed`, 
         onChange,
-        transitionType = "slide", 
+        transitionType = "slide",
+        height,
         ...rest 
     } = props;
 
     const [activeTab, setActiveTab] = useState(0);
+    const [tabHeights, setTabHeights] = useState<Record<number, number>>({});
     const tabview = useRef<HTMLDivElement>(null)
     const size = useResizeObserver(tabview)
     const tabViewID = useMemo(() => uuid(8), [])
@@ -70,6 +72,15 @@ const TabView = ({
         as: `flex cols w-full no-overflow ${rest.as || ""}`,
         ...rest
     });
+
+    const setTabHeight = useCallback((index: number, measuredHeight: number) => {
+        setTabHeights((current) => current[index] === measuredHeight ? current : { ...current, [index]: measuredHeight });
+    }, []);
+    const tabBodyHeight = height === "fit-content"
+        ? tabHeights[activeTab]
+        : height === "max-content"
+            ? Math.max(0, ...Object.values(tabHeights))
+            : undefined;
 
     const getTrackStyle = () => {
 
@@ -117,10 +128,13 @@ const TabView = ({
 
         <Box 
             className={`--tabview-body`} 
-            style={{ 
+            style={{
                 display: 'grid',
-                gridTemplateRows: hasMeasured ? '1fr' : '0fr',
-                transition: hasMeasured ? `grid-template-rows ${speed}s cubic-bezier(0.4, 0, 0.2, 1)` : 'none',
+                gridTemplateRows: tabBodyHeight === undefined ? (hasMeasured ? '1fr' : '0fr') : 'auto',
+                height: tabBodyHeight === undefined ? undefined : `${tabBodyHeight}px`,
+                transition: hasMeasured
+                    ? `height ${speed}s cubic-bezier(0.4, 0, 0.2, 1), grid-template-rows ${speed}s cubic-bezier(0.4, 0, 0.2, 1)`
+                    : 'none',
                 overflow: 'hidden',
             }}>
             <Box style={{ overflow: 'hidden', position: 'relative' }}>
@@ -136,6 +150,8 @@ const TabView = ({
                         speed={speed}
                         width={size.width}
                         render={prerender || index === activeTab}
+                        index={index}
+                        onHeightChange={setTabHeight}
                         content={tab.body}
                     />)}
             </Box>
