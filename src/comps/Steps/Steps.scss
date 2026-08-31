@@ -1,0 +1,57 @@
+@use "../../scss/variables";
+
+body {
+    --step: var(--surface);
+    --step-border-width: 2px;
+    --step-border-color: var(--text-primary);
+    --step-border-style: solid;
+    --step-line-height: 2px;
+    --step-gap: 15px;
+}
+
+.--stepper {
+
+    width: 100%;
+    gap: var(--step-gap);
+
+    @each $size in variables.$sizes {
+        &.--#{$size}{
+            --step-size: 40px;
+            --step-label-size: var(--text-#{$size});
+        }
+    }
+
+    .--step-item{
+
+        opacity: 0.5;
+
+        &.--current{
+            opacity: 1;
+        }
+
+        &:not(:last-child){
+            flex: 1;
+        }
+
+        .--step {
+            width: var(--step-size);
+            border: var(--step-border-width) var(--step-border-color) var(--step-border-style);
+            border-radius: 50%;
+            background: var(--step);
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            background: rgb(from var(--step-border-color) r g b / 0.1);
+        }
+
+        .--step-label {
+            font-size: var(--step-label-size);
+        }
+
+        .--step-line {
+            height: var(--step-line-height);
+            flex: 1;
+            background: var(--step-border-color);
+        }
+
+    }
+}

@@ -526,6 +526,16 @@ export { default as Slider } from './Slider';
 export type * from "./Slider/types";
 
 /**
+ * Step progress indicator.
+ * @example
+ * ```tsx
+ * <Steps steps={[{ label: "Step 1" }, { label: "Step 2" }]} current={0} />
+ * ```
+ */
+export { default as Steps } from './Steps';
+export * from './Steps/types';
+
+/**
  * Inline text span primitive.
  * @example
  * ```tsx

@@ -6,7 +6,6 @@
     "module": "ESNext",
     "strict": true,
     "esModuleInterop": true,
-    "downlevelIteration": true,
     "preserveWatchOutput": true,
     "outDir": "dist/cjs",
     "rootDir": "./src",
@@ -20,7 +19,7 @@
     "removeComments": false,
     "allowImportingTsExtensions": false,
     "noEmit": false,
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": "6.0"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "src/**/_*.*"]

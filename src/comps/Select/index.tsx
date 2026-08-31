@@ -63,7 +63,7 @@ const Select = (({
         options,
         label,
         name,
-        kind = "surface",
+        kind = `solid`,
         variant,
         searchVariant,
         search: withSearch,
