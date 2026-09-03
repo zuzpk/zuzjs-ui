@@ -164,7 +164,7 @@
     },
     {
       "name": "Input",
-      "description": "Text input field. Integrates with Form context for validation.",
+      "description": "Text input field. Integrates with Form context for validation. Supports advanced masking with pattern validation (0=numeric, A=alphabetic, Z=alphanumeric, S=any).",
       "import": "Input",
       "extends": "Props<input>",
       "props": [
@@ -172,9 +172,20 @@
         { "name": "numeric", "type": "boolean", "description": "Restricts input to numbers." },
         { "name": "variant", "type": "Variant", "description": "Size variant." },
         { "name": "with", "type": "WithFormValidation", "description": "Validation rules object." },
-        { "name": "onConfirm", "type": "(value: string) => void", "description": "Fires on Enter/Return." }
+        { "name": "onConfirm", "type": "(value: string) => void", "description": "Fires on Enter/Return." },
+        { 
+          "name": "mask", 
+          "type": "InputMaskOptions", 
+          "description": "Mask configuration object with pattern validation. Pattern chars: '0'=numeric(0-9), 'A'=alphabetic(a-z,A-Z), 'Z'=alphanumeric(a-z,A-Z,0-9), 'S'=any. Other chars are fixed separators.",
+          "props": [
+            { "name": "mask", "type": "string", "description": "Pattern string: '0'=numeric, 'A'=alpha, 'Z'=alphanumeric, 'S'=any, others=separators. Example: '000A-BB123' validates 3 digits, 1 letter, separator, 2 letters, then '123' literal." },
+            { "name": "placeholder", "type": "string", "description": "Custom placeholder display. Defaults to showing pattern chars. Example: mask='000-00-0000' placeholder='___-__-____' " },
+            { "name": "showMaskOnFocus", "type": "boolean", "description": "Show mask pattern on focus (default: true)." },
+            { "name": "clearMaskOnBlur", "type": "boolean", "description": "Clear incomplete masks on blur (default: false)." }
+          ]
+        }
       ],
-      "example": "<Input name=\"email\" placeholder=\"Email\" variant=\"md\" />"
+      "example": "<Input mask={{ mask: '(000) 000-0000' }} placeholder=\"Phone Number\" />"
     },
     {
       "name": "Password",
