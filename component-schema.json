@@ -699,14 +699,34 @@
     },
     {
       "name": "AutoComplete",
-      "description": "Input with suggestion dropdown.",
+      "description": "Input with suggestion dropdown. Supports static data array or dynamic API fetching with @zuzjs/core.",
       "import": "AutoComplete",
       "extends": "InputProps",
       "props": [
-        { "name": "options", "type": "string[]", "description": "Suggestion list." },
-        { "name": "onSelect", "type": "(value: string) => void", "description": "Fires when a suggestion is chosen." }
+        { "name": "data", "type": "string[]", "description": "Static array of suggestion strings." },
+        { 
+          "name": "dynamic", 
+          "type": "AutoCompleteDynamicOptions", 
+          "description": "Dynamic API configuration for server-side search.",
+          "props": [
+            { "name": "action", "type": "string", "required": true, "description": "API endpoint URL to fetch suggestions." },
+            { "name": "method", "type": "'GET' | 'POST'", "description": "HTTP method (default: 'POST')." },
+            { "name": "queryParam", "type": "string", "description": "Query parameter name for search (default: 'query')." },
+            { "name": "params", "type": "dynamic", "description": "Additional data to send with request." },
+            { "name": "transformResponse", "type": "(data: dynamic) => string[]", "description": "Transform API response to string array. Default expects {items: string[]}." },
+            { "name": "minChars", "type": "number", "description": "Minimum characters before searching (default: 1)." },
+            { "name": "debounce", "type": "number", "description": "Debounce delay in ms (default: 250)." }
+          ]
+        },
+        { "name": "action", "type": "string", "description": "DEPRECATED: Use dynamic.action instead. Legacy API endpoint." },
+        { "name": "onSelect", "type": "(value: string) => void", "description": "Callback when a suggestion is selected." },
+        { "name": "onChange", "type": "(value: string) => void", "description": "Callback when input value changes." },
+        { "name": "renderOption", "type": "(option: string, index: number) => ReactNode", "description": "Custom renderer for suggestion items." },
+        { "name": "loadingPlaceholder", "type": "string", "description": "Placeholder during loading (default: 'Loading...')." },
+        { "name": "emptyPlaceholder", "type": "string", "description": "Placeholder when no results (default: 'No results found')." },
+        { "name": "withStyle", "type": "string", "description": "Custom styling for autocomplete container." }
       ],
-      "example": "<AutoComplete options={countries} onSelect={setCountry} />"
+      "example": "<AutoComplete dynamic={{ action: '/api/search', transformResponse: (d) => d.items }} onSelect={setCountry} />"
     },
     {
       "name": "DatePicker",

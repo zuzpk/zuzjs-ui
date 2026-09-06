@@ -75,12 +75,14 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
     useEffect(() => {
         if (typeof dateValue !== "undefined") {
             setCurrentDate(dateValue);
+            onDateChange?.(dateValue);
         }
     }, [dateValue]);
 
     useEffect(() => {
         if (typeof rangeValue !== "undefined") {
             setCurrentRange(rangeValue);
+            onRangeChange?.(rangeValue);
         }
     }, [rangeValue]);
 

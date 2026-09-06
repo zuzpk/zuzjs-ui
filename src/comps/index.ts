@@ -293,6 +293,7 @@ export * from './Flex/types';
  */
 export { default as Form } from './Form';
 export * from './Form/types';
+export { useForm } from './Form/context';
 
 /**
  * Grid layout primitive.
