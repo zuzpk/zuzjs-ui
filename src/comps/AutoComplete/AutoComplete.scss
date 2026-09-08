@@ -1,87 +1,103 @@
 @use "../../scss/mixins.scss" as *;
+@use "../../scss/variables";
 
-:root{
-    --autocomplete-arrow: #111;
-    --autocomplete-arrow-size-sm: 40px;
-    --autocomplete-arrow-size-md: 24px;
-    --autocomplete-arrow-size-lg: 30px;
-
-    --autocomplete-item-hover: #d4d4d4;
+body {
+    --autocomplete-arrow-width: 16px;
+    --autocomplete-arrow: var(--text-primary);
+    --select-option-hover: var(--background);
 }
 
 .--autocomplete{
-
+    
     width: 100%;
-    background: var(--input);
+    background: var(--autocomplete, var(--input));
+    border: var(--autocomplete-border, var(--input-border));
     z-index: 2;
+    
+    .--input {
+        --input-border-custom: 0px;
+        flex: 1;
+        width: 100%;
+    }
 
     .--arrow{
+        width: var(--autocomplete-arrow-width);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
         svg{
             fill: var(--autocomplete-arrow);
         }
-    }
-
-    &.--sm{
-        border-radius: var(--input-radius-sm);
-        .--suggestion-list{
-            border-radius: var(--input-radius-sm);
-        }
-        .--arrow{
-            width: var(--autocomplete-arrow-size-sm);
-            svg{
-                width: calc( var(--autocomplete-arrow-size-sm) / 2.5 );
-            }
-        }
-        .--input{
-            width: calc( 100% - var(--autocomplete-arrow-size-sm) );
-        }
-    }
-    &.--md{
-        border-radius: var(--input-radius-md);
-        .--suggestion-list{
-            border-radius: var(--input-radius-md);
-        }
-        .--arrow{
-            width: var(--autocomplete-arrow-size-md);
-            svg{
-                width: calc( var(--autocomplete-arrow-size-md) / 2.5 );
-            }
-        }
-        .--input{
-            width: calc( 100% - var(--autocomplete-arrow-size-md) );
-        }
-    } 
-    &.--lg{
-        border-radius: var(--input-radius-lg);
-        .--suggestion-list{
-            border-radius: var(--input-radius-lg);
-        }
-        .--arrow{
-            width: var(--autocomplete-arrow-size-lg);
-            svg{
-                width: calc( var(--autocomplete-arrow-size-lg) / 2.5 );
-            }
-        }
-        .--input{
-            width: calc( 100% - var(--autocomplete-arrow-size-lg) );
+        
+        .--spinner{
+            font-size: 14px;
         }
     }
 
-    .--suggestion-list{
-        left: 0px;
-        right: 0px;
-        background: var(--input);
-        z-index: 2;
-        padding: 8px 0px;
-        overflow-x: hidden;
-        li{
+    @each $size in variables.$sizes {
+        &.--#{$size}{
+            padding-right: var(--padding-#{$size}-x);
+            border-radius: var(--radius-#{$size});
+            
+            .--autocomplete-options.--#{$size}, 
+            .--autocomplete-options-list.--#{$size}{
+                border-radius: calc(var(--radius-#{$size}));
+                li {
+                    padding: var(--padding-#{$size});
+                }
+
+            }   
+        }
+    }
+
+}
+
+.--autocomplete-options {
+
+    backdrop-filter: blur(10px) saturate(0);
+    left: 0;
+    width: fit-content;
+    min-width: anchor-size(width);
+    max-height: var(--autocomplete-options-max-height, 400px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    touch-action: pan-y;
+    gap: 2px;
+    background: var(--autocomplete-options, var(--surface));
+    box-shadow: var(--autocomplete-shadow);
+    z-index: var(--max-z-index);
+    scrollbar-color: var(--scrollbar-color);
+    overscroll-behavior-y: contain;
+    border: var(--autocomplete-border, 1px var(--border-primary) solid);
+
+    .--list {
+        gap: var(--autocomplete-list-gap, 2px);
+        li {
+            --list-drop-highlight-duration: 60ms;
             cursor: pointer;
             &:hover{
-                background: var(--autocomplete-item-hover);
+                background: var(--select-option-hover);
             }
-            &.--current{
-                background: var(--autocomplete-item-hover);
+            &.--current {
+                background: var(--select-option-hover);
             }
+        }
+    }
+
+    @each $size in variables.$sizes {
+        &.--#{$size}{
+            
+            border-radius: var(--radius-#{$size});
+            padding: var(--autocomplete-options-padding, 4px 2px);
+
+            .--list{
+                li {
+                    padding: calc( var(--padding-#{$size}-x) / 1.5) calc( var(--padding-#{$size}-y) / 1.5);
+                    border-radius: var(--radius-#{$size});
+                }
+            }
+
         }
     }
 

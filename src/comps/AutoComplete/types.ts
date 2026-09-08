@@ -52,7 +52,7 @@ export type AutoCompleteDynamicOptions = {
     debounce?: number;
 }
 
-export type AutoCompleteProps = InputProps & {
+export type AutoCompleteProps = Omit<InputProps, 'onSelect'> & {
     /**
      * Data source for suggestions
      * 
@@ -130,6 +130,18 @@ export type AutoCompleteProps = InputProps & {
     onChange?: (value: string) => void;
     
     /**
+     * Callback when input value changes
+     */
+    clearOnSelect?: boolean;
+
+    /**
+     * When true, Enter commits the current input value as a string even if it
+     * is not in the suggestion list. `onSelect` receives that string (and a
+     * `{ [dataKey]: value }` object). List picks still send the matched item.
+     */
+    allowCustom?: boolean;
+    
+    /**
      * Custom renderer for suggestion items
      * Receives the suggestion string and index
      * For dynamic objects, item parameter contains the full object
@@ -147,4 +159,9 @@ export type AutoCompleteProps = InputProps & {
      * @default 'No results found'
      */
     emptyPlaceholder?: string;
+
+    /**
+     * Max Height
+     */
+    maxHeight?: number;
 }

@@ -1,16 +1,20 @@
 "use client"
 import { _, clamp, uuid, withPost, withGet, dynamic } from "@zuzjs/core";
-import { useDebounce } from "@zuzjs/hooks";
-import { forwardRef, KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useAnchor, useDebounce } from "@zuzjs/hooks";
+import { forwardRef, KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import useBase from "../../hooks/useBase";
-import { Props } from "../../types";
-import { TRANSITION_CURVES, TRANSITIONS, Variant } from "../../types/enums";
+import { useTheme } from "../../hooks/useColorScheme";
+import { Props, Variant } from "../../types";
+import { TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
 import Box from "../Box";
 import Input from "../Input";
 import List from "../List";
 import { ListHandler } from "../List/types";
 import SVGIcons from "../svgicons";
 import { AutoCompleteProps } from "./types";
+
+const SELECT_OPEN_EVENT = "zuz-select-open";
 
 /**
  * AutoComplete component with support for static and dynamic data.
@@ -76,15 +80,19 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
         dynamic: dynamicConfig,
         withStyle,
         onSelect,
+        clearOnSelect,
+        allowCustom,
         onChange,
         renderOption,
         loadingPlaceholder = 'Loading...',
         emptyPlaceholder = 'No results found',
+        maxHeight,
         ...pops
     } = props
 
     const { className: autoCompleteStyle } = useBase({ as: withStyle || `` } as Props<`div`>)
     const { style } = useBase(pops)
+    const { variant: themeVariant } = useTheme(true)!
 
     const [choosing, setChoosing] = useState(false)
     const [items, setItems] = useState<string[]>([])
@@ -93,14 +101,35 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
     const [error, setError] = useState<string | null>(null)
 
     const innerRef = useRef<HTMLInputElement>(null)
-    const autoRef = useRef<HTMLDivElement>(null)
     const suggestionRef = useRef<ListHandler>(null)
+    const _container = useRef<HTMLDivElement>(null)
+    const _pop = useRef<HTMLDivElement>(null)
+    const committingRef = useRef(false)
+    const propsRef = useRef(props)
+    const itemsRef = useRef<string[]>([])
+    const rawItemsRef = useRef<dynamic[]>([])
+    const lastSuggestionsRef = useRef<string[]>([])
+    const lastRawSuggestionsRef = useRef<dynamic[]>([])
+    const lastQueryRef = useRef<string | null>(null)
+    const highlightedIndexRef = useRef<number | null>(null)
+    const loadingRef = useRef(false)
+    const errorRef = useRef<string | null>(null)
+
+    propsRef.current = props
 
     const _id = useMemo(() => pops.name || uuid(12), [])
     const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
     const [lastQuery, setLastQuery] = useState<string | null>(null);
     const [lastSuggestions, setLastSuggestions] = useState<string[]>([]);
     const [lastRawSuggestions, setLastRawSuggestions] = useState<dynamic[]>([]);
+
+    itemsRef.current = items
+    rawItemsRef.current = rawItems
+    lastSuggestionsRef.current = lastSuggestions
+    lastRawSuggestionsRef.current = lastRawSuggestions
+    lastQueryRef.current = lastQuery
+    loadingRef.current = loading
+    errorRef.current = error
 
     // Resolve action URL - prioritize dynamic.action over legacy action prop
     const actionUrl = dynamicConfig?.action || legacyAction || null;
@@ -193,6 +222,7 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
         } finally {
             setLoading(false);
             setHighlightedIndex(null);
+            highlightedIndexRef.current = null;
         }
     };
 
@@ -213,6 +243,8 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
             return;
         }
 
+        setChoosing(true);
+
         if (actionUrl) {
             // Dynamic API search
             fetchSuggestions(value.trim());
@@ -225,129 +257,176 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
             setLastSuggestions(filtered);
             setLastRawSuggestions(raw);
             setHighlightedIndex(null);
+            highlightedIndexRef.current = null;
         }
     }
 
     const debounce = useDebounce(handleChange, debounceMs)
 
-    const handlePosition = () => {
-        if (autoRef.current) {
-            const boundingBox = autoRef.current.getBoundingClientRect();
-            const spaceBelow = window.innerHeight - boundingBox.bottom;
-            const spaceAbove = boundingBox.top;
+    const getCurrentSuggestions = useCallback(() => {
+        const currentItems = itemsRef.current.length > 0 ? itemsRef.current : lastSuggestionsRef.current;
+        const currentRaw = rawItemsRef.current.length > 0 ? rawItemsRef.current : lastRawSuggestionsRef.current;
+        return { currentItems, currentRaw };
+    }, []);
 
-            if (suggestionRef.current?.element) {
-                const suggestionList = suggestionRef.current.element;
-                if (spaceBelow < suggestionList.offsetHeight && spaceAbove > spaceBelow) {
-                    suggestionList.style.top = 'auto';
-                    suggestionList.style.bottom = `${boundingBox.height}px`;
-                    suggestionList.style.maxHeight = `${spaceAbove - 150}px`;
-                } else {
-                    suggestionList.style.top = `${boundingBox.height + 5}px`;
-                    suggestionList.style.bottom = 'auto';
-                    suggestionList.style.maxHeight = `${spaceBelow - 150}px`;
-                }
-            }
-        }
-    };
+    const commitSelection = useCallback((item: string, rawItem?: dynamic) => {
+        if (!item || committingRef.current) return;
+        committingRef.current = true;
 
-    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (items.length > 0) {
-            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            if (e.key === 'Escape') {
-                setHighlightedIndex(null);
-                setChoosing(false);
-                setItems([]);
-                setRawItems([]);
-            }
-            else if (e.key === 'ArrowDown') {
-                setHighlightedIndex((prevIndex) => {
-                    const newIndex = prevIndex === null || prevIndex === items.length - 1 ? 0 : prevIndex + 1;
-                    updateInputValue(newIndex);
-                    return newIndex;
-                });
-            } else if (e.key === 'ArrowUp') {
-                setHighlightedIndex((prevIndex) => {
-                    const newIndex = prevIndex === null || prevIndex === 0 ? items.length - 1 : prevIndex - 1;
-                    updateInputValue(newIndex);
-                    return newIndex;
-                });
-            } else if (e.key === 'Enter' && highlightedIndex !== null) {
-                const selectedItem = items[highlightedIndex];
-                const selectedRaw = rawItems[highlightedIndex];
-                if (innerRef.current) {
-                    innerRef.current.value = selectedItem;
-                    setChoosing(false);
-                    setItems([]);
-                    setRawItems([]);
-                    onSelect?.(selectedItem, selectedRaw);
-                }
-            }
-        }
-    };
+        const {
+            onSelect: select,
+            onChange: change,
+            clearOnSelect: shouldClear,
+        } = propsRef.current;
 
-    const handleMouseSelect = (item: string, rawItem: dynamic) => {
         if (innerRef.current) {
-            innerRef.current.value = item;
-            setChoosing(false);
-            setItems([]);
-            setRawItems([]);
-            onSelect?.(item, rawItem);
+            innerRef.current.value = shouldClear === true ? `` : item;
         }
-    };
 
-    const updateInputValue = (index: number) => {
-        const selectedItem = items[index];
+        setChoosing(false);
+        setItems([]);
+        setRawItems([]);
+        setHighlightedIndex(null);
+        highlightedIndexRef.current = null;
+
+        select?.(item, rawItem);
+        if (shouldClear === true) change?.(``);
+    }, []);
+
+    const updateInputValue = useCallback((index: number) => {
+        const { currentItems } = getCurrentSuggestions();
+        const selectedItem = currentItems[index];
         if (selectedItem && innerRef.current) {
             innerRef.current.value = selectedItem;
-            // Move cursor to the end of the input value
             innerRef.current.setSelectionRange(selectedItem.length, selectedItem.length);
         }
-        // Auto-scroll the suggestion list to the selected index
-        if (suggestionRef.current?.element) {
-            const suggestionList = suggestionRef.current.element;
-            const selectedItemElement = suggestionList.children[index] as HTMLElement;
-            if (selectedItemElement) {
-                selectedItemElement.scrollIntoView({ block: 'nearest' });
-            }
-        }
-    };
+        const selectedItemElement = _pop.current?.querySelectorAll(`li`)[index] as HTMLElement | undefined;
+        selectedItemElement?.scrollIntoView({ block: 'nearest' });
+    }, [getCurrentSuggestions]);
 
-    const handleClickOutside = (event: MouseEvent) => {
-        if (autoRef.current && !autoRef.current.contains(event.target as Node)) {
+    const handleKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
+        const { currentItems, currentRaw } = getCurrentSuggestions();
+        const typed = (innerRef.current?.value ?? ``).trim();
+        const allowCustom = propsRef.current.allowCustom === true;
+
+        if (e.key === 'Enter') {
+            const highlighted = highlightedIndexRef.current;
+            const pick = highlighted !== null && currentItems[highlighted] !== undefined
+                ? highlighted
+                : currentItems.findIndex((value) => value === typed);
+
+            if (pick >= 0 && currentItems[pick] !== undefined) {
+                e.preventDefault();
+                e.stopPropagation();
+                commitSelection(currentItems[pick], currentRaw[pick]);
+                return;
+            }
+
+            if (allowCustom && typed) {
+                e.preventDefault();
+                e.stopPropagation();
+                const key = propsRef.current.dataKey || `name`;
+                commitSelection(typed, { [key]: typed });
+            }
+            return;
+        }
+
+        if (currentItems.length === 0 && !lastQueryRef.current) return;
+
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        if (e.key === 'Escape') {
+            setHighlightedIndex(null);
+            highlightedIndexRef.current = null;
             setChoosing(false);
             setItems([]);
             setRawItems([]);
+            return;
         }
-    };
 
-    const handleFocus = () => {
-        if (innerRef.current && innerRef.current.value === lastQuery) {
-            setItems(lastSuggestions);
-            setRawItems(lastRawSuggestions);
+        if (e.key === 'ArrowDown') {
+            setHighlightedIndex((prevIndex) => {
+                const newIndex = prevIndex === null || prevIndex === currentItems.length - 1 ? 0 : prevIndex + 1;
+                highlightedIndexRef.current = newIndex;
+                updateInputValue(newIndex);
+                return newIndex;
+            });
+            return;
+        }
+
+        if (e.key === 'ArrowUp') {
+            setHighlightedIndex((prevIndex) => {
+                const newIndex = prevIndex === null || prevIndex === 0 ? currentItems.length - 1 : prevIndex - 1;
+                highlightedIndexRef.current = newIndex;
+                updateInputValue(newIndex);
+                return newIndex;
+            });
+            return;
+        }
+    }, [commitSelection, getCurrentSuggestions, updateInputValue]);
+
+    const handleOptionPointer = useCallback((index: number) => {
+        if (loadingRef.current || errorRef.current) return;
+        const { currentItems, currentRaw } = getCurrentSuggestions();
+        const item = currentItems[index];
+        if (!item) return;
+        commitSelection(item, currentRaw[index]);
+    }, [commitSelection, getCurrentSuggestions]);
+
+    const handleFocus = useCallback(() => {
+        if (innerRef.current && innerRef.current.value === lastQueryRef.current && lastSuggestionsRef.current.length > 0) {
+            setChoosing(true);
+            setItems(lastSuggestionsRef.current);
+            setRawItems(lastRawSuggestionsRef.current);
             setHighlightedIndex(null);
-            handlePosition();
+            highlightedIndexRef.current = null;
         }
-    };
+    }, []);
 
-    useEffect(() => {
-        window.addEventListener('resize', handlePosition);
-        window.addEventListener('scroll', handlePosition, true);
-        document.addEventListener('mousedown', handleClickOutside);
+    const shouldShowDropdown = useMemo(() => {
+        if (!choosing) return false;
+        if (loading) return true;
+        if (error) return true;
+        if (items.length > 0) return true;
+        if (lastSuggestions.length > 0) return true;
+        if (lastQuery) return true;
+        return false;
+    }, [choosing, loading, error, items.length, lastSuggestions.length, lastQuery]);
 
-        return () => {
-            window.removeEventListener('resize', handlePosition);
-            window.removeEventListener('scroll', handlePosition, true);
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [])
+    const trigger = useMemo(() => (
+        <Box
+            ref={_container}
+            style={style}
+            className={`--autocomplete --autocomplete-anchor --${pops.size || themeVariant || Variant.Medium} flex aic rel ${autoCompleteStyle}`.trim()}
+        >
+            <Input
+                {...pops}
+                ref={innerRef}
+                autoComplete="off"
+                onChange={debounce}
+                onKeyDown={handleKeyDown}
+                onFocus={handleFocus} />
 
-    useEffect(() => {
-        handlePosition()
-    }, [items])
+            <Box className={`--arrow rel flex aic jcc`}>
+                {loading ? (
+                    <span className="--spinner">⏳</span>
+                ) : shouldShowDropdown ? (
+                    SVGIcons.arrowUp
+                ) : (
+                    SVGIcons.arrowDown
+                )}
+            </Box>
+        </Box>
+    ), [style, pops, autoCompleteStyle, themeVariant, loading, shouldShowDropdown, debounce, handleKeyDown, handleFocus]);
+
+    const { root, canUseDocument, floatingRef, floatingStyle, isPositioned, anchorRef } = useAnchor(trigger, '--autocomplete-anchor', {
+        preferredPlacement: 'bottom',
+        margin: 2,
+        open: choosing,
+    });
 
     // Build suggestion list items
     const suggestionItems = useMemo(() => {
@@ -367,7 +446,10 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
             }];
         }
 
-        if (items.length === 0 && lastQuery) {
+        const currentItems = items.length > 0 ? items : lastSuggestions;
+        const currentRaw = rawItems.length > 0 ? rawItems : lastRawSuggestions;
+
+        if (currentItems.length === 0 && lastQuery) {
             return [{
                 label: emptyPlaceholder,
                 onClick: () => {},
@@ -375,13 +457,8 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
             }];
         }
 
-        return items.map((item, index) => ({
-            label: renderOption ? renderOption(item, index, rawItems[index]) : item,
-            onClick: (e: any) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleMouseSelect(item, rawItems[index]);
-            },
+        return currentItems.map((item, index) => ({
+            label: renderOption ? renderOption(item, index, currentRaw[index]) : item,
             className: highlightedIndex === index ? '--current' : '',
             animate: {
                 transition: TRANSITIONS.SlideInBottom,
@@ -389,40 +466,126 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
                 delay: clamp(0.02 * index, 0.02, 0.5)
             }
         }));
-    }, [items, rawItems, loading, error, highlightedIndex, lastQuery, loadingPlaceholder, emptyPlaceholder]);
+    }, [items, rawItems, loading, error, highlightedIndex, lastQuery, lastSuggestions, lastRawSuggestions, loadingPlaceholder, emptyPlaceholder, renderOption]);
 
-    return <Box
-        style={style}
-        ref={autoRef}
-        className={`--autocomplete --${props.size || Variant.Small} flex aic rel ${autoCompleteStyle}`.trim()}>
+    useEffect(() => {
+        if (choosing) committingRef.current = false;
+    }, [choosing]);
 
-        <Input
-            ref={innerRef}
-            autoComplete="off"
-            onChange={debounce}
-            onKeyDown={handleKeyDown}
-            onFocus={handleFocus}
-            {...pops} />
+    useEffect(() => {
+        if (!choosing) return;
 
-        <Box className={`--arrow rel flex aic jcc`}>
-            {loading ? (
-                <span className="--spinner">⏳</span>
-            ) : items.length > 0 ? (
-                SVGIcons.arrowUp
-            ) : (
-                SVGIcons.arrowDown
-            )}
-        </Box>
+        const handleOutsidePointerDown = (e: MouseEvent) => {
+            const target = e.target as Node | null;
+            if (!target) return;
+            const el = target instanceof Element ? target : target.parentElement;
+            const clickedInsideTrigger = Boolean(
+                _container.current?.contains(target) ||
+                anchorRef.current?.contains(target)
+            );
+            const clickedInsidePop = Boolean(
+                _pop.current?.contains(target) ||
+                el?.closest(`.--autocomplete-options`)
+            );
+            if (!clickedInsideTrigger && !clickedInsidePop) {
+                setChoosing(false);
+                setHighlightedIndex(null);
+                highlightedIndexRef.current = null;
+            }
+        };
 
-        { (items.length > 0 || loading || (error !== null) || (lastQuery && items.length === 0)) &&
+        document.addEventListener("mousedown", handleOutsidePointerDown, true);
+
+        return () => {
+            document.removeEventListener("mousedown", handleOutsidePointerDown, true);
+        };
+    }, [choosing, anchorRef]);
+
+    useEffect(() => {
+        const onSelectOpen = (e: Event) => {
+            const detail = (e as CustomEvent<{ id?: string }>).detail;
+            if (!detail?.id) return;
+            if (detail.id === _id) return;
+            setChoosing(false);
+        };
+
+        document.addEventListener(SELECT_OPEN_EVENT, onSelectOpen as EventListener);
+        return () => {
+            document.removeEventListener(SELECT_OPEN_EVENT, onSelectOpen as EventListener);
+        };
+    }, [_id]);
+
+    useEffect(() => {
+        if (!choosing) return;
+        document.dispatchEvent(new CustomEvent(SELECT_OPEN_EVENT, { detail: { id: _id } }));
+    }, [choosing, _id]);
+
+    // Options list (portal)
+    const optionsList = (
+        <Box
+            id={_id}
+            className={`--autocomplete-options --suggestion-list --${pops.size || themeVariant || Variant.Medium} --allow-scroll flex cols fixed zIndex:var(--max-z-index)`}
+            aria-hidden={!choosing}
+            style={{
+                ...floatingStyle,
+                visibility: shouldShowDropdown && isPositioned ? "visible" : "hidden",
+                pointerEvents: shouldShowDropdown && isPositioned ? "auto" : "none",
+                minWidth: "anchor-size(width)",
+                maxHeight: maxHeight || 'auto',
+            }}
+            ref={(node) => {
+                _pop.current = node;
+                floatingRef.current = node;
+            }}
+            fx={{
+                from: { y: 5, opacity: 0 },
+                to: { y: 0, opacity: 1 },
+                when: shouldShowDropdown && isPositioned,
+                duration: 0.05
+            }}
+            onMouseDown={(e) => {
+                if (e.button !== 0) return;
+                const target = e.target as HTMLElement | null;
+                if (!target) return;
+                const li = target.closest(`li`);
+                if (!li || !e.currentTarget.contains(li)) return;
+                if (
+                    li.classList.contains(`--loading`) ||
+                    li.classList.contains(`--error`) ||
+                    li.classList.contains(`--empty`) ||
+                    li.classList.contains(`--list-empty`)
+                ) return;
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                const listItems = Array.from(li.parentElement?.children ?? []).filter(
+                    (node): node is HTMLElement => node instanceof HTMLElement && node.tagName === `LI` && !node.classList.contains(`--list-seperator`)
+                );
+                const index = listItems.indexOf(li);
+                handleOptionPointer(index);
+            }}
+        >
             <List
                 id={_id}
                 ref={suggestionRef}
-                className={`--suggestion-list flex cols abs`}
+                className={`--options-content flex cols`}
                 items={suggestionItems}
+                onItemClick={(_item, index, e) => {
+                    e?.preventDefault?.();
+                    e?.stopPropagation?.();
+                    handleOptionPointer(index);
+                }}
             />
-        }
-    </Box>
+        </Box>
+    );
+
+    return (
+        <>
+            {root}
+            {canUseDocument ? createPortal(optionsList, document.body) : null}
+        </>
+    )
 })
 
 AutoComplete.displayName = `Zuz.AutoComplete`

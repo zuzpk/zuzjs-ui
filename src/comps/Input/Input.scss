@@ -38,7 +38,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     }
 
     background: var(--input);    
-    border: var(--input-border);
+    border: var(--input-border-custom, var(--input-border));
     color: var(--input-color);
     width: 100%;
 

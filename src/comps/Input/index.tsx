@@ -100,6 +100,7 @@ const Input = ({ ref, ...props } : InputProps) => {
         defaultValue,
         value,
         mask,
+        onKeyDown: onKeyDownProp,
         ...pops 
     } = props
 
@@ -391,6 +392,8 @@ const Input = ({ ref, ...props } : InputProps) => {
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         // Deletion (Backspace/Delete) for masked inputs is now fully handled
         // in handleBeforeInput, including selection ranges and forward delete.
+        onKeyDownProp?.(e);
+        if (e.defaultPrevented) return;
         if (e.key === 'Enter') {
             onConfirm?.(e.currentTarget.value);
         }
