@@ -48,9 +48,15 @@
         }
     }
 
+    &.--sortable > li {
+        cursor: grab;
+        -webkit-user-drag: none;
+        user-select: none;
+    }
+
     li.--is-dragging {
+        pointer-events: none;
         transition:
-            transform 0ms ease,
             box-shadow var(--list-drop-highlight-duration, 560ms) var(--list-drop-highlight-curve, ease-in-out),
             background-color var(--list-drop-highlight-duration, 560ms) var(--list-drop-highlight-curve, ease-in-out),
             opacity 180ms ease;
@@ -59,13 +65,19 @@
     li.--drag-origin-outline {
         outline: 2px dashed color-mix(in srgb, var(--accent, #4f46e5) 55%, transparent);
         outline-offset: -2px;
-        opacity: 0.15;
+        opacity: 0.2;
     }
 
     li.--drag-origin-placeholder {
         outline: 2px dashed color-mix(in srgb, var(--accent, #4f46e5) 65%, transparent);
         outline-offset: -1px;
-        background: color-mix(in srgb, var(--accent, #4f46e5) 5%, transparent);
+        background: color-mix(in srgb, var(--accent, #4f46e5) 6%, transparent);
+        opacity: 0.18;
+        color: transparent;
+    }
+
+    li.--drag-origin-placeholder > * {
+        visibility: hidden;
     }
 
     li.--is-over.--can-drop {
@@ -107,19 +119,6 @@
         box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent, #4f46e5) 45%, transparent);
     }
 
-    .--list-clone-ghost {
-        position: fixed;
-        z-index: 9999;
-        pointer-events: none;
-        padding: var(--list-item-padding-sm);
-        border-radius: 10px;
-        background: color-mix(in srgb, var(--accent, #4f46e5) 12%, white);
-        box-shadow: 0 12px 32px -16px rgba(15, 23, 42, 0.55);
-        border: 1px solid color-mix(in srgb, var(--accent, #4f46e5) 35%, transparent);
-        max-width: min(420px, calc(100vw - 32px));
-        opacity: 0.96;
-    }
-
     .--list-item-icon,
     .--list-item-action,
     .--list-item-label {
@@ -138,4 +137,28 @@
         font-size: 0.875rem;
     }
 
+}
+
+.--list-clone-ghost {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    background: color-mix(in srgb, var(--accent, #4f46e5) 12%, var(--surface, white));
+    box-shadow: 0 12px 32px -16px rgba(15, 23, 42, 0.55);
+    border: 1px solid color-mix(in srgb, var(--accent, #4f46e5) 35%, transparent);
+    opacity: 0.96;
+    cursor: grabbing;
+}
+
+.--list-clone-ghost.--list-ghost-self {
+    opacity: 1;
+    box-shadow: 0 16px 40px -12px rgba(15, 23, 42, 0.45);
+}
+
+body.--list-sorting {
+    cursor: grabbing;
+    user-select: none;
 }

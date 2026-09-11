@@ -71,7 +71,7 @@ export type ListProps = Omit<Props<`ul` | `ol`>, "onSelect"> & {
     dragChannel?: DragType,
     /** Delay before drag starts in milliseconds (0 = instant) */
     dragDelay?: number,
-    /** Visual mode while dragging: "self" (move element + show placeholder) or "clone" (fade + show ghost) */
+    /** Visual mode while dragging: "self" (placeholder in-list + floating ghost) or "clone" (faded original + floating ghost) */
     ghostMode?: "self" | "clone",
     /** Duration of drop highlight animation in ms */
     dropHighlightDuration?: number,

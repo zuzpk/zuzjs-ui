@@ -1,6 +1,7 @@
-import { MD5 } from "@zuzjs/core";
+import { MD5, uuid } from "@zuzjs/core";
 import { useSortable } from "@zuzjs/hooks";
-import { createElement, CSSProperties, forwardRef, Fragment, isValidElement, KeyboardEvent, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { createElement, CSSProperties, forwardRef, Fragment, isValidElement, KeyboardEvent, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { getAnimationCurve } from "../../funs/css";
 import { useBase } from "../../hooks";
 import { TRANSITION_CURVES, TRANSITIONS, Variant } from "../../types/enums";
@@ -52,8 +53,43 @@ const getItemKey = (item: ListProps["items"][number], index: number) => {
     return `${String(item)}-${index}`;
 };
 
+const createItemKeys = (list: ListProps["items"]) => list.map(() => uuid(12));
+
+const captureListPositions = (root: HTMLElement | null, store: Map<string, DOMRect>) => {
+    store.clear();
+    if (!root) return;
+    root.querySelectorAll<HTMLElement>(`:scope > li[data-list-id]`).forEach((el) => {
+        const id = el.dataset.listId;
+        if (id) store.set(id, el.getBoundingClientRect());
+    });
+};
+
+const playListFlip = (root: HTMLElement | null, prev: Map<string, DOMRect>) => {
+    if (!root || prev.size === 0) return;
+    root.querySelectorAll<HTMLElement>(`:scope > li[data-list-id]`).forEach((el) => {
+        if (el.classList.contains(`--is-dragging`)) return;
+        const id = el.dataset.listId;
+        if (!id) return;
+        const last = prev.get(id);
+        if (!last) return;
+        const next = el.getBoundingClientRect();
+        const dx = last.left - next.left;
+        const dy = last.top - next.top;
+        if (dx === 0 && dy === 0) return;
+        el.animate(
+            [
+                { transform: `translate(${dx}px, ${dy}px)` },
+                { transform: `translate(0, 0)` },
+            ],
+            { duration: 220, easing: `cubic-bezier(0.25, 0.46, 0.45, 0.94)` }
+        );
+    });
+    prev.clear();
+};
+
 type SortableRowProps = {
     item: ListProps["items"][number];
+    itemId: string;
     index: number;
     itemCount: number;
     seperator?: ListProps["seperator"];
@@ -63,6 +99,7 @@ type SortableRowProps = {
     dragChannel: NonNullable<ListProps["dragChannel"]>;
     dragDelay: number;
     ghostMode: NonNullable<ListProps["ghostMode"]>;
+    axis: "x" | "y";
     hoverable?: boolean;
     highlighted: boolean;
     dropHighlightDuration: number;
@@ -72,6 +109,7 @@ type SortableRowProps = {
     onItemClick?: ListProps["onItemClick"];
     onMove: (from: number, to: number, item: ListProps["items"][number]) => void;
     onDrop: (to: number) => void;
+    onDragActive?: (active: boolean) => void;
     /** Whether this row is the active keyboard-navigation selection */
     selected: boolean;
     /** Called when this row is clicked (used to keep keyboard selection in sync) */
@@ -83,6 +121,7 @@ type SortableRowProps = {
 const SortableRow = (props: SortableRowProps) => {
     const {
         item,
+        itemId,
         index,
         itemCount,
         seperator,
@@ -92,31 +131,37 @@ const SortableRow = (props: SortableRowProps) => {
         dragChannel,
         dragDelay,
         ghostMode,
+        axis,
         highlighted,
         dropHighlightDuration,
         dropHighlightTransition,
         dropHighlightCurve,
-        hoverable,
         render,
         onItemClick,
         onMove,
         onDrop,
+        onDragActive,
         selected,
         onSelectIndex,
         onHoverIndex,
     } = props;
 
     const currentIndexRef = useRef(index);
-    
-    useEffect(() => {
-        currentIndexRef.current = index;
-    }, [index]);
+    currentIndexRef.current = index;
+    const nodeRef = useRef<HTMLLIElement | null>(null);
+    const [ghostBox, setGhostBox] = useState<{
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+        padding: string;
+        borderRadius: string;
+    } | null>(null);
 
     const [{
         isDragging,
         isOver,
         canReceive,
-        dragOffset,
         pointer,
     }, sortableRef] = useSortable<ListProps["items"][number], {
         isDragging: boolean;
@@ -127,8 +172,9 @@ const SortableRow = (props: SortableRowProps) => {
     }>(() => ({
         channel: dragChannel,
         accepts: dragChannel,
-        id: getItemKey(item, index),
+        id: itemId,
         index: currentIndexRef.current,
+        axis,
         payload: item,
         dragDelay,
         draggable: itemDraggable,
@@ -136,7 +182,7 @@ const SortableRow = (props: SortableRowProps) => {
         canReceive: (dragged) => {
             if (!itemDroppable) return false;
             if (!dragged) return false;
-            return dragged.id !== getItemKey(item, index) && dragged.index !== currentIndexRef.current;
+            return dragged.id !== itemId;
         },
         onMove: (dragged, toIndex) => {
             if (!sortable) return;
@@ -155,7 +201,32 @@ const SortableRow = (props: SortableRowProps) => {
             dragOffset: state.dragOffset,
             pointer: state.pointer,
         }),
-    }), [item, index, itemDraggable, itemDroppable, sortable, dragChannel, dragDelay, onMove, onDrop, onHoverIndex]);
+    }), [item, itemId, index, axis, itemDraggable, itemDroppable, sortable, dragChannel, dragDelay, onMove, onDrop]);
+
+    useEffect(() => {
+        if (isDragging) onDragActive?.(true);
+        return () => {
+            if (isDragging) onDragActive?.(false);
+        };
+    }, [isDragging, onDragActive]);
+
+    useLayoutEffect(() => {
+        if (!isDragging) {
+            setGhostBox(null);
+            return;
+        }
+        if (ghostBox || !nodeRef.current || !pointer) return;
+        const rect = nodeRef.current.getBoundingClientRect();
+        const cs = getComputedStyle(nodeRef.current);
+        setGhostBox({
+            x: pointer.x - rect.left,
+            y: pointer.y - rect.top,
+            width: rect.width,
+            height: rect.height,
+            padding: cs.padding,
+            borderRadius: cs.borderRadius,
+        });
+    }, [isDragging, pointer, ghostBox]);
 
     const objectMeta = isObjectMeta(item) ? item : null;
     const transitionCurve = getAnimationCurve(dropHighlightCurve);
@@ -165,34 +236,26 @@ const SortableRow = (props: SortableRowProps) => {
         "--list-drop-highlight-curve": transitionCurve,
     } as CSSProperties;
 
-    if (isDragging && ghostMode === "self" && dragOffset) {
-        itemStyle.transform = `translate3d(${dragOffset.x}px, ${dragOffset.y}px, 0)`;
-        itemStyle.zIndex = 20;
-        itemStyle.position = "relative";
-        itemStyle.cursor = "grabbing";
-        itemStyle.transition = "none";
-    }
-
-    if (isDragging && ghostMode === "clone") {
-        itemStyle.opacity = 0.2;
-        itemStyle.cursor = "grabbing";
+    if (itemDraggable) {
+        itemStyle.cursor = isDragging ? `grabbing` : `grab`;
     }
 
     const itemClassName = [
         objectMeta?.className,
-        isDragging ? "--is-dragging" : "",
-        isDragging && ghostMode === "clone" ? "--drag-origin-outline" : "",
-        isOver ? "--is-over" : "",
-        isOver && canReceive ? "--can-drop" : "",
-        highlighted ? "--drop-highlighted" : "",
-        dropHighlightTransition === TRANSITIONS.ScaleIn ? "--drop-tx-scale" : "",
-        dropHighlightTransition === TRANSITIONS.SlideInLeft ? "--drop-tx-slide-left" : "",
-        dropHighlightTransition === TRANSITIONS.SlideInRight ? "--drop-tx-slide-right" : "",
-        dropHighlightTransition === TRANSITIONS.SlideInTop ? "--drop-tx-slide-top" : "",
-        dropHighlightTransition === TRANSITIONS.SlideInBottom ? "--drop-tx-slide-bottom" : "",
-        dropHighlightTransition === TRANSITIONS.FadeIn ? "--drop-tx-fade" : "",
-        selected ? "--selected" : "",
-    ].filter(Boolean).join(" ");
+        isDragging ? `--is-dragging` : ``,
+        isDragging && ghostMode === `clone` ? `--drag-origin-outline` : ``,
+        isDragging && ghostMode === `self` ? `--drag-origin-placeholder` : ``,
+        isOver ? `--is-over` : ``,
+        isOver && canReceive ? `--can-drop` : ``,
+        highlighted ? `--drop-highlighted` : ``,
+        dropHighlightTransition === TRANSITIONS.ScaleIn ? `--drop-tx-scale` : ``,
+        dropHighlightTransition === TRANSITIONS.SlideInLeft ? `--drop-tx-slide-left` : ``,
+        dropHighlightTransition === TRANSITIONS.SlideInRight ? `--drop-tx-slide-right` : ``,
+        dropHighlightTransition === TRANSITIONS.SlideInTop ? `--drop-tx-slide-top` : ``,
+        dropHighlightTransition === TRANSITIONS.SlideInBottom ? `--drop-tx-slide-bottom` : ``,
+        dropHighlightTransition === TRANSITIONS.FadeIn ? `--drop-tx-fade` : ``,
+        selected ? `--selected` : ``,
+    ].filter(Boolean).join(` `);
 
     const renderContext = {
         index,
@@ -207,11 +270,33 @@ const SortableRow = (props: SortableRowProps) => {
         ? render(item, renderContext)
         : renderItemContent(item);
 
-    return <Fragment key={getItemKey(item, index)}>
+    const ghost = isDragging && pointer && ghostBox && typeof document !== `undefined` ? (
+        <div
+            className={`--list-clone-ghost${ghostMode === `self` ? ` --list-ghost-self` : ``}`}
+            style={{
+                top: pointer.y - ghostBox.y,
+                left: pointer.x - ghostBox.x,
+                width: ghostBox.width,
+                height: ghostBox.height,
+                padding: ghostBox.padding,
+                borderRadius: ghostBox.borderRadius || undefined,
+            }}
+        >
+            {rowContent}
+        </div>
+    ) : null;
+
+    return <Fragment>
         <li
-            ref={sortableRef}
+            ref={(node) => {
+                nodeRef.current = node;
+                sortableRef(node);
+            }}
+            data-list-id={itemId}
+            draggable={false}
             className={itemClassName}
             style={itemStyle}
+            onDragStart={(e) => e.preventDefault()}
             onMouseEnter={() => onHoverIndex?.(index)}
             onClick={(e) => {
                 objectMeta?.onClick?.(e);
@@ -222,25 +307,9 @@ const SortableRow = (props: SortableRowProps) => {
             {rowContent}
         </li>
 
-        {isDragging && ghostMode === "self" ? (
-            <li className="--drag-origin-placeholder" style={{ opacity: 0.3, cursor: "grab" }}>
-                {rowContent}
-            </li>
-        ) : null}
+        {ghost ? createPortal(ghost, document.body) : null}
 
-        {isDragging && ghostMode === "clone" && pointer ? (
-            <div
-                className="--list-clone-ghost"
-                style={{
-                    top: pointer.y + 8,
-                    left: pointer.x + 8,
-                }}
-            >
-                {rowContent}
-            </div>
-        ) : null}
-
-        {seperator && index < itemCount - 1 ? <li key={`spt-${index}-${getItemKey(item, index)}`} className={`--list-seperator`}>{seperator}</li> : null}
+        {seperator && index < itemCount - 1 ? <li className={`--list-seperator`}>{seperator}</li> : null}
     </Fragment>;
 };
 
@@ -335,7 +404,10 @@ const List = forwardRef<ListHandler, ListProps>((props, ref) => {
     const containerRef = useRef<HTMLUListElement | HTMLOListElement>(null);
     const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const dropHighlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const draggingRef = useRef(false);
+    const flipRectsRef = useRef<Map<string, DOMRect>>(new Map());
     const [sortedItems, setSortedItems] = useState(items);
+    const [itemKeys, setItemKeys] = useState(() => createItemKeys(items));
     const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
     const [selectedIndex, setSelectedIndex] = useState<number | null>(keyboardNavigation ? defaultSelected : null);
     
@@ -348,10 +420,23 @@ const List = forwardRef<ListHandler, ListProps>((props, ref) => {
     const Tag = ol == true ? 'ol' : 'ul';
     const dragEnabled = itemDraggable ?? sortable;
     const dropEnabled = itemDroppable ?? sortable;
+    const sortAxis: "x" | "y" = direction === `rows` ? `x` : `y`;
 
     useEffect(() => {
+        if (draggingRef.current) return;
         setSortedItems(items);
+        setItemKeys((prev) => {
+            if (prev.length === items.length) return prev;
+            if (items.length > prev.length) return [...prev, ...createItemKeys(items.slice(prev.length))];
+            return prev.slice(0, items.length);
+        });
     }, [items]);
+
+    const handleDragActive = useCallback((active: boolean) => {
+        draggingRef.current = active;
+        if (typeof document === `undefined`) return;
+        document.body.classList.toggle(`--list-sorting`, active);
+    }, []);
 
     const setPrev = useCallback(() => {
         setSelectedIndex((prev) => {
@@ -395,6 +480,9 @@ const List = forwardRef<ListHandler, ListProps>((props, ref) => {
         if (!sortable) return;
         if (from === to) return;
 
+        captureListPositions(containerRef.current, flipRectsRef.current);
+
+        setItemKeys((prev) => reorderItems(prev, from, to));
         setSortedItems((prevItems) => {
             const nextItems = reorderItems(prevItems, from, to);
             if (nextItems === prevItems) return prevItems;
@@ -403,6 +491,11 @@ const List = forwardRef<ListHandler, ListProps>((props, ref) => {
             return nextItems;
         });
     }, [onSort, sortable]);
+
+    useLayoutEffect(() => {
+        if (!draggingRef.current) return;
+        playListFlip(containerRef.current, flipRectsRef.current);
+    }, [sortedItems, itemKeys]);
 
     const highlightDrop = useCallback((index: number) => {
         setHighlightedIndex(index);
@@ -445,8 +538,9 @@ const List = forwardRef<ListHandler, ListProps>((props, ref) => {
             const key = getItemKey(item, actualIndex);
 
             return <SortableRow
-                key={key}
+                key={itemKeys[actualIndex] ?? key}
                 item={item}
+                itemId={itemKeys[actualIndex] ?? key}
                 index={actualIndex}
                 itemCount={sortedItems.length}
                 seperator={seperator}
@@ -456,6 +550,7 @@ const List = forwardRef<ListHandler, ListProps>((props, ref) => {
                 dragChannel={dragChannel}
                 dragDelay={dragDelay}
                 ghostMode={ghostMode}
+                axis={sortAxis}
                 highlighted={highlightedIndex === actualIndex}
                 selected={selectedIndex === actualIndex}
                 dropHighlightDuration={dropHighlightDuration}
@@ -466,11 +561,12 @@ const List = forwardRef<ListHandler, ListProps>((props, ref) => {
                 onMove={moveItem}
                 hoverable={hoverable}
                 onDrop={highlightDrop}
+                onDragActive={handleDragActive}
                 onSelectIndex={keyboardNavigation ? setSelectedIndex : undefined}
                 onHoverIndex={keyboardNavigation ? setSelectedIndex : undefined}
             />
         });
-    }, [visibleRange, sortedItems, seperator, sortable, dragEnabled, dropEnabled, dragChannel, dragDelay, ghostMode, highlightedIndex, selectedIndex, dropHighlightDuration, dropHighlightTransition, dropHighlightCurve, render, onItemClick, moveItem, highlightDrop, keyboardNavigation]);
+    }, [visibleRange, sortedItems, itemKeys, seperator, sortable, dragEnabled, dropEnabled, dragChannel, dragDelay, ghostMode, sortAxis, highlightedIndex, selectedIndex, dropHighlightDuration, dropHighlightTransition, dropHighlightCurve, render, onItemClick, moveItem, highlightDrop, handleDragActive, keyboardNavigation]);
 
     // Handle scroll optimization for fast scrolling
     useEffect(() => {
@@ -499,6 +595,9 @@ const List = forwardRef<ListHandler, ListProps>((props, ref) => {
             if (dropHighlightTimeoutRef.current) {
                 clearTimeout(dropHighlightTimeoutRef.current);
             }
+            if (typeof document !== `undefined`) {
+                document.body.classList.remove(`--list-sorting`);
+            }
         };
     }, []);
 
@@ -512,7 +611,7 @@ const List = forwardRef<ListHandler, ListProps>((props, ref) => {
     );
 
     return createElement(Tag, {
-        className: `--list ${hoverable ? `--hoverable` : ``} ${listStyle ? `--list-style --ls-${listStyle}` : ""} --${variant || Variant.Small} flex ${direction ?? `cols`} ${className}`.trim(),
+        className: `--list ${hoverable ? `--hoverable` : ``} ${sortable ? `--sortable` : ``} ${listStyle ? `--list-style --ls-${listStyle}` : ""} --${variant || Variant.Small} flex ${direction ?? `cols`} ${className}`.trim(),
         style, 
         tabIndex: keyboardNavigation ? 0 : undefined,
         onKeyDown: keyboardNavigation ? handleKeyDown : undefined,
