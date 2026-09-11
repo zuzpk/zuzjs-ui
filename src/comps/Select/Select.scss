@@ -180,6 +180,8 @@ body{
 
         .--selected-icon{
             color: var(--select-current-color);
+            --icon-color-1: var(--select-option-color);
+            --icon-color-2: rgb(from var(--icon-color-1) r g b / var(--icon-alpha, 0.5));
         }
 
         .--label-wrapper,

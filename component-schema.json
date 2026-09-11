@@ -703,7 +703,8 @@
       "import": "AutoComplete",
       "extends": "InputProps",
       "props": [
-        { "name": "data", "type": "string[]", "description": "Static array of suggestion strings." },
+        { "name": "data", "type": "string[] | dynamic[]", "description": "Static array of suggestion strings or objects." },
+        { "name": "dataKey", "type": "string | string[]", "description": "Object field(s) used for the suggestion label and search. A string uses one field; an array joins non-empty values with a space and matches any of them. If omitted, keys are inferred from string/number fields on `data` (or API results). Falls back to 'name'." },
         { 
           "name": "dynamic", 
           "type": "AutoCompleteDynamicOptions", 

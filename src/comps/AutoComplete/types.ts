@@ -61,7 +61,7 @@ export type AutoCompleteProps = Omit<InputProps, 'onSelect'> & {
      * 2. **Dynamic object array**: [{name: 'Apple'}, {name: 'Banana'}]
      * 3. **API configuration**: Use `dynamic` prop for server-side search
      * 
-     * When passing dynamic objects, use `dataKey` prop to specify which field to use as the suggestion value.
+     * When passing dynamic objects, use `dataKey` to specify which field (or fields) to use as the suggestion value.
      * 
      * @example
      * ```tsx
@@ -79,18 +79,27 @@ export type AutoCompleteProps = Omit<InputProps, 'onSelect'> & {
     data?: string[] | dynamic[];
     
     /**
-     * Field name to extract from dynamic objects when data is dynamic[]
-     * Only used when data contains objects instead of strings
-     * 
+     * Field name(s) to extract from dynamic objects when `data` is an object array.
+     *
+     * A string uses one field. An array uses those fields in order: each
+     * non-empty value is searchable, and they are joined with a space for the
+     * suggestion label and committed input value. The first key is used when
+     * wrapping a custom/string item (`{ [dataKey[0]]: value }`).
+     *
+     * If omitted, keys are inferred from string/number fields on objects in
+     * `data` (or from API results). Falls back to `'name'` when nothing can
+     * be inferred.
+     *
      * @example
      * ```tsx
      * data={[{id: 1, name: 'Apple'}]}
-     * dataKey="name"  // Extracts 'Apple' from object
+     * dataKey="name"
+     *
+     * data={[{ firstName: 'Jane', lastName: 'Smith', email: 'jane@acme.com' }]}
+     * dataKey={['firstName', 'lastName']}
      * ```
-     * 
-     * @default 'name'
      */
-    dataKey?: string;
+    dataKey?: string | string[];
     
     /**
      * Dynamic API configuration for fetching suggestions from server
@@ -137,7 +146,8 @@ export type AutoCompleteProps = Omit<InputProps, 'onSelect'> & {
     /**
      * When true, Enter commits the current input value as a string even if it
      * is not in the suggestion list. `onSelect` receives that string (and a
-     * `{ [dataKey]: value }` object). List picks still send the matched item.
+     * `{ [primaryDataKey]: value }` object, using the first `dataKey`). List
+     * picks still send the matched item.
      */
     allowCustom?: boolean;
     

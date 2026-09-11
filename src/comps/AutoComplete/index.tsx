@@ -15,6 +15,66 @@ import SVGIcons from "../svgicons";
 import { AutoCompleteProps } from "./types";
 
 const SELECT_OPEN_EVENT = "zuz-select-open";
+const DEFAULT_DATA_KEY = `name`;
+
+const isPlainItem = (item: unknown): item is dynamic => {
+    return typeof item === `object` && item !== null && !Array.isArray(item);
+};
+
+const fieldToText = (value: unknown): string => {
+    if (typeof value === `string`) return value.trim();
+    if (typeof value === `number` && Number.isFinite(value)) return String(value);
+    return ``;
+};
+
+const keysFromItems = (...sources: Array<Array<string | dynamic> | undefined>): string[] => {
+    const keys: string[] = [];
+    const seen = new Set<string>();
+
+    for (const items of sources) {
+        if (!items || !Array.isArray(items)) continue;
+        for (const item of items) {
+            if (!isPlainItem(item)) continue;
+            for (const key of Object.keys(item)) {
+                if (seen.has(key)) continue;
+                if (!fieldToText(item[key])) continue;
+                seen.add(key);
+                keys.push(key);
+            }
+        }
+        if (keys.length > 0) return keys;
+    }
+
+    return keys;
+};
+
+const toDataKeys = (dataKey?: string | string[], ...sources: Array<Array<string | dynamic> | undefined>): string[] => {
+    if (dataKey !== undefined) {
+        const list = Array.isArray(dataKey) ? dataKey : [dataKey];
+        const keys = list.filter((key): key is string => typeof key === `string` && key.length > 0);
+        if (keys.length > 0) return keys;
+    }
+
+    const inferred = keysFromItems(...sources);
+    return inferred.length > 0 ? inferred : [DEFAULT_DATA_KEY];
+};
+
+const extractValue = (item: string | dynamic, keys: string[]): string => {
+    if (typeof item === `string`) return item;
+    const parts = keys.map((key) => fieldToText(item?.[key])).filter(Boolean);
+    if (parts.length > 0) return parts.join(` `);
+    return fieldToText(item?.name) || String(item);
+};
+
+const itemMatchesQuery = (item: string | dynamic, keys: string[], lowerQuery: string): boolean => {
+    if (typeof item === `string`) return item.toLowerCase().includes(lowerQuery);
+    if (keys.some((key) => fieldToText(item?.[key]).toLowerCase().includes(lowerQuery))) return true;
+    return extractValue(item, keys).toLowerCase().includes(lowerQuery);
+};
+
+const wrapPrimitiveItem = (item: string, keys: string[]): dynamic => ({
+    [keys[0] ?? DEFAULT_DATA_KEY]: item,
+});
 
 /**
  * AutoComplete component with support for static and dynamic data.
@@ -35,7 +95,7 @@ const SELECT_OPEN_EVENT = "zuz-select-open";
  * ```
  *
  * @example
- * // Dynamic object array
+ * // Dynamic object array (`dataKey` optional — inferred from object fields)
  * ```tsx
  * <AutoComplete
  *   data={[
@@ -45,6 +105,18 @@ const SELECT_OPEN_EVENT = "zuz-select-open";
  *   dataKey="name"
  *   placeholder="Search fruits..."
  *   onSelect={(value, item) => console.log(value, item.price)}
+ * />
+ * ```
+ *
+ * @example
+ * // Multiple object fields (search + joined label)
+ * ```tsx
+ * <AutoComplete
+ *   data={[
+ *     { firstName: 'Jane', lastName: 'Smith', email: 'jane@acme.com' }
+ *   ]}
+ *   dataKey={['firstName', 'lastName']}
+ *   placeholder="Search people..."
  * />
  * ```
  *
@@ -64,7 +136,7 @@ const SELECT_OPEN_EVENT = "zuz-select-open";
  * ```
  *
  * @param data - Array of suggestions (strings or objects)
- * @param dataKey - Field to extract from objects (default: 'name')
+ * @param dataKey - Field(s) to extract from objects. If omitted, keys are inferred from `data`.
  * @param dynamic - Dynamic configuration for API fetching
  * @param onSelect - Callback when suggestion is selected
  * @param onChange - Callback when input value changes
@@ -76,7 +148,7 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
         fx,
         action: legacyAction,
         data,
-        dataKey = 'name',
+        dataKey,
         dynamic: dynamicConfig,
         withStyle,
         onSelect,
@@ -145,13 +217,7 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
     });
     const minChars = dynamicConfig?.minChars || 1;
     const debounceMs = dynamicConfig?.debounce || 250;
-
-    /**
-     * Extract string value from item (string or object)
-     */
-    const extractValue = (item: string | dynamic): string => {
-        return typeof item === 'string' ? item : (item[dataKey] || item.name || String(item));
-    };
+    const dataKeys = toDataKeys(dataKey, data);
 
     /**
      * Filter static data based on input value
@@ -163,11 +229,9 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
         const matches: { filtered: string[], raw: dynamic[] } = { filtered: [], raw: [] };
 
         data.forEach((item) => {
-            const value = extractValue(item);
-            if (value.toLowerCase().includes(lowerQuery)) {
-                matches.filtered.push(value);
-                matches.raw.push(typeof item === 'string' ? { [dataKey]: item } : item);
-            }
+            if (!itemMatchesQuery(item, dataKeys, lowerQuery)) return;
+            matches.filtered.push(extractValue(item, dataKeys));
+            matches.raw.push(typeof item === `string` ? wrapPrimitiveItem(item, dataKeys) : item);
         });
 
         return matches;
@@ -195,13 +259,13 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
             const suggestions = transformResponse(response);
 
             if (_(suggestions).isArray()) {
-                // Check if suggestions are strings or objects
+                const keys = toDataKeys(dataKey, suggestions, data);
                 const processed: { items: string[], raw: dynamic[] } = { items: [], raw: [] };
 
                 suggestions.forEach((item: string | dynamic) => {
-                    const value = extractValue(item);
+                    const value = extractValue(item, keys);
                     processed.items.push(value);
-                    processed.raw.push(typeof item === 'string' ? { [dataKey]: item } : item);
+                    processed.raw.push(typeof item === `string` ? wrapPrimitiveItem(item, keys) : item);
                 });
 
                 setItems(processed.items);
@@ -325,8 +389,10 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
             if (allowCustom && typed) {
                 e.preventDefault();
                 e.stopPropagation();
-                const key = propsRef.current.dataKey || `name`;
-                commitSelection(typed, { [key]: typed });
+                commitSelection(typed, wrapPrimitiveItem(
+                    typed,
+                    toDataKeys(propsRef.current.dataKey, propsRef.current.data, lastRawSuggestionsRef.current)
+                ));
             }
             return;
         }
