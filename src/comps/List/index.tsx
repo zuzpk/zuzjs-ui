@@ -286,12 +286,14 @@ const SortableRow = (props: SortableRowProps) => {
         </div>
     ) : null;
 
+    const setRowRef = useCallback((node: HTMLLIElement | null) => {
+        nodeRef.current = node;
+        sortableRef(node);
+    }, [sortableRef]);
+
     return <Fragment>
         <li
-            ref={(node) => {
-                nodeRef.current = node;
-                sortableRef(node);
-            }}
+            ref={setRowRef}
             data-list-id={itemId}
             draggable={false}
             className={itemClassName}
@@ -424,7 +426,28 @@ const List = forwardRef<ListHandler, ListProps>((props, ref) => {
 
     useEffect(() => {
         if (draggingRef.current) return;
-        setSortedItems(items);
+
+        // Bail out if this is a referentially-new-but-otherwise-identical items
+        // array (e.g. a caller passing `items={value ?? []}` inline, which
+        // creates a fresh array on every render). Without this guard, every
+        // parent re-render - even ones unrelated to this list - would trip
+        // this effect's dependency check, call setSortedItems with a new
+        // reference, force a re-render of List, and (in combination with
+        // SortableRow's own item-identity-sensitive effects) can spiral into
+        // "Maximum update depth exceeded". A shallow same-length/same-refs
+        // check is enough to short-circuit that without affecting genuine
+        // reorders, additions, or removals.
+        setSortedItems((prev) => {
+            if (prev === items) return prev;
+            if (
+                prev.length === items.length &&
+                prev.every((item, i) => item === items[i])
+            ) {
+                return prev;
+            }
+            return items;
+        });
+
         setItemKeys((prev) => {
             if (prev.length === items.length) return prev;
             if (items.length > prev.length) return [...prev, ...createItemKeys(items.slice(prev.length))];
@@ -603,6 +626,15 @@ const List = forwardRef<ListHandler, ListProps>((props, ref) => {
 
     const { ref: restRef, ...restWithoutRef } = rest;
 
+    const setContainerRef = useCallback((node: HTMLUListElement | HTMLOListElement | null) => {
+        containerRef.current = node;
+        if (typeof restRef === 'function') {
+            restRef(node);
+        } else if (restRef && typeof restRef === 'object') {
+            (restRef as { current: HTMLUListElement | HTMLOListElement | null }).current = node;
+        }
+    }, [restRef]);
+
     const isEmpty = sortedItems.length === 0;
     const defaultEmpty = (
         <li className="--list-empty" style={{ textAlign: "center", opacity: 0.5, padding: "20px" }}>
@@ -616,14 +648,7 @@ const List = forwardRef<ListHandler, ListProps>((props, ref) => {
         tabIndex: keyboardNavigation ? 0 : undefined,
         onKeyDown: keyboardNavigation ? handleKeyDown : undefined,
         ...restWithoutRef,
-        ref: (node: HTMLUListElement | HTMLOListElement | null) => {
-            containerRef.current = node;
-            if (typeof restRef === 'function') {
-                restRef(node);
-            } else if (restRef && typeof restRef === 'object') {
-                (restRef as { current: HTMLUListElement | HTMLOListElement | null }).current = node;
-            }
-        },
+        ref: setContainerRef,
         children: isEmpty ? (empty !== undefined ? empty : defaultEmpty) : renderItems()
     });
     
