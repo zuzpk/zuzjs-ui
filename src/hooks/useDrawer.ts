@@ -1,4 +1,4 @@
-import { ReactNode, useContext } from "react";
+import { ReactNode, useContext, useRef } from "react";
 import { DrawerProps } from "../comps";
 import { LayersContext } from "../comps/Layers";
 import { DrawerController } from "../types";
@@ -12,9 +12,27 @@ const useDrawer = () => {
 
     if (!ctx) throw new Error('useDialog must be used inside <LayersProvider>');
 
+    // Track last drawer ID for convenience close
+    const lastDrawerIdRef = useRef<number | null>(null);
+
     const clearAll = () => ctx.clear(`drawer`)
 
-    const hide = (id: number) => ctx.remove(id)
+    /**
+     * Hide drawer by ID or hide last drawer if no ID provided
+     * @param id - Optional drawer ID. If not provided, hides the last drawer
+     */
+    const hide = (id?: number) => {
+        if (id !== undefined) {
+            ctx.remove(id)
+            // Clear ref if closing the tracked drawer
+            if (lastDrawerIdRef.current === id) {
+                lastDrawerIdRef.current = null;
+            }
+        } else if (lastDrawerIdRef.current !== null) {
+            ctx.remove(lastDrawerIdRef.current)
+            lastDrawerIdRef.current = null;
+        }
+    }
 
     const setLoading = (id: number, mode: boolean) => ctx.loading(id, mode)
 
@@ -25,6 +43,9 @@ const useDrawer = () => {
             type: `drawer`,
             props: pops
         })
+        // Track the last opened drawer
+        lastDrawerIdRef.current = id;
+        
         return {
             id,
             setLoading: (mod) => setLoading(id, mod),
