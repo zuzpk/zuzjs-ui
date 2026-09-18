@@ -16,6 +16,7 @@ body {
     --badge-current-bg: var(--badge-color);
     --badge-current-border: 0px;
     --badge-current-color: #fff;
+    width: fit-content;
 
     &.--success { --badge-color: var(--badge-success); }
     &.--error   { --badge-color: var(--badge-error); }
