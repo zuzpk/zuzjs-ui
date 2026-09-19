@@ -1,6 +1,6 @@
 
 import { useAnchor } from "@zuzjs/hooks";
-import { format } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 import { forwardRef, InputEventHandler, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useBase } from "../../hooks";
@@ -9,6 +9,7 @@ import { Variant } from "../../types/enums";
 import Box from "../Box";
 import Calendar from "../Calendar";
 import { CalendarRangeValue } from "../Calendar/types";
+import { useFormActions, useFormFieldError, useFormFieldValue } from "../Form/context";
 import Icon from "../Icon";
 import Span from "../Span";
 import SVGIcons from "../svgicons";
@@ -56,13 +57,38 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
         onDateChange,
         onRangeChange,
         onConfirm,
+        name,
+        selectYear,
         ...pops
     } = props
+    
+    const form = useFormActions()
+    const error = useFormFieldError(name)
+    const formValue = useFormFieldValue(name)
+    const inForm = Boolean(name && form?.setFieldValue)
+    
+    // Helper to parse form value if provided
+    const parseFormValue = (val: unknown): Date | null => {
+        if (!val) return null;
+        if (val instanceof Date) return val;
+        if (typeof val === 'string') {
+            const parsed = parseISO(val);
+            return isValid(parsed) ? parsed : null;
+        }
+        return null;
+    };
+    
     const [ choosing, setChoosing ] = useState(false);
-    const [ currentDate, setCurrentDate ] = useState<Date | null>(dateValue ?? defaultValue ?? null);
-    const [ currentRange, setCurrentRange ] = useState<CalendarRangeValue>(
-        rangeValue ?? defaultRangeValue ?? { start: null, end: null }
-    );
+    const [ currentDate, setCurrentDate ] = useState<Date | null>(() => {
+        if (dateValue !== undefined) return dateValue ?? null;
+        if (inForm && formValue) return parseFormValue(formValue) ?? defaultValue ?? null;
+        return defaultValue ?? null;
+    });
+    const [ currentRange, setCurrentRange ] = useState<CalendarRangeValue>(() => {
+        if (rangeValue !== undefined) return rangeValue;
+        if (defaultRangeValue !== undefined) return defaultRangeValue;
+        return { start: null, end: null };
+    });
     const {
         style,
         className,
@@ -122,10 +148,11 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
     }, [currentDate, placeholder, range]);
 
     const trigger = useMemo(() => <Box 
-        as={`--date-picker --${variant || themeVariant || Variant.Medium} rel flex aic ${className}`} 
+        as={`--date-picker --${variant || themeVariant || Variant.Medium} rel flex aic ${className}${error ? ` --has-error` : ``}`} 
         data-value={currentDate ? currentDate.toISOString() : ``} >
         { icon ? `string` === typeof icon ? <Icon as={`mr:10 c:#666`} name={icon} /> : icon : <Span as={`--date-picker-icon flex aic jcc`}>{SVGIcons.calendar}</Span> }
         <input
+            name={name}
             ref={_input}
             value={inputValue}
             className={`--input --${variant || themeVariant || Variant.Medium} flex`.trim()}
@@ -140,7 +167,7 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
             }}
             {...rest}
             autoComplete="off" />
-    </Box>, [className, currentDate, handleFocus, handleInput, icon, inputPlaceholder, inputValue, onConfirm, rest, style, themeVariant, variant])
+    </Box>, [className, currentDate, handleFocus, handleInput, icon, inputPlaceholder, inputValue, onConfirm, rest, style, themeVariant, variant, error, name])
 
     const { root, canUseDocument, floatingRef, floatingStyle } = useAnchor(trigger, '--date-picker-anchor', {
         open: choosing,
@@ -204,6 +231,8 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
                 minDate={minDate}
                 maxDate={maxDate}
                 range={range}
+                name={name}
+                selectYear={selectYear}
                 disableQuickOptions={disableQuickOptions}
                 disabledDates={disabledDates}
                 rangeValue={currentRange}
@@ -212,6 +241,10 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
                 onChange={(dt, meta) => {
                     setCurrentDate(dt)
                     onDateChange?.(dt)
+                    // Update form value
+                    if (inForm && name && dt) {
+                        form?.setFieldValue?.(name, dt.toISOString());
+                    }
                     if (meta?.source !== "month") {
                         setChoosing(false)
                     }
@@ -219,6 +252,13 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
                 onRangeChange={(nextRange) => {
                     setCurrentRange(nextRange)
                     onRangeChange?.(nextRange)
+                    // Update form value
+                    if (inForm && name && nextRange.start && nextRange.end) {
+                        form?.setFieldValue?.(name, {
+                            start: nextRange.start.toISOString(),
+                            end: nextRange.end.toISOString()
+                        });
+                    }
                     if (nextRange.start && nextRange.end) {
                         setChoosing(false)
                     }

@@ -1,3 +1,4 @@
+"use client";
 import { addDays, addHours, addWeeks, eachDayOfInterval, endOfMonth, endOfWeek, format, isAfter, isBefore, isSameDay, isSameMonth, isToday, isValid, isWithinInterval, parse, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import { forwardRef, useEffect, useMemo, useState } from "react";
 import { useBase } from "../../hooks";
@@ -6,8 +7,11 @@ import { Variant } from "../../types";
 import Box from "../Box";
 import Button from "../Button";
 import Flex from "../Flex";
+import Select from "../Select";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
+import { useFormActions, useFormFieldError, useFormFieldValue } from "../Form/context";
+import LargeCalendar from "./LargeCalendar";
 import { CalendarDisabledDateInput, CalendarProps, CalendarQuickOptionInput, CalendarQuickOptionLabel, CalendarRangeValue } from "./types";
 
 const _quickDateOptions = [
@@ -171,6 +175,18 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
         variant,
         onChange,
         onRangeChange,
+        selectYear,
+        name,
+        // Large mode props
+        large,
+        viewMode = 'week',
+        timeInterval = 60,
+        startHour = 8,
+        endHour = 20,
+        appointments,
+        renderAppointment,
+        onTimeSlotClick,
+        onAppointmentClick,
         ...pops
     } = props
 
@@ -180,12 +196,73 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
         rest
     } = useBase<"div">(pops)
     const { variant: themeVariant } = useTheme(true)!
+    const form = useFormActions()
+    const error = useFormFieldError(name)
+    const formValue = useFormFieldValue(name)
+    const inForm = Boolean(name && form?.setFieldValue)
+    
     const isRangeMode = !!range;
-    const [current, setCurrent] = useState(value ?? defaultValue ?? new Date());
-    const [visibleMonth, setVisibleMonth] = useState(startOfMonth(value ?? defaultValue ?? new Date()));
+    
+    // Helper to parse form value if provided
+    const parseFormValue = (val: unknown): Date | null => {
+        if (!val) return null;
+        if (val instanceof Date) return val;
+        if (typeof val === 'string') {
+            const parsed = new Date(val);
+            return isValid(parsed) ? parsed : null;
+        }
+        return null;
+    };
+    
+    const [current, setCurrent] = useState<Date | null>(() => {
+        if (value !== undefined) return value ?? new Date();
+        if (inForm && formValue) return parseFormValue(formValue) ?? defaultValue ?? new Date();
+        return defaultValue ?? new Date();
+    });
+    
+    const [visibleMonth, setVisibleMonth] = useState(() => {
+        const initialDate = (() => {
+            if (value !== undefined) return value ?? new Date();
+            if (inForm && formValue) return parseFormValue(formValue) ?? defaultValue ?? new Date();
+            return defaultValue ?? new Date();
+        })();
+        return startOfMonth(initialDate);
+    });
+    
     const [currentRange, setCurrentRange] = useState<CalendarRangeValue>(
         rangeValue ?? defaultRangeValue ?? { start: null, end: null }
     );
+    
+    // Large mode renders its own calendar
+    if (large) {
+        return (
+            <LargeCalendar
+                value={current}
+                defaultValue={defaultValue}
+                variant={variant}
+                themeVariant={themeVariant as string}
+                viewMode={viewMode}
+                timeInterval={timeInterval}
+                startHour={startHour}
+                endHour={endHour}
+                appointments={appointments}
+                renderAppointment={renderAppointment}
+                onTimeSlotClick={onTimeSlotClick}
+                onAppointmentClick={onAppointmentClick}
+                visibleMonth={visibleMonth}
+                setVisibleMonth={setVisibleMonth}
+                onChange={(date) => {
+                    if (date) {
+                        setCurrent(date);
+                        onChange?.(date, { source: 'day' });
+                        if (inForm && name) {
+                            form?.setFieldValue?.(name, date.toISOString());
+                        }
+                    }
+                }}
+            />
+        );
+    }
 
     useEffect(() => {
         if (typeof value !== "undefined") {
@@ -314,19 +391,32 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
             onRangeChange?.(nextRange);
             setCurrent(date);
             setVisibleMonth(startOfMonth(date));
+            
+            // Update form value
+            if (inForm && name && nextRange.start && nextRange.end) {
+                form?.setFieldValue?.(name, {
+                    start: nextRange.start.toISOString(),
+                    end: nextRange.end.toISOString()
+                });
+            }
             return;
         }
 
         onChange?.(date, { source: "day" });
         setCurrent(date);
         setVisibleMonth(startOfMonth(date));
+        
+        // Update form value
+        if (inForm && name) {
+            form?.setFieldValue?.(name, date.toISOString());
+        }
     };
 
     const gotoPrevMonth = () => {
         setVisibleMonth((prevVisibleMonth) => {
             const nextVisibleMonth = startOfMonth(new Date(prevVisibleMonth.getFullYear(), prevVisibleMonth.getMonth() - 1, 1));
 
-            if (!isRangeMode) {
+            if (!isRangeMode && current) {
                 const preferredDay = current.getDate();
                 const nextDate = findSelectableDateInMonth(nextVisibleMonth, preferredDay);
 
@@ -346,7 +436,7 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
         setVisibleMonth((prevVisibleMonth) => {
             const nextVisibleMonth = startOfMonth(new Date(prevVisibleMonth.getFullYear(), prevVisibleMonth.getMonth() + 1, 1));
 
-            if (!isRangeMode) {
+            if (!isRangeMode && current) {
                 const preferredDay = current.getDate();
                 const nextDate = findSelectableDateInMonth(nextVisibleMonth, preferredDay);
 
@@ -366,6 +456,39 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
     const nextMonthStart = startOfMonth(new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 1));
     const disablePrevMonth = !!minDateDay && isBefore(prevMonthEnd, minDateDay);
     const disableNextMonth = !!maxDateDay && isAfter(nextMonthStart, maxDateDay);
+    
+    // Year selector options for selectYear mode
+    const yearOptions = useMemo(() => {
+        if (!selectYear) return [];
+        
+        const currentYear = new Date().getFullYear();
+        const minYear = minDate ? minDate.getFullYear() : currentYear - 50;
+        const maxYear = maxDate ? maxDate.getFullYear() : currentYear + 50;
+        
+        const options = [];
+        for (let year = minYear; year <= maxYear; year++) {
+            options.push({
+                label: String(year),
+                value: String(year)
+            });
+        }
+        return options;
+    }, [selectYear, minDate, maxDate]);
+    
+    const selectedYearOption = useMemo(() => {
+        if (!selectYear || !visibleMonth) return null;
+        return {
+            label: String(visibleMonth.getFullYear()),
+            value: String(visibleMonth.getFullYear())
+        };
+    }, [selectYear, visibleMonth]);
+    
+    const handleYearChange = (yearValue: string | number) => {
+        const year = Number(yearValue);
+        const newDate = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth(), 1);
+        newDate.setFullYear(year);
+        setVisibleMonth(startOfMonth(newDate));
+    };
 
     const rawRangeStart = currentRange.start ? startOfDay(currentRange.start) : null;
     const rawRangeEnd = currentRange.end ? startOfDay(currentRange.end) : null;
@@ -392,7 +515,18 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
         {/* `${isSameDay(date, current) && option.label != `Later` ? `--calendar-quick-option-selected` : ``}`, */}
         <Box as={`--calendar-selector flex cols flex:1`}>
             <Box as={`--calendar-head flex aic jcc gap:4`}>
-                <Text as={`flex:1 --calendar-cm bold`}>{format(visibleMonth, 'MMMM yyyy')}</Text>
+                {selectYear ? (
+                    <Select
+                        as={`flex:1 --calendar-cm`}
+                        options={yearOptions}
+                        selected={selectedYearOption?.value}
+                        onChange={(opt) => handleYearChange(opt.value)}
+                        variant={variant || themeVariant || Variant.Small}
+                        kind="plain"
+                    />
+                ) : (
+                    <Text as={`flex:1 --calendar-cm bold`}>{format(visibleMonth, 'MMMM yyyy')}</Text>
+                )}
                 <Button 
                     disabled={disablePrevMonth}
                     onClick={gotoPrevMonth}
@@ -407,7 +541,7 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
                 {days.map((day, idx) => {
                     const isCurrentMonth = isSameMonth(day, visibleMonth);
                     const isDisabled = !isCurrentMonth || isDateDisabled(day);
-                    const isSelected = !isDisabled && isSameDay(day, current);
+                    const isSelected = !isDisabled && current && isSameDay(day, current);
                     const isCurrentDay = isToday(day);
                     const isRangeStart = !!rangeStart && isSameDay(day, rangeStart);
                     const isRangeEnd = !!rangeEnd && isSameDay(day, rangeEnd);

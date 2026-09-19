@@ -17,4 +17,5 @@ export type DatePickerProps = Omit<InputProps, "defaultValue" | "value"> & {
     onRangeChange?: (range: CalendarRangeValue) => void;
     displayFormat?: string;
     value?: string;
+    selectYear?: boolean;
 }

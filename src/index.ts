@@ -1,3 +1,4 @@
+"use client";
 String.prototype.trim = function(){ return this.replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' '); }
 
 export { default as Countries } from "./funs/countries";
