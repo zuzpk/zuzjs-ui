@@ -45,10 +45,14 @@ const TabView = ({
         onChange,
         transitionType = "slide",
         height,
+        defaultActive = 0,
         ...rest 
     } = props;
 
-    const [activeTab, setActiveTab] = useState(0);
+    const [activeTab, setActiveTab] = useState(() => {
+        if (!_tabs.length) return 0
+        return Math.min(Math.max(defaultActive, 0), _tabs.length - 1)
+    });
     const [tabHeights, setTabHeights] = useState<Record<number, number>>({});
     const tabview = useRef<HTMLDivElement>(null)
     const size = useResizeObserver(tabview)
@@ -105,14 +109,16 @@ const TabView = ({
         className={`--tabview --${tabStyle} flex cols ${className}`}>
         
         <Segmented
-            as={`--tabview-head`} 
-            onSwitch={(segment:Segment) => {
-                setActiveTab(segment.index);
-                const tab = tabs.find((t) => t.tag == segment.tag)
-                if ( tab && tab.onSelect ){
-                    tab.onSelect(tab, segment.index);
-                    onChange?.(tab, segment.index);
-                }
+            as={`--tabview-head`}
+            variant={variant}
+            onSwitch={(segment: Segment) => {
+                const index = segment.index ?? tabs.findIndex((t) => t.tag === segment.tag)
+                if (index < 0) return
+                setActiveTab(index)
+                const tab = tabs[index]
+                if (!tab) return
+                tab.onSelect?.(tab, index)
+                onChange?.(tab, index)
             }}
             selected={activeTab}
             items={tabs.reduce((arr, c, index) => {

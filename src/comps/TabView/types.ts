@@ -118,6 +118,12 @@ export type TabViewProps = Omit<BoxProps, "onChange" | "height"> & {
      * @example prerender: true
      */
     prerender?: boolean,
+    /**
+     * Default active tab index.
+     * @default 0
+     * @example defaultActive: 1
+     */
+    defaultActive?: number,
 }
 
 /**

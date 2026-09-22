@@ -1,33 +1,87 @@
-import { addDays, addMinutes, addWeeks, endOfWeek, format, isAfter, isBefore, isSameDay, isToday, setHours, setMinutes, startOfDay, startOfWeek } from "date-fns";
+"use client"
+import { useDrag, useDrop, type DropProbe } from "@zuzjs/hooks";
+import {
+    addDays,
+    addMonths,
+    addWeeks,
+    addYears,
+    endOfMonth,
+    endOfWeek,
+    format,
+    isAfter,
+    isSameDay,
+    isSameMonth,
+    isToday,
+    startOfDay,
+    startOfMonth,
+    startOfWeek,
+    subDays,
+    subMonths,
+    subWeeks,
+    subYears,
+} from "date-fns";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { Variant } from "../../types";
+import Box from "../Box";
 import Button from "../Button";
 import Flex from "../Flex";
-import Select from "../Select";
+import Grid from "../Grid";
+import Segmented from "../Segmented";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
-import { CalendarViewMode, CalendarWeekStartDay, LargeCalendarProps } from "./types";
-import React, { useCallback, useMemo } from "react";
-import Segmented from "../Segmented";
-import { Variant } from "../../types";
-import Grid from "../Grid";
+import {
+    CalendarAppointment,
+    CalendarTimeRange,
+    CalendarTimeSlot,
+    CalendarViewMode,
+    CalendarWeekStartDay,
+    LargeCalendarProps,
+} from "./types";
+
 type TimeSlot = {
     hour: number;
     minute: number;
     label: string;
-    isMainSlot: boolean;
-}
+};
 
-// Render view mode selector options
-const viewModeOptions = [
-    { label: 'Week', value: 'week' },
-    { label: 'Month', value: 'month' },
-    { label: 'Year', value: 'year' }
+type DragPoint = {
+    day: Date;
+    minutes: number;
+};
+
+type TimeScale = {
+    viewStart: number;
+    viewEnd: number;
+    interval: number;
+    slotStarts: number[];
+};
+
+type AppointmentMoveItem = {
+    kind: "move";
+    appointment: CalendarAppointment;
+};
+
+type AppointmentResizeItem = {
+    kind: "resize";
+    appointment: CalendarAppointment;
+    edge: "start" | "end";
+};
+
+const APPOINTMENT_CHANNEL = "calendar-appointment";
+const RESIZE_CHANNEL = "calendar-appointment-resize";
+
+const viewModeSegments: { label: string; tag: CalendarViewMode }[] = [
+    { label: `Day`, tag: `day` },
+    { label: `Week`, tag: `week` },
+    { label: `Month`, tag: `month` },
+    { label: `Year`, tag: `year` },
 ];
 
 const getMaxAllowedDate = (disableAfter?: 'today' | 'next-week' | Date): Date | null => {
     if (!disableAfter) return null;
-    
+
     const today = startOfDay(new Date());
-    
+
     switch (disableAfter) {
         case 'today':
             return today;
@@ -40,6 +94,8 @@ const getMaxAllowedDate = (disableAfter?: 'today' | 'next-week' | Date): Date | 
 
 const getViewLabel = (date: Date, viewMode: CalendarViewMode, weekStartsOn: CalendarWeekStartDay): string => {
     switch (viewMode) {
+        case 'day':
+            return format(date, 'EEEE, MMM d, yyyy');
         case 'week': {
             const start = startOfWeek(date, { weekStartsOn });
             const end = endOfWeek(date, { weekStartsOn });
@@ -56,6 +112,8 @@ const getViewLabel = (date: Date, viewMode: CalendarViewMode, weekStartsOn: Cale
 
 const getDaysInView = (date: Date, viewMode: CalendarViewMode, weekStartsOn: CalendarWeekStartDay): Date[] => {
     switch (viewMode) {
+        case 'day':
+            return [startOfDay(date)];
         case 'week': {
             const start = startOfWeek(date, { weekStartsOn });
             const end = endOfWeek(date, { weekStartsOn });
@@ -68,8 +126,10 @@ const getDaysInView = (date: Date, viewMode: CalendarViewMode, weekStartsOn: Cal
             return days;
         }
         case 'month': {
-            const start = new Date(date.getFullYear(), date.getMonth(), 1);
-            const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            const monthStart = startOfMonth(date);
+            const monthEnd = endOfMonth(date);
+            const start = startOfWeek(monthStart, { weekStartsOn });
+            const end = endOfWeek(monthEnd, { weekStartsOn });
             const days: Date[] = [];
             let current = start;
             while (current <= end) {
@@ -96,238 +156,749 @@ const formatTimeLabel = (hour: number, minute: number): string => {
     return `${h}:${m}`;
 };
 
-type CalendarColumnBase = {
-    subInterval: number;
-    showSubIntervalLabel: boolean;
-    subTimeSlots: TimeSlot[];
-}
-type CalendarColumnProps = | {
-        type: "stamps";
-        mainTimeSlots: TimeSlot[];
-        rowCount: number;
-        index?: never;
-        day?: never,
-        disabled?: never;
-        value?: never;
-        
-    }
-    | {
-        type: "meta";
-        index: number;
-        day: Date,
-        disabled: boolean;
-        value: Date | null | undefined;
-        rowCount: number;
-        mainTimeSlots?: TimeSlot[];
-    }
+const parseHHmm = (value: string): number => {
+    const [h, m] = value.split(':').map(Number);
+    return (h || 0) * 60 + (m || 0);
+};
 
-const CalendarColumn : React.FC<CalendarColumnBase & CalendarColumnProps> = ({
-    type,
-    index,
+const minutesToHHmm = (minutes: number): string => {
+    const clamped = Math.max(0, Math.round(minutes));
+    return formatTimeLabel(Math.floor(clamped / 60), clamped % 60);
+};
+
+const minutesToDate = (day: Date, minutes: number): Date => {
+    const d = startOfDay(day);
+    d.setMinutes(minutes);
+    return d;
+};
+
+const buildSlotStarts = (startHour: number, endHour: number, interval: number): number[] => {
+    const starts: number[] = [];
+    for (let minutes = startHour * 60; minutes < endHour * 60; minutes += interval) {
+        starts.push(minutes);
+    }
+    return starts;
+};
+
+const minutesToSlotIndex = (minutes: number, scale: TimeScale): number => {
+    const { viewStart, viewEnd, interval, slotStarts } = scale;
+    if (slotStarts.length === 0 || interval <= 0) return 0;
+    if (minutes <= viewStart) return 0;
+    if (minutes >= viewEnd) return slotStarts.length;
+    return (minutes - viewStart) / interval;
+};
+
+/** Layout against the slot grid so 09:15–11:00 starts on 09:15 and ends on the 11:00 row. */
+const getAppointmentLayout = (appointment: CalendarAppointment, scale: TimeScale) => {
+    const start = Math.max(parseHHmm(appointment.timeStart), scale.viewStart);
+    const end = Math.min(parseHHmm(appointment.timeEnd), scale.viewEnd);
+    const count = scale.slotStarts.length;
+    if (end <= start || count === 0) return null;
+
+    const startIndex = minutesToSlotIndex(start, scale);
+    let endIndex = minutesToSlotIndex(end, scale);
+    // timeEnd names the last occupied slot (11:00 occupies the 11:00 row, not 10:45)
+    if (endIndex < count && Number.isInteger(endIndex) && scale.slotStarts[endIndex] === end) {
+        endIndex += 1;
+    }
+    endIndex = Math.min(count, Math.max(startIndex + 1, endIndex));
+
+    return {
+        top: (startIndex / count) * 100,
+        bottom: ((count - endIndex) / count) * 100,
+    };
+};
+
+const snapMinutes = (minutes: number, scale: TimeScale): number => {
+    const snapped = scale.viewStart + Math.round((minutes - scale.viewStart) / scale.interval) * scale.interval;
+    return Math.min(scale.viewEnd, Math.max(scale.viewStart, snapped));
+};
+
+const clampRange = (start: number, end: number, scale: TimeScale) => {
+    let nextStart = start;
+    let nextEnd = end;
+    if (nextEnd - nextStart < scale.interval) {
+        nextEnd = nextStart + scale.interval;
+    }
+    if (nextStart < scale.viewStart) {
+        nextEnd += scale.viewStart - nextStart;
+        nextStart = scale.viewStart;
+    }
+    if (nextEnd > scale.viewEnd) {
+        nextStart -= nextEnd - scale.viewEnd;
+        nextEnd = scale.viewEnd;
+        if (nextStart < scale.viewStart) nextStart = scale.viewStart;
+    }
+    if (nextEnd - nextStart < scale.interval) {
+        nextEnd = Math.min(scale.viewEnd, nextStart + scale.interval);
+        nextStart = Math.max(scale.viewStart, nextEnd - scale.interval);
+    }
+    return {
+        start: snapMinutes(nextStart, scale),
+        end: snapMinutes(nextEnd, scale),
+    };
+};
+
+const appointmentFromRange = (appointment: CalendarAppointment, day: Date, start: number, end: number): CalendarAppointment => ({
+    ...appointment,
+    date: startOfDay(day),
+    timeStart: minutesToHHmm(start),
+    timeEnd: minutesToHHmm(end),
+});
+
+const deltaMinutesFromOffset = (offsetY: number, bodyHeight: number, scale: TimeScale) => {
+    if (bodyHeight <= 0) return 0;
+    return (offsetY / bodyHeight) * (scale.viewEnd - scale.viewStart);
+};
+
+type DropFeedback = {
+    id: string | number;
+    day: Date;
+    start: number;
+    end: number;
+    title?: string;
+};
+
+const DropFeedbackContext = createContext<{
+    feedback: DropFeedback | null;
+    setFeedback: React.Dispatch<React.SetStateAction<DropFeedback | null>>;
+}>({
+    feedback: null,
+    setFeedback: () => {},
+});
+
+const snapMoveFromProbe = (
+    item: AppointmentMoveItem,
+    probe: DropProbe<AppointmentMoveItem | AppointmentResizeItem>,
+    scale: TimeScale,
+) => {
+    const bounds = probe.bounds();
+    const offset = probe.offset();
+    if (!bounds || bounds.height <= 0) return null;
+    const originalStart = parseHHmm(item.appointment.timeStart);
+    const originalEnd = parseHHmm(item.appointment.timeEnd);
+    const duration = Math.max(scale.interval, originalEnd - originalStart);
+    const delta = deltaMinutesFromOffset(offset?.y ?? 0, bounds.height, scale);
+    return clampRange(originalStart + delta, originalStart + delta + duration, scale);
+};
+
+const appointmentLayoutStyle = (layout: { top: number; bottom: number }): React.CSSProperties => ({
+    position: "absolute",
+    top: `${layout.top}%`,
+    height: `${Math.max(0, 100 - layout.top - layout.bottom)}%`,
+    left: 4,
+    right: 4,
+});
+
+const AppointmentDropMeta: React.FC<{ day: Date; start: number; end: number }> = ({ day, start, end }) => (
+    <Flex cols as="--appointment-drop-overlay abs fill flex cols aic jcc pe-none">
+        <Text as="--drop-overlay-date bold">{format(day, "EEE, MMM d")}</Text>
+        <Text as="--drop-overlay-time">{minutesToHHmm(start)} – {minutesToHHmm(end)}</Text>
+    </Flex>
+);
+
+const TimeColumn: React.FC<{ mainTimeSlots: TimeSlot[]; subSlotOffsets: number[]; showSubIntervalLabel: boolean }> = ({
+    mainTimeSlots,
+    subSlotOffsets,
+    showSubIntervalLabel,
+}) => (
+    <Flex cols as="--time-column-root">
+        <Flex gap={4} as={`--day-header --calendar-column flex aic jcc`} />
+        {mainTimeSlots.map((slot, idx) => (
+            <React.Fragment key={`time-col-${idx}`}>
+                <Flex aic jce as="--time-label --calendar-column --time-column w-full">
+                    <Text as="--time-text">{slot.label}</Text>
+                </Flex>
+                {subSlotOffsets.map((offset) => {
+                    const totalMinutes = slot.hour * 60 + slot.minute + offset;
+                    return (
+                        <Flex
+                            key={`time-col-${idx}-${offset}`}
+                            aic
+                            jce
+                            as="--time-label --calendar-column --time-column --sub-slot w-full">
+                            {showSubIntervalLabel && (
+                                <Text as="--time-text --sub">
+                                    {formatTimeLabel(Math.floor(totalMinutes / 60), totalMinutes % 60)}
+                                </Text>
+                            )}
+                        </Flex>
+                    );
+                })}
+            </React.Fragment>
+        ))}
+    </Flex>
+);
+
+const AppointmentContent: React.FC<{ appointment: CalendarAppointment }> = ({ appointment }) => (
+    <Flex cols as="--appointment-body w-full flex-1 minW:0">
+        <Text as="--appointment-title">{appointment.title}</Text>
+        <Text as="--appointment-time">
+            {appointment.timeStart} – {appointment.timeEnd}
+        </Text>
+    </Flex>
+);
+
+const AppointmentBlock: React.FC<{
+    appointment: CalendarAppointment;
+    scale: TimeScale;
+    disabled?: boolean;
+    onChange?: (appointment: CalendarAppointment) => void;
+    onClick?: (appointment: CalendarAppointment) => void;
+}> = ({ appointment, scale, disabled, onChange, onClick }) => {
+    const wrapperRef = useRef<HTMLDivElement>(null);
+    const movedRef = useRef(false);
+    const { setFeedback } = useContext(DropFeedbackContext);
+
+    const readBodyHeight = useCallback(() => (
+        wrapperRef.current?.parentElement?.getBoundingClientRect().height ?? 0
+    ), []);
+
+    const applyResize = useCallback((edge: "start" | "end", offsetY: number): CalendarAppointment => {
+        const originalStart = parseHHmm(appointment.timeStart);
+        const originalEnd = parseHHmm(appointment.timeEnd);
+        const delta = deltaMinutesFromOffset(offsetY, readBodyHeight(), scale);
+        const next = edge === "start"
+            ? clampRange(originalStart + delta, originalEnd, scale)
+            : clampRange(originalStart, originalEnd + delta, scale);
+        return appointmentFromRange(appointment, appointment.date, next.start, next.end);
+    }, [appointment, readBodyHeight, scale]);
+
+    const [{ isDragging }, moveRef] = useDrag<AppointmentMoveItem, { isDragging: boolean }>(() => ({
+        channel: APPOINTMENT_CHANNEL,
+        when: !disabled,
+        payload: { kind: "move", appointment },
+        observe: (probe) => ({ isDragging: probe.active() }),
+        onFinish: (_item, probe) => {
+            const offset = probe.offset();
+            movedRef.current = Math.abs(offset?.x ?? 0) > 3 || Math.abs(offset?.y ?? 0) > 3;
+            setFeedback(null);
+        },
+    }), [appointment, disabled, setFeedback]);
+
+    const [{ isResizing: resizingStart, offsetY: startOffsetY }, startResizeRef] = useDrag<AppointmentResizeItem, { isResizing: boolean; offsetY: number }>(() => ({
+        channel: RESIZE_CHANNEL,
+        when: !disabled,
+        payload: { kind: "resize", appointment, edge: "start" },
+        observe: (probe) => ({
+            isResizing: probe.active(),
+            offsetY: probe.offset()?.y ?? 0,
+        }),
+        onFinish: (_item, probe) => {
+            movedRef.current = true;
+            onChange?.(applyResize("start", probe.offset()?.y ?? 0));
+        },
+    }), [appointment, disabled, applyResize, onChange]);
+
+    const [{ isResizing: resizingEnd, offsetY: endOffsetY }, endResizeRef] = useDrag<AppointmentResizeItem, { isResizing: boolean; offsetY: number }>(() => ({
+        channel: RESIZE_CHANNEL,
+        when: !disabled,
+        payload: { kind: "resize", appointment, edge: "end" },
+        observe: (probe) => ({
+            isResizing: probe.active(),
+            offsetY: probe.offset()?.y ?? 0,
+        }),
+        onFinish: (_item, probe) => {
+            movedRef.current = true;
+            onChange?.(applyResize("end", probe.offset()?.y ?? 0));
+        },
+    }), [appointment, disabled, applyResize, onChange]);
+
+    const preview = resizingStart
+        ? applyResize("start", startOffsetY)
+        : resizingEnd
+            ? applyResize("end", endOffsetY)
+            : appointment;
+
+    const layout = getAppointmentLayout(preview, scale);
+    if (!layout) return null;
+
+    const isResizing = resizingStart || resizingEnd;
+
+    return (
+        <Flex
+            ref={wrapperRef}
+            cols
+            as={`--appointment ${isDragging ? '--ghost' : ''} ${isResizing ? '--resizing' : ''}`}
+            style={appointmentLayoutStyle(layout)}
+            onClick={(event: React.MouseEvent) => {
+                event.stopPropagation();
+                if (movedRef.current) {
+                    movedRef.current = false;
+                    return;
+                }
+                onClick?.(appointment);
+            }}
+            onMouseDown={(event: React.MouseEvent) => event.stopPropagation()}>
+            <Box
+                ref={startResizeRef}
+                as="--appointment-resize --start"
+            />
+            <Flex
+                ref={moveRef}
+                cols
+                as="--appointment-body w-full flex-1 minW:0">
+                <Text as="--appointment-title">{preview.title}</Text>
+                <Text as="--appointment-time">
+                    {preview.timeStart} – {preview.timeEnd}
+                </Text>
+            </Flex>
+            <Box
+                ref={endResizeRef}
+                as="--appointment-resize --end"
+            />
+        </Flex>
+    );
+};
+
+type DayColumnProps = {
+    day: Date;
+    disabled: boolean;
+    selected: boolean;
+    mainTimeSlots: TimeSlot[];
+    subSlotOffsets: number[];
+    appointments: CalendarAppointment[];
+    scale: TimeScale;
+    onDayClick: (day: Date) => void;
+    onSlotMouseDown: (day: Date, minutes: number) => void;
+    onSlotMouseUp: (day: Date, minutes: number) => void;
+    onAppointmentClick?: (appointment: CalendarAppointment) => void;
+    onAppointmentChange?: (appointment: CalendarAppointment) => void;
+    renderAppointment?: LargeCalendarProps['renderAppointment'];
+};
+
+const DayColumn: React.FC<DayColumnProps> = ({
     day,
     disabled,
-    value,
-    rowCount,
+    selected,
     mainTimeSlots,
-    subTimeSlots,
-    subInterval,
-    showSubIntervalLabel
+    subSlotOffsets,
+    appointments,
+    scale,
+    onDayClick,
+    onSlotMouseDown,
+    onSlotMouseUp,
+    onAppointmentClick,
+    onAppointmentChange,
+    renderAppointment,
 }) => {
+    const { setFeedback } = useContext(DropFeedbackContext);
+    const [dropPreview, setDropPreview] = useState<DropFeedback | null>(null);
 
-    return <Flex cols>
+    const [{ isOver }, dropRef] = useDrop<AppointmentMoveItem | AppointmentResizeItem, { isOver: boolean }>(() => ({
+        accepts: [APPOINTMENT_CHANNEL, RESIZE_CHANNEL],
+        canReceive: () => !disabled,
+        observe: (probe) => ({ isOver: probe.hovering() && probe.canReceive() }),
+        onHover: (item, probe) => {
+            if (!item || item.kind !== "move") return;
+            const next = snapMoveFromProbe(item, probe, scale);
+            if (!next) return;
+            const preview: DropFeedback = {
+                id: item.appointment.id,
+                day,
+                start: next.start,
+                end: next.end,
+                title: item.appointment.title,
+            };
+            setDropPreview((current) => (
+                current
+                && current.id === preview.id
+                && current.start === preview.start
+                && current.end === preview.end
+                && isSameDay(current.day, preview.day)
+                    ? current
+                    : preview
+            ));
+            setFeedback(preview);
+        },
+        onReceive: (item, probe) => {
+            if (!item || item.kind !== "move") return;
+            const next = snapMoveFromProbe(item, probe, scale);
+            setDropPreview(null);
+            setFeedback(null);
+            if (!next) return;
+            onAppointmentChange?.(appointmentFromRange(item.appointment, day, next.start, next.end));
+        },
+    }), [day, disabled, onAppointmentChange, scale, setFeedback]);
 
-    { type == `stamps` ? 
-        <Flex
-            gap={4}
-            as={`--day-header --calendar-column flex aic jcc`} />
-        : <Flex
-            gap={4}
-            as={`--day-header --calendar-column flex aic jcc ${isToday(day) ? '--today' : ''} ${disabled ? '--disabled' : ''}`}>
-            <Text as="--day-name">{format(day, 'EEE')}</Text>
-            <Text as={`--day-number ${isSameDay(day, value || new Date()) ? '--selected' : ''}`}>
-                {format(day, 'd')}
-            </Text>
-        </Flex> }
+    useEffect(() => {
+        if (isOver) return;
+        setDropPreview(null);
+        setFeedback((current) => current && isSameDay(current.day, day) ? null : current);
+    }, [isOver, day, setFeedback]);
 
-        { new Array(rowCount).fill({}).map((slot, idx) => {
-            if ( type == `stamps` ){
-                return  <>
+    const dropPreviewLayout = dropPreview
+        ? getAppointmentLayout({
+            id: dropPreview.id,
+            date: day,
+            timeStart: minutesToHHmm(dropPreview.start),
+            timeEnd: minutesToHHmm(dropPreview.end),
+            title: dropPreview.title,
+        }, scale)
+        : null;
+
+    return (
+        <Flex cols as={`--day-column w-full minW:0 ${isOver ? '--drop-over' : ''}`}>
+            <Flex
+                gap={4}
+                onClick={() => !disabled && onDayClick(day)}
+                as={`--day-header --calendar-column flex aic jcc w-full ${isToday(day) ? '--today' : ''} ${disabled ? '--disabled' : ''}`}>
+                <Text as="--day-name">{format(day, 'EEE')}</Text>
+                <Text as={`--day-number ${selected ? '--selected' : ''}`}>{format(day, 'd')}</Text>
+            </Flex>
+
+            <Flex
+                ref={dropRef}
+                cols
+                as={`--calendar-day-body rel w-full minW:0 ${isOver ? '--drop-over' : ''}`}>
+                {mainTimeSlots.map((slot, idx) => {
+                    const mainMinutes = slot.hour * 60 + slot.minute;
+                    return (
+                        <React.Fragment key={`day-col-${idx}`}>
+                            <Flex
+                                as="--calendar-column --time-column w-full"
+                                onMouseDown={() => !disabled && onSlotMouseDown(day, mainMinutes)}
+                                onMouseUp={() => !disabled && onSlotMouseUp(day, mainMinutes)}
+                            />
+                            {subSlotOffsets.map((offset) => {
+                                const minutes = mainMinutes + offset;
+                                return (
+                                    <Flex
+                                        key={`day-col-${idx}-${offset}`}
+                                        as="--calendar-column --time-column --sub-slot w-full"
+                                        onMouseDown={() => !disabled && onSlotMouseDown(day, minutes)}
+                                        onMouseUp={() => !disabled && onSlotMouseUp(day, minutes)}
+                                    />
+                                );
+                            })}
+                        </React.Fragment>
+                    );
+                })}
+
+                {appointments.map((appointment) => {
+                    const layout = getAppointmentLayout(appointment, scale);
+                    if (!layout) return null;
+
+                    const style: React.CSSProperties = {
+                        position: 'absolute',
+                        top: `${layout.top}%`,
+                        bottom: `${layout.bottom}%`,
+                        height: 'auto',
+                        left: 4,
+                        right: 4,
+                    };
+
+                    if (renderAppointment) {
+                        return (
+                            <React.Fragment key={appointment.id}>
+                                {renderAppointment({ appointment, style, isDefault: false })}
+                            </React.Fragment>
+                        );
+                    }
+
+                    return (
+                        <AppointmentBlock
+                            key={appointment.id}
+                            appointment={appointment}
+                            scale={scale}
+                            disabled={disabled}
+                            onChange={onAppointmentChange}
+                            onClick={onAppointmentClick}
+                        />
+                    );
+                })}
+
+                {dropPreview && dropPreviewLayout && (
                     <Flex
-                        key={`time-slot-${idx}`}
-                        aic jce
-                        as="--time-label --calendar-column --time-column">
-                        <Text as="--time-text">{mainTimeSlots[idx].label}</Text>
+                        cols
+                        as="--appointment --drop-preview pe-none"
+                        style={appointmentLayoutStyle(dropPreviewLayout)}>
+                        <AppointmentContent
+                            appointment={{
+                                id: dropPreview.id,
+                                date: day,
+                                timeStart: minutesToHHmm(dropPreview.start),
+                                timeEnd: minutesToHHmm(dropPreview.end),
+                                title: dropPreview.title,
+                            }}
+                        />
+                        <AppointmentDropMeta day={day} start={dropPreview.start} end={dropPreview.end} />
                     </Flex>
-                    {subTimeSlots.map(st => <Flex
-                        key={`time-slot-${idx}`}
-                        as="--time-label --calendar-column --time-column">
-                        
-                    </Flex>)}
-                </>
-            }
-
-            return <>
-                <Flex
-                    key={`time-slot-${idx}`}
-                    as="--calendar-column --time-column">
-                    
-                </Flex>
-                {subTimeSlots.map(st => <Flex
-                    key={`time-slot-${idx}`}
-                    as="--calendar-column --time-column">
-                    
-                </Flex>)}
-            </>
-
-        })}
-
-    </Flex>
-}
+                )}
+            </Flex>
+        </Flex>
+    );
+};
 
 const LargeCalendar = (props: LargeCalendarProps) => {
-
     const {
-        viewMode = `week`,
+        viewMode: viewModeProp,
         weekStartsOn = 1,
+        variant,
         themeVariant,
         startDate,
-        visibleMonth,
+        setVisibleMonth,
         disableAfter,
         startHour = 8,
         endHour = 20,
         timeInterval = 60,
-        subInterval = 15,
+        subInterval,
         showSubIntervalLabel = false,
-        value
-    } = props
+        appointments = [],
+        renderAppointment,
+        onTimeSlotClick,
+        onAppointmentClick,
+        onAppointmentChange,
+        enableRangeSelect,
+        onTimeRangeSelect,
+        onViewModeChange,
+        onChange,
+        value,
+    } = props;
 
-    // Determine the reference date for the view
-    const referenceDate = useMemo(() => {
-        return startDate || visibleMonth || value || new Date();
-    }, [startDate, visibleMonth, value]);
+    const isViewModeControlled = props.viewMode !== undefined && typeof onViewModeChange === `function`;
+    const [localViewMode, setLocalViewMode] = useState<CalendarViewMode>(viewModeProp ?? `week`);
+    const viewMode = isViewModeControlled ? (viewModeProp ?? `week`) : localViewMode;
+    const viewModeIndex = Math.max(0, viewModeSegments.findIndex((segment) => segment.tag === viewMode));
 
-    // Get days to display
+    const setViewMode = useCallback((mode: CalendarViewMode) => {
+        if (!isViewModeControlled) setLocalViewMode(mode);
+        onViewModeChange?.(mode);
+    }, [isViewModeControlled, onViewModeChange]);
+
+    // Own cursor: today (or startDate filter). Do not use useCalendar's start-of-month visibleMonth.
+    const [visibleDate, setVisibleDateState] = useState(() => startOfDay(startDate || new Date()));
+
+    useEffect(() => {
+        if (startDate) setVisibleDateState(startOfDay(startDate));
+    }, [startDate]);
+
+    const setVisibleDate = useCallback((date: Date) => {
+        const next = startOfDay(date);
+        setVisibleDateState(next);
+        setVisibleMonth(next);
+    }, [setVisibleMonth]);
+
+    const referenceDate = visibleDate;
+
     const daysInView = useMemo(() => getDaysInView(referenceDate, viewMode, weekStartsOn), [referenceDate, viewMode, weekStartsOn]);
 
-    // Get max allowed date
     const maxAllowedDate = useMemo(() => getMaxAllowedDate(disableAfter), [disableAfter]);
 
-    // Determine if we have sub-intervals
-    const hasSubIntervals = subInterval && subInterval < timeInterval;
+    const hasSubIntervals = !!subInterval && subInterval < timeInterval;
     const effectiveSubInterval = hasSubIntervals ? subInterval! : timeInterval;
 
-    // Check if a day is disabled
+    const timeScale = useMemo<TimeScale>(() => ({
+        viewStart: startHour * 60,
+        viewEnd: endHour * 60,
+        interval: effectiveSubInterval,
+        slotStarts: buildSlotStarts(startHour, endHour, effectiveSubInterval),
+    }), [startHour, endHour, effectiveSubInterval]);
+
     const isDayDisabled = useCallback((day: Date): boolean => {
         if (!maxAllowedDate) return false;
         return isAfter(startOfDay(day), maxAllowedDate);
     }, [maxAllowedDate]);
 
-    // Generate main time slots (for labels in the time column)
-    const mainTimeSlots : TimeSlot[] = useMemo(() => {
+    const mainTimeSlots: TimeSlot[] = useMemo(() => {
         const slots: TimeSlot[] = [];
         for (let h = startHour; h < endHour; h++) {
             for (let m = 0; m < 60; m += timeInterval) {
-                slots.push({
-                    hour: h,
-                    minute: m,
-                    label: formatTimeLabel(h, m),
-                    isMainSlot: false
-                });
+                slots.push({ hour: h, minute: m, label: formatTimeLabel(h, m) });
             }
         }
         return slots;
     }, [startHour, endHour, timeInterval]);
 
-    // Generate sub time slots (for clickable cells)
-    const subTimeSlots : TimeSlot[] = useMemo(() => {
+    const subSlotOffsets = useMemo(() => {
+        if (!hasSubIntervals) return [];
+        const count = Math.round(timeInterval / effectiveSubInterval) - 1;
+        return Array.from({ length: Math.max(count, 0) }, (_, i) => (i + 1) * effectiveSubInterval);
+    }, [hasSubIntervals, timeInterval, effectiveSubInterval]);
 
-        return new Array(Math.round(timeInterval / subInterval) - 1).fill({}).map(m => ({
-            hour: 9,
-            minute: 15,
-            label: formatTimeLabel(9, 15),
-            isMainSlot: false
-        }))
+    const appointmentsKey = appointments
+        .map((item) => `${item.id}:${item.date.getTime()}:${item.timeStart}:${item.timeEnd}:${item.title ?? ""}`)
+        .join("|");
+    const [localAppointments, setLocalAppointments] = useState(appointments);
 
-    }, [startHour, endHour, timeInterval, effectiveSubInterval]);
+    useEffect(() => {
+        setLocalAppointments(appointments);
+    }, [appointmentsKey]);
 
-    return <Flex as={`--large-calendar --${themeVariant} flex cols`}>
-        
-        {/* Header */}
-        <Flex as="--large-calendar-header flex aic jcb">
-                
-            <Flex aic gap={8} as={`flex:1`}>
-                <Text as="--calendar-range bold">{getViewLabel(referenceDate, viewMode, weekStartsOn)}</Text>
-            </Flex>
-                
-            <Flex aic jcc gap={8} as={`flex:1`}>
-                <Segmented 
-                    variant={Variant.Small}
-                    items={[
-                        { label: `Day`, tag: `day` },
-                        { label: `Week`, tag: `week` },
-                        { label: `Month`, tag: `month` },
-                        { label: `Year`, tag: `year` },
-                    ]}
-                    onSwitch={(seg) => {}}
+    const handleAppointmentChange = useCallback((next: CalendarAppointment) => {
+        setLocalAppointments((current) => current.map((item) => item.id === next.id ? next : item));
+        onAppointmentChange?.(next);
+    }, [onAppointmentChange]);
+
+    const goto = useCallback((direction: 1 | -1) => {
+        const stepFns: Record<CalendarViewMode, (d: Date, amount: number) => Date> = {
+            day: (d, amount) => (amount > 0 ? addDays(d, 1) : subDays(d, 1)),
+            week: (d, amount) => (amount > 0 ? addWeeks(d, 1) : subWeeks(d, 1)),
+            month: (d, amount) => (amount > 0 ? addMonths(d, 1) : subMonths(d, 1)),
+            year: (d, amount) => (amount > 0 ? addYears(d, 1) : subYears(d, 1)),
+        };
+        setVisibleDate(stepFns[viewMode](referenceDate, direction));
+    }, [viewMode, referenceDate, setVisibleDate]);
+
+    const gotoPrev = useCallback(() => goto(-1), [goto]);
+    const gotoNext = useCallback(() => goto(1), [goto]);
+    const gotoToday = useCallback(() => setVisibleDate(new Date()), [setVisibleDate]);
+
+    const handleDayClick = useCallback((day: Date) => {
+        onChange?.(day);
+    }, [onChange]);
+
+    const dragStartRef = useRef<DragPoint | null>(null);
+
+    const handleSlotMouseDown = useCallback((day: Date, minutes: number) => {
+        dragStartRef.current = { day, minutes };
+    }, []);
+
+    const buildTimeSlot = useCallback((day: Date, minutes: number): CalendarTimeSlot => {
+        const slotEndMinutes = minutes + effectiveSubInterval;
+        return {
+            date: minutesToDate(day, minutes),
+            timeStart: formatTimeLabel(Math.floor(minutes / 60), minutes % 60),
+            timeEnd: formatTimeLabel(Math.floor(slotEndMinutes / 60), slotEndMinutes % 60),
+        };
+    }, [effectiveSubInterval]);
+
+    const handleSlotMouseUp = useCallback((day: Date, minutes: number) => {
+        const start = dragStartRef.current;
+        dragStartRef.current = null;
+        if (!start) return;
+
+        const isDrag = enableRangeSelect && (!isSameDay(start.day, day) || start.minutes !== minutes);
+
+        if (isDrag && onTimeRangeSelect) {
+            const [from, to] = start.minutes <= minutes || !isSameDay(start.day, day)
+                ? [start, { day, minutes }]
+                : [{ day, minutes }, start];
+
+            const range: CalendarTimeRange = {
+                start: buildTimeSlot(from.day, from.minutes),
+                end: buildTimeSlot(to.day, to.minutes),
+            };
+            onTimeRangeSelect(range);
+            return;
+        }
+
+        onTimeSlotClick?.(buildTimeSlot(day, minutes));
+    }, [enableRangeSelect, onTimeRangeSelect, onTimeSlotClick, buildTimeSlot]);
+
+    const getAppointmentsForDay = useCallback((day: Date) => {
+        return localAppointments.filter((a) => isSameDay(a.date, day));
+    }, [localAppointments]);
+
+    const isTimeGridView = viewMode === 'day' || viewMode === 'week';
+    const [dropFeedback, setDropFeedback] = useState<DropFeedback | null>(null);
+
+    return (
+        <DropFeedbackContext.Provider value={{ feedback: dropFeedback, setFeedback: setDropFeedback }}>
+        <Flex as={`--large-calendar --${themeVariant} flex cols`}>
+
+            <Flex as="--large-calendar-header flex aic jcb">
+
+                <Flex aic gap={8} as={`flex:1`}>
+                    <Text as="--calendar-range bold">{getViewLabel(referenceDate, viewMode, weekStartsOn)}</Text>
+                </Flex>
+
+                <Flex aic jcc gap={8} as={`flex:1`}>
+                    <Segmented
+                        variant={variant || themeVariant || Variant.Small}
+                        items={viewModeSegments}
+                        selected={viewModeIndex}
+                        onSwitch={(seg) => setViewMode(seg.tag as CalendarViewMode)}
                     />
+                </Flex>
+
+                <Flex aic jce gap={4} as={`flex:1`}>
+                    <Button variant={variant || themeVariant} onClick={gotoPrev} as="--nav-btn">
+                        {SVGIcons.chevronLeftOutline}
+                    </Button>
+                    <Button variant={variant || themeVariant} onClick={gotoToday} as="--today-btn">Today</Button>
+                    <Button variant={variant || themeVariant} onClick={gotoNext} as="--nav-btn">
+                        {SVGIcons.chevronRightOutline}
+                    </Button>
+                </Flex>
+
             </Flex>
 
-            <Flex aic jce gap={4} as={`flex:1`}>
-                <Button
-                    // kind="ghost"
-                    variant={props.variant || themeVariant}
-                    // onClick={gotoPrev}
-                    as="--nav-btn"
-                >
-                    {SVGIcons.chevronLeftOutline}
-                </Button>
-                <Button
-                    // kind="ghost"
-                    variant={props.variant || themeVariant}
-                    // onClick={gotoToday}
-                    as="--today-btn">Today</Button>
-                <Button
-                    // kind="ghost"
-                    variant={props.variant || themeVariant}
-                    // onClick={gotoNext}
-                    as="--nav-btn"
-                >
-                    {SVGIcons.chevronRightOutline}
-                </Button>
-            </Flex>
- 
+            {isTimeGridView ? (
+                <Grid
+                    columns={`auto repeat(${daysInView.length}, minmax(0, 1fr))`}
+                    alignItems="stretch"
+                    as="--large-calendar-grid w-full">
+                    <TimeColumn
+                        mainTimeSlots={mainTimeSlots}
+                        subSlotOffsets={subSlotOffsets}
+                        showSubIntervalLabel={showSubIntervalLabel}
+                    />
+
+                    {daysInView.map((day) => (
+                        <DayColumn
+                            key={day.toISOString()}
+                            day={day}
+                            disabled={isDayDisabled(day)}
+                            selected={!!value && isSameDay(day, value)}
+                            mainTimeSlots={mainTimeSlots}
+                            subSlotOffsets={subSlotOffsets}
+                            appointments={getAppointmentsForDay(day)}
+                            scale={timeScale}
+                            onDayClick={handleDayClick}
+                            onSlotMouseDown={handleSlotMouseDown}
+                            onSlotMouseUp={handleSlotMouseUp}
+                            onAppointmentClick={onAppointmentClick}
+                            onAppointmentChange={handleAppointmentChange}
+                            renderAppointment={renderAppointment}
+                        />
+                    ))}
+                </Grid>
+            ) : viewMode === 'month' ? (
+                <Grid columns={`repeat(7, minmax(0, 1fr))`} as="--large-calendar-month-grid w-full">
+                    {daysInView.map((day) => {
+                        const disabled = isDayDisabled(day) || !isSameMonth(day, referenceDate);
+                        const dayAppointments = getAppointmentsForDay(day);
+                        return (
+                            <Flex
+                                key={day.toISOString()}
+                                cols
+                                onClick={() => !disabled && handleDayClick(day)}
+                                as={`--calendar-column --month-cell w-full minW:0 ${isToday(day) ? '--today' : ''} ${disabled ? '--disabled' : ''} ${value && isSameDay(day, value) ? '--selected' : ''}`}>
+                                <Text as="--day-number">{format(day, 'd')}</Text>
+                                {dayAppointments.length > 0 && (
+                                    <Text as="--month-cell-count">{dayAppointments.length} appt{dayAppointments.length > 1 ? 's' : ''}</Text>
+                                )}
+                            </Flex>
+                        );
+                    })}
+                </Grid>
+            ) : (
+                <Grid columns={`repeat(4, minmax(0, 1fr))`} as="--large-calendar-year-grid w-full">
+                    {daysInView.map((month) => {
+                        const monthAppointments = localAppointments.filter((a) => isSameMonth(a.date, month));
+                        return (
+                            <Flex
+                                key={month.toISOString()}
+                                cols
+                                onClick={() => {
+                                    setVisibleDate(month);
+                                    setViewMode('month');
+                                }}
+                                as={`--calendar-column --year-cell w-full minW:0 ${isSameMonth(month, new Date()) ? '--today' : ''}`}>
+                                <Text as="--month-name">{format(month, 'MMMM')}</Text>
+                                {monthAppointments.length > 0 && (
+                                    <Text as="--month-cell-count">{monthAppointments.length} appt{monthAppointments.length > 1 ? 's' : ''}</Text>
+                                )}
+                            </Flex>
+                        );
+                    })}
+                </Grid>
+            )}
+
         </Flex>
+        </DropFeedbackContext.Provider>
+    );
+};
 
-        <Grid
-            cols={`repeat(8, 1fr)`}
-            // rows="var(--large-calendar-sub-head, ) 1fr"
-            as="--large-calendar-grid">
-
-            <CalendarColumn 
-                type={`stamps`}
-                rowCount={mainTimeSlots.length}
-                mainTimeSlots={mainTimeSlots}
-                subTimeSlots={subTimeSlots}
-                subInterval={subInterval}
-                showSubIntervalLabel={showSubIntervalLabel} />
-
-            {daysInView.map((day, idx) => <CalendarColumn 
-                type={`meta`}
-                key={`lgc-${idx}-${day}-${viewMode}`}
-                index={idx}
-                day={day}
-                rowCount={mainTimeSlots.length}
-                disabled={isDayDisabled(day)}
-                subTimeSlots={subTimeSlots}
-                subInterval={subInterval}
-                showSubIntervalLabel={showSubIntervalLabel}
-                value={value}
-            />)}
-
-        </Grid>
-
-
-    </Flex>
-}
-
-export default LargeCalendar
+export default LargeCalendar;

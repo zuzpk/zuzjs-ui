@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { ValueOf } from "../../types";
 import { Variant } from "../../types/enums";
+import { dynamic } from "@zuzjs/core";
 
 export type CalendarRangeValue = {
     start: Date | null;
@@ -21,7 +22,7 @@ export type CalendarQuickOptionLabel =
     | "4 weeks";
 export type CalendarQuickOptionInput = CalendarQuickOptionLabel | CalendarDisabledDateInput;
 
-export type CalendarViewMode = "week" | "month" | "year";
+export type CalendarViewMode = "day" | "week" | "month" | "year";
 
 export type CalendarTimeSlot = {
     date: Date;
@@ -40,7 +41,7 @@ export type CalendarAppointment = {
     timeStart: string; // "09:00"
     timeEnd: string;   // "10:30"
     title?: string;
-    data?: any;
+    data?: dynamic;
 };
 
 export type CalendarAppointmentRenderProps = {
@@ -93,6 +94,8 @@ export type CalendarProps = {
     onTimeSlotClick?: (slot: CalendarTimeSlot) => void;
     /** Callback when clicking on an appointment */
     onAppointmentClick?: (appointment: CalendarAppointment) => void;
+    /** Callback when an appointment is moved or resized */
+    onAppointmentChange?: (appointment: CalendarAppointment) => void;
     /** Enable multi-select by clicking and dragging across time slots */
     enableRangeSelect?: boolean;
     /** Callback when a time range is selected (when enableRangeSelect is true) */
@@ -117,6 +120,7 @@ export type LargeCalendarProps = Pick<CalendarProps,
     | 'renderAppointment'
     | 'onTimeSlotClick'
     | 'onAppointmentClick'
+    | 'onAppointmentChange'
     | 'enableRangeSelect'
     | 'onTimeRangeSelect'
     | 'disableAfter'
@@ -125,4 +129,6 @@ export type LargeCalendarProps = Pick<CalendarProps,
     themeVariant?: ValueOf<typeof Variant>;
     onChange?: (date: Date | null) => void;
     setVisibleMonth: (date: Date) => void;
+    /** Called when the user switches Day/Week/Month/Year via the segmented control. Optional — LargeCalendar tracks the mode itself if this isn't provided. */
+    onViewModeChange?: (viewMode: CalendarViewMode) => void;
 };

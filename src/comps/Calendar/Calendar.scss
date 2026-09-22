@@ -19,6 +19,9 @@ body{
     --large-calendar-appointment-color: var(--blue-900);
     --large-calendar-today-bg: var(--blue-50);
     --large-calendar-hover-bg: var(--gray-50);
+
+    --calendar-column-border-x: rgb(from var(--border-primary) r g b / 0.65);
+    --calendar-column-border-y: rgb(from var(--border-primary) r g b / 0.35);
 }
 
 [color-scheme="dark"] {
@@ -235,25 +238,204 @@ body{
 
     .--large-calendar-grid{
         width: 100%;
+        min-width: 0;
+        align-items: stretch;
+
+        .--time-column-root {
+            width: max-content;
+            min-width: var(--calendar-time-column-width, 56px);
+        }
+
+        .--day-column {
+            width: 100%;
+            min-width: 0;
+
+            &.--drop-over{
+                .--day-header{
+                    background: color-mix(in srgb, var(--large-calendar-appointment-border) 18%, var(--surface));
+                }
+            }
+        }
+
         .--calendar-column {
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
             padding: var(--padding-md);
             background: var(--surface);
-            border-bottom: 1px var(--border-primary, var(--calendar-column-border-y)) solid;
-            border-right: 1px var(--border-primary, var(--calendar-column-border-x)) solid;
+            border-bottom: 1px var(--calendar-column-border-y, var(--border-primary)) solid;
+            border-right: 1px var(--calendar-column-border-x, var(--border-primary)) solid;
             &.--day-header{
                 font-size: var(--text-lg);
                 height: var(--calendar-slot-height, 36px);
+                flex-shrink: 0;
+                cursor: pointer;
+                &.--disabled{
+                    cursor: not-allowed;
+                    opacity: 0.4;
+                }
+                .--day-number.--selected{
+                    background: var(--large-calendar-appointment-border);
+                    color: #fff;
+                    border-radius: 999px;
+                    width: 22px;
+                    height: 22px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                }
             }
             &:not(.--day-header){
                 height: var(--calendar-slot-height, 28px);
+                flex-shrink: 0;
                 cursor: crosshair;
                 &:hover{
                     background: var(--calendar-column-hover, var(--muted));
                 }
+                &.--sub-slot{
+                    height: var(--calendar-sub-slot-height, 28px);
+                    // opacity: 0.6;
+                }
             }
-            .--time-label{
-                opacity: var(--calendar-time-label-opacity, 0.5);
+            &.--time-label{
+                .--time-text{
+                    opacity: var(--calendar-time-label-opacity, 0.5);
+                }
+                min-width: 100px;
+                &.--sub-slot{
+                    height: var(--calendar-sub-slot-height, 28px);
+                }
+            }
+            .--time-text{
+                white-space: nowrap;
+                &.--sub{
+                    font-size: var(--text-xs);
+                }
+            }
+        }
+
+        .--calendar-day-body{
+            position: relative;
+            width: 100%;
+            min-width: 0;
+
+            &.--drop-over{
+                background: color-mix(in srgb, var(--large-calendar-appointment-bg) 35%, transparent);
+            }
+
+            .--appointment{
+                background: var(--large-calendar-appointment-bg);
+                border-left: 3px solid var(--large-calendar-appointment-border);
+                color: var(--large-calendar-appointment-color);
+                border-radius: var(--radius-sm);
+                overflow: hidden;
+                z-index: 1;
+                user-select: none;
+                box-sizing: border-box;
+                min-height: 16px;
+
+                &.--ghost{
+                    opacity: 0.38;
+                    pointer-events: none;
+                    outline: 1px dashed var(--large-calendar-appointment-border);
+                    .--appointment-resize{
+                        display: none;
+                    }
+                }
+
+                &.--resizing{
+                    z-index: 4;
+                }
+
+                &.--drop-preview{
+                    z-index: 5;
+                    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+                    outline: 1px solid var(--large-calendar-appointment-border);
+                }
+
+                .--appointment-drop-overlay{
+                    background: color-mix(in srgb, var(--large-calendar-appointment-border) 78%, transparent);
+                    color: #fff;
+                    padding: 6px;
+                    text-align: center;
+                    .--drop-overlay-date{
+                        font-size: var(--text-xs);
+                    }
+                    .--drop-overlay-time{
+                        font-size: var(--text-sm);
+                        font-weight: 700;
+                    }
+                }
+
+                .--appointment-body{
+                    cursor: grab;
+                    padding: 8px 8px 10px;
+                    min-height: 0;
+                    flex: 1;
+                    .--appointment-title{
+                        font-size: var(--text-xs);
+                        font-weight: 600;
+                    }
+                    .--appointment-time{
+                        font-size: var(--text-xs);
+                        opacity: 0.7;
+                    }
+                }
+
+                .--appointment-resize{
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    height: 10px;
+                    cursor: ns-resize;
+                    z-index: 3;
+                    &.--start{ top: 0; }
+                    &.--end{ bottom: 0; }
+                    &:hover,
+                    &:active{
+                        background: color-mix(in srgb, var(--large-calendar-appointment-border) 35%, transparent);
+                    }
+                }
+            }
+        }
+    }
+
+    .--large-calendar-month-grid,
+    .--large-calendar-year-grid{
+        width: 100%;
+        min-width: 0;
+
+        .--calendar-column{
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            padding: var(--padding-md);
+            background: var(--surface);
+            border-bottom: 1px solid var(--large-calendar-cell-border);
+            border-right: 1px solid var(--large-calendar-cell-border);
+            cursor: pointer;
+            min-height: 80px;
+
+            &.--disabled{
+                opacity: 0.35;
+                cursor: not-allowed;
+            }
+            &.--today{
+                background: var(--large-calendar-today-bg);
+            }
+            &.--selected{
+                outline: 2px solid var(--large-calendar-appointment-border);
+                outline-offset: -2px;
+            }
+            &:hover:not(.--disabled){
+                background: var(--large-calendar-hover-bg);
+            }
+
+            .--month-cell-count{
+                font-size: var(--text-xs);
+                opacity: 0.6;
             }
         }
     }
 }
+

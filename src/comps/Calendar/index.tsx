@@ -65,6 +65,7 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
         renderAppointment,
         onTimeSlotClick,
         onAppointmentClick,
+        onAppointmentChange,
         enableRangeSelect,
         onTimeRangeSelect,
         disableAfter,
@@ -123,6 +124,7 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
                 renderAppointment={renderAppointment}
                 onTimeSlotClick={onTimeSlotClick}
                 onAppointmentClick={onAppointmentClick}
+                onAppointmentChange={onAppointmentChange}
                 enableRangeSelect={enableRangeSelect}
                 onTimeRangeSelect={onTimeRangeSelect}
                 disableAfter={disableAfter}
