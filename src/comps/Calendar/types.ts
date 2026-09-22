@@ -29,6 +29,11 @@ export type CalendarTimeSlot = {
     timeEnd: string;   // "10:00"
 };
 
+export type CalendarTimeRange = {
+    start: CalendarTimeSlot;
+    end: CalendarTimeSlot;
+};
+
 export type CalendarAppointment = {
     id: string | number;
     date: Date;
@@ -43,6 +48,9 @@ export type CalendarAppointmentRenderProps = {
     style: React.CSSProperties;
     isDefault?: boolean;
 };
+
+/** Day of week: 0 = Sunday, 1 = Monday, ..., 6 = Saturday */
+export type CalendarWeekStartDay = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export type CalendarProps = {
     value?: Date | null;
@@ -63,8 +71,16 @@ export type CalendarProps = {
     large?: boolean;
     /** View mode for large calendar - default: week */
     viewMode?: CalendarViewMode;
-    /** Time interval in minutes - default: 60 */
+    /** Start date for the view (defaults to today or value) */
+    startDate?: Date;
+    /** Day of the week to start (0=Sunday, 1=Monday, etc.) - default: 1 (Monday) */
+    weekStartsOn?: CalendarWeekStartDay;
+    /** Time interval in minutes - default: 60 (main slot size) */
     timeInterval?: number;
+    /** Sub-interval in minutes for clickable slots within main intervals - e.g., 15 for 15-min slots within 1-hour intervals */
+    subInterval?: number;
+    /** Whether to show labels for sub-intervals - default: false (only main intervals are labeled) */
+    showSubIntervalLabel?: boolean;
     /** Start hour (0-23) - default: 8 */
     startHour?: number;
     /** End hour (0-23) - default: 20 */
@@ -77,4 +93,36 @@ export type CalendarProps = {
     onTimeSlotClick?: (slot: CalendarTimeSlot) => void;
     /** Callback when clicking on an appointment */
     onAppointmentClick?: (appointment: CalendarAppointment) => void;
+    /** Enable multi-select by clicking and dragging across time slots */
+    enableRangeSelect?: boolean;
+    /** Callback when a time range is selected (when enableRangeSelect is true) */
+    onTimeRangeSelect?: (range: CalendarTimeRange) => void;
+    /** Disable dates after a specific threshold: 'today', 'next-week', or a specific Date */
+    disableAfter?: 'today' | 'next-week' | Date;
+};
+
+export type LargeCalendarProps = Pick<CalendarProps,
+    | 'value'
+    | 'defaultValue'
+    | 'variant'
+    | 'viewMode'
+    | 'startDate'
+    | 'weekStartsOn'
+    | 'timeInterval'
+    | 'subInterval'
+    | 'showSubIntervalLabel'
+    | 'startHour'
+    | 'endHour'
+    | 'appointments'
+    | 'renderAppointment'
+    | 'onTimeSlotClick'
+    | 'onAppointmentClick'
+    | 'enableRangeSelect'
+    | 'onTimeRangeSelect'
+    | 'disableAfter'
+> & {
+    visibleMonth: Date;
+    themeVariant?: ValueOf<typeof Variant>;
+    onChange?: (date: Date | null) => void;
+    setVisibleMonth: (date: Date) => void;
 };

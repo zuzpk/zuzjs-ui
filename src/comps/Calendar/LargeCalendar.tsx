@@ -1,42 +1,48 @@
-"use client";
-import { addDays, addMinutes, addWeeks, endOfWeek, format, isSameDay, isToday, setHours, setMinutes, startOfWeek } from "date-fns";
-import { ReactNode, useMemo } from "react";
-import Box from "../Box";
+import { addDays, addMinutes, addWeeks, endOfWeek, format, isAfter, isBefore, isSameDay, isToday, setHours, setMinutes, startOfDay, startOfWeek } from "date-fns";
 import Button from "../Button";
 import Flex from "../Flex";
 import Select from "../Select";
 import SVGIcons from "../svgicons";
 import Text from "../Text";
-import { CalendarAppointment, CalendarAppointmentRenderProps, CalendarProps, CalendarTimeSlot, CalendarViewMode } from "./types";
+import { CalendarViewMode, CalendarWeekStartDay, LargeCalendarProps } from "./types";
+import React, { useCallback, useMemo } from "react";
+import Segmented from "../Segmented";
+import { Variant } from "../../types";
+import Grid from "../Grid";
+type TimeSlot = {
+    hour: number;
+    minute: number;
+    label: string;
+    isMainSlot: boolean;
+}
 
-type LargeCalendarProps = Pick<CalendarProps,
-    | 'value'
-    | 'defaultValue'
-    | 'variant'
-    | 'viewMode'
-    | 'timeInterval'
-    | 'startHour'
-    | 'endHour'
-    | 'appointments'
-    | 'renderAppointment'
-    | 'onTimeSlotClick'
-    | 'onAppointmentClick'
-> & {
-    visibleMonth: Date;
-    themeVariant: string;
-    onChange?: (date: Date | null) => void;
-    setVisibleMonth: (date: Date) => void;
+// Render view mode selector options
+const viewModeOptions = [
+    { label: 'Week', value: 'week' },
+    { label: 'Month', value: 'month' },
+    { label: 'Year', value: 'year' }
+];
+
+const getMaxAllowedDate = (disableAfter?: 'today' | 'next-week' | Date): Date | null => {
+    if (!disableAfter) return null;
+    
+    const today = startOfDay(new Date());
+    
+    switch (disableAfter) {
+        case 'today':
+            return today;
+        case 'next-week':
+            return addDays(today, 7);
+        default:
+            return startOfDay(disableAfter);
+    }
 };
 
-const DEFAULT_TIME_SLOT_HEIGHT = 48; // px per hour slot
-const HEADER_HEIGHT = 50;
-const TIME_COLUMN_WIDTH = 80;
-
-const getViewLabel = (date: Date, viewMode: CalendarViewMode): string => {
+const getViewLabel = (date: Date, viewMode: CalendarViewMode, weekStartsOn: CalendarWeekStartDay): string => {
     switch (viewMode) {
         case 'week': {
-            const start = startOfWeek(date);
-            const end = endOfWeek(date);
+            const start = startOfWeek(date, { weekStartsOn });
+            const end = endOfWeek(date, { weekStartsOn });
             return `${format(start, 'MMM d')} - ${format(end, 'MMM d, yyyy')}`;
         }
         case 'month':
@@ -48,11 +54,11 @@ const getViewLabel = (date: Date, viewMode: CalendarViewMode): string => {
     }
 };
 
-const getDaysInView = (date: Date, viewMode: CalendarViewMode): Date[] => {
+const getDaysInView = (date: Date, viewMode: CalendarViewMode, weekStartsOn: CalendarWeekStartDay): Date[] => {
     switch (viewMode) {
         case 'week': {
-            const start = startOfWeek(date);
-            const end = endOfWeek(date);
+            const start = startOfWeek(date, { weekStartsOn });
+            const end = endOfWeek(date, { weekStartsOn });
             const days: Date[] = [];
             let current = start;
             while (current <= end) {
@@ -84,330 +90,244 @@ const getDaysInView = (date: Date, viewMode: CalendarViewMode): Date[] => {
     }
 };
 
-const parseTimeToMinutes = (timeStr: string): number => {
-    const [hours, minutes] = timeStr.split(':').map(Number);
-    return hours * 60 + minutes;
-};
-
 const formatTimeLabel = (hour: number, minute: number): string => {
     const h = hour.toString().padStart(2, '0');
     const m = minute.toString().padStart(2, '0');
     return `${h}:${m}`;
 };
 
+type CalendarColumnBase = {
+    subInterval: number;
+    showSubIntervalLabel: boolean;
+    subTimeSlots: TimeSlot[];
+}
+type CalendarColumnProps = | {
+        type: "stamps";
+        mainTimeSlots: TimeSlot[];
+        rowCount: number;
+        index?: never;
+        day?: never,
+        disabled?: never;
+        value?: never;
+        
+    }
+    | {
+        type: "meta";
+        index: number;
+        day: Date,
+        disabled: boolean;
+        value: Date | null | undefined;
+        rowCount: number;
+        mainTimeSlots?: TimeSlot[];
+    }
+
+const CalendarColumn : React.FC<CalendarColumnBase & CalendarColumnProps> = ({
+    type,
+    index,
+    day,
+    disabled,
+    value,
+    rowCount,
+    mainTimeSlots,
+    subTimeSlots,
+    subInterval,
+    showSubIntervalLabel
+}) => {
+
+    return <Flex cols>
+
+    { type == `stamps` ? 
+        <Flex
+            gap={4}
+            as={`--day-header --calendar-column flex aic jcc`} />
+        : <Flex
+            gap={4}
+            as={`--day-header --calendar-column flex aic jcc ${isToday(day) ? '--today' : ''} ${disabled ? '--disabled' : ''}`}>
+            <Text as="--day-name">{format(day, 'EEE')}</Text>
+            <Text as={`--day-number ${isSameDay(day, value || new Date()) ? '--selected' : ''}`}>
+                {format(day, 'd')}
+            </Text>
+        </Flex> }
+
+        { new Array(rowCount).fill({}).map((slot, idx) => {
+            if ( type == `stamps` ){
+                return  <>
+                    <Flex
+                        key={`time-slot-${idx}`}
+                        aic jce
+                        as="--time-label --calendar-column --time-column">
+                        <Text as="--time-text">{mainTimeSlots[idx].label}</Text>
+                    </Flex>
+                    {subTimeSlots.map(st => <Flex
+                        key={`time-slot-${idx}`}
+                        as="--time-label --calendar-column --time-column">
+                        
+                    </Flex>)}
+                </>
+            }
+
+            return <>
+                <Flex
+                    key={`time-slot-${idx}`}
+                    as="--calendar-column --time-column">
+                    
+                </Flex>
+                {subTimeSlots.map(st => <Flex
+                    key={`time-slot-${idx}`}
+                    as="--calendar-column --time-column">
+                    
+                </Flex>)}
+            </>
+
+        })}
+
+    </Flex>
+}
+
 const LargeCalendar = (props: LargeCalendarProps) => {
+
     const {
-        value,
-        visibleMonth,
+        viewMode = `week`,
+        weekStartsOn = 1,
         themeVariant,
-        viewMode = 'week',
-        timeInterval = 60,
+        startDate,
+        visibleMonth,
+        disableAfter,
         startHour = 8,
         endHour = 20,
-        appointments = [],
-        renderAppointment,
-        onTimeSlotClick,
-        onAppointmentClick,
-        setVisibleMonth
-    } = props;
+        timeInterval = 60,
+        subInterval = 15,
+        showSubIntervalLabel = false,
+        value
+    } = props
 
-    // Generate time slots
-    const timeSlots = useMemo(() => {
-        const slots: { hour: number; minute: number; label: string }[] = [];
+    // Determine the reference date for the view
+    const referenceDate = useMemo(() => {
+        return startDate || visibleMonth || value || new Date();
+    }, [startDate, visibleMonth, value]);
+
+    // Get days to display
+    const daysInView = useMemo(() => getDaysInView(referenceDate, viewMode, weekStartsOn), [referenceDate, viewMode, weekStartsOn]);
+
+    // Get max allowed date
+    const maxAllowedDate = useMemo(() => getMaxAllowedDate(disableAfter), [disableAfter]);
+
+    // Determine if we have sub-intervals
+    const hasSubIntervals = subInterval && subInterval < timeInterval;
+    const effectiveSubInterval = hasSubIntervals ? subInterval! : timeInterval;
+
+    // Check if a day is disabled
+    const isDayDisabled = useCallback((day: Date): boolean => {
+        if (!maxAllowedDate) return false;
+        return isAfter(startOfDay(day), maxAllowedDate);
+    }, [maxAllowedDate]);
+
+    // Generate main time slots (for labels in the time column)
+    const mainTimeSlots : TimeSlot[] = useMemo(() => {
+        const slots: TimeSlot[] = [];
         for (let h = startHour; h < endHour; h++) {
             for (let m = 0; m < 60; m += timeInterval) {
                 slots.push({
                     hour: h,
                     minute: m,
-                    label: formatTimeLabel(h, m)
+                    label: formatTimeLabel(h, m),
+                    isMainSlot: false
                 });
             }
         }
         return slots;
     }, [startHour, endHour, timeInterval]);
 
-    // Get days to display
-    const daysInView = useMemo(() => getDaysInView(visibleMonth, viewMode), [visibleMonth, viewMode]);
+    // Generate sub time slots (for clickable cells)
+    const subTimeSlots : TimeSlot[] = useMemo(() => {
 
-    // Calculate slot height based on interval
-    const slotHeight = useMemo(() => {
-        const hourFraction = timeInterval / 60;
-        return DEFAULT_TIME_SLOT_HEIGHT * hourFraction;
-    }, [timeInterval]);
+        return new Array(Math.round(timeInterval / subInterval) - 1).fill({}).map(m => ({
+            hour: 9,
+            minute: 15,
+            label: formatTimeLabel(9, 15),
+            isMainSlot: false
+        }))
 
-    // Group appointments by date
-    const appointmentsByDate = useMemo(() => {
-        const map = new Map<string, typeof appointments>();
-        appointments.forEach(apt => {
-            const dateKey = format(apt.date, 'yyyy-MM-dd');
-            const existing = map.get(dateKey) || [];
-            map.set(dateKey, [...existing, apt]);
-        });
-        return map;
-    }, [appointments]);
+    }, [startHour, endHour, timeInterval, effectiveSubInterval]);
 
-    // Navigate to previous period
-    const gotoPrev = () => {
-        switch (viewMode) {
-            case 'week':
-                setVisibleMonth(addWeeks(visibleMonth, -1));
-                break;
-            case 'month':
-                setVisibleMonth(new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() - 1, 1));
-                break;
-            case 'year':
-                setVisibleMonth(new Date(visibleMonth.getFullYear() - 1, 0, 1));
-                break;
-        }
-    };
-
-    // Navigate to next period
-    const gotoNext = () => {
-        switch (viewMode) {
-            case 'week':
-                setVisibleMonth(addWeeks(visibleMonth, 1));
-                break;
-            case 'month':
-                setVisibleMonth(new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 1));
-                break;
-            case 'year':
-                setVisibleMonth(new Date(visibleMonth.getFullYear() + 1, 0, 1));
-                break;
-        }
-    };
-
-    // Go to today
-    const gotoToday = () => {
-        setVisibleMonth(new Date());
-    };
-
-    // Handle cell click
-    const handleCellClick = (day: Date, slot: typeof timeSlots[0]) => {
-        if (onTimeSlotClick) {
-            const dateWithTime = setMinutes(setHours(day, slot.hour), slot.minute);
-            const endTime = format(addMinutes(dateWithTime, timeInterval), 'HH:mm');
-            onTimeSlotClick({
-                date: dateWithTime,
-                timeStart: slot.label,
-                timeEnd: endTime
-            });
-        }
-    };
-
-    // Default appointment render
-    const defaultRenderAppointment = (props: CalendarAppointmentRenderProps): ReactNode => {
-        const { appointment, style } = props;
-        return (
-            <Box
-                as={`--large-calendar-appointment`}
-                style={style}
-                onClick={(e: React.MouseEvent) => {
-                    e.stopPropagation();
-                    onAppointmentClick?.(appointment);
-                }}
-            >
-                <Text as="--appointment-title">{appointment.title || 'Event'}</Text>
-            </Box>
-        );
-    };
-
-    // Calculate appointment position and height
-    const getAppointmentStyle = (appointment: typeof appointments[0]): React.CSSProperties | null => {
-        const startMinutes = parseTimeToMinutes(appointment.timeStart);
-        const endMinutes = parseTimeToMinutes(appointment.timeEnd);
+    return <Flex as={`--large-calendar --${themeVariant} flex cols`}>
         
-        // Check if appointment is within visible hours
-        if (startMinutes < startHour * 60 || endMinutes > endHour * 60) {
-            return null;
-        }
-
-        const minutesFromStart = startMinutes - startHour * 60;
-        const duration = endMinutes - startMinutes;
-        
-        const top = (minutesFromStart / 60) * DEFAULT_TIME_SLOT_HEIGHT;
-        const height = (duration / 60) * DEFAULT_TIME_SLOT_HEIGHT;
-
-        return {
-            top: `${top}px`,
-            height: `${height}px`,
-            left: '4px',
-            right: '4px',
-            position: 'absolute' as const,
-            zIndex: 5
-        };
-    };
-
-    // Render view mode selector options
-    const viewModeOptions = [
-        { label: 'Week', value: 'week' },
-        { label: 'Month', value: 'month' },
-        { label: 'Year', value: 'year' }
-    ];
-
-    const gridTemplateColumns = viewMode !== 'year' 
-        ? `${TIME_COLUMN_WIDTH}px repeat(${daysInView.length}, 1fr)`
-        : 'none';
-
-    return (
-        <Flex as={`--large-calendar --${themeVariant} flex cols`} style={{ width: '100%', height: '100%' }}>
-            {/* Header */}
-            <Flex as="--large-calendar-header flex aic jcb" style={{ minHeight: HEADER_HEIGHT }}>
-                <Flex aic gap={8}>
-                    <Button
-                        kind="ghost"
-                        variant={props.variant || themeVariant}
-                        onClick={gotoToday}
-                        as="--today-btn"
-                    >
-                        Today
-                    </Button>
-                </Flex>
+        {/* Header */}
+        <Flex as="--large-calendar-header flex aic jcb">
                 
-                <Flex aic gap={8}>
-                    <Button
-                        kind="ghost"
-                        variant={props.variant || themeVariant}
-                        onClick={gotoPrev}
-                        as="--nav-btn"
-                    >
-                        {SVGIcons.chevronLeftOutline}
-                    </Button>
-                    <Text as="--calendar-range bold">{getViewLabel(visibleMonth, viewMode)}</Text>
-                    <Button
-                        kind="ghost"
-                        variant={props.variant || themeVariant}
-                        onClick={gotoNext}
-                        as="--nav-btn"
-                    >
-                        {SVGIcons.chevronRightOutline}
-                    </Button>
-                </Flex>
-
-                <Select
-                    options={viewModeOptions}
-                    selected={viewMode}
-                    onChange={(opt) => {
-                        // View mode change would need to be handled by parent
-                    }}
-                    variant={props.variant || themeVariant}
-                    kind="surface"
-                />
+            <Flex aic gap={8} as={`flex:1`}>
+                <Text as="--calendar-range bold">{getViewLabel(referenceDate, viewMode, weekStartsOn)}</Text>
+            </Flex>
+                
+            <Flex aic jcc gap={8} as={`flex:1`}>
+                <Segmented 
+                    variant={Variant.Small}
+                    items={[
+                        { label: `Day`, tag: `day` },
+                        { label: `Week`, tag: `week` },
+                        { label: `Month`, tag: `month` },
+                        { label: `Year`, tag: `year` },
+                    ]}
+                    onSwitch={(seg) => {}}
+                    />
             </Flex>
 
-            {/* Grid Container */}
-            <Box as="--large-calendar-grid" style={{ flex: 1, overflow: 'auto', position: 'relative' }}>
-                {/* Day Headers Row */}
-                {viewMode !== 'year' && (
-                    <Box 
-                        as="--large-calendar-days-header" 
-                        style={{
-                            display: 'grid',
-                            gridTemplateColumns,
-                            position: 'sticky',
-                            top: 0,
-                            zIndex: 10,
-                            background: 'var(--large-calendar-header-bg)'
-                        }}
-                    >
-                        {/* Empty corner for time column */}
-                        <Box as="--corner" style={{ width: TIME_COLUMN_WIDTH }} />
-                        
-                        {/* Day headers */}
-                        {daysInView.map((day, idx) => (
-                            <Box
-                                key={`day-header-${idx}`}
-                                as={`--day-header flex cols aic jcc ${isToday(day) ? '--today' : ''}`}
-                            >
-                                <Text as="--day-name">{format(day, 'EEE')}</Text>
-                                <Text as={`--day-number ${isSameDay(day, value || new Date()) ? '--selected' : ''}`}>
-                                    {format(day, 'd')}
-                                </Text>
-                            </Box>
-                        ))}
-                    </Box>
-                )}
-
-                {/* Time Grid */}
-                {viewMode !== 'year' && (
-                    <Box 
-                        as="--large-calendar-body"
-                        style={{
-                            display: 'grid',
-                            gridTemplateColumns,
-                            position: 'relative'
-                        }}
-                    >
-                        {/* Time Column */}
-                        <Box as="--time-column">
-                            {timeSlots.map((slot, idx) => (
-                                <Box
-                                    key={`time-slot-${idx}`}
-                                    as="--time-label"
-                                    style={{ height: slotHeight }}
-                                >
-                                    <Text as="--time-text">{slot.label}</Text>
-                                </Box>
-                            ))}
-                        </Box>
-
-                        {/* Day Columns with time cells */}
-                        {daysInView.map((day, dayIdx) => {
-                            const dateKey = format(day, 'yyyy-MM-dd');
-                            const dayAppointments = appointmentsByDate.get(dateKey) || [];
-
-                            return (
-                                <Box
-                                    key={`day-col-${dayIdx}`}
-                                    as={`--day-column rel ${isToday(day) ? '--today' : ''}`}
-                                >
-                                    {/* Time cells */}
-                                    {timeSlots.map((slot, slotIdx) => (
-                                        <Box
-                                            key={`cell-${dayIdx}-${slotIdx}`}
-                                            as="--time-cell"
-                                            style={{ height: slotHeight }}
-                                            onClick={() => handleCellClick(day, slot)}
-                                        />
-                                    ))}
-
-                                    {/* Appointments */}
-                                    {dayAppointments.map(apt => {
-                                        const style = getAppointmentStyle(apt);
-                                        if (!style) return null;
-
-                                        const renderProps: CalendarAppointmentRenderProps = {
-                                            appointment: apt,
-                                            style,
-                                            isDefault: !renderAppointment
-                                        };
-
-                                        return renderAppointment
-                                            ? renderAppointment(renderProps)
-                                            : defaultRenderAppointment(renderProps);
-                                    })}
-                                </Box>
-                            );
-                        })}
-                    </Box>
-                )}
-
-                {/* Year View - Months Grid */}
-                {viewMode === 'year' && (
-                    <Flex as="--year-grid wrap" style={{ padding: 16, gap: 16 }}>
-                        {daysInView.map((month, idx) => (
-                            <Box
-                                key={`month-${idx}`}
-                                as={`--month-cell --${themeVariant}`}
-                                onClick={() => setVisibleMonth(month)}
-                            >
-                                <Text as="--month-name">{format(month, 'MMMM')}</Text>
-                            </Box>
-                        ))}
-                    </Flex>
-                )}
-            </Box>
+            <Flex aic jce gap={4} as={`flex:1`}>
+                <Button
+                    // kind="ghost"
+                    variant={props.variant || themeVariant}
+                    // onClick={gotoPrev}
+                    as="--nav-btn"
+                >
+                    {SVGIcons.chevronLeftOutline}
+                </Button>
+                <Button
+                    // kind="ghost"
+                    variant={props.variant || themeVariant}
+                    // onClick={gotoToday}
+                    as="--today-btn">Today</Button>
+                <Button
+                    // kind="ghost"
+                    variant={props.variant || themeVariant}
+                    // onClick={gotoNext}
+                    as="--nav-btn"
+                >
+                    {SVGIcons.chevronRightOutline}
+                </Button>
+            </Flex>
+ 
         </Flex>
-    );
-};
 
-export default LargeCalendar;
+        <Grid
+            cols={`repeat(8, 1fr)`}
+            // rows="var(--large-calendar-sub-head, ) 1fr"
+            as="--large-calendar-grid">
+
+            <CalendarColumn 
+                type={`stamps`}
+                rowCount={mainTimeSlots.length}
+                mainTimeSlots={mainTimeSlots}
+                subTimeSlots={subTimeSlots}
+                subInterval={subInterval}
+                showSubIntervalLabel={showSubIntervalLabel} />
+
+            {daysInView.map((day, idx) => <CalendarColumn 
+                type={`meta`}
+                key={`lgc-${idx}-${day}-${viewMode}`}
+                index={idx}
+                day={day}
+                rowCount={mainTimeSlots.length}
+                disabled={isDayDisabled(day)}
+                subTimeSlots={subTimeSlots}
+                subInterval={subInterval}
+                showSubIntervalLabel={showSubIntervalLabel}
+                value={value}
+            />)}
+
+        </Grid>
+
+
+    </Flex>
+}
+
+export default LargeCalendar

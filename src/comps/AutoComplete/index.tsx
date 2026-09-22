@@ -8,14 +8,23 @@ import { useTheme } from "../../hooks/useColorScheme";
 import { Props, Variant } from "../../types";
 import { TRANSITION_CURVES, TRANSITIONS } from "../../types/enums";
 import Box from "../Box";
+import Flex from "../Flex";
 import Input from "../Input";
 import List from "../List";
 import { ListHandler } from "../List/types";
 import SVGIcons from "../svgicons";
+import Text from "../Text";
 import { AutoCompleteProps } from "./types";
 
 const SELECT_OPEN_EVENT = "zuz-select-open";
 const DEFAULT_DATA_KEY = `name`;
+
+// Token type for tokenized selections
+type AutoCompleteToken = {
+    id: string;
+    value: string;
+    item: dynamic;
+};
 
 const isPlainItem = (item: unknown): item is dynamic => {
     return typeof item === `object` && item !== null && !Array.isArray(item);
@@ -159,6 +168,7 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
         loadingPlaceholder = 'Loading...',
         emptyPlaceholder = 'No results found',
         maxHeight,
+        tokenize,
         ...pops
     } = props
 
@@ -171,6 +181,7 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
     const [rawItems, setRawItems] = useState<dynamic[]>([]) // Store original objects
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [tokens, setTokens] = useState<AutoCompleteToken[]>([]) // Tokenized selections
 
     const innerRef = useRef<HTMLInputElement>(null)
     const suggestionRef = useRef<ListHandler>(null)
@@ -341,8 +352,54 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
             onSelect: select,
             onChange: change,
             clearOnSelect: shouldClear,
+            tokenize: isTokenize,
         } = propsRef.current;
 
+        // Handle tokenize mode
+        if (isTokenize) {
+            // Check if token already exists
+            setTokens(prev => {
+                const exists = prev.some(t => t.value === item);
+                if (exists) {
+                    // Token already selected, just clear input
+                    if (innerRef.current) innerRef.current.value = ``;
+                    setChoosing(false);
+                    setItems([]);
+                    setRawItems([]);
+                    setHighlightedIndex(null);
+                    highlightedIndexRef.current = null;
+                    committingRef.current = false;
+                    return prev;
+                }
+                
+                // Add new token
+                const newToken: AutoCompleteToken = {
+                    id: uuid(12),
+                    value: item,
+                    item: rawItem || wrapPrimitiveItem(item, toDataKeys(propsRef.current.dataKey, propsRef.current.data))
+                };
+                const newTokens = [...prev, newToken];
+                
+                // Notify parent with array of values
+                select?.(newTokens.map(t => t.value), newTokens.map(t => t.item));
+                
+                // Clear input for next selection
+                if (innerRef.current) innerRef.current.value = ``;
+                change?.(``);
+                
+                return newTokens;
+            });
+            
+            setChoosing(false);
+            setItems([]);
+            setRawItems([]);
+            setHighlightedIndex(null);
+            highlightedIndexRef.current = null;
+            committingRef.current = false;
+            return;
+        }
+
+        // Standard single selection mode
         if (innerRef.current) {
             innerRef.current.value = shouldClear === true ? `` : item;
         }
@@ -355,6 +412,16 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
 
         select?.(item, rawItem);
         if (shouldClear === true) change?.(``);
+    }, []);
+
+    // Remove token handler
+    const removeToken = useCallback((tokenId: string) => {
+        setTokens(prev => {
+            const newTokens = prev.filter(t => t.id !== tokenId);
+            const { onSelect: select } = propsRef.current;
+            select?.(newTokens.map(t => t.value), newTokens.map(t => t.item));
+            return newTokens;
+        });
     }, []);
 
     const updateInputValue = useCallback((index: number) => {
@@ -466,8 +533,35 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
         <Box
             ref={_container}
             style={style}
-            className={`--autocomplete --autocomplete-anchor --${pops.size || themeVariant || Variant.Medium} flex aic rel ${autoCompleteStyle}`.trim()}
+            className={`--autocomplete --autocomplete-anchor --${pops.size || themeVariant || Variant.Medium} flex aic rel ${autoCompleteStyle}${tokens.length > 0 ? ` --has-tokens` : ``}`.trim()}
         >
+            {/* Tokenized selections */}
+            {tokens.length > 0 && (
+                <Flex as={`--tokens-wrap wrap`} gap={4}>
+                    {tokens.map((token) => (
+                        <Box
+                            key={token.id}
+                            as={`--token flex aic gap:4`}
+                            onClick={(e: React.MouseEvent) => {
+                                e.stopPropagation();
+                            }}
+                        >
+                            <Text as={`--token-text`}>{token.value}</Text>
+                            <Box
+                                as={`--token-remove flex aic jcc`}
+                                onClick={(e: React.MouseEvent) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    removeToken(token.id);
+                                }}
+                            >
+                                {SVGIcons.close}
+                            </Box>
+                        </Box>
+                    ))}
+                </Flex>
+            )}
+            
             <Input
                 {...pops}
                 ref={innerRef}
@@ -486,7 +580,7 @@ const AutoComplete = forwardRef<HTMLDivElement, AutoCompleteProps>((props, ref) 
                 )}
             </Box>
         </Box>
-    ), [style, pops, autoCompleteStyle, themeVariant, loading, shouldShowDropdown, debounce, handleKeyDown, handleFocus]);
+    ), [style, pops, autoCompleteStyle, themeVariant, loading, shouldShowDropdown, debounce, handleKeyDown, handleFocus, tokens, removeToken]);
 
     const { root, canUseDocument, floatingRef, floatingStyle, isPositioned, anchorRef } = useAnchor(trigger, '--autocomplete-anchor', {
         preferredPlacement: 'bottom',

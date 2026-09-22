@@ -130,8 +130,9 @@ export type AutoCompleteProps = Omit<InputProps, 'onSelect'> & {
     
     /**
      * Callback when a suggestion is selected
+     * When tokenize=true, this receives an array of selected values
      */
-    onSelect?: (value: string, item?: dynamic) => void;
+    onSelect?: (value: string | string[], item?: dynamic | dynamic[]) => void;
     
     /**
      * Callback when input value changes
@@ -174,4 +175,19 @@ export type AutoCompleteProps = Omit<InputProps, 'onSelect'> & {
      * Max Height
      */
     maxHeight?: number;
+
+    /**
+     * When true, selected items are displayed as removable tokens.
+     * The `onSelect` callback will receive an array of selected values instead of a single value.
+     * 
+     * @example
+     * ```tsx
+     * <AutoComplete
+     *   data={['Apple', 'Banana', 'Cherry']}
+     *   tokenize
+     *   onSelect={(values) => console.log('Selected:', values)}
+     * />
+     * ```
+     */
+    tokenize?: boolean;
 }

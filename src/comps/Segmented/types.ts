@@ -11,7 +11,7 @@ import { Variant } from "../../types/enums"
  */
 export interface Segment {
     tag?: string | number,
-    index: number,
+    index?: number,
     icon?: ReactNode,
     label?: ReactNode
 }

@@ -193,22 +193,27 @@ body{
 
 }
 
-// Large Calendar Styles
 .--large-calendar {
+
     background: var(--large-calendar-bg);
     border: 1px solid var(--large-calendar-border);
     border-radius: var(--radius-md);
     overflow: hidden;
-    height: 100%;
-    min-height: 600px;
-    
+    // height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    width: 100%;
+
     .--large-calendar-header {
-        padding: 12px 16px;
+        padding: 12px 24px;
         background: var(--large-calendar-header-bg);
         border-bottom: 1px solid var(--large-calendar-border);
+        flex-shrink: 0;
         
         .--today-btn {
-            font-weight: 500;
+            font-weight: bold;
+            height: 30px;
         }
         
         .--calendar-range {
@@ -218,162 +223,37 @@ body{
         .--nav-btn {
             width: 32px;
             height: 32px;
-            
+            height: 30px;
+            aspect-ratio: 1/1;
+            padding: 3px !important;
             svg {
-                width: 16px;
-                height: 16px;
+                width: 100%;
+                height: 100%;
             }
         }
     }
-    
-    .--large-calendar-grid {
-        height: calc(100% - 50px);
-        overflow: auto;
-    }
-    
-    .--large-calendar-days-header {
-        background: var(--large-calendar-header-bg);
-        border-bottom: 1px solid var(--large-calendar-border);
-        
-        .--corner {
-            border-right: 1px solid var(--large-calendar-border);
-            background: var(--large-calendar-time-bg);
-        }
-        
-        .--day-header {
-            padding: 8px 4px;
-            border-right: 1px solid var(--large-calendar-cell-border);
-            text-align: center;
-            
-            &.--today {
-                background: var(--large-calendar-today-bg);
-            }
-            
-            .--day-name {
-                font-size: var(--text-xs);
-                color: var(--text-muted);
-                text-transform: uppercase;
-                font-weight: 600;
-            }
-            
-            .--day-number {
-                font-size: var(--text-lg);
-                font-weight: 600;
-                margin-top: 2px;
-                
-                &.--selected {
-                    background: var(--calendar-selected-day-bg);
-                    color: var(--calendar-selected-day-color);
-                    width: 32px;
-                    height: 32px;
-                    border-radius: 50%;
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-            }
-        }
-    }
-    
-    .--large-calendar-body {
-        position: relative;
-        
-        .--time-column {
-            border-right: 1px solid var(--large-calendar-border);
-            background: var(--large-calendar-time-bg);
-            
-            .--time-label {
-                display: flex;
-                align-items: flex-start;
-                justify-content: flex-end;
-                padding: 4px 8px;
-                border-bottom: 1px solid var(--large-calendar-cell-border);
-                
-                .--time-text {
-                    font-size: var(--text-xs);
-                    color: var(--text-muted);
-                    transform: translateY(-6px);
-                }
-            }
-        }
-        
-        .--day-column {
-            border-right: 1px solid var(--large-calendar-cell-border);
-            
-            &.--today {
-                background: var(--large-calendar-today-bg);
-            }
-            
-            .--time-cell {
-                border-bottom: 1px solid var(--large-calendar-cell-border);
-                cursor: pointer;
-                
-                &:hover {
-                    background: var(--large-calendar-hover-bg);
-                }
-            }
-        }
-    }
-    
-    .--large-calendar-appointment {
-        position: absolute;
-        background: var(--large-calendar-appointment-bg);
-        border-left: 3px solid var(--large-calendar-appointment-border);
-        border-radius: 2px;
-        padding: 4px 8px;
-        margin: 1px 4px;
-        cursor: pointer;
-        overflow: hidden;
-        
-        &:hover {
-            filter: brightness(0.95);
-        }
-        
-        .--appointment-title {
-            font-size: var(--text-xs);
-            font-weight: 600;
-            color: var(--large-calendar-appointment-color);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-    }
-    
-    // Year grid
-    .--year-grid {
-        padding: 16px;
-        
-        .--month-cell {
-            padding: 24px 16px;
-            text-align: center;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            border: 1px solid var(--large-calendar-border);
-            min-width: 120px;
-            flex: 1 0 calc(25% - 16px);
-            
-            &:hover {
-                background: var(--large-calendar-hover-bg);
-            }
-            
-            .--month-name {
-                font-weight: 600;
-            }
-        }
-    }
-}
 
-@each $size in variables.$sizes {
-    .--large-calendar.--#{$size} {
-        border-radius: var(--radius-#{$size});
-        font-size: var(--text-#{$size});
-        
-        .--large-calendar-header {
-            padding: var(--padding-#{$size});
-        }
-        
-        .--large-calendar-appointment {
-            border-radius: var(--radius-#{$size});
+    .--large-calendar-grid{
+        width: 100%;
+        .--calendar-column {
+            padding: var(--padding-md);
+            background: var(--surface);
+            border-bottom: 1px var(--border-primary, var(--calendar-column-border-y)) solid;
+            border-right: 1px var(--border-primary, var(--calendar-column-border-x)) solid;
+            &.--day-header{
+                font-size: var(--text-lg);
+                height: var(--calendar-slot-height, 36px);
+            }
+            &:not(.--day-header){
+                height: var(--calendar-slot-height, 28px);
+                cursor: crosshair;
+                &:hover{
+                    background: var(--calendar-column-hover, var(--muted));
+                }
+            }
+            .--time-label{
+                opacity: var(--calendar-time-label-opacity, 0.5);
+            }
         }
     }
 }

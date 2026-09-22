@@ -3,7 +3,7 @@ export { default as useColorPicker } from './useColorPicker';
 export { useTheme } from './useColorScheme';
 export {
     /**
-     * @deprecated use useContextMenu instead. Will be removed in v2.0.0
+     * @deprecated use useContextMenu instead. Will be Removed in v2.0.0
      */
     default as useContextMenu,
     default as useMenu
@@ -20,6 +20,12 @@ export {
     type SnackController
 } from './useSnack';
 export { default as useToast } from './useToast';
+export { 
+    default as useCalendar,
+    type UseCalendarProps,
+    type UseCalendarReturn,
+    type QuickOption
+} from './useCalendar';
 // export { 
 //     useStepper, 
 //     StepsProvider,

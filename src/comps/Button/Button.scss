@@ -73,6 +73,12 @@ body{
         --button-current-disabled-bg: var(--button-disabled);
         --button-current-disabled-color: var(--button-disabled-color);
         --button-current-disabled-border: var(--button-border);
+        .--svgico {
+            fill: var(--button-current-svg-fill, var(--text-primary-inverted));
+            path, circle {
+                fill: var(--button-current-svg-fill, var(--text-primary-inverted));
+            }
+        }
     }
 
     &.--subtle{
@@ -103,6 +109,12 @@ body{
         --button-current-disabled-bg: transparent;
         --button-current-disabled-color: var(--button-disabled-color);
         --button-current-disabled-border: 1px solid var(--button-disabled-color);
+        .--svgico {
+            fill: var(--button-current-svg-fill, var(--text-primary-inverted));
+            path, circle {
+                fill: var(--button-current-svg-fill, var(--text-primary-inverted));
+            }
+        }
     }
 
     &.--outline-reverse {
@@ -113,6 +125,12 @@ body{
         --button-current-disabled-bg: transparent;
         --button-current-disabled-color: var(--button-disabled-color);
         --button-current-disabled-border: 1px solid var(--button-disabled-color);
+        .--svgico {
+            fill: var(--button-current-svg-fill, var(--text-primary));
+            path, circle {
+                fill: var(--button-current-svg-fill, var(--text-primary));
+            }
+        }
     }
 
     &.--plain{
@@ -152,6 +170,12 @@ body{
         --button-current-disabled-bg: transparent;
         --button-current-disabled-color: var(--button-disabled-color);
         --button-current-disabled-border: 1px solid transparent;
+        .--svgico {
+            fill: var(--button-current-svg-fill, var(--text-primary));
+            path, circle {
+                fill: var(--button-current-svg-fill, var(--text-primary));
+            }
+        }
     }
 
 }

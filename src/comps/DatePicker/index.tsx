@@ -1,7 +1,7 @@
 
 import { useAnchor } from "@zuzjs/hooks";
-import { format, isValid, parseISO } from "date-fns";
-import { forwardRef, InputEventHandler, useEffect, useMemo, useRef, useState } from "react";
+import { format, isValid, parse, parseISO } from "date-fns";
+import { forwardRef, InputEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useBase } from "../../hooks";
 import { useTheme } from "../../hooks/useColorScheme";
@@ -58,7 +58,7 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
         onRangeChange,
         onConfirm,
         name,
-        selectYear,
+        selectYear = true,
         ...pops
     } = props
     
@@ -68,15 +68,32 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
     const inForm = Boolean(name && form?.setFieldValue)
     
     // Helper to parse form value if provided
-    const parseFormValue = (val: unknown): Date | null => {
+    // Try multiple formats: ISO, DD/M/YYYY, DD/MM/YYYY
+    const parseFormValue = useCallback((val: unknown): Date | null => {
         if (!val) return null;
         if (val instanceof Date) return val;
         if (typeof val === 'string') {
-            const parsed = parseISO(val);
-            return isValid(parsed) ? parsed : null;
+            // Try ISO format first
+            let parsed = parseISO(val);
+            if (isValid(parsed)) return parsed;
+            
+            // Try common date formats
+            parsed = parse(val, 'dd/M/yyyy', new Date());
+            if (isValid(parsed)) return parsed;
+            
+            parsed = parse(val, 'dd/MM/yyyy', new Date());
+            if (isValid(parsed)) return parsed;
+            
+            parsed = parse(val, 'dd-MM-yyyy', new Date());
+            if (isValid(parsed)) return parsed;
+            
+            parsed = parse(val, 'MM/dd/yyyy', new Date());
+            if (isValid(parsed)) return parsed;
+            
+            return null;
         }
         return null;
-    };
+    }, []);
     
     const [ choosing, setChoosing ] = useState(false);
     const [ currentDate, setCurrentDate ] = useState<Date | null>(() => {
@@ -100,17 +117,40 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>((props, ref) =>
 
     useEffect(() => {
         if (typeof dateValue !== "undefined") {
-            setCurrentDate(dateValue);
-            onDateChange?.(dateValue);
+            setCurrentDate(prev => {
+                // Only update if the date actually changed
+                if (prev?.getTime() !== dateValue?.getTime()) {
+                    onDateChange?.(dateValue);
+                    return dateValue;
+                }
+                return prev;
+            });
         }
-    }, [dateValue]);
+    }, [dateValue, onDateChange]);
+
+    // Sync form value to state when form initializes or updates
+    useEffect(() => {
+        if (inForm && formValue !== undefined && formValue !== null) {
+            const parsed = parseFormValue(formValue);
+            if (parsed) {
+                setCurrentDate(prev => {
+                    // Only update if the date actually changed
+                    if (prev?.getTime() !== parsed.getTime()) {
+                        onDateChange?.(parsed);
+                        return parsed;
+                    }
+                    return prev;
+                });
+            }
+        }
+    }, [inForm, formValue, parseFormValue, onDateChange]);
 
     useEffect(() => {
         if (typeof rangeValue !== "undefined") {
             setCurrentRange(rangeValue);
             onRangeChange?.(rangeValue);
         }
-    }, [rangeValue]);
+    }, [rangeValue, onRangeChange]);
 
     const handleInput : InputEventHandler<HTMLInputElement>  = (event) => {
         if (numeric ) {
