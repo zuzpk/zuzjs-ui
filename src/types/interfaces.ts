@@ -62,6 +62,8 @@ export interface ZuzProps {
 
     textSize?: string | number;
 
+    square?: boolean;
+
 }
 
 export interface BoxProps extends Partial<Props<`div`>> {

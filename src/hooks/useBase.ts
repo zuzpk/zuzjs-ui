@@ -48,6 +48,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
         timelineRoot,
         textSize,
         style: incomingStyle,
+        square,
         ...rest
     } = props || {}
 
@@ -174,6 +175,7 @@ const useBase = <T extends keyof JSX.IntrinsicElements>(
             droppable ? `--droppable` : ``,
             dragClassName,
             dropClassName,
+            square ? `--ratio-square` : ``
         ].join(` `).trim(),
         rest: {
             ...dragRest,

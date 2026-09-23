@@ -22,6 +22,7 @@ export {
 export { default as useToast } from './useToast';
 export { 
     default as useCalendar,
+    type CalendarNavUnit,
     type UseCalendarProps,
     type UseCalendarReturn,
     type QuickOption

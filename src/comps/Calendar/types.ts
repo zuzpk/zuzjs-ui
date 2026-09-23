@@ -8,7 +8,7 @@ export type CalendarRangeValue = {
     end: Date | null;
 };
 
-export type CalendarChangeSource = "day" | "month" | "time";
+export type CalendarChangeSource = "day" | "month" | "time" | "week" | "year" | "today";
 
 export type CalendarDisabledDateInput = string | Date;
 export type CalendarQuickOptionLabel =

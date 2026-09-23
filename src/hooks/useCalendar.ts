@@ -1,14 +1,17 @@
 "use client";
-import { addDays, addHours, addWeeks, eachDayOfInterval, endOfMonth, endOfWeek, format, isAfter, isBefore, isSameDay, isSameMonth, isToday, isValid, isWithinInterval, parse, startOfDay, startOfMonth, startOfWeek } from "date-fns";
+import { addDays, addHours, addMonths, addWeeks, addYears, eachDayOfInterval, endOfMonth, endOfWeek, endOfYear, format, isAfter, isBefore, isSameDay, isSameMonth, isToday, isValid, isWithinInterval, parse, startOfDay, startOfMonth, startOfWeek, startOfYear } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-// Import types from Calendar types - these are exported from the main index
-import type { 
-    CalendarQuickOptionLabel,
+import type {
+    CalendarChangeSource,
     CalendarDisabledDateInput,
     CalendarQuickOptionInput,
-    CalendarRangeValue
+    CalendarQuickOptionLabel,
+    CalendarRangeValue,
+    CalendarWeekStartDay,
 } from "../comps/Calendar/types";
+
+export type CalendarNavUnit = "day" | "week" | "month" | "year";
 
 export type QuickOption = {
     label: string;
@@ -27,7 +30,9 @@ export type UseCalendarProps = {
     rangeValue?: CalendarRangeValue;
     defaultRangeValue?: CalendarRangeValue;
     selectYear?: boolean;
-    onChange?: (date: Date | null, meta?: { source: "day" | "month" | "time" }) => void;
+    /** First day of the week for the month grid. 0 = Sunday, 1 = Monday. @default 0 */
+    weekStartsOn?: CalendarWeekStartDay;
+    onChange?: (date: Date | null, meta?: { source: CalendarChangeSource }) => void;
     onRangeChange?: (range: CalendarRangeValue) => void;
     formValue?: unknown;
     inForm?: boolean;
@@ -36,41 +41,72 @@ export type UseCalendarProps = {
 };
 
 export type UseCalendarReturn = {
-    // State
     current: Date | null;
     visibleMonth: Date;
+    visibleYear: number;
+    visibleLabel: string;
     currentRange: CalendarRangeValue;
-    
-    // Computed
+    today: Date;
+    weekStartsOn: CalendarWeekStartDay;
+
     days: Date[];
+    daysInMonth: Date[];
+    weeks: Date[][];
+    weekDays: string[];
+    gridStart: Date;
+    gridEnd: Date;
+    weekStart: Date;
+    weekEnd: Date;
     isRangeMode: boolean;
     showQuickOptions: boolean;
     visibleQuickOptions: QuickOption[];
     isDateDisabled: (date: Date) => boolean;
+    isToday: (date: Date) => boolean;
+    isSelected: (date: Date) => boolean;
+    isInRange: (date: Date) => boolean;
+
+    disablePrevDay: boolean;
+    disableNextDay: boolean;
+    disablePrevWeek: boolean;
+    disableNextWeek: boolean;
     disablePrevMonth: boolean;
     disableNextMonth: boolean;
-    
-    // Range computed
+    disablePrevYear: boolean;
+    disableNextYear: boolean;
+
     rangeStart: Date | null;
     rangeEnd: Date | null;
-    
-    // SelectYear mode
+
     yearOptions: { label: string; value: string }[];
     monthOptions: { label: string; value: string }[];
     selectedYearOption: { label: string; value: string } | null;
     selectedMonthOption: { label: string; value: string } | null;
-    
-    // Actions
+
     handleDateClick: (date: Date) => void;
+    selectDate: (date: Date) => void;
+    clearSelection: () => void;
+    clearRange: () => void;
+    setRange: (range: CalendarRangeValue) => void;
+
+    goto: (unit: CalendarNavUnit, amount?: number) => void;
+    canGoto: (unit: CalendarNavUnit, amount?: number) => boolean;
+    gotoDate: (date: Date, options?: { select?: boolean }) => void;
+    gotoToday: () => void;
+    gotoPrevDay: () => void;
+    gotoNextDay: () => void;
+    gotoPrevWeek: () => void;
+    gotoNextWeek: () => void;
     gotoPrevMonth: () => void;
     gotoNextMonth: () => void;
+    gotoPrevYear: () => void;
+    gotoNextYear: () => void;
+
     handleYearChange: (yearValue: string | number) => void;
     handleMonthChange: (monthValue: string | number) => void;
     setVisibleMonth: (date: Date) => void;
     setCurrent: (date: Date | null) => void;
     setCurrentRange: (range: CalendarRangeValue) => void;
-    
-    // Day rendering helpers
+
     getDayProps: (day: Date) => {
         isCurrentMonth: boolean;
         isDisabled: boolean;
@@ -222,15 +258,19 @@ const parseFormValue = (val: unknown): Date | null => {
 };
 
 /**
- * Custom hook for Calendar component logic
- * 
+ * Calendar state, month grid, range selection, and navigation.
+ *
  * @example
  * ```tsx
  * const calendar = useCalendar({
  *   onChange: (date) => console.log(date),
  *   minDate: new Date(2024, 0, 1),
- *   maxDate: new Date()
+ *   weekStartsOn: 1,
  * });
+ *
+ * calendar.gotoToday();
+ * calendar.goto("week", 1);
+ * calendar.gotoPrevMonth();
  * ```
  */
 export const useCalendar = (props: UseCalendarProps = {}): UseCalendarReturn => {
@@ -245,6 +285,7 @@ export const useCalendar = (props: UseCalendarProps = {}): UseCalendarReturn => 
         rangeValue,
         defaultRangeValue,
         selectYear,
+        weekStartsOn = 0,
         onChange,
         onRangeChange,
         formValue,
@@ -317,12 +358,32 @@ export const useCalendar = (props: UseCalendarProps = {}): UseCalendarReturn => 
     // Month computation
     const monthStart = useMemo(() => startOfMonth(visibleMonth), [visibleMonth]);
     const monthEnd = useMemo(() => endOfMonth(visibleMonth), [visibleMonth]);
-    const startDate = useMemo(() => startOfWeek(monthStart), [monthStart]);
-    const endDate = useMemo(() => endOfWeek(monthEnd), [monthEnd]);
+    const gridStart = useMemo(() => startOfWeek(monthStart, { weekStartsOn }), [monthStart, weekStartsOn]);
+    const gridEnd = useMemo(() => endOfWeek(monthEnd, { weekStartsOn }), [monthEnd, weekStartsOn]);
+    const today = startOfDay(new Date());
+    const visibleYear = visibleMonth.getFullYear();
+    const visibleLabel = useMemo(() => format(visibleMonth, "MMMM yyyy"), [visibleMonth]);
     
     const days = useMemo(() => 
-        eachDayOfInterval({ start: startDate, end: endDate }),
-    [startDate, endDate]);
+        eachDayOfInterval({ start: gridStart, end: gridEnd }),
+    [gridStart, gridEnd]);
+
+    const daysInMonth = useMemo(() =>
+        eachDayOfInterval({ start: monthStart, end: monthEnd }),
+    [monthStart, monthEnd]);
+
+    const weeks = useMemo(() => {
+        const rows: Date[][] = [];
+        for (let i = 0; i < days.length; i += 7) {
+            rows.push(days.slice(i, i + 7));
+        }
+        return rows;
+    }, [days]);
+
+    const weekDays = useMemo(() => {
+        const start = startOfWeek(new Date(), { weekStartsOn });
+        return Array.from({ length: 7 }, (_, index) => format(addDays(start, index), "EEEEEE"));
+    }, [weekStartsOn]);
     
     // Date disabled check
     const isDateDisabled = useCallback((date: Date) => {
@@ -381,11 +442,35 @@ export const useCalendar = (props: UseCalendarProps = {}): UseCalendarReturn => 
 
     const showQuickOptions = visibleQuickOptions.length > 0;
     
-    // Month navigation
-    const prevMonthEnd = useMemo(() => endOfMonth(new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() - 1, 1)), [visibleMonth]);
-    const nextMonthStart = useMemo(() => startOfMonth(new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 1)), [visibleMonth]);
+    const prevMonthEnd = useMemo(() => endOfMonth(addMonths(visibleMonth, -1)), [visibleMonth]);
+    const nextMonthStart = useMemo(() => startOfMonth(addMonths(visibleMonth, 1)), [visibleMonth]);
+    const prevYearEnd = useMemo(() => endOfYear(addYears(visibleMonth, -1)), [visibleMonth]);
+    const nextYearStart = useMemo(() => startOfYear(addYears(visibleMonth, 1)), [visibleMonth]);
     const disablePrevMonth = useMemo(() => !!minDateDay && isBefore(prevMonthEnd, minDateDay), [minDateDay, prevMonthEnd]);
     const disableNextMonth = useMemo(() => !!maxDateDay && isAfter(nextMonthStart, maxDateDay), [maxDateDay, nextMonthStart]);
+    const disablePrevYear = useMemo(() => !!minDateDay && isBefore(prevYearEnd, minDateDay), [minDateDay, prevYearEnd]);
+    const disableNextYear = useMemo(() => !!maxDateDay && isAfter(nextYearStart, maxDateDay), [maxDateDay, nextYearStart]);
+
+    const anchorDate = startOfDay(current ?? visibleMonth);
+    const weekStart = useMemo(() => startOfWeek(anchorDate, { weekStartsOn }), [anchorDate, weekStartsOn]);
+    const weekEnd = useMemo(() => endOfWeek(anchorDate, { weekStartsOn }), [anchorDate, weekStartsOn]);
+
+    const findSelectableByStep = useCallback((from: Date, distance: number) => {
+        const direction = distance >= 0 ? 1 : -1;
+        let candidate = startOfDay(addDays(from, distance));
+        for (let i = 0; i < 366; i += 1) {
+            if (minDateDay && isBefore(candidate, minDateDay)) return null;
+            if (maxDateDay && isAfter(candidate, maxDateDay)) return null;
+            if (!isDateDisabled(candidate)) return candidate;
+            candidate = addDays(candidate, direction);
+        }
+        return null;
+    }, [isDateDisabled, minDateDay, maxDateDay]);
+
+    const disablePrevDay = !findSelectableByStep(anchorDate, -1);
+    const disableNextDay = !findSelectableByStep(anchorDate, 1);
+    const disablePrevWeek = !findSelectableByStep(anchorDate, -7);
+    const disableNextWeek = !findSelectableByStep(anchorDate, 7);
     
     // Year/Month selectors
     const yearOptions = useMemo(() => {
@@ -447,6 +532,17 @@ export const useCalendar = (props: UseCalendarProps = {}): UseCalendarReturn => 
     const rangeEnd = rawRangeStart && rawRangeEnd && isAfter(rawRangeStart, rawRangeEnd) ? rawRangeStart : rawRangeEnd;
     
     // Handlers
+    const commitSelectedDate = useCallback((date: Date, source: CalendarChangeSource) => {
+        if (isDateDisabled(date)) return false;
+        setCurrent(date);
+        setVisibleMonth(startOfMonth(date));
+        onChange?.(date, { source });
+        if (inForm && name && formSetFieldValue) {
+            formSetFieldValue(name, date.toISOString());
+        }
+        return true;
+    }, [isDateDisabled, onChange, inForm, name, formSetFieldValue]);
+
     const handleDateClick = useCallback((date: Date) => {
         if (isDateDisabled(date)) return;
 
@@ -469,7 +565,6 @@ export const useCalendar = (props: UseCalendarProps = {}): UseCalendarReturn => 
             setCurrent(date);
             setVisibleMonth(startOfMonth(date));
             
-            // Update form value
             if (inForm && name && nextRange.start && nextRange.end && formSetFieldValue) {
                 formSetFieldValue(name, {
                     start: nextRange.start.toISOString(),
@@ -479,55 +574,128 @@ export const useCalendar = (props: UseCalendarProps = {}): UseCalendarReturn => 
             return;
         }
 
-        onChange?.(date, { source: "day" });
-        setCurrent(date);
-        setVisibleMonth(startOfMonth(date));
-        
-        // Update form value
-        if (inForm && name && formSetFieldValue) {
-            formSetFieldValue(name, date.toISOString());
+        commitSelectedDate(date, "day");
+    }, [isDateDisabled, isRangeMode, currentRange, onRangeChange, commitSelectedDate, inForm, name, formSetFieldValue]);
+
+    const gotoByDays = useCallback((distance: number) => {
+        const nextDate = findSelectableByStep(anchorDate, distance);
+        if (!nextDate) return;
+        if (isRangeMode) {
+            setVisibleMonth(startOfMonth(nextDate));
+            return;
         }
-    }, [isDateDisabled, isRangeMode, currentRange, onRangeChange, onChange, inForm, name, formSetFieldValue]);
-    
-    const gotoPrevMonth = useCallback(() => {
-        setVisibleMonth((prevVisibleMonth) => {
-            const nextVisibleMonth = startOfMonth(new Date(prevVisibleMonth.getFullYear(), prevVisibleMonth.getMonth() - 1, 1));
+        commitSelectedDate(nextDate, Math.abs(distance) === 7 ? "week" : "day");
+    }, [anchorDate, findSelectableByStep, isRangeMode, commitSelectedDate]);
 
-            if (!isRangeMode && current) {
-                const preferredDay = current.getDate();
-                const nextDate = findSelectableDateInMonth(nextVisibleMonth, preferredDay);
-
-                if (nextDate) {
-                    setCurrent(nextDate);
-                    onChange?.(nextDate, { source: "month" });
-                } else {
-                    onChange?.(null, { source: "month" });
-                }
-            }
-
-            return nextVisibleMonth;
-        });
+    const shiftPeriod = useCallback((nextVisibleMonth: Date, source: CalendarChangeSource) => {
+        setVisibleMonth(nextVisibleMonth);
+        if (isRangeMode || !current) return;
+        const nextDate = findSelectableDateInMonth(nextVisibleMonth, current.getDate());
+        if (nextDate) {
+            setCurrent(nextDate);
+            onChange?.(nextDate, { source });
+            return;
+        }
+        onChange?.(null, { source });
     }, [isRangeMode, current, findSelectableDateInMonth, onChange]);
-    
-    const gotoNextMonth = useCallback(() => {
-        setVisibleMonth((prevVisibleMonth) => {
-            const nextVisibleMonth = startOfMonth(new Date(prevVisibleMonth.getFullYear(), prevVisibleMonth.getMonth() + 1, 1));
 
-            if (!isRangeMode && current) {
-                const preferredDay = current.getDate();
-                const nextDate = findSelectableDateInMonth(nextVisibleMonth, preferredDay);
+    const canShiftMonth = useCallback((months: number) => {
+        const next = startOfMonth(addMonths(visibleMonth, months));
+        if (months < 0) return !(minDateDay && isBefore(endOfMonth(next), minDateDay));
+        return !(maxDateDay && isAfter(next, maxDateDay));
+    }, [visibleMonth, minDateDay, maxDateDay]);
 
-                if (nextDate) {
-                    setCurrent(nextDate);
-                    onChange?.(nextDate, { source: "month" });
-                } else {
-                    onChange?.(null, { source: "month" });
-                }
-            }
+    const canShiftYear = useCallback((years: number) => {
+        const next = addYears(visibleMonth, years);
+        if (years < 0) return !(minDateDay && isBefore(endOfYear(next), minDateDay));
+        return !(maxDateDay && isAfter(startOfYear(next), maxDateDay));
+    }, [visibleMonth, minDateDay, maxDateDay]);
 
-            return nextVisibleMonth;
-        });
-    }, [isRangeMode, current, findSelectableDateInMonth, onChange]);
+    const canGoto = useCallback((unit: CalendarNavUnit, amount = 1) => {
+        if (amount === 0) return true;
+        switch (unit) {
+            case "day":
+                return !!findSelectableByStep(anchorDate, amount);
+            case "week":
+                return !!findSelectableByStep(anchorDate, amount * 7);
+            case "month":
+                return canShiftMonth(amount);
+            case "year":
+                return canShiftYear(amount);
+            default:
+                return false;
+        }
+    }, [anchorDate, findSelectableByStep, canShiftMonth, canShiftYear]);
+
+    const goto = useCallback((unit: CalendarNavUnit, amount = 1) => {
+        if (!canGoto(unit, amount)) return;
+        switch (unit) {
+            case "day":
+                gotoByDays(amount);
+                return;
+            case "week":
+                gotoByDays(amount * 7);
+                return;
+            case "month":
+                shiftPeriod(startOfMonth(addMonths(visibleMonth, amount)), "month");
+                return;
+            case "year":
+                shiftPeriod(startOfMonth(addYears(visibleMonth, amount)), "year");
+                return;
+        }
+    }, [canGoto, gotoByDays, shiftPeriod, visibleMonth]);
+
+    const gotoDate = useCallback((date: Date, options?: { select?: boolean }) => {
+        const next = startOfDay(date);
+        setVisibleMonth(startOfMonth(next));
+        if (options?.select === false) return;
+        if (isRangeMode) {
+            setCurrent(next);
+            return;
+        }
+        commitSelectedDate(next, "day");
+    }, [isRangeMode, commitSelectedDate]);
+
+    const gotoToday = useCallback(() => {
+        setVisibleMonth(startOfMonth(today));
+        if (isRangeMode) {
+            if (!isDateDisabled(today)) setCurrent(today);
+            return;
+        }
+        if (!isDateDisabled(today)) {
+            commitSelectedDate(today, "today");
+            return;
+        }
+        onChange?.(null, { source: "today" });
+    }, [today, isRangeMode, isDateDisabled, commitSelectedDate, onChange]);
+
+    const gotoPrevDay = useCallback(() => goto("day", -1), [goto]);
+    const gotoNextDay = useCallback(() => goto("day", 1), [goto]);
+    const gotoPrevWeek = useCallback(() => goto("week", -1), [goto]);
+    const gotoNextWeek = useCallback(() => goto("week", 1), [goto]);
+    const gotoPrevMonth = useCallback(() => goto("month", -1), [goto]);
+    const gotoNextMonth = useCallback(() => goto("month", 1), [goto]);
+    const gotoPrevYear = useCallback(() => goto("year", -1), [goto]);
+    const gotoNextYear = useCallback(() => goto("year", 1), [goto]);
+
+    const clearSelection = useCallback(() => {
+        setCurrent(null);
+        onChange?.(null, { source: "day" });
+        if (inForm && name && formSetFieldValue) {
+            formSetFieldValue(name, null);
+        }
+    }, [onChange, inForm, name, formSetFieldValue]);
+
+    const setRange = useCallback((range: CalendarRangeValue) => {
+        setCurrentRange(range);
+        onRangeChange?.(range);
+    }, [onRangeChange]);
+
+    const clearRange = useCallback(() => {
+        const empty = { start: null, end: null };
+        setCurrentRange(empty);
+        onRangeChange?.(empty);
+    }, [onRangeChange]);
     
     const handleYearChange = useCallback((yearValue: string | number) => {
         const year = Number(yearValue);
@@ -542,7 +710,13 @@ export const useCalendar = (props: UseCalendarProps = {}): UseCalendarReturn => 
         setVisibleMonth(startOfMonth(newDate));
     }, [visibleMonth]);
     
-    // Day props helper
+    const isTodayDate = useCallback((date: Date) => isToday(date), []);
+    const isSelectedDate = useCallback((date: Date) => !!current && isSameDay(date, current), [current]);
+    const isInRange = useCallback((date: Date) => {
+        if (!rangeStart || !rangeEnd) return false;
+        return isWithinInterval(startOfDay(date), { start: rangeStart, end: rangeEnd });
+    }, [rangeStart, rangeEnd]);
+
     const getDayProps = useCallback((day: Date) => {
         const isCurrentMonth = isSameMonth(day, visibleMonth);
         const isDisabled = !isCurrentMonth || isDateDisabled(day);
@@ -566,41 +740,72 @@ export const useCalendar = (props: UseCalendarProps = {}): UseCalendarReturn => 
     }, [visibleMonth, isDateDisabled, current, rangeStart, rangeEnd]);
     
     return {
-        // State
         current,
         visibleMonth,
+        visibleYear,
+        visibleLabel,
         currentRange,
-        
-        // Computed
+        today,
+        weekStartsOn,
+
         days,
+        daysInMonth,
+        weeks,
+        weekDays,
+        gridStart,
+        gridEnd,
+        weekStart,
+        weekEnd,
         isRangeMode,
         showQuickOptions,
         visibleQuickOptions,
         isDateDisabled,
+        isToday: isTodayDate,
+        isSelected: isSelectedDate,
+        isInRange,
+
+        disablePrevDay,
+        disableNextDay,
+        disablePrevWeek,
+        disableNextWeek,
         disablePrevMonth,
         disableNextMonth,
-        
-        // Range computed
+        disablePrevYear,
+        disableNextYear,
+
         rangeStart,
         rangeEnd,
-        
-        // SelectYear mode
+
         yearOptions,
         monthOptions,
         selectedYearOption,
         selectedMonthOption,
-        
-        // Actions
+
         handleDateClick,
+        selectDate: handleDateClick,
+        clearSelection,
+        clearRange,
+        setRange,
+
+        goto,
+        canGoto,
+        gotoDate,
+        gotoToday,
+        gotoPrevDay,
+        gotoNextDay,
+        gotoPrevWeek,
+        gotoNextWeek,
         gotoPrevMonth,
         gotoNextMonth,
+        gotoPrevYear,
+        gotoNextYear,
+
         handleYearChange,
         handleMonthChange,
         setVisibleMonth,
         setCurrent,
         setCurrentRange,
-        
-        // Day rendering helpers
+
         getDayProps,
     };
 };
