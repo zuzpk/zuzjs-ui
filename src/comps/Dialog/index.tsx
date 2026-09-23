@@ -75,6 +75,7 @@ const Dialog = ({
         formProps,
         noHead,
         withClass = ``,
+        hideOnClickOutside = true,
         onConfirm,
         onCancel,
         onClose,
@@ -249,7 +250,7 @@ const Dialog = ({
     return <DialogContext.Provider value={contextValue}><>
         <Overlay 
             onClick={() => {
-                if (visible) tryClose()
+                if (visible && hideOnClickOutside) tryClose()
             }}
             style={{ zIndex: baseZIndex }}
             when={visible} />

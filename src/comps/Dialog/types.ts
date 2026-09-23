@@ -66,6 +66,8 @@ export type DialogProps = ZuzProps & {
     /** If true, the dialog will not render a header */
     noHead?: boolean,
     
+    /** Close when the overlay is clicked. @default true */
+    hideOnClickOutside?: boolean,
     onConfirm?: (data?: dynamic, validateResult?: ValidationResult) => void,
     onCancel?: () => void,
     onShow?: () => void,

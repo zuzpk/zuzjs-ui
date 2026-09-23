@@ -30,6 +30,8 @@ export type DrawerProps = Omit<BoxProps, `id`> & {
     animation?: ValueOf<typeof TRANSITION_CURVES>,
     closeBtn?: Extract<Placement, "left" | "right">,
     onClose?: (id: number) => void,
+    /** Close when the overlay is clicked. @default true */
+    hideOnClickOutside?: boolean,
     /** When truthy, overlay / ESC close is gated by a "Discard changes?" confirm when dirty. */
     confirmClose?: DrawerConfirmClose,
     /** Externally controlled dirty state (synced to internal dirty state). */

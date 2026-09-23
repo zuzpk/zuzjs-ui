@@ -50,6 +50,7 @@ const Drawer = ({
         forceClose, 
         forceLoading,
         closeBtn,
+        hideOnClickOutside = true,
         onClose,
         confirmClose,
         dirty,
@@ -193,7 +194,7 @@ const Drawer = ({
         <>
             <Overlay
                 onClick={() => {
-                    if ( visible ) tryClose()
+                    if ( visible && hideOnClickOutside ) tryClose()
                 }}
                 when={visible} 
                 style={{ zIndex: baseZIndex }} />
