@@ -175,7 +175,7 @@ body{
         }
 
         &:hover{
-            background: var(--select-current-hover);
+            background: var(--select-current-hover-custom, var(--select-current-hover));
         }
 
         .--selected-icon{

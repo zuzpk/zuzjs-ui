@@ -55,6 +55,12 @@ export type Option = {
     iconColor?: string,
     /** The display text for the option. */
     label: string,
+    /** Optional color for the label. */
+    labelColor?: string,
+    /** Optional color for the border. */
+    borderColor?: string,
+    /** Optional color for the background. */
+    bgColor?: string,
     /** The underlying value for the option. */
     value: string | number,
     /** Optional flag to disable this specific option. */

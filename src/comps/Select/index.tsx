@@ -473,7 +473,14 @@ const Select = (({
             }
             className={`--select-display --selected --select-anchor --${kind} flex aic rel ${className}`.trim()}
             withLabel={false}
-            style={style}
+            style={{
+                ...style,
+                ...(currentOption?.borderColor ? { ["--select-current-border-custom" as any]: `1px ${currentOption?.borderColor} solid` } : {}),
+                ...(currentOption?.bgColor ? { 
+                    ["--select-current-bg-custom" as any] : currentOption?.bgColor,
+                    ["--select-current-hover-custom" as any]: `rgb(from ${currentOption?.bgColor}) r g b / 0.5)`
+                } : {})
+            }}
             onClick={(e) => {
                 e.stopPropagation()
                 if ( !disabled ) setChoosing(prev => !prev)
@@ -496,7 +503,9 @@ const Select = (({
                         </Text>}
                     </Flex>
                 ) : (
-                    <Text as="--label">
+                    <Text 
+                        as="--label"
+                        style={currentOption?.labelColor ? { color: currentOption?.labelColor } : undefined}>
                         {Array.isArray(value)
                             ? (value.length > 0 ? `${value.length} selected` : label || "Choose")
                             : (currentOption?.label || label || "Choose")}
