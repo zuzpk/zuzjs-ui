@@ -193,7 +193,7 @@ body{
         .--svg-arrow{
             width: var(--select-arrow-width);
             svg{
-                fill: var(--select-current-color);
+                fill: var(--select-current-color-custom, var(--select-current-color));
             }
         }
 

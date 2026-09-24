@@ -250,6 +250,10 @@ body{
             width: 100%;
             min-width: 0;
 
+            &.--day-today{
+                background: color-mix(in srgb, var(--large-calendar-day-today, var(--surface)) 18%, var(--blue-600));
+            }
+
             &.--drop-over{
                 .--day-header{
                     background: color-mix(in srgb, var(--large-calendar-appointment-border) 18%, var(--surface));
@@ -327,7 +331,7 @@ body{
                 background: var(--large-calendar-appointment-bg);
                 border-left: 3px solid var(--large-calendar-appointment-border);
                 color: var(--large-calendar-appointment-color);
-                border-radius: var(--radius-sm);
+                border-radius: var(--large-calendar-appointment-radius, 2px);
                 overflow: hidden;
                 z-index: 1;
                 user-select: none;

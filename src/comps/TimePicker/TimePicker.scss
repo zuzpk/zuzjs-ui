@@ -1,0 +1,142 @@
+@use "../../scss/variables";
+
+body{
+
+    --timepicker: var(--input);
+    --timepicker-border: var(--input-border);
+    --time-picker-item-hover: var(--surface-hover);
+    --time-picker-item-selected: var(--blue-600);
+    --time-picker-item-selected-color: #fff;
+    --timepicker-icon-xxl: 48px;
+    --timepicker-icon-xl: 36px;
+    --timepicker-icon-lg: 30px;
+    --timepicker-icon-md: 24px;
+    --timepicker-icon-sm: 20px;
+    --timepicker-icon-xs: 16px;
+
+}
+
+.--time-picker{
+    
+    background: var(--timepicker);
+    border: var(--timepicker-border);
+    gap: 10px;
+    
+    .--input{
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        width: 100% !important;
+        cursor: pointer;
+    }
+
+    .--time-picker-icon{
+        color: var(--text-primary);
+        svg{
+            fill: var(--text-primary);
+            path{
+                fill: var(--text-primary);
+            }
+        }
+    }
+
+    @each $size in variables.$sizes {
+        &.--#{$size} {
+            font-size: var(--text-#{$size});
+            line-height: var(--lh-#{$size}, 1.4);
+            padding: var(--timepicker-padding-#{$size}, var(--padding-#{$size}));
+            border-radius: var(--timepicker-border-radius-#{$size}, var(--radius-#{$size}));
+            min-height: var(--timepicker-control-height-#{$size}, var(--control-height-#{$size}));
+            height: var(--timepicker-control-height-#{$size}, var(--control-height-#{$size}));
+
+            .--time-picker-icon{
+                width: var(--timepicker-icon-#{$size});
+                height: var(--timepicker-icon-#{$size});
+            }
+        }
+    }
+
+}
+
+.--time-picker-chooser {
+
+    z-index: 9999999999;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    min-width: 280px;
+    max-width: 400px;
+    @each $size in variables.$sizes {
+        &.--#{$size} {
+            border-radius: var(--timepicker-border-radius-#{$size}, calc(var(--radius-#{$size}) / 2));
+        }
+    }
+
+    .--time-picker-selector {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    .--time-picker-section-head{
+        padding: var(--padding-md);
+        border-bottom: 1px var(--time-picker-section-head-border, var(--border-primary)) solid;
+        margin-bottom: 4px;
+    }
+
+    .--time-picker-scrollable {
+        max-height: 200px;
+        overflow-y: auto;
+        
+        // Custom scrollbar styling
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        &::-webkit-scrollbar-track {
+            background: var(--surface-dim);
+            border-radius: 3px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            background: var(--border-strong);
+            border-radius: 3px;
+            
+            &:hover {
+                background: var(--text-dim);
+            }
+        }
+    }
+    
+    .--time-picker-item {
+
+        // min-height: 32px;
+        // padding: 4px 8px;
+        // justify-content: center;
+        // border-radius: var(--radius-sm);
+        // transition: all 0.15s ease;
+        width: 100%;
+        
+        &:hover {
+            background: var(--time-picker-item-hover-custom, var(--time-picker-item-hover));
+        }
+        
+        &.--time-picker-item-selected {
+
+            background: var(--time-picker-item-selected-custom, var(--time-picker-item-selected));
+            color: var(--time-picker-item-selected-color-custom, var(--time-picker-item-selected-color));
+            
+            &:hover {
+                background: var(--time-picker-item-selected-custom, var(--time-picker-item-selected));
+                color: var(--time-picker-item-selected-color-custom, var(--time-picker-item-selected-color));
+            }
+        }
+    }
+    
+    .--time-picker-period {
+        min-width: 60px;
+    }
+
+    .--timepicker-footer {
+        padding: 10px;
+    }
+}

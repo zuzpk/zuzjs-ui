@@ -57,4 +57,65 @@ body{
 
 .--date-picker-chooser {
     z-index: 9999999999;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    
+    // Time mode specific styles
+    .--time-picker-selector {
+        max-height: 320px;
+        overflow-y: auto;
+        min-width: 280px;
+        max-width: 420px;
+    }
+    
+    .--time-select-scroll {
+        max-height: 200px;
+        overflow-y: auto;
+        
+        // Custom scrollbar styling
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        &::-webkit-scrollbar-track {
+            background: var(--surface-dim);
+            border-radius: 3px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            background: var(--border-strong);
+            border-radius: 3px;
+            
+            &:hover {
+                background: var(--text-dim);
+            }
+        }
+    }
+    
+    .--time-select-item {
+        min-height: 32px;
+        padding: 4px 8px;
+        justify-content: center;
+        border-radius: var(--radius-sm);
+        transition: all 0.15s ease;
+        
+        &:hover {
+            background: var(--surface-bright);
+        }
+        
+        &.--time-select-item-selected {
+            background: var(--brand);
+            color: var(--on-brand);
+            
+            &:hover {
+                background: var(--brand-bright);
+            }
+        }
+    }
+    
+    .--time-select-period {
+        min-width: 60px;
+    }
 }

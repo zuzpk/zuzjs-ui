@@ -53,6 +53,17 @@ export type CalendarAppointmentRenderProps = {
 /** Day of week: 0 = Sunday, 1 = Monday, ..., 6 = Saturday */
 export type CalendarWeekStartDay = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
+/** Drag mode for appointment operations */
+export type CalendarDragMode = "rightClickDrag" | "ctrlClickDrag";
+
+/** Disabled time range within a day */
+export type CalendarDisabledTimeRange = {
+    /** Start time in HH:mm format */
+    timeStart: string;
+    /** End time in HH:mm format */
+    timeEnd: string;
+};
+
 export type CalendarProps = {
     value?: Date | null;
     defaultValue?: Date | null;
@@ -131,4 +142,14 @@ export type LargeCalendarProps = Pick<CalendarProps,
     setVisibleMonth: (date: Date) => void;
     /** Called when the user switches Day/Week/Month/Year via the segmented control. Optional — LargeCalendar tracks the mode itself if this isn't provided. */
     onViewModeChange?: (viewMode: CalendarViewMode) => void;
+    /** Drag mode for appointments - default: "rightClickDrag" */
+    dragMode?: CalendarDragMode;
+    /** Disabled time ranges (time of day that is disabled) */
+    disabledTimeRanges?: CalendarDisabledTimeRange[];
+    /** Prevent adding/moving appointments in past dates */
+    disablePastDates?: boolean;
+    /** Prevent adding/moving appointments in future dates */
+    disableFutureDates?: boolean;
+    /** Callback to determine if a specific date is disabled */
+    isDateDisabled?: (date: Date) => boolean;
 };

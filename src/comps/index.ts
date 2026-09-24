@@ -229,6 +229,16 @@ export * from './Crumb/types';
  */
 export { default as DatePicker } from './DatePicker';
 
+/**
+ * Time picking input.
+ * @example
+ * ```tsx
+ * <TimePicker name="startTime" />
+ * ```
+ */
+export { default as TimePicker } from './TimePicker';
+export * from './TimePicker/types';
+
 export { default as DependencyTree } from './DependencyTree';
 export type * from "./DependencyTree/types";
 

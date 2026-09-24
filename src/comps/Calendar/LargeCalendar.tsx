@@ -9,6 +9,7 @@ import {
     endOfWeek,
     format,
     isAfter,
+    isBefore,
     isSameDay,
     isSameMonth,
     isToday,
@@ -21,6 +22,7 @@ import {
     subYears,
 } from "date-fns";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { Variant } from "../../types";
 import Box from "../Box";
 import Button from "../Button";
@@ -31,6 +33,8 @@ import SVGIcons from "../svgicons";
 import Text from "../Text";
 import {
     CalendarAppointment,
+    CalendarDisabledTimeRange,
+    CalendarDragMode,
     CalendarTimeRange,
     CalendarTimeSlot,
     CalendarViewMode,
@@ -90,6 +94,29 @@ const getMaxAllowedDate = (disableAfter?: 'today' | 'next-week' | Date): Date | 
         default:
             return startOfDay(disableAfter);
     }
+};
+
+/** Check if a time (in minutes) falls within a disabled time range */
+const isTimeInRange = (minutes: number, range: CalendarDisabledTimeRange): boolean => {
+    const start = parseHHmm(range.timeStart);
+    const end = parseHHmm(range.timeEnd);
+    return minutes >= start && minutes < end;
+};
+
+/** Check if a time slot overlaps with any disabled time range */
+const isTimeSlotDisabled = (minutes: number, disabledRanges?: CalendarDisabledTimeRange[]): boolean => {
+    if (!disabledRanges || disabledRanges.length === 0) return false;
+    return disabledRanges.some(range => isTimeInRange(minutes, range));
+};
+
+/** Check if date is in the past */
+const isPastDate = (date: Date): boolean => {
+    return isBefore(startOfDay(date), startOfDay(new Date()));
+};
+
+/** Check if date is in the future */
+const isFutureDate = (date: Date): boolean => {
+    return isAfter(startOfDay(date), startOfDay(new Date()));
 };
 
 const getViewLabel = (date: Date, viewMode: CalendarViewMode, weekStartsOn: CalendarWeekStartDay): string => {
@@ -272,6 +299,8 @@ const snapMoveFromProbe = (
     probe: DropProbe<AppointmentMoveItem | AppointmentResizeItem>,
     scale: TimeScale,
 ) => {
+    // Safely check if bounds method exists and is callable
+    if (typeof probe.bounds !== 'function') return null;
     const bounds = probe.bounds();
     const offset = probe.offset();
     if (!bounds || bounds.height <= 0) return null;
@@ -343,16 +372,36 @@ const AppointmentBlock: React.FC<{
     appointment: CalendarAppointment;
     scale: TimeScale;
     disabled?: boolean;
+    dragMode?: CalendarDragMode;
     onChange?: (appointment: CalendarAppointment) => void;
     onClick?: (appointment: CalendarAppointment) => void;
-}> = ({ appointment, scale, disabled, onChange, onClick }) => {
+}> = ({ appointment, scale, disabled, dragMode = "rightClickDrag", onChange, onClick }) => {
     const wrapperRef = useRef<HTMLDivElement>(null);
     const movedRef = useRef(false);
+    const dragStartedRef = useRef(false);
+    const [canDrag, setCanDrag] = useState(false);
     const { setFeedback } = useContext(DropFeedbackContext);
 
     const readBodyHeight = useCallback(() => (
         wrapperRef.current?.parentElement?.getBoundingClientRect().height ?? 0
     ), []);
+
+    // Suppress the browser's native context menu via a raw, non-React listener
+    // attached directly to the DOM node. This is intentionally decoupled from
+    // React's synthetic onContextMenu (and from the flushSync-driven re-render
+    // in handleMouseDown below): a native listener registered once via
+    // useEffect can't be affected by React re-render/commit timing the way a
+    // delegated synthetic handler might be, so it's the most reliable place to
+    // guarantee the menu never appears while dragging is enabled.
+    useEffect(() => {
+        const node = wrapperRef.current;
+        if (!node || disabled) return;
+        const suppress = (event: MouseEvent) => {
+            event.preventDefault();
+        };
+        node.addEventListener("contextmenu", suppress);
+        return () => node.removeEventListener("contextmenu", suppress);
+    }, [disabled]);
 
     const applyResize = useCallback((edge: "start" | "end", offsetY: number): CalendarAppointment => {
         const originalStart = parseHHmm(appointment.timeStart);
@@ -366,43 +415,101 @@ const AppointmentBlock: React.FC<{
 
     const [{ isDragging }, moveRef] = useDrag<AppointmentMoveItem, { isDragging: boolean }>(() => ({
         channel: APPOINTMENT_CHANNEL,
-        when: !disabled,
+        when: canDrag && !disabled,
         payload: { kind: "move", appointment },
         observe: (probe) => ({ isDragging: probe.active() }),
+        onStart: () => {
+            dragStartedRef.current = true;
+        },
         onFinish: (_item, probe) => {
             const offset = probe.offset();
-            movedRef.current = Math.abs(offset?.x ?? 0) > 3 || Math.abs(offset?.y ?? 0) > 3;
+            const hasMoved = Math.abs(offset?.x ?? 0) > 3 || Math.abs(offset?.y ?? 0) > 3;
+            movedRef.current = hasMoved;
+            dragStartedRef.current = false;
+            setCanDrag(false);
             setFeedback(null);
         },
-    }), [appointment, disabled, setFeedback]);
+    }), [appointment, disabled, setFeedback, canDrag]);
 
     const [{ isResizing: resizingStart, offsetY: startOffsetY }, startResizeRef] = useDrag<AppointmentResizeItem, { isResizing: boolean; offsetY: number }>(() => ({
         channel: RESIZE_CHANNEL,
-        when: !disabled,
+        when: canDrag && !disabled,
         payload: { kind: "resize", appointment, edge: "start" },
         observe: (probe) => ({
             isResizing: probe.active(),
             offsetY: probe.offset()?.y ?? 0,
         }),
+        onStart: () => {
+            dragStartedRef.current = true;
+        },
         onFinish: (_item, probe) => {
             movedRef.current = true;
+            dragStartedRef.current = false;
+            setCanDrag(false);
             onChange?.(applyResize("start", probe.offset()?.y ?? 0));
         },
-    }), [appointment, disabled, applyResize, onChange]);
+    }), [appointment, disabled, applyResize, onChange, canDrag]);
 
     const [{ isResizing: resizingEnd, offsetY: endOffsetY }, endResizeRef] = useDrag<AppointmentResizeItem, { isResizing: boolean; offsetY: number }>(() => ({
         channel: RESIZE_CHANNEL,
-        when: !disabled,
+        when: canDrag && !disabled,
         payload: { kind: "resize", appointment, edge: "end" },
         observe: (probe) => ({
             isResizing: probe.active(),
             offsetY: probe.offset()?.y ?? 0,
         }),
+        onStart: () => {
+            dragStartedRef.current = true;
+        },
         onFinish: (_item, probe) => {
             movedRef.current = true;
+            dragStartedRef.current = false;
+            setCanDrag(false);
             onChange?.(applyResize("end", probe.offset()?.y ?? 0));
         },
-    }), [appointment, disabled, applyResize, onChange]);
+    }), [appointment, disabled, applyResize, onChange, canDrag]);
+
+    // Handle mouse down to enable drag based on mode.
+    // IMPORTANT: bound via onMouseDownCapture (not onMouseDown) further down.
+    // useDrag's own native mousedown listener is attached directly to the
+    // ref'd DOM node, so it fires in the DOM's target phase — which happens
+    // *before* React's regular bubble-phase onMouseDown (React delegates
+    // bubble events to the root, so they run later). That meant this same
+    // mousedown was already rejected by useDrag (`when` still false) by the
+    // time we set canDrag — the flag only became true in time for the *next*
+    // unrelated click. Capture-phase listeners on an ancestor (which is what
+    // React attaches for onMouseDownCapture) always run before target-phase
+    // listeners on the target itself, so this now runs first. flushSync
+    // forces the state update (and useDrag's layout effect that re-binds its
+    // listener) to commit synchronously before the event continues to the
+    // target, so useDrag sees the correct `when` for this exact press.
+    const handleMouseDown = useCallback((event: React.MouseEvent) => {
+        if (disabled) return;
+
+        if (dragMode === "ctrlClickDrag") {
+            // Ctrl/Cmd + left click only
+            if ((event.ctrlKey || event.metaKey) && event.button === 0) {
+                event.preventDefault();
+                flushSync(() => setCanDrag(true));
+            }
+        } else if (dragMode === "rightClickDrag") {
+            // Right mouse button press
+            if (event.button === 2) {
+                event.preventDefault();
+                flushSync(() => setCanDrag(true));
+            }
+        }
+    }, [disabled, dragMode]);
+
+    // Safety net: if a press armed canDrag but never turned into an actual
+    // drag (e.g. a plain right-click with no movement — which triggers
+    // neither onClick nor useDrag's onFinish), clear the flag on mouseup so
+    // it can't leak into the next, unrelated interaction.
+    const handleMouseUp = useCallback(() => {
+        if (!dragStartedRef.current) {
+            setCanDrag(false);
+        }
+    }, []);
 
     const preview = resizingStart
         ? applyResize("start", startOffsetY)
@@ -423,21 +530,36 @@ const AppointmentBlock: React.FC<{
             style={appointmentLayoutStyle(layout)}
             onClick={(event: React.MouseEvent) => {
                 event.stopPropagation();
-                if (movedRef.current) {
-                    movedRef.current = false;
-                    return;
-                }
+                // Reset state
+                setCanDrag(false);
+                movedRef.current = false;
+                dragStartedRef.current = false;
+                
+                // Trigger click callback only if it was a simple click
                 onClick?.(appointment);
             }}
-            onMouseDown={(event: React.MouseEvent) => event.stopPropagation()}>
+            onMouseDownCapture={handleMouseDown}
+            onMouseUp={handleMouseUp}
+            onContextMenu={(event: React.MouseEvent) => {
+                // Only suppress the native menu here — arming happens on mousedown
+                // (see handleMouseDown) since contextmenu fires too late (typically
+                // on mouse-up) to gate the start of a drag gesture.
+                if (!disabled) {
+                    event.preventDefault();
+                }
+                
+            }}
+            >
             <Box
                 ref={startResizeRef}
                 as="--appointment-resize --start"
+                onMouseDownCapture={handleMouseDown}
             />
             <Flex
                 ref={moveRef}
                 cols
-                as="--appointment-body w-full flex-1 minW:0">
+                as="--appointment-body w-full flex-1 minW:0"
+                onMouseDownCapture={handleMouseDown}>
                 <Text as="--appointment-title">{preview.title}</Text>
                 <Text as="--appointment-time">
                     {preview.timeStart} – {preview.timeEnd}
@@ -446,6 +568,7 @@ const AppointmentBlock: React.FC<{
             <Box
                 ref={endResizeRef}
                 as="--appointment-resize --end"
+                onMouseDownCapture={handleMouseDown}
             />
         </Flex>
     );
@@ -459,6 +582,8 @@ type DayColumnProps = {
     subSlotOffsets: number[];
     appointments: CalendarAppointment[];
     scale: TimeScale;
+    disabledTimeRanges?: CalendarDisabledTimeRange[];
+    dragMode?: CalendarDragMode;
     onDayClick: (day: Date) => void;
     onSlotMouseDown: (day: Date, minutes: number) => void;
     onSlotMouseUp: (day: Date, minutes: number) => void;
@@ -475,6 +600,8 @@ const DayColumn: React.FC<DayColumnProps> = ({
     subSlotOffsets,
     appointments,
     scale,
+    disabledTimeRanges,
+    dragMode,
     onDayClick,
     onSlotMouseDown,
     onSlotMouseUp,
@@ -538,11 +665,11 @@ const DayColumn: React.FC<DayColumnProps> = ({
         : null;
 
     return (
-        <Flex cols as={`--day-column w-full minW:0 ${isOver ? '--drop-over' : ''}`}>
+        <Flex cols as={`--day-column w-full minW:0 ${isToday(day) ? `--day-today` : ``} ${isOver ? '--drop-over' : ''} ${disabled ? '--has-stripes' : ''}`}>
             <Flex
                 gap={4}
                 onClick={() => !disabled && onDayClick(day)}
-                as={`--day-header --calendar-column flex aic jcc w-full ${isToday(day) ? '--today' : ''} ${disabled ? '--disabled' : ''}`}>
+                as={`--day-header --calendar-column flex aic jcc w-full ${isToday(day) ? '--today' : ''} ${disabled ? '--disabled --has-stripes' : ''}`}>
                 <Text as="--day-name">{format(day, 'EEE')}</Text>
                 <Text as={`--day-number ${selected ? '--selected' : ''}`}>{format(day, 'd')}</Text>
             </Flex>
@@ -553,21 +680,23 @@ const DayColumn: React.FC<DayColumnProps> = ({
                 as={`--calendar-day-body rel w-full minW:0 ${isOver ? '--drop-over' : ''}`}>
                 {mainTimeSlots.map((slot, idx) => {
                     const mainMinutes = slot.hour * 60 + slot.minute;
+                    const isSlotDisabled = disabled || isTimeSlotDisabled(mainMinutes, disabledTimeRanges);
                     return (
                         <React.Fragment key={`day-col-${idx}`}>
                             <Flex
-                                as="--calendar-column --time-column w-full"
-                                onMouseDown={() => !disabled && onSlotMouseDown(day, mainMinutes)}
-                                onMouseUp={() => !disabled && onSlotMouseUp(day, mainMinutes)}
+                                as={`--calendar-column --time-column w-full ${isSlotDisabled ? '--disabled --has-stripes' : ''}`}
+                                onMouseDown={() => !isSlotDisabled && onSlotMouseDown(day, mainMinutes)}
+                                onMouseUp={() => !isSlotDisabled && onSlotMouseUp(day, mainMinutes)}
                             />
                             {subSlotOffsets.map((offset) => {
                                 const minutes = mainMinutes + offset;
+                                const isSubSlotDisabled = disabled || isTimeSlotDisabled(minutes, disabledTimeRanges);
                                 return (
                                     <Flex
                                         key={`day-col-${idx}-${offset}`}
-                                        as="--calendar-column --time-column --sub-slot w-full"
-                                        onMouseDown={() => !disabled && onSlotMouseDown(day, minutes)}
-                                        onMouseUp={() => !disabled && onSlotMouseUp(day, minutes)}
+                                        as={`--calendar-column --time-column --sub-slot w-full ${isSubSlotDisabled ? '--disabled --has-stripes' : ''}`}
+                                        onMouseDown={() => !isSubSlotDisabled && onSlotMouseDown(day, minutes)}
+                                        onMouseUp={() => !isSubSlotDisabled && onSlotMouseUp(day, minutes)}
                                     />
                                 );
                             })}
@@ -602,6 +731,7 @@ const DayColumn: React.FC<DayColumnProps> = ({
                             appointment={appointment}
                             scale={scale}
                             disabled={disabled}
+                            dragMode={dragMode}
                             onChange={onAppointmentChange}
                             onClick={onAppointmentClick}
                         />
@@ -654,6 +784,11 @@ const LargeCalendar = (props: LargeCalendarProps) => {
         onViewModeChange,
         onChange,
         value,
+        dragMode = "ctrlClickDrag",
+        disabledTimeRanges,
+        disablePastDates = false,
+        disableFutureDates = false,
+        isDateDisabled,
     } = props;
 
     const isViewModeControlled = props.viewMode !== undefined && typeof onViewModeChange === `function`;
@@ -696,9 +831,16 @@ const LargeCalendar = (props: LargeCalendarProps) => {
     }), [startHour, endHour, effectiveSubInterval]);
 
     const isDayDisabled = useCallback((day: Date): boolean => {
-        if (!maxAllowedDate) return false;
-        return isAfter(startOfDay(day), maxAllowedDate);
-    }, [maxAllowedDate]);
+        // Check custom disabled function first
+        if (isDateDisabled?.(day)) return true;
+        // Check past dates
+        if (disablePastDates && isPastDate(day)) return true;
+        // Check future dates
+        if (disableFutureDates && isFutureDate(day)) return true;
+        // Check disableAfter
+        if (maxAllowedDate && isAfter(startOfDay(day), maxAllowedDate)) return true;
+        return false;
+    }, [maxAllowedDate, disablePastDates, disableFutureDates, isDateDisabled]);
 
     const mainTimeSlots: TimeSlot[] = useMemo(() => {
         const slots: TimeSlot[] = [];
@@ -845,6 +987,8 @@ const LargeCalendar = (props: LargeCalendarProps) => {
                             subSlotOffsets={subSlotOffsets}
                             appointments={getAppointmentsForDay(day)}
                             scale={timeScale}
+                            disabledTimeRanges={disabledTimeRanges}
+                            dragMode={dragMode}
                             onDayClick={handleDayClick}
                             onSlotMouseDown={handleSlotMouseDown}
                             onSlotMouseUp={handleSlotMouseUp}
@@ -864,7 +1008,7 @@ const LargeCalendar = (props: LargeCalendarProps) => {
                                 key={day.toISOString()}
                                 cols
                                 onClick={() => !disabled && handleDayClick(day)}
-                                as={`--calendar-column --month-cell w-full minW:0 ${isToday(day) ? '--today' : ''} ${disabled ? '--disabled' : ''} ${value && isSameDay(day, value) ? '--selected' : ''}`}>
+                                as={`--calendar-column --month-cell w-full minW:0 ${isToday(day) ? '--today' : ''} ${disabled ? '--disabled --has-stripes' : ''} ${value && isSameDay(day, value) ? '--selected' : ''}`}>
                                 <Text as="--day-number">{format(day, 'd')}</Text>
                                 {dayAppointments.length > 0 && (
                                     <Text as="--month-cell-count">{dayAppointments.length} appt{dayAppointments.length > 1 ? 's' : ''}</Text>
