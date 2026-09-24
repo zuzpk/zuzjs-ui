@@ -8,12 +8,15 @@ export type TimePickerValue = {
     period?: "AM" | "PM";
 }
 
+/** Value type that accepts TimePickerValue, ISO Date string, or Date object */
+export type TimePickerInputValue = TimePickerValue | string | Date;
+
 export type TimePickerProps = Omit<InputProps, "defaultValue" | "value"> & {
     icon?: ReactNode | string;
-    /** Default time value */
-    defaultValue?: TimePickerValue | null;
-    /** Controlled time value */
-    timeValue?: TimePickerValue | null;
+    /** Default time value - accepts TimePickerValue, ISO Date string, or Date object */
+    defaultValue?: TimePickerInputValue | null;
+    /** Controlled time value - accepts TimePickerValue, ISO Date string, or Date object */
+    timeValue?: TimePickerInputValue | null;
     /** Use 12-hour format (AM/PM) instead of 24-hour */
     use12Hours?: boolean;
     /** Show seconds picker */

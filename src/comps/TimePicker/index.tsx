@@ -14,7 +14,7 @@ import SVGIcons from "../svgicons";
 import Text from "../Text";
 import Button from "../Button";
 import Flex from "../Flex";
-import { TimePickerProps, TimePickerValue } from "./types";
+import { TimePickerProps, TimePickerValue, TimePickerInputValue } from "./types";
 
 /**
  * TimePicker component.
@@ -29,6 +29,18 @@ import { TimePickerProps, TimePickerValue } from "./types";
  * // Advanced usage with 12-hour format
  * ```tsx
  * <TimePicker onTimeChange={(time) => console.log(time)} use12Hours showSeconds />
+ * ```
+ *
+ * @example
+ * // Using ISO Date string
+ * ```tsx
+ * <TimePicker defaultValue="2024-01-15T14:30:00" onTimeChange={(time) => console.log(time)} />
+ * ```
+ *
+ * @example
+ * // Using Date object
+ * ```tsx
+ * <TimePicker defaultValue={new Date()} onTimeChange={(time) => console.log(time)} />
  * ```
  * @param onTimeChange - Callback function triggered when time changes
  * @param timeValue - Currently selected time
@@ -62,11 +74,47 @@ const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>((props, ref) =>
     const formValue = useFormFieldValue(name)
     const inForm = Boolean(name && form?.setFieldValue)
     
-    // Parse time string to TimePickerValue
+    /**
+     * Parse various time input formats to TimePickerValue
+     * Supports: TimePickerValue object, ISO Date string, Date object
+     */
     const parseTimeValue = useCallback((val: unknown): TimePickerValue | null => {
         if (!val) return null;
-        if (typeof val === 'object' && 'hour' in (val as TimePickerValue)) return val as TimePickerValue;
+        
+        // Already a TimePickerValue object (but not a Date instance)
+        if (typeof val === 'object' && 'hour' in (val as TimePickerValue) && !(val instanceof Date)) {
+            return val as TimePickerValue;
+        }
+        
+        // Date object
+        if (val instanceof Date) {
+            const hour = val.getHours();
+            const minute = val.getMinutes();
+            const second = val.getSeconds();
+            return {
+                hour,
+                minute,
+                second,
+                period: use12Hours ? (hour < 12 ? "AM" : "PM") : undefined
+            };
+        }
+        
+        // String parsing (ISO Date string or time string)
         if (typeof val === 'string') {
+            // Try parsing as ISO Date string first
+            const dateVal = new Date(val);
+            if (!isNaN(dateVal.getTime())) {
+                const hour = dateVal.getHours();
+                const minute = dateVal.getMinutes();
+                const second = dateVal.getSeconds();
+                return {
+                    hour,
+                    minute,
+                    second,
+                    period: use12Hours ? (hour < 12 ? "AM" : "PM") : undefined
+                };
+            }
+            
             // Parse format like "HH:mm" or "HH:mm:ss" or "HH:mm AM/PM"
             const match = val.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?$/i);
             if (match) {
@@ -88,11 +136,18 @@ const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>((props, ref) =>
         return null;
     }, [use12Hours]);
     
+    /**
+     * Normalize input value to TimePickerValue
+     */
+    const normalizeTimeValue = useCallback((val: TimePickerInputValue | null | undefined): TimePickerValue | null => {
+        return parseTimeValue(val);
+    }, [parseTimeValue]);
+    
     const [ choosing, setChoosing ] = useState(false);
     const [ currentTime, setCurrentTime ] = useState<TimePickerValue | null>(() => {
-        if (timeValue !== undefined) return timeValue ?? null;
-        if (inForm && formValue) return parseTimeValue(formValue) ?? defaultValue ?? null;
-        return defaultValue ?? null;
+        if (timeValue !== undefined) return normalizeTimeValue(timeValue) ?? null;
+        if (inForm && formValue) return parseTimeValue(formValue) ?? normalizeTimeValue(defaultValue) ?? null;
+        return normalizeTimeValue(defaultValue) ?? null;
     });
     
     // Helper to get display hour (converts 24h to 12h for display)
@@ -126,16 +181,17 @@ const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>((props, ref) =>
 
     useEffect(() => {
         if (typeof timeValue !== "undefined") {
+            const normalized = normalizeTimeValue(timeValue);
             setCurrentTime(prev => {
                 // Only update if the time actually changed
-                if (prev?.hour !== timeValue?.hour || prev?.minute !== timeValue?.minute || prev?.second !== timeValue?.second) {
-                    onTimeChange?.(timeValue);
-                    return timeValue;
+                if (prev?.hour !== normalized?.hour || prev?.minute !== normalized?.minute || prev?.second !== normalized?.second) {
+                    onTimeChange?.(normalized);
+                    return normalized;
                 }
                 return prev;
             });
         }
-    }, [timeValue, onTimeChange]);
+    }, [timeValue, normalizeTimeValue, onTimeChange]);
 
     // Sync form value to state when form initializes or updates
     useEffect(() => {
