@@ -3,6 +3,8 @@ import React, { ReactNode } from 'react';
 import { DialogActionHandler } from './types';
 import Box from '../Box';
 import { ValueOf, Variant } from '../../types';
+import ScrollView from '../ScrollView';
+import Flex from '../Flex';
 
 const DialogBody : React.FC<{
     action?: DialogActionHandler[] | null,
@@ -15,9 +17,9 @@ const DialogBody : React.FC<{
     message = ``
 }) => {
     
-    return <Box as={`--body flex aic rel ${action ? `` : `--no-action`}`.trim()}>
+    return <ScrollView as={`flex --body rel ${action ? `` : `--no-action`}`}>
         {render ? message : null}
-    </Box>
+    </ScrollView>
 }
 
 export default DialogBody;

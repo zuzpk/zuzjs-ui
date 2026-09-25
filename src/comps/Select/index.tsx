@@ -478,8 +478,9 @@ const Select = (({
                 ...(currentOption?.borderColor ? { ["--select-current-border-custom" as any]: `1px ${currentOption?.borderColor} solid` } : {}),
                 ...(currentOption?.labelColor ? { ["--select-current-color-custom" as any]: currentOption?.labelColor } : {}),
                 ...(currentOption?.bgColor ? { 
-                    ["--select-current-bg-custom" as any] : currentOption?.bgColor,
-                    ["--select-current-hover-custom" as any]: `rgb(from ${currentOption?.bgColor}) r g b / 0.1)`,
+                    // ["--select-current-bg-custom" as any] : currentOption?.bgColor,
+                    ["--select-current-bg-custom" as any]: `rgb(from ${currentOption?.bgColor}) r g b / var(--select-current-bg-custom-opacity, 0.1))`,
+                    ["--select-current-hover-custom" as any]: `rgb(from ${currentOption?.bgColor}) r g b / var(--select-current-bg-custom-opacity, 0.15))`,
                 } : {})
             }}
             onClick={(e) => {

@@ -1,4 +1,4 @@
-
+"use client"
 import { useAnchor } from "@zuzjs/hooks";
 import { format } from "date-fns";
 import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
