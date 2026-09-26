@@ -63,12 +63,19 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
         endHour = 20,
         appointments,
         renderAppointment,
+        renderAppointmentGhost,
         onTimeSlotClick,
         onAppointmentClick,
         onAppointmentChange,
         enableRangeSelect,
         onTimeRangeSelect,
         disableAfter,
+        dragMode,
+        disabledTimeRanges,
+        disablePastDates,
+        disableFutureDates,
+        isDateDisabled,
+        onViewModeChange,
         ...pops
     } = props
 
@@ -122,12 +129,19 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
                 endHour={endHour}
                 appointments={appointments}
                 renderAppointment={renderAppointment}
+                renderAppointmentGhost={renderAppointmentGhost}
                 onTimeSlotClick={onTimeSlotClick}
                 onAppointmentClick={onAppointmentClick}
                 onAppointmentChange={onAppointmentChange}
                 enableRangeSelect={enableRangeSelect}
                 onTimeRangeSelect={onTimeRangeSelect}
                 disableAfter={disableAfter}
+                dragMode={dragMode}
+                disabledTimeRanges={disabledTimeRanges}
+                disablePastDates={disablePastDates}
+                disableFutureDates={disableFutureDates}
+                isDateDisabled={isDateDisabled}
+                onViewModeChange={onViewModeChange}
                 visibleMonth={calendar.visibleMonth}
                 setVisibleMonth={calendar.setVisibleMonth}
                 onChange={(date) => {

@@ -368,40 +368,29 @@ const AppointmentContent: React.FC<{ appointment: CalendarAppointment }> = ({ ap
     </Flex>
 );
 
-const AppointmentBlock: React.FC<{
+/** Appointment container that handles all drag/resize logic and wraps custom content */
+const AppointmentContainer: React.FC<{
     appointment: CalendarAppointment;
     scale: TimeScale;
     disabled?: boolean;
     dragMode?: CalendarDragMode;
     onChange?: (appointment: CalendarAppointment) => void;
     onClick?: (appointment: CalendarAppointment) => void;
-}> = ({ appointment, scale, disabled, dragMode = "rightClickDrag", onChange, onClick }) => {
-    const wrapperRef = useRef<HTMLDivElement>(null);
+    children?: React.ReactNode;
+    /** Optional custom content renderer - receives appointment data and basic style */
+    renderContent?: (props: { appointment: CalendarAppointment; style: React.CSSProperties }) => React.ReactNode;
+    /** Optional ghost content renderer for drag preview - falls back to renderContent, then default */
+    renderGhost?: (props: { appointment: CalendarAppointment; style: React.CSSProperties }) => React.ReactNode;
+}> = ({ appointment, scale, disabled, dragMode = "rightClickDrag", onChange, onClick, children, renderContent, renderGhost }) => {
+    const containerRef = useRef<HTMLDivElement | null>(null);
     const movedRef = useRef(false);
     const dragStartedRef = useRef(false);
     const [canDrag, setCanDrag] = useState(false);
     const { setFeedback } = useContext(DropFeedbackContext);
 
-    const readBodyHeight = useCallback(() => (
-        wrapperRef.current?.parentElement?.getBoundingClientRect().height ?? 0
-    ), []);
-
-    // Suppress the browser's native context menu via a raw, non-React listener
-    // attached directly to the DOM node. This is intentionally decoupled from
-    // React's synthetic onContextMenu (and from the flushSync-driven re-render
-    // in handleMouseDown below): a native listener registered once via
-    // useEffect can't be affected by React re-render/commit timing the way a
-    // delegated synthetic handler might be, so it's the most reliable place to
-    // guarantee the menu never appears while dragging is enabled.
-    useEffect(() => {
-        const node = wrapperRef.current;
-        if (!node || disabled) return;
-        const suppress = (event: MouseEvent) => {
-            event.preventDefault();
-        };
-        node.addEventListener("contextmenu", suppress);
-        return () => node.removeEventListener("contextmenu", suppress);
-    }, [disabled]);
+    const readBodyHeight = useCallback(() => {
+        return containerRef.current?.parentElement?.getBoundingClientRect().height ?? 0;
+    }, []);
 
     const applyResize = useCallback((edge: "start" | "end", offsetY: number): CalendarAppointment => {
         const originalStart = parseHHmm(appointment.timeStart);
@@ -413,7 +402,8 @@ const AppointmentBlock: React.FC<{
         return appointmentFromRange(appointment, appointment.date, next.start, next.end);
     }, [appointment, readBodyHeight, scale]);
 
-    const [{ isDragging }, moveRef] = useDrag<AppointmentMoveItem, { isDragging: boolean }>(() => ({
+    // Drag is now on the entire container
+    const [{ isDragging }, dragRef] = useDrag<AppointmentMoveItem, { isDragging: boolean }>(() => ({
         channel: APPOINTMENT_CHANNEL,
         when: canDrag && !disabled,
         payload: { kind: "move", appointment },
@@ -469,31 +459,15 @@ const AppointmentBlock: React.FC<{
         },
     }), [appointment, disabled, applyResize, onChange, canDrag]);
 
-    // Handle mouse down to enable drag based on mode.
-    // IMPORTANT: bound via onMouseDownCapture (not onMouseDown) further down.
-    // useDrag's own native mousedown listener is attached directly to the
-    // ref'd DOM node, so it fires in the DOM's target phase — which happens
-    // *before* React's regular bubble-phase onMouseDown (React delegates
-    // bubble events to the root, so they run later). That meant this same
-    // mousedown was already rejected by useDrag (`when` still false) by the
-    // time we set canDrag — the flag only became true in time for the *next*
-    // unrelated click. Capture-phase listeners on an ancestor (which is what
-    // React attaches for onMouseDownCapture) always run before target-phase
-    // listeners on the target itself, so this now runs first. flushSync
-    // forces the state update (and useDrag's layout effect that re-binds its
-    // listener) to commit synchronously before the event continues to the
-    // target, so useDrag sees the correct `when` for this exact press.
     const handleMouseDown = useCallback((event: React.MouseEvent) => {
         if (disabled) return;
 
         if (dragMode === "ctrlClickDrag") {
-            // Ctrl/Cmd + left click only
             if ((event.ctrlKey || event.metaKey) && event.button === 0) {
                 event.preventDefault();
                 flushSync(() => setCanDrag(true));
             }
         } else if (dragMode === "rightClickDrag") {
-            // Right mouse button press
             if (event.button === 2) {
                 event.preventDefault();
                 flushSync(() => setCanDrag(true));
@@ -501,10 +475,6 @@ const AppointmentBlock: React.FC<{
         }
     }, [disabled, dragMode]);
 
-    // Safety net: if a press armed canDrag but never turned into an actual
-    // drag (e.g. a plain right-click with no movement — which triggers
-    // neither onClick nor useDrag's onFinish), clear the flag on mouseup so
-    // it can't leak into the next, unrelated interaction.
     const handleMouseUp = useCallback(() => {
         if (!dragStartedRef.current) {
             setCanDrag(false);
@@ -522,55 +492,106 @@ const AppointmentBlock: React.FC<{
 
     const isResizing = resizingStart || resizingEnd;
 
+    // Build the style with position absolute and calculated dimensions
+    const style: React.CSSProperties = {
+        position: "absolute",
+        top: `${layout.top}%`,
+        height: `${Math.max(0, 100 - layout.top - layout.bottom)}%`,
+        left: 4,
+        right: 4,
+    };
+
+    // Merge refs: containerRef for height calculation, dragRef for dragging
+    const setContainerRef = useCallback((node: HTMLDivElement | null) => {
+        containerRef.current = node;
+        dragRef(node);
+    }, [dragRef]);
+
+    // Compute content - use ghost renderer when dragging, then custom, then default
+    let content: React.ReactNode;
+    
+    // When dragging: use renderGhost if provided, fall back to renderContent
+    if (isDragging && renderGhost) {
+        content = renderGhost({ appointment: preview, style: {} });
+    } else if (renderContent) {
+        content = renderContent({ appointment: preview, style: {} });
+    } else if (children) {
+        content = children;
+    } else {
+        content = (
+            <>
+                <Text as="--appointment-title">{preview.title}</Text>
+                <Text as="--appointment-time">
+                    {preview.timeStart} – {preview.timeEnd}
+                </Text>
+            </>
+        );
+    }
+
     return (
         <Flex
-            ref={wrapperRef}
+            ref={setContainerRef}
             cols
             as={`--appointment ${isDragging ? '--ghost' : ''} ${isResizing ? '--resizing' : ''}`}
-            style={appointmentLayoutStyle(layout)}
+            style={style}
             onClick={(event: React.MouseEvent) => {
                 event.stopPropagation();
-                // Reset state
-                setCanDrag(false);
                 movedRef.current = false;
                 dragStartedRef.current = false;
-                
-                // Trigger click callback only if it was a simple click
-                onClick?.(appointment);
+                setCanDrag(false);
+                onClick?.(preview);
             }}
             onMouseDownCapture={handleMouseDown}
             onMouseUp={handleMouseUp}
             onContextMenu={(event: React.MouseEvent) => {
-                // Only suppress the native menu here — arming happens on mousedown
-                // (see handleMouseDown) since contextmenu fires too late (typically
-                // on mouse-up) to gate the start of a drag gesture.
                 if (!disabled) {
                     event.preventDefault();
                 }
-                
             }}
-            >
+        >
+            {/* Resize handle at top */}
             <Box
                 ref={startResizeRef}
                 as="--appointment-resize --start"
                 onMouseDownCapture={handleMouseDown}
             />
+            
+            {/* Content area */}
             <Flex
-                ref={moveRef}
                 cols
                 as="--appointment-body w-full flex-1 minW:0"
-                onMouseDownCapture={handleMouseDown}>
-                <Text as="--appointment-title">{preview.title}</Text>
-                <Text as="--appointment-time">
-                    {preview.timeStart} – {preview.timeEnd}
-                </Text>
+            >
+                {content}
             </Flex>
+            
+            {/* Resize handle at bottom */}
             <Box
                 ref={endResizeRef}
                 as="--appointment-resize --end"
                 onMouseDownCapture={handleMouseDown}
             />
         </Flex>
+    );
+};
+
+/** Default appointment block renderer */
+const AppointmentBlock: React.FC<{
+    appointment: CalendarAppointment;
+    scale: TimeScale;
+    disabled?: boolean;
+    dragMode?: CalendarDragMode;
+    onChange?: (appointment: CalendarAppointment) => void;
+    onClick?: (appointment: CalendarAppointment) => void;
+}> = ({ appointment, scale, disabled, dragMode = "rightClickDrag", onChange, onClick }) => {
+    return (
+        <AppointmentContainer
+            appointment={appointment}
+            scale={scale}
+            disabled={disabled}
+            dragMode={dragMode}
+            onChange={onChange}
+            onClick={onClick}
+        />
     );
 };
 
@@ -590,6 +611,7 @@ type DayColumnProps = {
     onAppointmentClick?: (appointment: CalendarAppointment) => void;
     onAppointmentChange?: (appointment: CalendarAppointment) => void;
     renderAppointment?: LargeCalendarProps['renderAppointment'];
+    renderAppointmentGhost?: LargeCalendarProps['renderAppointmentGhost'];
 };
 
 const DayColumn: React.FC<DayColumnProps> = ({
@@ -608,6 +630,7 @@ const DayColumn: React.FC<DayColumnProps> = ({
     onAppointmentClick,
     onAppointmentChange,
     renderAppointment,
+    renderAppointmentGhost,
 }) => {
     const { setFeedback } = useContext(DropFeedbackContext);
     const [dropPreview, setDropPreview] = useState<DropFeedback | null>(null);
@@ -705,23 +728,19 @@ const DayColumn: React.FC<DayColumnProps> = ({
                 })}
 
                 {appointments.map((appointment) => {
-                    const layout = getAppointmentLayout(appointment, scale);
-                    if (!layout) return null;
-
-                    const style: React.CSSProperties = {
-                        position: 'absolute',
-                        top: `${layout.top}%`,
-                        bottom: `${layout.bottom}%`,
-                        height: 'auto',
-                        left: 4,
-                        right: 4,
-                    };
-
                     if (renderAppointment) {
                         return (
-                            <React.Fragment key={appointment.id}>
-                                {renderAppointment({ appointment, style, isDefault: false })}
-                            </React.Fragment>
+                            <AppointmentContainer
+                                key={appointment.id}
+                                appointment={appointment}
+                                scale={scale}
+                                disabled={disabled}
+                                dragMode={dragMode}
+                                onChange={onAppointmentChange}
+                                onClick={onAppointmentClick}
+                                renderContent={renderAppointment}
+                                renderGhost={renderAppointmentGhost}
+                            />
                         );
                     }
 
@@ -776,6 +795,7 @@ const LargeCalendar = (props: LargeCalendarProps) => {
         showSubIntervalLabel = false,
         appointments = [],
         renderAppointment,
+        renderAppointmentGhost,
         onTimeSlotClick,
         onAppointmentClick,
         onAppointmentChange,
@@ -995,6 +1015,7 @@ const LargeCalendar = (props: LargeCalendarProps) => {
                             onAppointmentClick={onAppointmentClick}
                             onAppointmentChange={handleAppointmentChange}
                             renderAppointment={renderAppointment}
+                            renderAppointmentGhost={renderAppointmentGhost}
                         />
                     ))}
                 </Grid>

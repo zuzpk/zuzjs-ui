@@ -255,7 +255,12 @@ body{
             min-width: 0;
 
             &.--day-today{
-                background: color-mix(in srgb, var(--large-calendar-day-today, var(--surface)) 18%, var(--blue-600));
+                // background: color-mix(in srgb, var(--large-calendar-day-today, var(--surface)) 18%, var(--blue-600));
+                .--calendar-column{
+                    &:not(.--day-header){
+                        background: var(--large-calendar-day-today, var(--muted)) !important;
+                    }
+                }
             }
 
             &.--drop-over{
@@ -286,8 +291,8 @@ body{
                     background: var(--large-calendar-appointment-border);
                     color: #fff;
                     border-radius: 999px;
-                    width: 22px;
-                    height: 22px;
+                    width: var(--day-number-selected-width, 22px);
+                    height: var(--day-number-selected-height, 22px);
                     display: inline-flex;
                     align-items: center;
                     justify-content: center;
@@ -303,6 +308,10 @@ body{
                 &.--sub-slot{
                     height: var(--calendar-sub-slot-height, 28px);
                     // opacity: 0.6;
+                }
+                &.--disabled{
+                    cursor: not-allowed;
+                    opacity: 0.4;
                 }
             }
             &.--time-label{
@@ -332,9 +341,9 @@ body{
             }
 
             .--appointment{
-                background: var(--large-calendar-appointment-bg);
-                border-left: 3px solid var(--large-calendar-appointment-border);
-                color: var(--large-calendar-appointment-color);
+                background: var(--large-calendar-appointment-bg-custom, var(--large-calendar-appointment-bg));
+                border-left: var(--large-calendar-appointment-border, 3px solid var(--large-calendar-appointment-border));
+                color: var(--large-calendar-appointment-color-custom, var(--large-calendar-appointment-color));
                 border-radius: var(--large-calendar-appointment-radius, 2px);
                 overflow: hidden;
                 z-index: 1;
@@ -345,7 +354,7 @@ body{
                 &.--ghost{
                     opacity: 0.38;
                     pointer-events: none;
-                    outline: 1px dashed var(--large-calendar-appointment-border);
+                    outline: var(--large-calendar-appointment-outline-custom, 1px dashed var(--large-calendar-appointment-border));
                     .--appointment-resize{
                         display: none;
                     }
@@ -358,7 +367,7 @@ body{
                 &.--drop-preview{
                     z-index: 5;
                     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
-                    outline: 1px solid var(--large-calendar-appointment-border);
+                    outline: var(--large-calendar-appointment-outline-custom, 1px solid var(--large-calendar-appointment-border));
                 }
 
                 .--appointment-drop-overlay{
@@ -377,15 +386,15 @@ body{
 
                 .--appointment-body{
                     cursor: grab;
-                    padding: 8px 8px 10px;
+                    padding: var(--appointment-body-padding, 8px 8px 10px);
                     min-height: 0;
                     flex: 1;
                     .--appointment-title{
-                        font-size: var(--text-xs);
+                        font-size: var(--appointment-title-size, var(--text-xs));
                         font-weight: 600;
                     }
                     .--appointment-time{
-                        font-size: var(--text-xs);
+                        font-size: var(--appointment-time-size, var(--text-xs));
                         opacity: 0.7;
                     }
                 }

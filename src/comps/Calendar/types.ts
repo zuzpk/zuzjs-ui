@@ -45,9 +45,10 @@ export type CalendarAppointment = {
 };
 
 export type CalendarAppointmentRenderProps = {
+    /** The appointment data */
     appointment: CalendarAppointment;
+    /** Style object (empty - positioning is handled internally) */
     style: React.CSSProperties;
-    isDefault?: boolean;
 };
 
 /** Day of week: 0 = Sunday, 1 = Monday, ..., 6 = Saturday */
@@ -101,6 +102,8 @@ export type CalendarProps = {
     appointments?: CalendarAppointment[];
     /** Custom render for appointment blocks */
     renderAppointment?: (props: CalendarAppointmentRenderProps) => ReactNode;
+    /** Custom render for appointment ghost preview during drag (falls back to renderAppointment, then default) */
+    renderAppointmentGhost?: (props: CalendarAppointmentRenderProps) => ReactNode;
     /** Callback when clicking on a time slot */
     onTimeSlotClick?: (slot: CalendarTimeSlot) => void;
     /** Callback when clicking on an appointment */
@@ -113,6 +116,18 @@ export type CalendarProps = {
     onTimeRangeSelect?: (range: CalendarTimeRange) => void;
     /** Disable dates after a specific threshold: 'today', 'next-week', or a specific Date */
     disableAfter?: 'today' | 'next-week' | Date;
+    /** Drag mode for appointments - default: "rightClickDrag" */
+    dragMode?: CalendarDragMode;
+    /** Disabled time ranges (time of day that is disabled) */
+    disabledTimeRanges?: CalendarDisabledTimeRange[];
+    /** Prevent adding/moving appointments in past dates */
+    disablePastDates?: boolean;
+    /** Prevent adding/moving appointments in future dates */
+    disableFutureDates?: boolean;
+    /** Callback to determine if a specific date is disabled */
+    isDateDisabled?: (date: Date) => boolean;
+    /** Called when the user switches Day/Week/Month/Year via the segmented control */
+    onViewModeChange?: (viewMode: CalendarViewMode) => void;
 };
 
 export type LargeCalendarProps = Pick<CalendarProps,
@@ -129,27 +144,22 @@ export type LargeCalendarProps = Pick<CalendarProps,
     | 'endHour'
     | 'appointments'
     | 'renderAppointment'
+    | 'renderAppointmentGhost'
     | 'onTimeSlotClick'
     | 'onAppointmentClick'
     | 'onAppointmentChange'
     | 'enableRangeSelect'
     | 'onTimeRangeSelect'
     | 'disableAfter'
+    | 'dragMode'
+    | 'disabledTimeRanges'
+    | 'disablePastDates'
+    | 'disableFutureDates'
+    | 'isDateDisabled'
+    | 'onViewModeChange'
 > & {
     visibleMonth: Date;
     themeVariant?: ValueOf<typeof Variant>;
     onChange?: (date: Date | null) => void;
     setVisibleMonth: (date: Date) => void;
-    /** Called when the user switches Day/Week/Month/Year via the segmented control. Optional — LargeCalendar tracks the mode itself if this isn't provided. */
-    onViewModeChange?: (viewMode: CalendarViewMode) => void;
-    /** Drag mode for appointments - default: "rightClickDrag" */
-    dragMode?: CalendarDragMode;
-    /** Disabled time ranges (time of day that is disabled) */
-    disabledTimeRanges?: CalendarDisabledTimeRange[];
-    /** Prevent adding/moving appointments in past dates */
-    disablePastDates?: boolean;
-    /** Prevent adding/moving appointments in future dates */
-    disableFutureDates?: boolean;
-    /** Callback to determine if a specific date is disabled */
-    isDateDisabled?: (date: Date) => boolean;
 };
