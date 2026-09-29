@@ -224,10 +224,13 @@ const getAppointmentLayout = (appointment: CalendarAppointment, scale: TimeScale
 
     const startIndex = minutesToSlotIndex(start, scale);
     let endIndex = minutesToSlotIndex(end, scale);
-    // timeEnd names the last occupied slot (11:00 occupies the 11:00 row, not 10:45)
-    if (endIndex < count && Number.isInteger(endIndex) && scale.slotStarts[endIndex] === end) {
-        endIndex += 1;
-    }
+    
+    // Use ceiling for endIndex: if end time falls exactly on a slot boundary,
+    // ceil gives us that slot index. If end time is within a slot, ceil gives
+    // the next slot. This correctly represents "appointment ends at/before this slot".
+    endIndex = Math.ceil(endIndex);
+    
+    // Ensure minimum height of one slot
     endIndex = Math.min(count, Math.max(startIndex + 1, endIndex));
 
     return {
@@ -272,6 +275,40 @@ const appointmentFromRange = (appointment: CalendarAppointment, day: Date, start
     timeStart: minutesToHHmm(start),
     timeEnd: minutesToHHmm(end),
 });
+
+/** Check if two appointments overlap */
+const checkAppointmentOverlap = (
+    appointment1: CalendarAppointment,
+    appointment2: CalendarAppointment
+): boolean => {
+    // Must be on the same day
+    if (!isSameDay(appointment1.date, appointment2.date)) return false;
+    
+    const start1 = parseHHmm(appointment1.timeStart);
+    const end1 = parseHHmm(appointment1.timeEnd);
+    const start2 = parseHHmm(appointment2.timeStart);
+    const end2 = parseHHmm(appointment2.timeEnd);
+    
+    // Check for overlap: appointment1 starts before appointment2 ends AND appointment2 starts before appointment1 ends
+    return start1 < end2 && start2 < end1;
+};
+
+/** Find overlapping appointments */
+const findOverlappingAppointments = (
+    newAppointment: CalendarAppointment,
+    existingAppointments: CalendarAppointment[],
+    excludeId?: string | number
+): CalendarAppointment | null => {
+    for (const existing of existingAppointments) {
+        // Skip if it's the same appointment (being moved/resized)
+        if (excludeId !== undefined && existing.id === excludeId) continue;
+        
+        if (checkAppointmentOverlap(newAppointment, existing)) {
+            return existing;
+        }
+    }
+    return null;
+};
 
 const deltaMinutesFromOffset = (offsetY: number, bodyHeight: number, scale: TimeScale) => {
     if (bodyHeight <= 0) return 0;
@@ -374,6 +411,8 @@ const AppointmentContainer: React.FC<{
     scale: TimeScale;
     disabled?: boolean;
     dragMode?: CalendarDragMode;
+    canDrag?: boolean;
+    canResize?: boolean;
     onChange?: (appointment: CalendarAppointment) => void;
     onClick?: (appointment: CalendarAppointment) => void;
     children?: React.ReactNode;
@@ -381,11 +420,12 @@ const AppointmentContainer: React.FC<{
     renderContent?: (props: { appointment: CalendarAppointment; style: React.CSSProperties }) => React.ReactNode;
     /** Optional ghost content renderer for drag preview - falls back to renderContent, then default */
     renderGhost?: (props: { appointment: CalendarAppointment; style: React.CSSProperties }) => React.ReactNode;
-}> = ({ appointment, scale, disabled, dragMode = "rightClickDrag", onChange, onClick, children, renderContent, renderGhost }) => {
+}> = ({ appointment, scale, disabled, dragMode = "rightClickDrag", canDrag: canDragProp = true, canResize = true, onChange, onClick, children, renderContent, renderGhost }) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const movedRef = useRef(false);
     const dragStartedRef = useRef(false);
-    const [canDrag, setCanDrag] = useState(false);
+    const resizeStartedRef = useRef(false);
+    const [isDragArmed, setIsDragArmed] = useState(false);
     const { setFeedback } = useContext(DropFeedbackContext);
 
     const readBodyHeight = useCallback(() => {
@@ -405,7 +445,7 @@ const AppointmentContainer: React.FC<{
     // Drag is now on the entire container
     const [{ isDragging }, dragRef] = useDrag<AppointmentMoveItem, { isDragging: boolean }>(() => ({
         channel: APPOINTMENT_CHANNEL,
-        when: canDrag && !disabled,
+        when: canDragProp && isDragArmed && !disabled,
         payload: { kind: "move", appointment },
         observe: (probe) => ({ isDragging: probe.active() }),
         onStart: () => {
@@ -416,68 +456,66 @@ const AppointmentContainer: React.FC<{
             const hasMoved = Math.abs(offset?.x ?? 0) > 3 || Math.abs(offset?.y ?? 0) > 3;
             movedRef.current = hasMoved;
             dragStartedRef.current = false;
-            setCanDrag(false);
+            setIsDragArmed(false);
             setFeedback(null);
         },
-    }), [appointment, disabled, setFeedback, canDrag]);
+    }), [appointment, disabled, setFeedback, canDragProp, isDragArmed]);
 
     const [{ isResizing: resizingStart, offsetY: startOffsetY }, startResizeRef] = useDrag<AppointmentResizeItem, { isResizing: boolean; offsetY: number }>(() => ({
         channel: RESIZE_CHANNEL,
-        when: canDrag && !disabled,
+        when: canResize && !disabled,
         payload: { kind: "resize", appointment, edge: "start" },
         observe: (probe) => ({
             isResizing: probe.active(),
             offsetY: probe.offset()?.y ?? 0,
         }),
         onStart: () => {
-            dragStartedRef.current = true;
+            resizeStartedRef.current = true;
         },
         onFinish: (_item, probe) => {
             movedRef.current = true;
-            dragStartedRef.current = false;
-            setCanDrag(false);
+            resizeStartedRef.current = false;
             onChange?.(applyResize("start", probe.offset()?.y ?? 0));
         },
-    }), [appointment, disabled, applyResize, onChange, canDrag]);
+    }), [appointment, disabled, applyResize, onChange, canResize]);
 
     const [{ isResizing: resizingEnd, offsetY: endOffsetY }, endResizeRef] = useDrag<AppointmentResizeItem, { isResizing: boolean; offsetY: number }>(() => ({
         channel: RESIZE_CHANNEL,
-        when: canDrag && !disabled,
+        when: canResize && !disabled,
         payload: { kind: "resize", appointment, edge: "end" },
         observe: (probe) => ({
             isResizing: probe.active(),
             offsetY: probe.offset()?.y ?? 0,
         }),
         onStart: () => {
-            dragStartedRef.current = true;
+            resizeStartedRef.current = true;
         },
         onFinish: (_item, probe) => {
             movedRef.current = true;
-            dragStartedRef.current = false;
-            setCanDrag(false);
+            resizeStartedRef.current = false;
             onChange?.(applyResize("end", probe.offset()?.y ?? 0));
         },
-    }), [appointment, disabled, applyResize, onChange, canDrag]);
+    }), [appointment, disabled, applyResize, onChange, canResize]);
 
     const handleMouseDown = useCallback((event: React.MouseEvent) => {
-        if (disabled) return;
+        if (disabled || !canDragProp) return;
 
         if (dragMode === "ctrlClickDrag") {
             if ((event.ctrlKey || event.metaKey) && event.button === 0) {
                 event.preventDefault();
-                flushSync(() => setCanDrag(true));
+                flushSync(() => setIsDragArmed(true));
             }
         } else if (dragMode === "rightClickDrag") {
             if (event.button === 2) {
                 event.preventDefault();
-                flushSync(() => setCanDrag(true));
+                flushSync(() => setIsDragArmed(true));
             }
         }
-    }, [disabled, dragMode]);
+    }, [disabled, dragMode, canDragProp]);
 
     const handleMouseUp = useCallback(() => {
         if (!dragStartedRef.current) {
-            setCanDrag(false);
+            setIsDragArmed(false);
         }
     }, []);
 
@@ -495,10 +533,10 @@ const AppointmentContainer: React.FC<{
     // Build the style with position absolute and calculated dimensions
     const style: React.CSSProperties = {
         position: "absolute",
-        top: `${layout.top}%`,
-        height: `${Math.max(0, 100 - layout.top - layout.bottom)}%`,
-        left: 4,
-        right: 4,
+        top: `calc(${layout.top}% + var(--appointment-margin, 1px))`,
+        height: `calc(${Math.max(0, 100 - layout.top - layout.bottom)}% - var(--appointment-margin, 1px))`,
+        left: `var(--appointment-margin, 1px)`,
+        right: `var(--appointment-margin, 1px)`,
     };
 
     // Merge refs: containerRef for height calculation, dragRef for dragging
@@ -538,7 +576,8 @@ const AppointmentContainer: React.FC<{
                 event.stopPropagation();
                 movedRef.current = false;
                 dragStartedRef.current = false;
-                setCanDrag(false);
+                resizeStartedRef.current = false;
+                setIsDragArmed(false);
                 onClick?.(preview);
             }}
             onMouseDownCapture={handleMouseDown}
@@ -553,7 +592,6 @@ const AppointmentContainer: React.FC<{
             <Box
                 ref={startResizeRef}
                 as="--appointment-resize --start"
-                onMouseDownCapture={handleMouseDown}
             />
             
             {/* Content area */}
@@ -568,7 +606,6 @@ const AppointmentContainer: React.FC<{
             <Box
                 ref={endResizeRef}
                 as="--appointment-resize --end"
-                onMouseDownCapture={handleMouseDown}
             />
         </Flex>
     );
@@ -580,15 +617,19 @@ const AppointmentBlock: React.FC<{
     scale: TimeScale;
     disabled?: boolean;
     dragMode?: CalendarDragMode;
+    canDrag?: boolean;
+    canResize?: boolean;
     onChange?: (appointment: CalendarAppointment) => void;
     onClick?: (appointment: CalendarAppointment) => void;
-}> = ({ appointment, scale, disabled, dragMode = "rightClickDrag", onChange, onClick }) => {
+}> = ({ appointment, scale, disabled, dragMode = "rightClickDrag", canDrag = true, canResize = true, onChange, onClick }) => {
     return (
         <AppointmentContainer
             appointment={appointment}
             scale={scale}
             disabled={disabled}
             dragMode={dragMode}
+            canDrag={canDrag}
+            canResize={canResize}
             onChange={onChange}
             onClick={onClick}
         />
@@ -605,6 +646,8 @@ type DayColumnProps = {
     scale: TimeScale;
     disabledTimeRanges?: CalendarDisabledTimeRange[];
     dragMode?: CalendarDragMode;
+    canDrag?: boolean;
+    canResize?: boolean;
     onDayClick: (day: Date) => void;
     onSlotMouseDown: (day: Date, minutes: number) => void;
     onSlotMouseUp: (day: Date, minutes: number) => void;
@@ -624,6 +667,8 @@ const DayColumn: React.FC<DayColumnProps> = ({
     scale,
     disabledTimeRanges,
     dragMode,
+    canDrag = true,
+    canResize = true,
     onDayClick,
     onSlotMouseDown,
     onSlotMouseUp,
@@ -736,6 +781,8 @@ const DayColumn: React.FC<DayColumnProps> = ({
                                 scale={scale}
                                 disabled={disabled}
                                 dragMode={dragMode}
+                                canDrag={canDrag}
+                                canResize={canResize}
                                 onChange={onAppointmentChange}
                                 onClick={onAppointmentClick}
                                 renderContent={renderAppointment}
@@ -751,6 +798,8 @@ const DayColumn: React.FC<DayColumnProps> = ({
                             scale={scale}
                             disabled={disabled}
                             dragMode={dragMode}
+                            canDrag={canDrag}
+                            canResize={canResize}
                             onChange={onAppointmentChange}
                             onClick={onAppointmentClick}
                         />
@@ -805,6 +854,9 @@ const LargeCalendar = (props: LargeCalendarProps) => {
         onChange,
         value,
         dragMode = "ctrlClickDrag",
+        canDrag = true,
+        canResize = true,
+        onAppointmentOverlap,
         disabledTimeRanges,
         disablePastDates = false,
         disableFutureDates = false,
@@ -888,9 +940,19 @@ const LargeCalendar = (props: LargeCalendarProps) => {
     }, [appointmentsKey]);
 
     const handleAppointmentChange = useCallback((next: CalendarAppointment) => {
+        // Check for overlaps before applying the change
+        const overlap = findOverlappingAppointments(next, appointments, next.id);
+        if (overlap && onAppointmentOverlap) {
+            onAppointmentOverlap({
+                appointment: next,
+                conflictingAppointment: overlap,
+                date: next.date,
+            });
+        }
+        
         setLocalAppointments((current) => current.map((item) => item.id === next.id ? next : item));
         onAppointmentChange?.(next);
-    }, [onAppointmentChange]);
+    }, [appointments, onAppointmentChange, onAppointmentOverlap]);
 
     const goto = useCallback((direction: 1 | -1) => {
         const stepFns: Record<CalendarViewMode, (d: Date, amount: number) => Date> = {
@@ -1009,6 +1071,7 @@ const LargeCalendar = (props: LargeCalendarProps) => {
                             scale={timeScale}
                             disabledTimeRanges={disabledTimeRanges}
                             dragMode={dragMode}
+                            canResize={canResize}
                             onDayClick={handleDayClick}
                             onSlotMouseDown={handleSlotMouseDown}
                             onSlotMouseUp={handleSlotMouseUp}

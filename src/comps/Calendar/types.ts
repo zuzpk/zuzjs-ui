@@ -40,8 +40,19 @@ export type CalendarAppointment = {
     date: Date;
     timeStart: string; // "09:00"
     timeEnd: string;   // "10:30"
+    duration?: number;
     title?: string;
     data?: dynamic;
+};
+
+/** Information about an appointment overlap conflict */
+export type CalendarAppointmentOverlap = {
+    /** The appointment being added/modified */
+    appointment: CalendarAppointment;
+    /** The existing appointment that overlaps */
+    conflictingAppointment: CalendarAppointment;
+    /** The date of the overlap */
+    date: Date;
 };
 
 export type CalendarAppointmentRenderProps = {
@@ -118,6 +129,12 @@ export type CalendarProps = {
     disableAfter?: 'today' | 'next-week' | Date;
     /** Drag mode for appointments - default: "rightClickDrag" */
     dragMode?: CalendarDragMode;
+    /** Whether appointments can be dragged - default: true */
+    canDrag?: boolean;
+    /** Whether appointments can be resized - default: true */
+    canResize?: boolean;
+    /** Callback when an appointment overlaps with an existing appointment */
+    onAppointmentOverlap?: (overlap: CalendarAppointmentOverlap) => void;
     /** Disabled time ranges (time of day that is disabled) */
     disabledTimeRanges?: CalendarDisabledTimeRange[];
     /** Prevent adding/moving appointments in past dates */
@@ -152,6 +169,9 @@ export type LargeCalendarProps = Pick<CalendarProps,
     | 'onTimeRangeSelect'
     | 'disableAfter'
     | 'dragMode'
+    | 'canDrag'
+    | 'canResize'
+    | 'onAppointmentOverlap'
     | 'disabledTimeRanges'
     | 'disablePastDates'
     | 'disableFutureDates'

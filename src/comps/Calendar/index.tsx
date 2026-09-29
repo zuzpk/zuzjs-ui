@@ -71,11 +71,14 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
         onTimeRangeSelect,
         disableAfter,
         dragMode,
+        canResize,
         disabledTimeRanges,
         disablePastDates,
         disableFutureDates,
         isDateDisabled,
         onViewModeChange,
+        canDrag,
+        onAppointmentOverlap,
         ...pops
     } = props
 
@@ -137,6 +140,9 @@ const Calendar = forwardRef<HTMLInputElement, CalendarProps>((props, ref) => {
                 onTimeRangeSelect={onTimeRangeSelect}
                 disableAfter={disableAfter}
                 dragMode={dragMode}
+                canDrag={canDrag}
+                canResize={canResize}
+                onAppointmentOverlap={onAppointmentOverlap}
                 disabledTimeRanges={disabledTimeRanges}
                 disablePastDates={disablePastDates}
                 disableFutureDates={disableFutureDates}

@@ -303,7 +303,7 @@ body{
                 flex-shrink: 0;
                 cursor: crosshair;
                 &:hover{
-                    background: var(--calendar-column-hover, var(--muted));
+                    background: var(--calendar-column-hover, var(--muted)) !important;
                 }
                 &.--sub-slot{
                     height: var(--calendar-sub-slot-height, 28px);
