@@ -14,9 +14,8 @@
   background: repeating-linear-gradient(
     $deg,
     $color1,
-    $color1 calc($size / 2),
-    $color2 calc($size / 2),
-    $color2 $size
+    $color1 calc(var(--stripe-size, #{$size}) / 2),
+    $color2 calc(var(--stripe-size, #{$size}) / 2),
+    $color2 var(--stripe-size, #{$size})
   );
-
 }

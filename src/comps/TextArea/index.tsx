@@ -148,6 +148,10 @@ const TextArea = ({
     };
   }, [deleteFieldValue, inForm, name]);
 
+  // console.log(style)
+
+  //TODO: TRANSITION -> fx style is not being passed to <Box /> and textarea is missing fx
+
   return (
     <Box as="rel --flex w-full">
       <textarea

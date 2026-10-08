@@ -485,6 +485,7 @@ export * from './Radio/types';
  */
 export { default as ScrollView } from './ScrollView';
 export * from './ScrollView/types';
+export { useScrollView } from './ScrollView/context';
 
 /**
  * Search input with clear action.

@@ -3,6 +3,7 @@ import { forwardRef, UIEvent, useEffect } from "react";
 import { useBase } from "../../hooks";
 import Box from "../Box";
 import { ScrollViewProps } from "./types";
+import { ScrollViewProvider } from "./context";
 
 /**
  * ScrollView component.
@@ -117,32 +118,34 @@ const ScrollView = forwardRef<HTMLDivElement, ScrollViewProps>((props, ref) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [autoScrollToBottom, rest.children]);
 
-    return <Box 
-        ref={rootRef}
-        className={`${className.trim()} --direction-${direction}`.trim()}
-        as={`--scrollview rel`}>
+    return <ScrollViewProvider value={containerRef}>
+        <Box 
+            ref={rootRef}
+            className={`${className.trim()} --direction-${direction}`.trim()}
+            as={`--scrollview rel`}>
 
-        {/*
-          Structure:
-          - .--scroll-content  = scrollport (overflow + measurements)
-          - .--scroll-inner    = in-flow sizing box + containing block for abs children
-            so abs/fixed descendants scroll with content but do NOT inflate
-            scrollWidth/scrollHeight used by the scrollbar.
-        */}
-        <Box as={`--scroll-content ${className}`.trim()} ref={containerRef} style={scrollStyle}>
-            <Box as={`--scroll-inner rel`}>
-                {rest.children}
+            {/*
+              Structure:
+              - .--scroll-content  = scrollport (overflow + measurements)
+              - .--scroll-inner    = in-flow sizing box + containing block for abs children
+                so abs/fixed descendants scroll with content but do NOT inflate
+                scrollWidth/scrollHeight used by the scrollbar.
+            */}
+            <Box as={`--scroll-content ${className}`.trim()} ref={containerRef} style={scrollStyle}>
+                <Box as={`--scroll-inner rel`}>
+                    {rest.children}
+                </Box>
             </Box>
-        </Box>
 
-        <Box as={`--scroll-track --track-y --abs`}>
-            <Box as={`--scroll-thumb --abs --round`} ref={thumbY} onMouseDown={onScrollY} />
-        </Box>
-        <Box as={`--scroll-track --track-x --abs`}>
-            <Box as={`--scroll-thumb --abs --round`} ref={thumbX} onMouseDown={onScrollX} />
-        </Box>
+            <Box as={`--scroll-track --track-y --abs`}>
+                <Box as={`--scroll-thumb --abs --round`} ref={thumbY} onMouseDown={onScrollY} />
+            </Box>
+            <Box as={`--scroll-track --track-x --abs`}>
+                <Box as={`--scroll-thumb --abs --round`} ref={thumbX} onMouseDown={onScrollX} />
+            </Box>
 
-    </Box>
+        </Box>
+    </ScrollViewProvider>
 
 })
 

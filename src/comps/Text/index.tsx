@@ -1,8 +1,9 @@
-import { useIntersectionObserver } from '@zuzjs/hooks';
+import { useIntersectionObserver, useScrollPhysics } from '@zuzjs/hooks';
 import { HTMLAttributes, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useBase } from '../../hooks';
 import Span from '../Span';
 import { TextProps } from './types';
+import { useScrollView } from '../ScrollView/context';
 
 /**
  * Text component.
@@ -25,6 +26,8 @@ import { TextProps } from './types';
  */
 const Text = ({
     ref,
+    scrollPhysics,
+    scrollContainer,
     ...props
 } : TextProps) => {
 
@@ -48,6 +51,13 @@ const Text = ({
 
     const innerRef = useRef<HTMLHeadingElement>(null);
     const [isHovered, setIsHovered] = useState(false);
+
+    // Use provided scrollContainer, or get from ScrollView context
+    const scrollViewContainer = useScrollView()
+    const effectiveScrollContainer = scrollContainer || scrollViewContainer
+
+    // Apply scroll physics
+    useScrollPhysics(innerRef as any, scrollPhysics, effectiveScrollContainer as any)
 
     const [ratio] = useIntersectionObserver([innerRef], { threshold: [1] });
 

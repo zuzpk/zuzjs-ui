@@ -1,4 +1,4 @@
-import { TimelineLayer, UseDragSpecFactory, UseDropSpecFactory } from "@zuzjs/hooks";
+import { ScrollPhysicsOptions, TimelineLayer, UseDragSpecFactory, UseDropSpecFactory } from "@zuzjs/hooks";
 import { Ref } from "react";
 import { ZuzStyleString } from "./css";
 import { SKELETON, TRANSITION_CURVES, TRANSITIONS } from "./enums";
@@ -62,7 +62,19 @@ export interface ZuzProps {
 
     textSize?: string | number;
 
-    square?: boolean;
+    square?: boolean; 
+
+    /**
+     * Scroll physics configuration for applying transform effects based on scroll position.
+     * Enables smooth animations like parallax, scaling, and rotation effects.
+     */
+    scrollPhysics?: ScrollPhysicsOptions;
+
+    /**
+     * Reference to a custom scroll container (e.g., ScrollView).
+     * If not provided, uses window scroll events.
+     */
+    scrollContainer?: Ref<HTMLElement>;
 
 }
 

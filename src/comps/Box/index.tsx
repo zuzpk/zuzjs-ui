@@ -1,6 +1,9 @@
 import { useMemo, useRef } from "react";
+import { RefObject } from "react";
 import { useBase } from "../../hooks";
 import { BoxProps } from "../../types";
+import { useScrollPhysics } from "@zuzjs/hooks";
+import { useScrollView } from "../ScrollView/context";
 
 /**
  * Box component.
@@ -24,17 +27,25 @@ import { BoxProps } from "../../types";
 const Box = ({ 
     ref, 
     style,
+    scrollPhysics,
+    scrollContainer,
     ...props 
 }: BoxProps) => {
 
     const innerRef = useRef<HTMLDivElement>(null)
     const targetRef = useMemo(() => ref && typeof ref !== "function" && ref.current ? ref : innerRef, [ref])
+    
+    // Use provided scrollContainer, or get from ScrollView context
+    const scrollViewContainer = useScrollView()
+    const effectiveScrollContainer = scrollContainer || scrollViewContainer
 
     const {
         style: _style,
         className,
         rest
     } = useBase<`div`>(props, targetRef as any)
+
+    useScrollPhysics(targetRef as RefObject<HTMLElement>, scrollPhysics, effectiveScrollContainer as RefObject<HTMLElement>)
 
     return <div 
         ref={ref || innerRef}

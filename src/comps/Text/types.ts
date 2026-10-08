@@ -1,4 +1,5 @@
 import { ReactNode, Ref } from "react";
+import { ScrollPhysicsOptions } from "@zuzjs/hooks";
 import { Props } from "../../types";
 
 export type TextFxVariant = 'bounce' | 'wave' | 'slide' | 'fade' | 'glitch' | `glitch-v2` | 'typewriter' | `fog` | `pop` | `reveal` | `shuffle`;
@@ -18,4 +19,8 @@ export type TextProps = Props<`h1` | `h2` | `h3` | `h4` | `h5` | `h6` | `p` | `s
     repeat?: boolean;
     reveal?: boolean;
     hover?: boolean;
+    /** Scroll physics configuration for applying transform effects based on scroll position */
+    scrollPhysics?: ScrollPhysicsOptions;
+    /** Reference to a custom scroll container (e.g., ScrollView) */
+    scrollContainer?: Ref<HTMLElement>;
 }
